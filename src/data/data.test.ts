@@ -3,6 +3,33 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('데이터베이스 보충 개념 9개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
+    const expectedSlugs: Record<string, string[]> = {
+      'rds-storage-features': [
+        'storage-type-names',
+        'multi-az-standby-limits',
+        'automated-backup-retention',
+        'connection-issue-heuristic',
+      ],
+      'aurora-dynamodb-cache': [
+        'aurora-serverless-v2',
+        'aurora-reader-endpoint',
+        'documentdb',
+        'dynamodb-pitr',
+        'dax-dynamodb-only',
+      ],
+    }
+
+    Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+
+      expect(addedConcepts.map(({ id }) => id)).toEqual(
+        slugs.map((slug) => `${topicId}.${slug}`),
+      )
+    })
+  })
+
   it('보충 개념 9개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
     const expectedSlugs: Record<string, string[]> = {
       'aws-core-services': ['exam-heuristics'],
@@ -135,7 +162,7 @@ describe('학습 데이터 무결성', () => {
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     expect(topics.slice(8, 15).map((topic) => topic.concepts.length)).toEqual([
-      3, 3, 4, 4, 4, 7, 4,
+      7, 8, 4, 4, 4, 7, 4,
     ])
   })
 
