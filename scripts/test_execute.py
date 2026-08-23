@@ -470,7 +470,11 @@ class TestCodexAgent:
 
 class TestMaxSteps:
     def test_stops_after_n_steps(self, executor):
-        """--max-steps 1 이면 한 step 만 돌고 멈춘다."""
+        """--max-steps 1 이면, 뒤에 pending 이 남아 있어도 한 step 만 돌고 멈춘다."""
+        index = executor._read_json(executor._index_file)
+        index["steps"].append({"step": 3, "name": "extra", "status": "pending"})
+        executor._write_json(executor._index_file, index)
+
         executor._max_steps = 1
         calls = []
 
@@ -486,8 +490,31 @@ class TestMaxSteps:
         with patch.object(executor, "_execute_single_step", side_effect=fake_step):
             finished = executor._execute_all_steps("")
 
-        assert len(calls) == 1        # 픽스처의 첫 pending step 하나만
-        assert finished is False        # 아직 안 끝났으므로 phase 를 완료로 찍으면 안 된다
+        assert len(calls) == 1        # 첫 pending step 하나만
+        assert finished is False      # 뒤에 step 3 이 남았으므로 phase 는 미완료        # 아직 안 끝났으므로 phase 를 완료로 찍으면 안 된다
+
+    def test_finishes_when_last_batch_exactly_consumes_remaining(self, executor):
+        """--max-steps 가 남은 step 수와 정확히 같으면 phase 를 완료로 봐야 한다.
+
+        pending 확인보다 max_steps 검사를 먼저 하면 False 를 돌려주고,
+        run() 이 _finalize() 를 건너뛰어 phase 가 영영 pending 으로 남는다.
+        """
+        index = executor._read_json(executor._index_file)
+        remaining = [s for s in index["steps"] if s["status"] == "pending"]
+        executor._max_steps = len(remaining)
+
+        def fake_step(step, guardrails):
+            idx = executor._read_json(executor._index_file)
+            for s in idx["steps"]:
+                if s["step"] == step["step"]:
+                    s["status"] = "completed"
+            executor._write_json(executor._index_file, idx)
+            return True
+
+        with patch.object(executor, "_execute_single_step", side_effect=fake_step):
+            finished = executor._execute_all_steps("")
+
+        assert finished is True
 
     def test_runs_all_without_limit(self, executor):
         def fake_step(step, guardrails):

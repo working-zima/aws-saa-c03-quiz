@@ -408,15 +408,18 @@ class StepExecutor:
         """pending step 을 순서대로 실행한다. 전부 끝내면 True, 조기 중단이면 False."""
         executed = 0
         while True:
-            if self._max_steps is not None and executed >= self._max_steps:
-                print(f"\n  ⏸ --max-steps {self._max_steps} 도달. 검토 후 다시 실행하면 이어서 진행한다.")
-                return False
-
             index = self._read_json(self._index_file)
             pending = next((s for s in index["steps"] if s["status"] == "pending"), None)
+
+            # 남은 step이 없는지 먼저 본다. --max-steps 를 정확히 소진하면서 마지막 step이
+            # 끝난 경우, 여기서 True 를 돌려줘야 _finalize() 가 phase 를 완료로 찍는다.
             if pending is None:
                 print("\n  All steps completed!")
                 return True
+
+            if self._max_steps is not None and executed >= self._max_steps:
+                print(f"\n  ⏸ --max-steps {self._max_steps} 도달. 검토 후 다시 실행하면 이어서 진행한다.")
+                return False
 
             step_num = pending["step"]
             for s in index["steps"]:
