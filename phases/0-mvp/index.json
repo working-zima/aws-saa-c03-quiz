@@ -69,7 +69,10 @@
     {
       "step": 8,
       "name": "quiz-page",
-      "status": "pending"
+      "status": "completed",
+      "summary": "문항별 즉시 채점·정오답 표시·해설·진행 기록과 완료 결과 및 빈 문항 안내를 갖춘 확인 문제 화면과 테스트 6개를 추가",
+      "started_at": "2026-08-23T16:47:29+0900",
+      "completed_at": "2026-08-23T16:50:39+0900"
     },
     {
       "step": 9,
