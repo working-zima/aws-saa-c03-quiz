@@ -45,7 +45,10 @@
     {
       "step": 5,
       "name": "topic-list-page",
-      "status": "pending"
+      "status": "completed",
+      "summary": "전체 진행률과 중요도·학습 상태를 표시하는 주제 카드 목록 및 빈 데이터 처리를 테스트 우선으로 구현",
+      "started_at": "2026-08-23T16:05:21+0900",
+      "completed_at": "2026-08-23T16:07:35+0900"
     },
     {
       "step": 6,
