@@ -93,7 +93,10 @@
     {
       "step": 11,
       "name": "concepts-security-ops",
-      "status": "pending"
+      "status": "completed",
+      "summary": "원본 36~50페이지 기반 7개 주제와 38개 concept 데이터 및 보안·운영 데이터 검증 테스트 2개 추가",
+      "started_at": "2026-08-23T17:15:58+0900",
+      "completed_at": "2026-08-23T17:19:16+0900"
     },
     {
       "step": 12,
