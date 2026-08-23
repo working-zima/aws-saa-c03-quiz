@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "progress-lib",
-      "status": "pending"
+      "status": "completed",
+      "summary": "React 비의존 진행 상태 갱신·채점·통계·복습 계산과 장애 안전 localStorage 계층 및 순수 단위 테스트 15개 추가",
+      "started_at": "2026-08-23T15:53:57+0900",
+      "completed_at": "2026-08-23T15:55:58+0900"
     },
     {
       "step": 4,
