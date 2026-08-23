@@ -69,7 +69,10 @@
     {
       "step": 8,
       "name": "questions-gap-network",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T21:30:48+0900",
+      "summary": "네트워크·하이브리드·라우팅·분석 보충 개념 15개에 대응하는 q209–q223 문항을 추가하고 데이터 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:33:03+0900"
     },
     {
       "step": 9,
