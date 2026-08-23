@@ -1,0 +1,23 @@
+node_modules/
+dist/
+tsconfig.tsbuildinfo
+
+# secrets — .env.example 만 커밋한다
+.env
+.env.*
+!.env.example
+
+# 개인 설정 (팀 공유 대상 아님)
+.claude/settings.local.json
+
+# phase execution outputs
+phases/**/phase*-output.json
+phases/**/step*-output.json
+
+# 원본 PDF (17MB). 추출본 docs/source/concepts-raw.md 가 커밋되므로 저장소에는 넣지 않는다.
+*.pdf
+
+# python 부산물
+__pycache__/
+*.pyc
+.pytest_cache/
