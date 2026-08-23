@@ -2,15 +2,59 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "1-exam-gaps",
   "steps": [
-    { "step": 0, "name": "concepts-gap-foundation", "status": "pending" },
-    { "step": 1, "name": "concepts-gap-database", "status": "pending" },
-    { "step": 2, "name": "concepts-gap-compute", "status": "pending" },
-    { "step": 3, "name": "concepts-gap-network", "status": "pending" },
-    { "step": 4, "name": "concepts-gap-security", "status": "pending" },
-    { "step": 5, "name": "questions-gap-foundation", "status": "pending" },
-    { "step": 6, "name": "questions-gap-database", "status": "pending" },
-    { "step": 7, "name": "questions-gap-compute", "status": "pending" },
-    { "step": 8, "name": "questions-gap-network", "status": "pending" },
-    { "step": 9, "name": "questions-gap-security", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "concepts-gap-foundation",
+      "status": "completed",
+      "summary": "4개 기존 주제의 concepts 배열 끝에 exam-gaps 보충 개념 9개를 추가하고 무결성 테스트를 보강함",
+      "started_at": "2026-08-23T20:44:57+0900",
+      "completed_at": "2026-08-23T20:47:58+0900"
+    },
+    {
+      "step": 1,
+      "name": "concepts-gap-database",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "concepts-gap-compute",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "concepts-gap-network",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "concepts-gap-security",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "questions-gap-foundation",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "questions-gap-database",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "questions-gap-compute",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "questions-gap-network",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "questions-gap-security",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-08-23T20:44:57+0900"
 }
