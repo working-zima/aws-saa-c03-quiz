@@ -45,7 +45,10 @@
     {
       "step": 5,
       "name": "rewrite-network",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T23:06:28+0900",
+      "summary": "네트워크·하이브리드 연결·Route 53 3개 주제의 개념 14개를 사실과 문항 근거를 보존해 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T23:09:27+0900"
     },
     {
       "step": 6,
