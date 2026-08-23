@@ -240,7 +240,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('기초·스토리지 보충 문제 9개가 새 개념과 일대일로 이어진다', () => {
-    const addedQuestions = questions.slice(169)
+    const addedQuestions = questions.slice(169, 178)
     const expectedConceptIds = [
       'aws-core-services.exam-heuristics',
       's3-versioning-lifecycle.object-lock-prerequisites',
@@ -273,7 +273,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('기초·스토리지 보충 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
-    const addedQuestions = questions.slice(169)
+    const addedQuestions = questions.slice(169, 178)
     const answerCounts = [0, 1, 2, 3].map(
       (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
     )
@@ -282,6 +282,53 @@ describe('학습 데이터 무결성', () => {
       .join(' ')
 
     expect(answerCounts).toEqual([2, 2, 2, 3])
+    addedQuestions.forEach(({ choices }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+  })
+
+  it('데이터베이스 보충 문제 9개가 새 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(178, 187)
+    const expectedConceptIds = [
+      'rds-storage-features.storage-type-names',
+      'rds-storage-features.multi-az-standby-limits',
+      'rds-storage-features.automated-backup-retention',
+      'rds-storage-features.connection-issue-heuristic',
+      'aurora-dynamodb-cache.aurora-serverless-v2',
+      'aurora-dynamodb-cache.aurora-reader-endpoint',
+      'aurora-dynamodb-cache.documentdb',
+      'aurora-dynamodb-cache.dynamodb-pitr',
+      'aurora-dynamodb-cache.dax-dynamodb-only',
+    ]
+
+    expect(addedQuestions).toHaveLength(9)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 9 }, (_, index) => `q${index + 179}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(4).fill('rds-storage-features'),
+      ...Array(5).fill('aurora-dynamodb-cache'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...expectedConceptIds].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(9)
+  })
+
+  it('데이터베이스 보충 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(178, 187)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    expect(answerCounts).toEqual([3, 2, 2, 2])
     addedQuestions.forEach(({ choices }) => {
       expect(choices).toHaveLength(4)
       expect(new Set(choices).size).toBe(4)
