@@ -398,6 +398,61 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('네트워크·라우팅·분석 보충 문제 15개가 새 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(208, 223)
+    const expectedConceptIds = [
+      'vpc-networking.endpoint-pricing',
+      'vpc-networking.egress-only-igw',
+      'vpc-networking.nat-instance',
+      'vpc-networking.vpc-peering-scaling-limit',
+      'vpc-networking.s3-is-regional',
+      'hybrid-connectivity.direct-connect-caveats',
+      'hybrid-connectivity.direct-connect-gateway',
+      'hybrid-connectivity.client-vpn',
+      'hybrid-connectivity.access-terms',
+      'hybrid-connectivity.data-locality-cost',
+      'hybrid-connectivity.onprem-connectivity-heuristic',
+      'route53.private-hosted-zone',
+      'route53.multivalue-answer-details',
+      'analytics-monitoring.glue-crawler',
+      'analytics-monitoring.log-analysis-options',
+    ]
+
+    expect(addedQuestions).toHaveLength(15)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 15 }, (_, index) => `q${index + 209}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(5).fill('vpc-networking'),
+      ...Array(6).fill('hybrid-connectivity'),
+      ...Array(2).fill('route53'),
+      ...Array(2).fill('analytics-monitoring'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...expectedConceptIds].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(15)
+  })
+
+  it('네트워크·라우팅·분석 보충 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(208, 223)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    expect(answerCounts).toEqual([4, 4, 4, 3])
+    addedQuestions.forEach(({ choices }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+  })
+
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
     expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
       id,
