@@ -61,7 +61,10 @@
     {
       "step": 7,
       "name": "questions-core",
-      "status": "pending"
+      "status": "completed",
+      "summary": "원본 1~18페이지 기반 주제 1~8의 4지선다 확인 문제 총 57문항(q001~q057) 추가",
+      "started_at": "2026-08-23T16:30:26+0900",
+      "completed_at": "2026-08-23T16:35:59+0900"
     },
     {
       "step": 8,
