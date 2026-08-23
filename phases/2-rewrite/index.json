@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "rewrite-compute",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T23:04:04+0900",
+      "summary": "컴퓨팅·서버리스·메시징 3개 주제의 개념 12개를 사실과 문항 근거를 보존해 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T23:06:28+0900"
     },
     {
       "step": 5,
