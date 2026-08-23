@@ -77,7 +77,10 @@
     {
       "step": 9,
       "name": "questions-gap-security",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T21:33:29+0900",
+      "summary": "보안·자격 증명·비용 관리 보충 개념 23개에 대응하는 q224–q246 문항을 추가하고 phase 전체 정답 분포 테스트를 보강함",
+      "completed_at": "2026-08-23T21:42:44+0900"
     }
   ],
   "created_at": "2026-08-23T20:44:57+0900"
