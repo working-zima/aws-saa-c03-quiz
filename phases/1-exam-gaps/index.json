@@ -1,0 +1,16 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "1-exam-gaps",
+  "steps": [
+    { "step": 0, "name": "concepts-gap-foundation", "status": "pending" },
+    { "step": 1, "name": "concepts-gap-database", "status": "pending" },
+    { "step": 2, "name": "concepts-gap-compute", "status": "pending" },
+    { "step": 3, "name": "concepts-gap-network", "status": "pending" },
+    { "step": 4, "name": "concepts-gap-security", "status": "pending" },
+    { "step": 5, "name": "questions-gap-foundation", "status": "pending" },
+    { "step": 6, "name": "questions-gap-database", "status": "pending" },
+    { "step": 7, "name": "questions-gap-compute", "status": "pending" },
+    { "step": 8, "name": "questions-gap-network", "status": "pending" },
+    { "step": 9, "name": "questions-gap-security", "status": "pending" }
+  ]
+}
