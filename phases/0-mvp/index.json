@@ -101,7 +101,10 @@
     {
       "step": 12,
       "name": "questions-data-network",
-      "status": "pending"
+      "status": "completed",
+      "summary": "원본 19~35페이지 기반 주제 9~15 확인 문제 59문항을 추가해 누적 총 116문항(q001~q116)을 완성",
+      "started_at": "2026-08-23T17:20:53+0900",
+      "completed_at": "2026-08-23T17:25:43+0900"
     },
     {
       "step": 13,
