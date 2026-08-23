@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "concepts-gap-security",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T21:15:34+0900",
+      "summary": "보안·자격 증명·비용 관리 5개 주제의 concepts 배열 끝에 exam-gaps 보충 개념 23개를 추가하고 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:20:23+0900"
     },
     {
       "step": 5,
