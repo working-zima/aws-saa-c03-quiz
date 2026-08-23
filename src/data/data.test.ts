@@ -23,6 +23,39 @@ describe('학습 데이터 무결성', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
+  it('모든 주제는 하나 이상의 개념을 가진다', () => {
+    topics.forEach((topic) => {
+      expect(topic.concepts.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('모든 개념의 이름과 요약이 빈 문자열이 아니다', () => {
+    topics.forEach((topic) => {
+      topic.concepts.forEach((concept) => {
+        expect(concept.name.trim()).not.toBe('')
+        expect(concept.summary.trim()).not.toBe('')
+      })
+    })
+  })
+
+  it('모든 개념은 하나 이상의 빈 문자열이 아닌 문단을 가진다', () => {
+    topics.forEach((topic) => {
+      topic.concepts.forEach((concept) => {
+        expect(concept.paragraphs.length).toBeGreaterThan(0)
+        concept.paragraphs.forEach((paragraph) => {
+          expect(paragraph.trim()).not.toBe('')
+        })
+      })
+    })
+  })
+
+  it('모든 주제의 원본 페이지 범위가 올바르다', () => {
+    topics.forEach((topic) => {
+      expect(topic.sourcePages).toHaveLength(2)
+      expect(topic.sourcePages[0]).toBeLessThanOrEqual(topic.sourcePages[1])
+    })
+  })
+
   it('문제 id가 유일하다', () => {
     const ids = questions.map((question) => question.id)
 
