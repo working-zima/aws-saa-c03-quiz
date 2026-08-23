@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { questions as defaultQuestions, topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { overallPercent, topicStats } from '../lib/stats'
@@ -56,10 +57,10 @@ export function TopicListPage({
               : stat.read ? '읽음' : null
 
             return (
-              <a
+              <Link
                 className="rounded-lg border border-neutral-800 bg-panel p-5 transition-colors hover:border-neutral-700"
-                href={`#/topic/${topic.id}`}
                 key={topic.id}
+                to={`/topic/${topic.id}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="text-lg font-medium text-neutral-100">{topic.title}</h2>
@@ -70,7 +71,7 @@ export function TopicListPage({
                   )}
                 </div>
                 {status && <p className="mt-3 text-xs text-neutral-500">{status}</p>}
-              </a>
+              </Link>
             )
           })}
         </div>

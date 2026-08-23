@@ -93,9 +93,9 @@ describe('TopicListPage', () => {
     expect(screen.getByText('정답 1/2')).toBeInTheDocument()
   })
 
-  it('카드 링크가 해시 주제 경로를 가리킨다', () => {
+  it('카드 링크가 MemoryRouter의 주제 경로를 가리킨다', () => {
     renderPage()
 
-    expect(screen.getByRole('link', { name: /중요 주제/ })).toHaveAttribute('href', '#/topic/high-topic')
+    expect(screen.getByRole('link', { name: /중요 주제/ })).toHaveAttribute('href', '/topic/high-topic')
   })
 })
