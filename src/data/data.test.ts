@@ -3,6 +3,41 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('보안·운영 주제 문제 53개가 지정된 id 범위와 주제별 문항 수로 이어진다', () => {
+    const expectedTopics = [
+      ...Array(6).fill('route53'),
+      ...Array(6).fill('analytics-monitoring'),
+      ...Array(9).fill('security-groups-nacl'),
+      ...Array(8).fill('secrets-encryption'),
+      ...Array(9).fill('threat-protection'),
+      ...Array(9).fill('identity-access'),
+      ...Array(6).fill('cost-management'),
+    ]
+    const addedQuestions = questions.slice(116)
+
+    expect(addedQuestions).toHaveLength(53)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 53 }, (_, index) => `q${String(index + 117).padStart(3, '0')}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(expectedTopics)
+  })
+
+  it('보안·운영 주제 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(116)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    expect(learnerFacingText).not.toMatch(/원본에서|원본은|문서에서|본문에서|위 글에 따르면/)
+  })
+
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
     expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
       id,
