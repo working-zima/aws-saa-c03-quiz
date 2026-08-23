@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "content-types",
-      "status": "pending"
+      "status": "completed",
+      "summary": "학습 콘텐츠·진행 상태 타입과 빈 정적 JSON 진입점, 데이터 무결성 검증 테스트 9개를 추가",
+      "started_at": "2026-08-23T15:38:58+0900",
+      "completed_at": "2026-08-23T15:40:31+0900"
     },
     {
       "step": 2,
