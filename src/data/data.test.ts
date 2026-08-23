@@ -3,6 +3,37 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('네트워크·라우팅·분석 보충 개념 15개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
+    const expectedSlugs: Record<string, string[]> = {
+      'vpc-networking': [
+        'endpoint-pricing',
+        'egress-only-igw',
+        'nat-instance',
+        'vpc-peering-scaling-limit',
+        's3-is-regional',
+      ],
+      'hybrid-connectivity': [
+        'direct-connect-caveats',
+        'direct-connect-gateway',
+        'client-vpn',
+        'access-terms',
+        'data-locality-cost',
+        'onprem-connectivity-heuristic',
+      ],
+      route53: ['private-hosted-zone', 'multivalue-answer-details'],
+      'analytics-monitoring': ['glue-crawler', 'log-analysis-options'],
+    }
+
+    Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+
+      expect(addedConcepts.map(({ id }) => id)).toEqual(
+        slugs.map((slug) => `${topicId}.${slug}`),
+      )
+    })
+  })
+
   it('컴퓨팅·메시징 보충 개념 21개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
     const expectedSlugs: Record<string, string[]> = {
       'compute-delivery': [
@@ -180,7 +211,7 @@ describe('학습 데이터 무결성', () => {
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     expect(topics.slice(15, 22).map((topic) => topic.concepts.length)).toEqual([
-      3, 12, 2, 5, 5, 6, 5,
+      5, 14, 2, 5, 5, 6, 5,
     ])
   })
 
@@ -203,7 +234,7 @@ describe('학습 데이터 무결성', () => {
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     expect(topics.slice(8, 15).map((topic) => topic.concepts.length)).toEqual([
-      7, 8, 11, 11, 11, 7, 4,
+      7, 8, 11, 11, 11, 12, 10,
     ])
   })
 
