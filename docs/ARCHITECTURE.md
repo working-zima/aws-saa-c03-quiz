@@ -20,7 +20,7 @@ src/
 `src/types/content.ts`에 정의한다. 데이터 JSON은 이 타입을 만족해야 한다.
 
 ```ts
-type Importance = 3 | 2;              // ★★★ = 3, ★★☆ = 2
+type Importance = 3 | 2 | 0;          // ★★★ = 3, ★★☆ = 2, 별점 없음(기초) = 0
 
 interface Topic {
   id: string;                          // kebab-case. 예: "s3-storage-classes"
