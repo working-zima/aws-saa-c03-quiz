@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "rewrite-database",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T22:59:57+0900",
+      "summary": "데이터베이스 2개 주제의 개념 6개를 사실과 문항 근거를 보존해 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T23:02:26+0900"
     },
     {
       "step": 4,
