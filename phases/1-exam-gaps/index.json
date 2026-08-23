@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "concepts-gap-database",
-      "status": "pending"
+      "status": "completed",
+      "summary": "RDS와 Aurora·DynamoDB 주제의 concepts 배열 끝에 exam-gaps 보충 개념 9개를 추가하고 무결성 테스트를 보강함",
+      "started_at": "2026-08-23T20:49:06+0900",
+      "completed_at": "2026-08-23T20:51:33+0900"
     },
     {
       "step": 2,
