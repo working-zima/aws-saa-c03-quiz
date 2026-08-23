@@ -3,6 +3,29 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
+    expect(topics.slice(8, 15).map(({ id, title, importance, sourcePages }) => ({
+      id,
+      title,
+      importance,
+      sourcePages,
+    }))).toEqual([
+      { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
+      { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
+      { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
+      { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
+      { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
+      { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
+      { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
+    ])
+  })
+
+  it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
+    expect(topics.slice(8, 15).map((topic) => topic.concepts.length)).toEqual([
+      3, 3, 4, 4, 4, 7, 4,
+    ])
+  })
+
   it('주제 id가 유일하다', () => {
     const ids = topics.map((topic) => topic.id)
 
