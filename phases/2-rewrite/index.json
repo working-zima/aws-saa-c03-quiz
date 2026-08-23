@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "rewrite-s3",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T22:55:04+0900",
+      "summary": "S3 3개 주제의 개념 7개를 사실과 문항 근거를 보존해 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T22:57:52+0900"
     },
     {
       "step": 2,
