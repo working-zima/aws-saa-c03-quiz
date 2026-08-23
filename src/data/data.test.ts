@@ -3,6 +3,61 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('보충 개념 9개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
+    const expectedSlugs: Record<string, string[]> = {
+      'aws-core-services': ['exam-heuristics'],
+      's3-versioning-lifecycle': ['object-lock-prerequisites', 'event-notification'],
+      's3-encryption-batch': ['envelope-encryption', 'sse-kms-cost'],
+      'block-file-storage': [
+        'cluster-placement-group',
+        'ebs-elastic-volumes',
+        'efs-lifecycle-management',
+        'fsx-ontap-multi-az',
+      ],
+    }
+
+    Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+
+      expect(addedConcepts.map(({ id }) => id)).toEqual(
+        slugs.map((slug) => `${topicId}.${slug}`),
+      )
+    })
+  })
+
+  it('보충 개념 추가 후에도 22개 주제의 메타데이터가 그대로다', () => {
+    expect(topics.map(({ id, title, importance, sourcePages }) => ({
+      id,
+      title,
+      importance,
+      sourcePages,
+    }))).toEqual([
+      { id: 'aws-core-services', title: 'AWS 핵심 서비스 개요 — EC2·RDS·S3·Route 53·ELB·CloudFront·Lambda', importance: 0, sourcePages: [1, 4] },
+      { id: 'region-availability', title: '리전·가용성·가용 영역·다중 AZ', importance: 0, sourcePages: [5, 6] },
+      { id: 'onpremise-migration', title: '온프레미스와 마이그레이션', importance: 0, sourcePages: [7, 7] },
+      { id: 's3-storage-classes', title: 'S3 스토리지 클래스 유형', importance: 3, sourcePages: [8, 9] },
+      { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기 정책', importance: 3, sourcePages: [10, 12] },
+      { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·S3 Batch Operations', importance: 2, sourcePages: [13, 13] },
+      { id: 'block-file-storage', title: 'EBS·EFS·FSx·인스턴스 스토어', importance: 3, sourcePages: [14, 15] },
+      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·Storage Gateway', importance: 3, sourcePages: [16, 18] },
+      { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
+      { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
+      { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
+      { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
+      { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
+      { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
+      { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
+      { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
+      { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
+      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
+      { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
+      { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
+      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+    ])
+  })
+
   it('보안·운영 주제 문제 53개가 지정된 id 범위와 주제별 문항 수로 이어진다', () => {
     const expectedTopics = [
       ...Array(6).fill('route53'),
