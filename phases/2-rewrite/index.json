@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "rewrite-analytics",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T23:09:28+0900",
+      "summary": "분석·모니터링과 보안 그룹·NACL 2개 주제의 개념 14개를 사실과 문항 근거를 보존해 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T23:12:00+0900"
     },
     {
       "step": 7,
