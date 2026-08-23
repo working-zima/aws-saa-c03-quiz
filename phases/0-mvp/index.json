@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "concept-read-page",
-      "status": "pending"
+      "status": "completed",
+      "summary": "주제별 개념 본문·중요도·퀴즈 이동과 안전한 미존재 안내, 진입 시 읽음 처리를 갖춘 개념 읽기 화면 및 테스트 4개를 추가",
+      "started_at": "2026-08-23T16:26:22+0900",
+      "completed_at": "2026-08-23T16:28:21+0900"
     },
     {
       "step": 7,
