@@ -61,7 +61,17 @@ export function useProgress(): {
 
 다크모드 고정이다. 라이트/다크 토글을 만들지 마라.
 
-### 5. 테스트
+### 5. 훅 린트 규칙
+
+step 0의 eslint 설정에는 React 훅 규칙이 빠져 있다. 이 step에서 훅(`useProgress`)이 처음 등장하므로
+여기서 채운다.
+
+- `eslint-plugin-react-hooks`(`^4.6.0`)를 devDependency로 설치한다.
+- `.eslintrc.cjs`의 `extends`에 `plugin:react-hooks/recommended`를 추가한다.
+- 추가 후 `npm run lint`가 경고 0으로 통과해야 한다.
+  `exhaustive-deps` 경고가 뜨면 의존성 배열을 고쳐라. **규칙을 끄거나 주석으로 무시하지 마라.**
+
+### 6. 테스트
 
 - 라우팅 테스트: `/`가 주제 목록을, `/review`가 복습 화면을 렌더한다
 - 알 수 없는 경로가 `/`로 리다이렉트된다
@@ -77,6 +87,7 @@ npm run lint
 npm run build
 npm run test
 grep -q "HashRouter" src/App.tsx && echo ROUTER_OK
+grep -q "react-hooks" .eslintrc.cjs && echo HOOKS_LINT_OK
 ```
 
 ## 검증 절차
