@@ -5,32 +5,32 @@
     "importance": 0,
     "sourcePages": [1, 4],
     "concepts": [
-      {"id":"aws-core-services.ec2","name":"EC2 (Elastic Compute Cloud)","summary":"컴퓨터를 빌려서 원격으로 접속해 사용하는 서비스이다.","paragraphs":["EC2를 쉽게 얘기하면 하나의 컴퓨터를 의미한다."]},
-      {"id":"aws-core-services.rds","name":"RDS (Relational Database Service)","summary":"관계형 데이터베이스 서비스이다.","paragraphs":["MySQL, MariaDB 등 여러 관계형 데이터베이스 서비스를 AWS로부터 빌려서 사용하는 형태이다."]},
-      {"id":"aws-core-services.s3","name":"S3 (Simple Storage Service)","summary":"파일 저장 서비스이다.","paragraphs":["우린 사진이나 동영상과 같은 파일들을 구글 드라이브나 iCloud에 저장한다. S3는 이런 종류의 서비스라고 생각하면 된다.","사실 S3는 파일 저장 이외에도 부가적인 기능을 가지고 있다. 그 중 하나가 ‘정적 웹 사이트 호스팅’ 기능이다. 쉽게 표현하자면 웹 서비스를 다른 사용자들도 쓸 수 있게 인터넷에 배포하는 걸 뜻한다."]},
-      {"id":"aws-core-services.route-53","name":"Route 53","summary":"도메인을 발급하고 관리해주는 서비스이다.","paragraphs":["혹시나 도메인(Domain)의 의미를 모르는 분들을 위해 설명드리자면, www.naver.com, daum.net, youtube.com과 같은 문자로 표현된 인터넷 주소를 의미한다.","Route 53을 조금 더 전문적인 용어로 표현하자면 DNS(Domain Name System) 서비스이다. DNS가 뭔지 짚고 넘어가자."]},
-      {"id":"aws-core-services.dns","name":"DNS (Domain Name System)","summary":"문자를 IP 주소로 변환해주는 하나의 시스템(서버)이다.","paragraphs":["도메인(Domain)이 없던 시절에는 특정 컴퓨터와 통신하기 위해서 IP 주소(ex. 12. 134. 122. 11)를 사용했다. 이 IP는 특정 컴퓨터를 가리키는 주소의 역할을 한다.","하지만 IP 주소는 많은 숫자들로 이루어져 있어서 일일이 외우기가 너무 불편했다. 이 때문에 사람들이 기억하기 쉬운 문자로 컴퓨터의 주소를 나타낼 수는 없을까에 대해 고민하게 됐다. 숫자로 이루어져 있는 IP 주소를 문자로 구성하기에는 한계가 있었다. 왜냐하면 컴퓨터가 처리하기 쉬운 값의 형태는 문자가 아니라 숫자이기 때문이다.","이를 해결하기 위해 문자를 IP 주소로 변환해주는 하나의 시스템(서버)을 만들게 됐다. 이게 바로 DNS(Domain Name System)이다. DNS가 생기고나서부터 사람들은 특정 컴퓨터와 통신하기 위해 복잡한 IP 주소를 일일이 외울 필요가 없게 됐다."]},
-      {"id":"aws-core-services.elb","name":"ELB (Elastic Load Balancer)","summary":"트래픽(부하)을 적절하게 분배해주는 장치이다.","paragraphs":["트래픽(부하)를 적절하게 분배해주는 장치를 보고 전문적인 용어로 로드밸런서(Load Balancer)라고 부른다. 서버를 2대 이상 가용할 때 ELB를 필수적으로 도입하게 된다."]},
-      {"id":"aws-core-services.cloudfront","name":"CloudFront","summary":"컨텐츠(파일, 동영상 등)를 빠르게 전송하게 해주는 서비스이다.","paragraphs":["AWS CloudFront가 어떻게 컨텐츠를 빠르게 전송하게 해주는 지 작동 과정을 알아보자.","컨텐츠(파일, 동영상)는 S3라는 곳에 저장될 것이다. 하지만 그 S3 저장소가 한국에 있다고 가정하자. 그러면 한국 사용자는 S3와 거리가 가까우므로 데이터를 빠르게 전송받을 수 있다. 하지만 미국에 있는 사용자가 S3로부터 데이터를 전송받으려면 거리가 멀어 시간이 오래 걸리게 된다.","이런 문제를 해결하기 위해 전세계 곳곳에 컨텐츠(파일, 동영상)의 복사본을 저장해놓을 수 있는 임시 저장소를 구축한다. 그러면 미국에 있는 사용자가 컨텐츠를 전송받고 싶을 때, 가장 가까운 임시 저장소에서 컨텐츠를 가져오면 훨씬 속도가 빨라진다.","이런 형태의 서비스를 보고 CDN(Content Delivery Network)이라고 부른다. 그래서 CloudFront를 CDN 서비스라고도 표현한다."]},
-      {"id":"aws-core-services.lambda","name":"Lambda","summary":"서버는 AWS가 관리하고, 개발자는 코드만 작성하면 알아서 실행되는 서비스이다.","paragraphs":["EC2처럼 서버를 직접 생성하고 관리할 필요 없이, 필요한 코드만 작성해서 실행시키면 알아서 작동한다."]},
+      {"id":"aws-core-services.ec2","name":"EC2 (Elastic Compute Cloud)","summary":"원격 접속할 수 있는 컴퓨터를 AWS에서 빌려 쓰는 서비스다.","paragraphs":["EC2의 기본 단위는 컴퓨터 한 대라고 이해할 수 있다."]},
+      {"id":"aws-core-services.rds","name":"RDS (Relational Database Service)","summary":"AWS에서 관계형 데이터베이스를 빌려 사용하는 서비스다.","paragraphs":["MySQL과 MariaDB를 포함한 여러 관계형 데이터베이스를 직접 마련하는 대신 AWS에서 제공받아 쓴다."]},
+      {"id":"aws-core-services.s3","name":"S3 (Simple Storage Service)","summary":"사진이나 동영상 같은 파일을 보관하는 서비스다.","paragraphs":["Google Drive나 iCloud에 파일을 올려 두는 것과 비슷한 저장 공간으로 이해할 수 있다.","S3에는 저장 외에도 정적 웹 사이트 호스팅 기능이 있다. 이 기능을 사용하면 웹 서비스를 인터넷에 배포해 다른 사용자가 이용할 수 있게 한다."]},
+      {"id":"aws-core-services.route-53","name":"Route 53","summary":"인터넷 도메인의 발급과 관리를 담당하는 서비스다.","paragraphs":["도메인은 www.naver.com, daum.net, youtube.com처럼 문자로 나타낸 인터넷 주소다.","Route 53은 이러한 주소를 다루는 DNS(Domain Name System) 서비스다."]},
+      {"id":"aws-core-services.dns","name":"DNS (Domain Name System)","summary":"사람이 읽는 문자 주소를 컴퓨터가 사용하는 IP 주소로 바꾸는 시스템이다.","paragraphs":["도메인이 사용되기 전에는 통신할 컴퓨터를 지정하려면 12.134.122.11과 같은 IP 주소가 필요했다. IP 주소는 특정 컴퓨터의 위치를 가리키는 주소 역할을 한다.","여러 숫자로 이루어진 IP 주소는 사람이 일일이 기억하기 어렵다. 사람에게는 문자 주소가 더 편리하지만, 컴퓨터는 문자보다 숫자 형태의 값을 처리하기 쉽다.","DNS 서버가 문자로 된 주소를 IP 주소로 변환하면서 이 차이를 해결한다. 따라서 사용자는 특정 컴퓨터에 연결할 때 복잡한 숫자 주소를 외우지 않아도 된다."]},
+      {"id":"aws-core-services.elb","name":"ELB (Elastic Load Balancer)","summary":"들어오는 트래픽을 여러 서버에 알맞게 나누는 장치다.","paragraphs":["트래픽, 즉 부하를 분배하는 장치를 로드 밸런서(Load Balancer)라고 한다. 서버를 두 대 이상 운용하는 구성에는 ELB를 필수로 도입한다."]},
+      {"id":"aws-core-services.cloudfront","name":"CloudFront","summary":"파일과 동영상 등의 콘텐츠를 사용자에게 빠르게 전달하는 서비스다.","paragraphs":["콘텐츠가 한국의 S3에만 저장되어 있다고 가정하면, 가까운 한국 사용자는 빠르게 받을 수 있지만 멀리 있는 미국 사용자는 전송에 더 많은 시간이 걸린다.","CloudFront는 이 거리 문제를 줄이기 위해 세계 여러 곳의 임시 저장소에 콘텐츠 복사본을 둔다. 사용자가 가장 가까운 저장소에서 파일을 받게 하여 전송 속도를 높인다.","콘텐츠 복사본을 분산해 전달하는 형태를 CDN(Content Delivery Network)이라고 하며, CloudFront는 CDN 서비스에 해당한다."]},
+      {"id":"aws-core-services.lambda","name":"Lambda","summary":"AWS가 서버를 맡고 개발자는 필요한 코드만 실행하는 서비스다.","paragraphs":["EC2를 사용할 때처럼 서버를 직접 만들고 관리하지 않아도 된다. 실행할 코드를 작성하면 Lambda가 작동시킨다."]},
       {"id":"aws-core-services.exam-heuristics","name":"시험에서 자주 통하는 판단 기준","summary":"선택지를 지우는 데 쓰는 시험 판단 기준이다.","paragraphs":["선택지에 '수동으로', '직접 스크립트를 짜서', '매번 담당자가' 같은 표현이 들어가면 대부분 오답이다. AWS가 이미 관리형 기능으로 제공하는 일을 사람이 하겠다는 뜻이기 때문이다.","사용자가 급격히 늘고, 이미지·파일 처리가 끼어 있고, 운영 비용을 최소화하라는 조건이 함께 나오면 서버리스(Lambda + S3 + DynamoDB) 조합이 정답인 경우가 많다."]}
     ]
   },
   {
     "id":"region-availability","title":"리전·가용성·가용 영역·다중 AZ","importance":0,"sourcePages":[5,6],
     "concepts":[
-      {"id":"region-availability.region","name":"리전 (Region)","summary":"인프라를 지리적으로 나누어 배포한 각각의 데이터 센터를 의미한다.","paragraphs":["리전(Region)이란 인프라를 지리적으로 나누어 배포한 각각의 데이터 센터를 의미한다.","말이 어렵다. 조금 더 쉽게 풀어서 EC2에 대입해서 생각해보자. 우린 EC2가 컴퓨터를 빌려서 원격으로 접속해 사용하는 서비스라는 걸 알고 있다. 여기서 EC2를 통해 빌려서 쓸 수 있는 컴퓨터들이 전 세계적으로 다양하게 분포해있다. 이렇게 컴퓨터들이 위치한 위치를 보고 AWS에서는 리전(Region)이라고 한다."]},
-      {"id":"region-availability.availability","name":"가용성 (Availability)","summary":"시스템이 서비스를 정상적으로 제공할 수 있는 가능성을 의미한다.","paragraphs":["가용성(Availability)이란 시스템이 서비스를 정상적으로 제공할 수 있는 가능성을 의미한다. 서비스에 장애가 발생할 가능성이 극히 작은 시스템을 가용성이 높은(고가용성) 시스템이라고 말할 수 있다. 반대로 서비스가 다운되는 시간이 긴 시스템을 가용성이 낮은 시스템이라고 한다.","가용성이 높고 낮음은 서비스의 정상 가동률(%)로 표시된다. 가용성 99. 99%라는 경우 99. 99% 시간을 정상적으로 이용 가능한 시스템을 말한다. 이를 바꿔 말하면 1년에 53분 정도는 서비스가 다운된다고 말할 수 있다."]},
-      {"id":"region-availability.availability-zone","name":"가용 영역 (Availability Zone)","summary":"하나의 리전 안에서 물리적으로 분리된 데이터 센터를 보고 가용 영역이라고 부른다.","paragraphs":["AWS는 자연 재해로 인해 데이터 센터가 파괴될 가능성을 고려해, 물리적으로 분리된 데이터 센터를 구축한다. 이와 같이 하나의 리전 안에서 물리적으로 분리된 데이터 센터를 보고 가용 영역(Availability Zone, AZ)이라고 부른다."]},
-      {"id":"region-availability.multi-az","name":"다중 AZ (Multi-AZ)","summary":"하나의 리전 안에서 서로 다른 가용 영역에 시스템을 분산 배치하는 구성 방식이다.","paragraphs":["다중 AZ(Multi-AZ)란 하나의 리전 안에서 서로 다른 가용 영역(AZ)에 시스템을 분산 배치하는 구성 방식을 말한다. 즉, 같은 서비스의 구성 요소를 여러 AZ에 동시에 배치하여 특정 AZ에 장애가 발생하더라도 서비스가 중단되지 않도록 만드는 것이 목적이다. 다중 AZ는 고가용성(High Availability)을 달성하기 위한 핵심 전략이다."]},
-      {"id":"region-availability.single-az","name":"단일 AZ (Single-AZ)","summary":"하나의 가용 영역에만 시스템을 배치하는 구성 방식을 말한다.","paragraphs":["단일 AZ(Single-AZ)란 하나의 가용 영역(AZ)에만 시스템을 배치하는 구성 방식을 말한다. 비용은 상대적으로 저렴하지만 해당 AZ에 장애가 생기면 중단될 수 있어서 가용성 측면에서는 취약하다."]}
+      {"id":"region-availability.region","name":"리전 (Region)","summary":"AWS 인프라를 지리적 위치에 따라 나누어 둔 데이터 센터 단위다.","paragraphs":["EC2에서 빌려 쓸 수 있는 컴퓨터는 세계 여러 지역에 흩어져 있다. AWS는 이 컴퓨터들이 자리한 각각의 위치를 리전(Region)이라고 부른다."]},
+      {"id":"region-availability.availability","name":"가용성 (Availability)","summary":"시스템이 서비스를 정상 상태로 제공할 수 있는 가능성이다.","paragraphs":["장애가 발생할 가능성이 매우 작은 시스템은 가용성이 높거나 고가용성이라고 한다. 반대로 서비스 중단 시간이 길수록 가용성이 낮다.","가용성은 서비스의 정상 가동률을 백분율로 나타낸다. 99.99%라면 전체 시간 중 그 비율만큼 정상적으로 이용할 수 있고, 1년 기준으로는 약 53분의 중단이 가능하다는 의미다."]},
+      {"id":"region-availability.availability-zone","name":"가용 영역 (Availability Zone)","summary":"리전 내부에서 물리적으로 떨어져 있는 데이터 센터다.","paragraphs":["AWS는 자연재해로 데이터 센터가 파괴될 가능성에 대비해 시설을 물리적으로 분리한다. 한 리전 안에 이렇게 나뉜 데이터 센터를 가용 영역(Availability Zone, AZ)이라고 한다."]},
+      {"id":"region-availability.multi-az","name":"다중 AZ (Multi-AZ)","summary":"같은 리전의 여러 가용 영역에 시스템을 나누어 배치하는 구성이다.","paragraphs":["서비스 구성 요소를 서로 다른 AZ에 동시에 두면 한 AZ에서 장애가 나더라도 서비스를 계속할 수 있다. 다중 AZ는 이러한 분산을 통해 고가용성(High Availability)을 달성하는 핵심 전략이다."]},
+      {"id":"region-availability.single-az","name":"단일 AZ (Single-AZ)","summary":"시스템 전체를 하나의 가용 영역에 두는 구성이다.","paragraphs":["비용은 다중 AZ보다 상대적으로 적지만, 해당 AZ에 장애가 생기면 서비스가 중단될 수 있어 가용성에는 취약하다."]}
     ]
   },
   {
     "id":"onpremise-migration","title":"온프레미스와 마이그레이션","importance":0,"sourcePages":[7,7],
     "concepts":[
-      {"id":"onpremise-migration.on-premise","name":"온프레미스 (On-premise)","summary":"회사가 직접 서버와 인프라의 장비를 사서 전산실에 두고 운영하는 방식이다.","paragraphs":["온프레미스란 회사가 직접 서버와 인프라의 장비를 직접 사서, 회사 건물의 전산실에 서버를 두고 운영하는 방식을 뜻한다. 온프레미스의 반대말은 클라우드(AWS)이다."]},
-      {"id":"onpremise-migration.migration","name":"마이그레이션 (Migration)","summary":"특정 환경에서 다른 환경으로 이동하는 걸 의미한다.","paragraphs":["마이그레이션(Migration)이란 특정 환경에서 다른 환경으로 이동하는 걸 의미한다. 시험에서는 ‘온프레미스 환경에서 AWS 환경으로 마이그레이션 하려고 하는데 …’라는 표현이 자주 나온다."]}
+      {"id":"onpremise-migration.on-premise","name":"온프레미스 (On-premise)","summary":"회사가 자체 장비를 구입해 사내 전산실에서 운영하는 방식이다.","paragraphs":["서버를 비롯한 인프라 장비를 회사가 직접 마련하고 회사 건물 안에서 관리한다. 클라우드(AWS)는 온프레미스와 반대되는 개념이다."]},
+      {"id":"onpremise-migration.migration","name":"마이그레이션 (Migration)","summary":"시스템이나 서비스를 한 환경에서 다른 환경으로 옮기는 일이다.","paragraphs":["시험에서는 온프레미스 환경에 있던 대상을 AWS 환경으로 이동하려는 상황에서 자주 등장한다."]}
     ]
   },
   {
