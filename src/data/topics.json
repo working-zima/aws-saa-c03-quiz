@@ -135,5 +135,78 @@
       {"id":"hybrid-connectivity.vpn-vs-direct-connect","name":"Site-to-Site VPN vs Direct Connect","summary":"온프레미스와 AWS 서버를 하나의 네트워크처럼 묶을 때 사용한다.","paragraphs":["[공통점]\n온프레미스와 AWS 서버를 하나의 네트워크처럼 묶을 때 사용한다.(온프레미스 ↔ AWS)","[차이점]\nSite-to-Site VPN : 인터넷을 이용해 암호화된 터널을 만든다. / 셋팅이 쉽고 저렴하지만, 속도가 들쭉날쭉한다.\nDirect Connect : 인터넷이 아닌 전용선을 직접 깐다. / 설치에 시간이 오래 걸리고 비용이 비싸지만, 일관된 속도를 제공한다."]},
       {"id":"hybrid-connectivity.transit-gateway","name":"Transit Gateway","summary":"여러 VPC와 온프레미스 네트워크를 하나로 연결하는 서비스이다.","paragraphs":["Transit Gateway(전송 게이트웨이)는 여러 VPC와 온프레미스 네트워크를 하나의 네트워크로 연결해주는 서비스이다."]}
     ]
+  },
+  {
+    "id":"route53","title":"Route 53","importance":2,"sourcePages":[36,37],
+    "concepts":[
+      {"id":"route53.route53","name":"Route53","summary":"도메인을 IP 주소로 변환하고, 트래픽을 라우팅하는 서비스이다.","paragraphs":["Route53은 도메인(www.jscode.kr)을 IP(52. 123.25. 11) 주소로 변환하고, 트래픽을 라우팅(특정 방향으로 전달)하는 서비스이다."]},
+      {"id":"route53.routing-policies","name":"Route53 라우팅 정책","summary":"요청 조건에 따라 리소스로 트래픽을 라우팅하는 정책이다.","paragraphs":["단순 라우팅(Simple Routing): 단일 리소스로 라우팅\n지리적 위치 라우팅(Geolocation Routing): 국가별로 라우팅\n지리적 근접 라우팅(Geoproximity Routing): 사용자와 리소스 간 거리를 기반으로 라우팅\n다중값 응답 라우팅(Multi-value Answer Routing): 여러 IP를 응답해 트래픽을 분산시키는 방식으로 라우팅\n가중치 기반 라우팅(Weighted Routing): 설정한 가중치를 기반으로 라우팅\n지연시간 기반 라우팅(Latency-based Routing): 지연시간이 가장 빠른 리전으로 라우팅\nIP 기반 라우팅(IP-based Routing): 클라이언트의 IP 주소 범위(CIDR)에 따라 서로 다른 리소스로 라우팅"]},
+      {"id":"route53.resolver","name":"Route53 Resolver","summary":"온프레미스와 AWS VPC 간 도메인 이름 기반 접속을 가능하게 해주는 서비스이다.","paragraphs":["Route53 Resolver는 온프레미스와 AWS VPC 간 도메인 이름 기반 접속을 가능하게 해주는 서비스이다.","Route 53 Resolver 아웃바운드 엔드포인트\nAWS VPC → Route53 Resolver 아웃바운드 엔드포인트 → 온프레미스\nAWS 서비스(ex. EC2)가 온프레미스 내부에서만 사용하는 도메인 주소(ex. db. corp. local)로 요청을 보낼 수 있게 해주는 기능이다.\n암기 Tip) AWS를 기준으로 아웃바운드, 인바운드를 구분하면 편하다.","Route 53 Resolver 인바운드 엔드포인트\n온프레미스 → Route53 Resolver 인바운드 엔드포인트 → AWS VPC\n온프레미스 내부에 있는 서버가 AWS VPC 내부에서만 사용하는 도메인 주소(ex. app. internal. aws)로 요청을 보낼 수 있게 해주는 기능이다."]}
+    ]
+  },
+  {
+    "id":"analytics-monitoring","title":"EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch","importance":2,"sourcePages":[38,40],
+    "concepts":[
+      {"id":"analytics-monitoring.emr","name":"EMR (Elastic MapReduce)","summary":"빅데이터 처리를 위한 컴퓨팅 서비스이다.","paragraphs":["EMR은 빅데이터 처리를 위한 컴퓨팅 서비스이다."]},
+      {"id":"analytics-monitoring.spark","name":"Spark","summary":"대규모 데이터 처리와 분석을 위한 오픈소스이다.","paragraphs":["Spark는 대규모 데이터 처리와 분석을 위한 오픈소스이다.","[특징]\n대규모 데이터를 여러 서버에서 동시에 처리할 수 있는 고속 엔진이다.\n실시간 분석에는 적합하지 않다."]},
+      {"id":"analytics-monitoring.redshift","name":"RedShift","summary":"대규모 데이터를 빠르게 분석하기 위한 DB 서비스이다.","paragraphs":["AWS Redshift는 대규모 데이터를 빠르게 분석하기 위한 DB 서비스이다."]},
+      {"id":"analytics-monitoring.athena","name":"Athena","summary":"S3에 있는 데이터에 바로 SQL 쿼리를 날릴 수 있는 서비스이다.","paragraphs":["Athena는 ‘S3’에 있는 데이터에 바로 SQL 쿼리를 날릴 수 있는 서비스이다. S3에 저장된 데이터를 즉시 분석할 수 있다.","[암기 Tip]\n이 서비스의 이름은 그리스 신화의 지혜의 여신인 아테나(Athena)에서 유래했다. ‘지혜를 활용해 S3의 수많은 데이터에서 쿼리를 날려 원하는 데이터를 찾을 수 있다’고 기억하자."]},
+      {"id":"analytics-monitoring.performance-insight","name":"Performance Insight","summary":"DB의 성능을 모니터링 해주는 서비스이다.","paragraphs":["Performance Insight는 DB의 성능을 모니터링 해주는 서비스이다."]},
+      {"id":"analytics-monitoring.cloudwatch","name":"CloudWatch","summary":"AWS 리소스와 애플리케이션을 모니터링, 로그로 관찰하는 서비스이다.","paragraphs":["CloudWatch는 AWS 리소스와 애플리케이션을 ‘모니터링, 로그’로 관찰하는 서비스이다."]},
+      {"id":"analytics-monitoring.glue","name":"Glue","summary":"완전 관리형 ETL 서비스이다.","paragraphs":["AWS Glue는 완전 관리형 ETL 서비스이다. ETL(Extract, Transform, Load)이란 ‘데이터 추출, 변환, 로드’를 뜻한다. 주의할 점은 Glue는 데이터 분석 기능은 따로 가지고 있지 않다."]},
+      {"id":"analytics-monitoring.x-ray","name":"X-Ray","summary":"요청이 어떤 서비스들을 거쳐 처리되는지 추적해서 시각화해주는 서비스이다.","paragraphs":["X-Ray는 인프라 위에서 어떤 서비스들을 거쳐서 요청이 처리되는 지 추적해서 시각화해주는 서비스이다. 복잡한 인프라 구성이나 마이크로서비스에서 요청이 어떤 식으로 흘러가는 지 파악하기 위해 주로 사용한다."]},
+      {"id":"analytics-monitoring.data-firehose","name":"Data Firehose","summary":"실시간 스트림 데이터를 특정 서비스에 안정적으로 전달하는 서비스이다.","paragraphs":["Data Firehose는 실시간 스트림 데이터를 특정 서비스에 안정적으로 전달하는 서비스이다."]},
+      {"id":"analytics-monitoring.kinesis-data-streams","name":"Kinesis Data Streams","summary":"실시간 스트림 데이터를 끊김없이 수집하는 서비스이다.","paragraphs":["Kinesis Data Streams는 실시간 스트림 데이터를 끊김없이 수집하는 서비스이다."]},
+      {"id":"analytics-monitoring.managed-service-apache-flink","name":"Managed Service for Apache Flink","summary":"실시간 스트림 데이터를 처리 / 분석하는 서비스이다.","paragraphs":["Amazon Managed Service for Apache Flink는 실시간 스트림 데이터를 처리 / 분석하는 서비스이다."]},
+      {"id":"analytics-monitoring.streaming-services-comparison","name":"Data Firehose vs Kinesis Data Streams vs Managed Service for Apache Flink","summary":"실시간 스트림 데이터를 처리하는 서비스들의 차이를 비교한다.","paragraphs":["[공통점]\n실시간 스트림 데이터를 처리하는 서비스","[차이점]\nData Firehose : 실시간 데이터 전송 / 배달\nKinesis Data Streams : 실시간 데이터 수집(스트림 데이터 저장소 역할)\nManaged Service for Apache Flink : 실시간 데이터 처리 / 분석"]}
+    ]
+  },
+  {
+    "id":"security-groups-nacl","title":"보안 그룹·NACL","importance":3,"sourcePages":[41,43],
+    "concepts":[
+      {"id":"security-groups-nacl.security-group","name":"보안 그룹 (Security Group)","summary":"AWS 리소스에 대해 트래픽을 제어하는 기능을 의미한다.","paragraphs":["보안 그룹(Security Group)이란 AWS 리소스에 대해 트래픽을 제어하는 기능을 의미한다.","AWS 리소스(ex. EC2 인스턴스)를 집이라고 생각한다면, 보안 그룹은 집 바깥 쪽에 쳐져있는 울타리와 대문이라고 생각하면 된다. 집에 접근할 때 울타리의 대문에서 접근해도 되는 요청인지 보안 요원이 검사를 하는 것과 비슷하다.","EC2 인스턴스 주위에 방화벽 역할을 할 보안 그룹(Security Group)을 만들고 보안 그룹에 규칙을 지정한다. 이 보안 규칙에는 인바운드 트래픽(즉, 보안 그룹의 외부에서 내부로 보내는 트래픽)에서 어떤 트래픽만 허용할 지 설정할 수 있고, 아웃바운드 트래픽(즉, 보안 그룹의 내부에서 외부로 나가는 트래픽)에서 어떤 트래픽만 허용할 지 설정할 수 있다.","보안 그룹을 설정할 때는 허용할 IP 범위와 포트(port)를 설정할 수 있다.","[특징]\n하나의 보안 그룹에 여러 개의 AWS 리소스를 포함시킬 수 있다.\n특정 서브넷에 종속되지 않고 여러 AWS 리소스를 하나의 보안 그룹으로 묶을 수 있다.\n기본 설정으로 인바운드 규칙은 모든 트래픽의 접근이 차단(Deny)되어 있고, 아웃바운드 규칙은 모든 트래픽의 접근이 허용(Allow)되어 있다.\n특정 트래픽에 대해 접근 허용(Allow) 설정을 추가할 수는 있지만, 접근 차단(Allow) 설정을 추가할 수는 없다.\n‘AWS 리소스, IP’를 활용해 규칙을 설정할 수 있다."]},
+      {"id":"security-groups-nacl.nacl","name":"NACL (Network Access Control List, 네트워크 ACL)","summary":"서브넷에 대해 트래픽을 허용 또는 거부하는 기능이다.","paragraphs":["NACL은 서브넷에 대해 트래픽을 허용 또는 거부하는 기능이다.","[특징]\n기본 설정으로 인바운드, 아웃바운드 둘 다 모든 트래픽의 접근이 허용(Allow)으로 설정되어 있다.\nNACL은 특정 트래픽에 대해 접근 허용(Allow) 설정을 추가할 수도 있고, 접근 차단(Allow) 설정을 추가할 수도 있다.\n오직 IP만 활용해 규칙을 설정할 수 있다.(AWS 리소스를 활용해 규칙을 설정할 수 없다.)"]}
+    ]
+  },
+  {
+    "id":"secrets-encryption","title":"Secrets Manager·Parameter Store·KMS·ACM","importance":3,"sourcePages":[44,44],
+    "concepts":[
+      {"id":"secrets-encryption.secrets-manager","name":"Secrets Manager","summary":"설정값 / 비밀값을 안전하게 저장하는 서비스이다.","paragraphs":["Secrets Manager는 설정값 / 비밀값을 안전하게 저장하는 서비스이다."]},
+      {"id":"secrets-encryption.parameter-store","name":"System Manager Parameter Store","summary":"설정값 / 비밀값을 안전하게 저장하는 서비스이다.","paragraphs":["System Manager Parameter Store는 설정값 / 비밀값을 안전하게 저장하는 서비스이다."]},
+      {"id":"secrets-encryption.secrets-manager-vs-parameter-store","name":"Secrets Manager vs System Manager Parameter Store","summary":"설정값 / 비밀값을 안전하게 저장하는 두 서비스의 차이를 비교한다.","paragraphs":["[공통점]\n설정값 / 비밀값을 안전하게 저장하는 서비스이다.","[차이점]\nSecrets Manager는 ‘자동 순환(Rotation, 보안을 위해 암호 값을 주기적으로 자동 교체하는 기능)’ 기능을 가지고 있지만, Systems Manager Parameter Store 서비스는 자동 순환 기능을 가지고 있지 않다. 한 마디로, Secrets Manager가 조금 더 보안에 특화된 서비스라고 볼 수 있다.\nSecrets Manager의 주용도는 보안에 치명적인 비밀값을 위주로 관리하고, Systems Manager Parameter Store의 주용도는 보안에 치명적이지 않은 설정값을 위주로 관리한다."]},
+      {"id":"secrets-encryption.kms","name":"KMS (Key Management Service)","summary":"암호화에 쓰이는 Key를 생성 / 보관해주는 서비스이다.","paragraphs":["KMS는 암호화에 쓰이는 Key를 생성 / 보관해주는 서비스이다.","[특징]\n설정값 / 비밀값을 ‘저장’하는 서비스가 아니다.\n암호화 Key를 알아서 주기적으로 교체 해주는 자동 순환(Rotation) 기능을 가지고 있다."]},
+      {"id":"secrets-encryption.acm","name":"ACM (AWS Certificate Manager)","summary":"SSL/TLS(HTTPS) 인증서를 발급 / 갱신해주는 서비스이다.","paragraphs":["ACM은 SSL/TLS(HTTPS) 인증서를 발급 / 갱신해주는 서비스이다."]}
+    ]
+  },
+  {
+    "id":"threat-protection","title":"WAF·Shield·GuardDuty·Macie·CloudFront","importance":3,"sourcePages":[45,47],
+    "concepts":[
+      {"id":"threat-protection.waf","name":"WAF (Web Application Firewall)","summary":"HTTP/HTTPS 요청을 검사해서 공격 트래픽을 차단하는 보안 서비스이다.","paragraphs":["WAF는 웹 애플리케이션 앞단에서 HTTP/HTTPS 요청을 검사해서 공격 트래픽을 차단하는 보안 서비스이다. WAF는 인프라 아키텍처에서 외부 트래픽이 들어오는 가장 앞단에 주로 배치한다.","[특징]\nL7(애플리케이션 계층)에 관련된 공격 트래픽을 막는다.\nTCP/UDP는 L4(전송 계층)이므로, WAF가 TCP/UDP에 관련된 공격은 막을 수 없다.","[기능]\n1. IP 기반 차단 및 허용 기능(IP Set 활용)\n특정 IP 또는 IP 대역 차단\n회사 내부 IP만 허용 가능\n2. 국가 기반 차단\n특정 국가에서 오는 요청 차단(ex. 해외 접속 차단)\n3. SQL Injection, XSS 방어"]},
+      {"id":"threat-protection.shield","name":"Shield","summary":"DDos를 자동으로 탐지 / 방어해주는 보안 서비스이다.","paragraphs":["Shield는 DDos를 자동으로 탐지 / 방어해주는 보안 서비스이다."]},
+      {"id":"threat-protection.guardduty","name":"GuardDuty","summary":"계정에 관련된 해킹 공격을 모니터링해서 탐지해주는 서비스이다.","paragraphs":["AWS GuardDuty는 계정에 관련된 해킹 공격을 모니터링해서 탐지해주는 서비스이다.","[특징]\n‘직접적인 대응’은 하지 않고, 오직 ‘모니터링’만 한다."]},
+      {"id":"threat-protection.macie","name":"Macie","summary":"S3에 저장된 민감한 데이터를 자동으로 찾아주는 서비스이다.","paragraphs":["AWS Macie는 S3에 저장된 민감한 데이터를 자동으로 찾아주는 서비스이다.","[암기 Tip]\n머신러닝(Machine Learning)을 활용해 개인 정보와 같이 민감한 데이터(Privacy)를 자동으로 찾아준다."]},
+      {"id":"threat-protection.cloudfront","name":"CloudFront","summary":"컨텐츠를 캐싱해서 전세계 사용자에게 빠른 속도로 제공하는 서비스이다.","paragraphs":["CloudFront는 컨텐츠(이미지, 파일 등)를 캐싱해서 전세계 사용자에게 빠른 속도로 컨텐츠를 제공하는 서비스이다.","[부가 기능]\n1. OAC(Origin Access Control) : CloudFront만 원본(Origin)에 접근할 수 있도록 하는 최신 보안 방식을 의미한다.\n2. 캐시 무효화(Invalidation) : 배포 직후 최신 결과를 보여줘야 할 때, 강제로 캐시를 삭제하는 기능이다.\n3. 멀티 오리진(Multi-origin) : 하나의 CloudFront 배포 안에서 여러 개의 원본(Origin)을 가질 수 있는 기능이다. 예를 들어, /api/*로 요청을 보내면 ELB의 원본 데이터로 응답을 할 수 있고, /images/*로 요청을 보냈을 때는 S3의 원본 데이터로 응답하게끔 할 수 있다."]}
+    ]
+  },
+  {
+    "id":"identity-access","title":"IAM·Identity Center·STS·Cognito·CloudTrail","importance":3,"sourcePages":[48,49],
+    "concepts":[
+      {"id":"identity-access.iam","name":"IAM (Identity And Access Management)","summary":"AWS 리소스에 접근할 권한들을 관리하는 서비스이다.","paragraphs":["IAM은 AWS 리소스에 접근할 권한들을 관리하는 서비스이다.","[기능]\n1. IAM 사용자(User) : AWS 서비스를 사용할 특정 사용자 또는 애플리케이션\nIAM 사용자는 AWS 서비스에 접근할 수 있는 Access Key(ex. AKIAIOSFODNN7EXAMPLE)를 발급받아 사용한다. 그런데 이 Access Key를 스스로 잘 관리해야 되는데, 관리를 못해 유출이 된다면 보안에 치명적이다. 그래서 최근에는 AWS 서비스를 사용할 수 있는 권한을 부여할 때 ‘IAM 사용자’를 사용하는 대신 ‘IAM 역할’을 사용하는 걸 권장한다.\nAccess Key는 한 번 발급하면 만료기간이 없기 때문에 장기적인 권한을 부여하는 방식이다. 그래서 Access Key를 보고 장기 자격 증명이라고 부른다. 장기 자격 증명은 유출되면 회수할 방법이 없어서 보안적으로 좋지 않다.","2. IAM 역할(Role) : AWS 리소스에 대한 접근 권한이 없는 사용자나 서비스에게 권한을 설정할 수 있다.\nAccess Key와 같은 자격 증명을 공유할 필요가 없어서 보안에 좋다.\nAccess Key와 같은 자격 증명을 발급해버리면 회수를 할 수가 없는데, IAM 역할은 언제든 역할을 해제할 수 있다."]},
+      {"id":"identity-access.identity-center","name":"Identity Center","summary":"여러 AWS 계정의 로그인과 권한을 중앙에서 관리하기 위한 서비스이다.","paragraphs":["Identity Center는 여러 AWS 계정의 로그인과 권한을 중앙에서 관리하기 위한 서비스이다.","[기능]\n1. 로그인 처리\n사용자 인증을 한 곳에서 일괄적으로 처리\n2. 권한 인가\n사용자 / 그룹에 Permission Set 부여\n(Permission Set : 허용할 권한을 정의해놓은 템플릿)\n3. 그룹 단위 권한 부여\n여러 사용자를 하나의 그룹으로 묶어서 Permission Set 부여 가능\n(사용자에게 일일이 권한을 부여하지 않아도 되기 때문에 훨신 편리함)\n4. 외부 IdP와 연동 가능\n외부 IdP(Identity Provider)란 AWS가 아닌 곳에서 사용자의 신원을 인증해주는 시스템을 뜻한다. 외부 IdP 종류에는 Google Workspace, Microsoft Entra ID, 온프레미스 AD 등등이 있다. 이런 시스템들과 연동이 가능하다는 뜻이다.\n5. MFA 설정을 강제\nIdentity Center에서 관리하는 모든 계정한테 보안을 위해 MFA(ex. OTP, SMS 인증 코드)를 필수적으로 사용하도록 강제할 수 있다."]},
+      {"id":"identity-access.sts","name":"STS (Security Token Service)","summary":"임시 권한(Access Key, Token 등)을 발급해주는 서비스이다.","paragraphs":["STS는 임시 권한(Access Key, Token 등)을 발급해주는 서비스이다.","[특징]\nSTS에서 발급한 토큰은 만료 기간이 있어서 유출돼도 위험성이 비교적 덜하다."]},
+      {"id":"identity-access.cognito","name":"Cognito","summary":"웹 / 모바일 애플리케이션의 JWT 기반 로그인 / 회원가입을 담당하는 서비스이다.","paragraphs":["Cognito는 웹 / 모바일 애플리케이션의 JWT 기반의 로그인 / 회원가입(인증, 인가)을 담당하는 서비스이다."]},
+      {"id":"identity-access.cloudtrail","name":"CloudTrail","summary":"AWS 계정에서 발생하는 모든 API 호출을 기록하는 서비스이다.","paragraphs":["AWS CloudTrail은 AWS 계정에서 발생하는 모든 API 호출(이벤트)을 기록하는 서비스이다.","[특징]\n어떤 계정이 AWS의 어떤 기능을 사용했는 지 로그를 남겨 감시하는 용도로 사용한다."]},
+      {"id":"identity-access.aws-config","name":"AWS Config","summary":"AWS 리소스의 설정이 시간에 따라 어떻게 변했는지 기록 / 검사하는 서비스이다.","paragraphs":["AWS Config는 AWS 리소스의 설정(Configuration)이 시간에 따라 어떻게 변했는 지 기록 / 검사하는 서비스이다. 즉, AWS 리소스의 설정을 언제, 누가, 어떻게 변경했는 지에 대한 기록을 남기는 서비스이다."]}
+    ]
+  },
+  {
+    "id":"cost-management","title":"절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor","importance":2,"sourcePages":[50,50],
+    "concepts":[
+      {"id":"cost-management.savings-plan","name":"절약 플랜 (Savings Plan)","summary":"일정 기간 및 사용량을 약정하면 할인된 요금이 적용되는 모델을 의미한다.","paragraphs":["절약 플랜이란 AWS 비용을 절감하기 위해 일정 기간 및 사용량을 약정하면 할인된 요금이 적용되는 모델을 의미한다.","[유형]\n1. 컴퓨팅 절약 플랜(Compute Savings Plan)\n가장 유연한 플랜\nEC2, AWS Fargate, AWS Lambda까지 할인이 적용된다.\n2. EC2 인스턴스 절약 플랜(EC2 Instance Savings Plan)\n특정 인스턴스 유형(ex. m5 계열)과 리전을 고정해서 약정하면 할인이 적용된다."]},
+      {"id":"cost-management.aws-budgets","name":"AWS Budgets","summary":"예산을 설정할 수 있고 예산을 초과하면 알림까지 해주는 서비스이다.","paragraphs":["AWS Budgets는 미래의 사용량과 비용을 예측해서, 예산을 설정할 수 있고 예산을 초과하면 알림까지 해주는 서비스이다.","[기능]\n비용 태그\nAWS 리소스에 태그를 붙여, 특정 태그가 붙은 리소스에 대해서만 예산을 설정 및 초과 여부를 감시할 수 있는 기능이다."]},
+      {"id":"cost-management.cost-explorer","name":"Cost Explorer","summary":"과거 / 현재에 발생한 비용을 분석하는 서비스이다.","paragraphs":["Cost Explorer는 과거 / 현재에 발생한 비용을 분석하는 서비스이다.","[기능]\n비용 태그\nAWS 리소스에 태그를 붙여, 태그를 기준으로 비용을 분류 / 집계 할 수 있는 기능이다. 팀별 비용, 프로젝트 별 비용, 환경별 비용 등을 보고 싶을 때 사용한다."]},
+      {"id":"cost-management.billing-and-cost-management","name":"Billing and Cost Management","summary":"사용 요금의 조회 / 결제 / 관리를 담당하는 비용 관리 콘솔이다.","paragraphs":["Billing and Cost Management는 사용 요금의 조회 / 결제 / 관리를 담당하는 비용 관리 콘솔이다."]},
+      {"id":"cost-management.trusted-advisor","name":"Trusted Advisor","summary":"AWS 환경을 자동 점검해서 개선 권장사항을 알려주는 서비스이다.","paragraphs":["Trusted Advisor는 AWS 환경을 자동으로 점검해서 개선 권장사항(비용 절감, 성능 개선 등)을 알려주는 서비스이다."]}
+    ]
   }
 ]

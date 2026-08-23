@@ -3,6 +3,29 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
+    expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
+      id,
+      title,
+      importance,
+      sourcePages,
+    }))).toEqual([
+      { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
+      { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
+      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
+      { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
+      { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
+      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+    ])
+  })
+
+  it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
+    expect(topics.slice(15, 22).map((topic) => topic.concepts.length)).toEqual([
+      3, 12, 2, 5, 5, 6, 5,
+    ])
+  })
+
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
     expect(topics.slice(8, 15).map(({ id, title, importance, sourcePages }) => ({
       id,
