@@ -77,7 +77,10 @@
     {
       "step": 9,
       "name": "review-page",
-      "status": "pending"
+      "status": "completed",
+      "summary": "오답 개념을 주제별로 묶고 상태별 빈 안내와 개념·퀴즈 이동 링크를 제공하는 복습 화면 및 테스트 5개를 추가",
+      "started_at": "2026-08-23T16:53:04+0900",
+      "completed_at": "2026-08-23T16:55:06+0900"
     },
     {
       "step": 10,
