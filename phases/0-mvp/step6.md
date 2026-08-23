@@ -53,13 +53,23 @@ URL의 `topicId`가 데이터에 없으면 안내 문구와 주제 목록으로 
 - 개념 사이 간격은 `space-y-8`
 - 좌측 정렬. 본문을 중앙 정렬하지 마라.
 
+### 화면 내 이동 링크
+
+앱 안에서 다른 화면으로 가는 링크는 **반드시 `react-router-dom`의 `Link`(또는 `NavLink`)를 써라.**
+`<a href="#/...">`처럼 해시 경로를 직접 박아 넣지 마라.
+
+이유: `Link`는 현재 라우터에 맞는 href를 알아서 만든다. `HashRouter`에서는 `#/topic/abc`,
+`MemoryRouter`(테스트)에서는 `/topic/abc`가 나온다. 해시를 손으로 박으면 컴포넌트가
+`HashRouter`에 고정되고, ADR-007이 열어 둔 `BrowserRouter` 전환 경로가 조용히 막힌다.
+`Layout.tsx`가 이미 `NavLink`를 쓰고 있으니 그 방식에 맞춰라.
+
 ### 테스트
 
 `src/pages/ConceptReadPage.test.tsx`:
 
 - 주어진 `topicId`의 개념 이름·요약·본문이 렌더된다
 - 없는 `topicId`에서 안내 문구가 뜨고 앱이 죽지 않는다
-- 확인 문제 링크가 `#/topic/{id}/quiz`를 가리킨다
+- 확인 문제 링크의 href가 `/topic/{id}/quiz`를 가리킨다 (`MemoryRouter` 기준)
 - 화면 진입 시 읽음 처리가 호출된다
 
 ## Acceptance Criteria
@@ -91,4 +101,5 @@ npm run test
 - 스크롤 위치 추적으로 읽음을 판정하지 마라. 이유: 복잡도에 비해 얻는 게 없다.
 - 데이터 파일을 수정하지 마라.
 - 다른 페이지를 건드리지 마라.
+- 내부 이동 링크에 `<a href="#/...">`를 쓰지 마라. 이유: 라우터 구현에 컴포넌트가 고정된다. `Link`를 써라.
 - 기존 테스트를 깨뜨리지 마라.
