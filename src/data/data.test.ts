@@ -3,6 +3,53 @@ import { describe, expect, it } from 'vitest'
 import { questions, topics } from './index'
 
 describe('학습 데이터 무결성', () => {
+  it('보안·비용 보충 개념 23개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
+    const expectedSlugs: Record<string, string[]> = {
+      'security-groups-nacl': [
+        'security-group-referencing',
+        'nacl-rule-limit',
+        'web-acl-vs-nacl',
+      ],
+      'secrets-encryption': [
+        'acm-cloudfront-region',
+        'lambda-env-var-kms',
+        'cloudhsm',
+        'rotation-heuristic',
+      ],
+      'threat-protection': [
+        'waf-attach-targets',
+        'waf-bot-control',
+        'waf-rule-types',
+        'shield-advanced-drt',
+        'guardduty-db-login',
+        'security-service-lineup',
+      ],
+      'identity-access': [
+        'least-privilege',
+        'instance-profile',
+        'iam-group-users-only',
+        'sts-assume-role',
+        'cognito-pools',
+        'organizations-scp',
+      ],
+      'cost-management': [
+        'cost-allocation-tag-activation',
+        'savings-plan-details',
+        'cost-anomaly-detection',
+        'compute-optimizer',
+      ],
+    }
+
+    Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+
+      expect(addedConcepts.map(({ id }) => id)).toEqual(
+        slugs.map((slug) => `${topicId}.${slug}`),
+      )
+    })
+  })
+
   it('네트워크·라우팅·분석 보충 개념 15개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
     const expectedSlugs: Record<string, string[]> = {
       'vpc-networking': [
@@ -211,7 +258,7 @@ describe('학습 데이터 무결성', () => {
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     expect(topics.slice(15, 22).map((topic) => topic.concepts.length)).toEqual([
-      5, 14, 2, 5, 5, 6, 5,
+      5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
