@@ -338,6 +338,66 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('컴퓨팅·메시징 보충 문제 21개가 새 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(187, 208)
+    const expectedConceptIds = [
+      'compute-delivery.warm-pool',
+      'compute-delivery.scheduled-scaling',
+      'compute-delivery.alb-l7-vs-nlb-l4',
+      'compute-delivery.sticky-session-tradeoff',
+      'compute-delivery.global-accelerator-protocols',
+      'compute-delivery.cloudfront-ttl',
+      'compute-delivery.edge-keyword',
+      'serverless-containers.eks',
+      'serverless-containers.fargate-no-time-limit',
+      'serverless-containers.lambda-function-url',
+      'serverless-containers.lambda-at-edge',
+      'serverless-containers.lambda-vpc-access',
+      'serverless-containers.api-gateway-jwt-authorizer',
+      'serverless-containers.aws-batch',
+      'messaging-backup.msk',
+      'messaging-backup.sqs-details',
+      'messaging-backup.sqs-queue-depth-scaling',
+      'messaging-backup.eventbridge-scheduler',
+      'messaging-backup.step-functions-features',
+      'messaging-backup.ses',
+      'messaging-backup.backup-long-term-retention',
+    ]
+
+    expect(addedQuestions).toHaveLength(21)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 21 }, (_, index) => `q${index + 188}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(7).fill('compute-delivery'),
+      ...Array(7).fill('serverless-containers'),
+      ...Array(7).fill('messaging-backup'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...expectedConceptIds].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(21)
+  })
+
+  it('컴퓨팅·메시징 보충 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(187, 208)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    expect(answerCounts).toEqual([5, 5, 5, 6])
+    addedQuestions.forEach(({ choices }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+  })
+
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
     expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
       id,
