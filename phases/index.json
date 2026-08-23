@@ -9,6 +9,10 @@
       "dir": "1-exam-gaps",
       "status": "completed",
       "completed_at": "2026-08-23T21:42:44+0900"
+    },
+    {
+      "dir": "2-rewrite",
+      "status": "pending"
     }
   ]
 }

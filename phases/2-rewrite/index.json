@@ -1,0 +1,51 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "2-rewrite",
+  "steps": [
+    {
+      "step": 0,
+      "name": "rewrite-foundation",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "rewrite-s3",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "rewrite-storage",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "rewrite-database",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "rewrite-compute",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "rewrite-network",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "rewrite-analytics",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "rewrite-security",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "rewrite-identity-cost",
+      "status": "pending"
+    }
+  ]
+}
