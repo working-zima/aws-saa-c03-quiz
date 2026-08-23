@@ -1,0 +1,19 @@
+{
+  "phases": [
+    {
+      "dir": "0-mvp",
+      "status": "completed",
+      "completed_at": "2026-08-23T17:32:09+0900"
+    },
+    {
+      "dir": "1-exam-gaps",
+      "status": "completed",
+      "completed_at": "2026-08-23T21:42:44+0900"
+    },
+    {
+      "dir": "2-rewrite",
+      "status": "completed",
+      "completed_at": "2026-08-23T23:18:17+0900"
+    }
+  ]
+}

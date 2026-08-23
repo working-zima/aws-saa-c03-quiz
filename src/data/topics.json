@@ -1,0 +1,289 @@
+[
+  {
+    "id": "aws-core-services",
+    "title": "AWS 핵심 서비스 개요 — EC2·RDS·S3·Route 53·ELB·CloudFront·Lambda",
+    "importance": 0,
+    "sourcePages": [1, 4],
+    "concepts": [
+      {"id":"aws-core-services.ec2","name":"EC2 (Elastic Compute Cloud)","summary":"원격 접속할 수 있는 컴퓨터를 AWS에서 빌려 쓰는 서비스다.","paragraphs":["EC2의 기본 단위는 컴퓨터 한 대라고 이해할 수 있다."]},
+      {"id":"aws-core-services.rds","name":"RDS (Relational Database Service)","summary":"AWS에서 관계형 데이터베이스를 빌려 사용하는 서비스다.","paragraphs":["MySQL과 MariaDB를 포함한 여러 관계형 데이터베이스를 직접 마련하는 대신 AWS에서 제공받아 쓴다."]},
+      {"id":"aws-core-services.s3","name":"S3 (Simple Storage Service)","summary":"사진이나 동영상 같은 파일을 보관하는 서비스다.","paragraphs":["Google Drive나 iCloud에 파일을 올려 두는 것과 비슷한 저장 공간으로 이해할 수 있다.","S3에는 저장 외에도 정적 웹 사이트 호스팅 기능이 있다. 이 기능을 사용하면 웹 서비스를 인터넷에 배포해 다른 사용자가 이용할 수 있게 한다."]},
+      {"id":"aws-core-services.route-53","name":"Route 53","summary":"인터넷 도메인의 발급과 관리를 담당하는 서비스다.","paragraphs":["도메인은 www.naver.com, daum.net, youtube.com처럼 문자로 나타낸 인터넷 주소다.","Route 53은 이러한 주소를 다루는 DNS(Domain Name System) 서비스다."]},
+      {"id":"aws-core-services.dns","name":"DNS (Domain Name System)","summary":"사람이 읽는 문자 주소를 컴퓨터가 사용하는 IP 주소로 바꾸는 시스템이다.","paragraphs":["도메인이 사용되기 전에는 통신할 컴퓨터를 지정하려면 12.134.122.11과 같은 IP 주소가 필요했다. IP 주소는 특정 컴퓨터의 위치를 가리키는 주소 역할을 한다.","여러 숫자로 이루어진 IP 주소는 사람이 일일이 기억하기 어렵다. 사람에게는 문자 주소가 더 편리하지만, 컴퓨터는 문자보다 숫자 형태의 값을 처리하기 쉽다.","DNS 서버가 문자로 된 주소를 IP 주소로 변환하면서 이 차이를 해결한다. 따라서 사용자는 특정 컴퓨터에 연결할 때 복잡한 숫자 주소를 외우지 않아도 된다."]},
+      {"id":"aws-core-services.elb","name":"ELB (Elastic Load Balancer)","summary":"들어오는 트래픽을 여러 서버에 알맞게 나누는 장치다.","paragraphs":["트래픽, 즉 부하를 분배하는 장치를 로드 밸런서(Load Balancer)라고 한다. 서버를 두 대 이상 운용하는 구성에는 ELB를 필수로 도입한다."]},
+      {"id":"aws-core-services.cloudfront","name":"CloudFront","summary":"파일과 동영상 등의 콘텐츠를 사용자에게 빠르게 전달하는 서비스다.","paragraphs":["콘텐츠가 한국의 S3에만 저장되어 있다고 가정하면, 가까운 한국 사용자는 빠르게 받을 수 있지만 멀리 있는 미국 사용자는 전송에 더 많은 시간이 걸린다.","CloudFront는 이 거리 문제를 줄이기 위해 세계 여러 곳의 임시 저장소에 콘텐츠 복사본을 둔다. 사용자가 가장 가까운 저장소에서 파일을 받게 하여 전송 속도를 높인다.","콘텐츠 복사본을 분산해 전달하는 형태를 CDN(Content Delivery Network)이라고 하며, CloudFront는 CDN 서비스에 해당한다."]},
+      {"id":"aws-core-services.lambda","name":"Lambda","summary":"AWS가 서버를 맡고 개발자는 필요한 코드만 실행하는 서비스다.","paragraphs":["EC2를 사용할 때처럼 서버를 직접 만들고 관리하지 않아도 된다. 실행할 코드를 작성하면 Lambda가 작동시킨다."]},
+      {"id":"aws-core-services.exam-heuristics","name":"시험에서 자주 통하는 판단 기준","summary":"선택지를 지우는 데 쓰는 시험 판단 기준이다.","paragraphs":["선택지에 '수동으로', '직접 스크립트를 짜서', '매번 담당자가' 같은 표현이 들어가면 대부분 오답이다. AWS가 이미 관리형 기능으로 제공하는 일을 사람이 하겠다는 뜻이기 때문이다.","사용자가 급격히 늘고, 이미지·파일 처리가 끼어 있고, 운영 비용을 최소화하라는 조건이 함께 나오면 서버리스(Lambda + S3 + DynamoDB) 조합이 정답인 경우가 많다."]}
+    ]
+  },
+  {
+    "id":"region-availability","title":"리전·가용성·가용 영역·다중 AZ","importance":0,"sourcePages":[5,6],
+    "concepts":[
+      {"id":"region-availability.region","name":"리전 (Region)","summary":"AWS 인프라를 지리적 위치에 따라 나누어 둔 데이터 센터 단위다.","paragraphs":["EC2에서 빌려 쓸 수 있는 컴퓨터는 세계 여러 지역에 흩어져 있다. AWS는 이 컴퓨터들이 자리한 각각의 위치를 리전(Region)이라고 부른다."]},
+      {"id":"region-availability.availability","name":"가용성 (Availability)","summary":"시스템이 서비스를 정상 상태로 제공할 수 있는 가능성이다.","paragraphs":["장애가 발생할 가능성이 매우 작은 시스템은 가용성이 높거나 고가용성이라고 한다. 반대로 서비스 중단 시간이 길수록 가용성이 낮다.","가용성은 서비스의 정상 가동률을 백분율로 나타낸다. 99.99%라면 전체 시간 중 그 비율만큼 정상적으로 이용할 수 있고, 1년 기준으로는 약 53분의 중단이 가능하다는 의미다."]},
+      {"id":"region-availability.availability-zone","name":"가용 영역 (Availability Zone)","summary":"리전 내부에서 물리적으로 떨어져 있는 데이터 센터다.","paragraphs":["AWS는 자연재해로 데이터 센터가 파괴될 가능성에 대비해 시설을 물리적으로 분리한다. 한 리전 안에 이렇게 나뉜 데이터 센터를 가용 영역(Availability Zone, AZ)이라고 한다."]},
+      {"id":"region-availability.multi-az","name":"다중 AZ (Multi-AZ)","summary":"같은 리전의 여러 가용 영역에 시스템을 나누어 배치하는 구성이다.","paragraphs":["서비스 구성 요소를 서로 다른 AZ에 동시에 두면 한 AZ에서 장애가 나더라도 서비스를 계속할 수 있다. 다중 AZ는 이러한 분산을 통해 고가용성(High Availability)을 달성하는 핵심 전략이다."]},
+      {"id":"region-availability.single-az","name":"단일 AZ (Single-AZ)","summary":"시스템 전체를 하나의 가용 영역에 두는 구성이다.","paragraphs":["비용은 다중 AZ보다 상대적으로 적지만, 해당 AZ에 장애가 생기면 서비스가 중단될 수 있어 가용성에는 취약하다."]}
+    ]
+  },
+  {
+    "id":"onpremise-migration","title":"온프레미스와 마이그레이션","importance":0,"sourcePages":[7,7],
+    "concepts":[
+      {"id":"onpremise-migration.on-premise","name":"온프레미스 (On-premise)","summary":"회사가 자체 장비를 구입해 사내 전산실에서 운영하는 방식이다.","paragraphs":["서버를 비롯한 인프라 장비를 회사가 직접 마련하고 회사 건물 안에서 관리한다. 클라우드(AWS)는 온프레미스와 반대되는 개념이다."]},
+      {"id":"onpremise-migration.migration","name":"마이그레이션 (Migration)","summary":"시스템이나 서비스를 한 환경에서 다른 환경으로 옮기는 일이다.","paragraphs":["시험에서는 온프레미스 환경에 있던 대상을 AWS 환경으로 이동하려는 상황에서 자주 등장한다."]}
+    ]
+  },
+  {
+    "id":"s3-storage-classes","title":"S3 스토리지 클래스 유형","importance":3,"sourcePages":[8,9],
+    "concepts":[
+      {"id":"s3-storage-classes.storage-classes","name":"S3 스토리지 클래스 유형","summary":"S3는 데이터의 접근 방식과 보관 목적에 맞춰 선택할 수 있는 여러 저장소 유형을 제공한다.","paragraphs":["자주 읽는 데이터에는 기본 클래스인 S3 Standard를 사용한다. 접근 시점이 일정하지 않다면 S3 Intelligent-Tiering이 사용 패턴을 분석하고 비용 효율적인 계층에 데이터를 자동으로 배치한다.","접근은 드물어도 바로 읽어야 하는 데이터에는 S3 Standard-IA가 알맞다. S3 One Zone-IA도 같은 용도이지만 데이터가 하나의 AZ에만 저장되므로 고가용성은 제공하지 않는다.","Glacier 계열 가운데 S3 Glacier Instant Retrieval은 드물게 찾는 데이터를 즉시 읽을 수 있게 한다. S3 Glacier Flexible Retrieval은 조회에 최대 1시간이 걸려도 될 때, S3 Glacier Deep Archive는 최대 12시간까지 기다릴 수 있을 때 선택한다.","바로 조회할 수 있는 유형에는 S3 Standard와 S3 Standard-IA가 있다. S3 Intelligent-Tiering, S3 Glacier Instant Retrieval, S3 One Zone-IA 역시 대기 없이 읽을 수 있다. 반면 Flexible Retrieval과 Deep Archive에서는 데이터를 꺼내는 데 시간이 필요하다.","Glacier 클래스는 법률, 감사 또는 규정 준수를 위해 데이터를 오래 보관할 때 사용한다. 이런 장기 보관 목적 없이 단지 접근 빈도만 낮다면 S3 Standard-IA를 선택한다."]}
+    ]
+  },
+  {
+    "id":"s3-versioning-lifecycle","title":"S3 버전 관리·객체 잠금·수명 주기 정책","importance":3,"sourcePages":[10,12],
+    "concepts":[
+      {"id":"s3-versioning-lifecycle.versioning","name":"S3 버전 관리","summary":"객체를 덮어쓴 뒤에도 그 객체의 이전 상태를 남겨 두는 기능이다.","paragraphs":["버전 관리를 사용하지 않는 버킷에 같은 이름의 파일을 다시 업로드하면 별도 알림 없이 기존 파일이 덮어써진다. 이때 이전 파일까지 유지하려면 버전 관리를 활성화해야 한다."]},
+      {"id":"s3-versioning-lifecycle.object-lock","name":"S3 객체 잠금","summary":"정해진 기간에 객체가 변경되거나 지워지지 않도록 보호하는 기능이다.","paragraphs":["S3 객체 잠금은 일정 기간 파일의 수정과 삭제를 차단해 사용자의 실수로 데이터가 바뀌거나 사라지는 일을 방지한다.","보존 모드는 권한에 따라 두 가지로 나뉜다. 거버넌스 모드는 특별 권한을 가진 관리자에게만 수정과 삭제를 허용한다. 규정 준수 모드는 루트 사용자를 포함해 누구에게도 이를 허용하지 않는다.","법적 보존을 적용하면 정해진 만료일과 관계없이 사용자가 직접 해제할 때까지 객체를 수정하거나 삭제할 수 없다. 종료 시점을 예측하기 어려운 소송 같은 사안에 활용한다."]},
+      {"id":"s3-versioning-lifecycle.lifecycle-policy","name":"S3 수명 주기 정책","summary":"지정한 시간이 지난 객체를 자동으로 옮기거나 삭제하는 기능이다.","paragraphs":["데이터에 얼마나 자주 접근할지 예상할 수 있다면 수명 주기 정책으로 일정 기간 뒤 객체를 다른 S3 유형으로 이동할 수 있다. 보존 기한이 정해진 경우에는 그 기간이 끝난 객체를 곧바로 자동 삭제하도록 설정할 수 있다."]},
+      {"id":"s3-versioning-lifecycle.object-lock-prerequisites","name":"객체 잠금의 전제 조건과 MFA 삭제의 한계","summary":"객체 잠금은 버전 관리가 필요하고, MFA 삭제로는 루트 사용자를 막지 못한다.","paragraphs":["S3 객체 잠금은 버전 관리가 활성화된 버킷에서만 동작한다. \"버전 관리를 끄고 객체 잠금을 건다\"는 구성 자체가 성립하지 않는다.","버전 관리 + MFA 삭제 조합은 삭제를 어렵게 만들 뿐이다. 루트 사용자가 MFA 인증을 거치면 삭제할 수 있으므로, \"루트 사용자조차 삭제할 수 없어야 한다\"는 요구에는 객체 잠금의 규정 준수 모드만 답이 된다."]},
+      {"id":"s3-versioning-lifecycle.event-notification","name":"S3 이벤트 알림","summary":"객체가 새로 생성될 때 다른 서비스를 자동으로 호출해주는 기능이다.","paragraphs":["파일이 업로드되는 즉시 Lambda 등을 트리거해야 할 때 쓴다. 주기적으로 확인하는 폴링 방식보다 지연이 없다.","주의할 점은 새로 생성되는 객체에만 이벤트가 발생한다는 것이다. 이미 버킷에 쌓여 있던 기존 객체에는 이벤트가 발생하지 않으므로, 과거 데이터를 처리하는 용도로는 쓸 수 없다."]}
+    ]
+  },
+  {
+    "id":"s3-encryption-batch","title":"S3 암호화(SSE)·S3 Batch Operations","importance":2,"sourcePages":[13,13],
+    "concepts":[
+      {"id":"s3-encryption-batch.sse","name":"SSE (Server Side Encryption)","summary":"SSE는 서버 측에서 데이터를 암호화하는 방식이다.","paragraphs":["S3에 저장하는 파일은 암호화로 보호하며, 이 과정에는 키가 필요하다. 암호화하지 않으면 보안 침해가 발생했을 때 공격자가 파일 내용을 곧바로 확인할 수 있다."]},
+      {"id":"s3-encryption-batch.sse-types","name":"SSE 종류","summary":"SSE 방식은 암호화 키를 만들고 관리하는 주체에 따라 구분된다.","paragraphs":["SSE-S3에서는 S3가 암호화 키의 생성과 관리를 맡는다. 가장 기본적인 방식이며 관리가 쉽다.","SSE-KMS에서는 키 관리 서비스인 AWS KMS가 암호화 키를 생성하고 관리한다. 보안을 철저히 요구할 때 선택하며, 키를 주기적으로 자동 교체하는 기능도 제공한다.","KMS를 이용하면 S3의 각 파일을 별도 키로 암호화하므로 파일 수가 많을 때 비용이 커질 수 있다. S3 Bucket Key를 사용하면 파일마다 새 키를 만들지 않고 버킷 키를 재사용하여 암호화 비용을 크게 낮출 수 있다.","SSE-C에서는 고객이 키를 직접 만들고 관리한다. 이 작업은 번거롭고 위험할 수 있어 권장되지 않는다."]},
+      {"id":"s3-encryption-batch.batch-operations","name":"S3 Batch Operations","summary":"아주 많은 S3 파일에 같은 작업을 일괄 적용하는 서비스다.","paragraphs":["S3 Batch Operations를 사용하면 S3에 보관된 수백만 개에서 수십억 개의 파일을 대상으로 복사, 삭제, 설정 적용 등의 동일한 작업을 한 번에 실행할 수 있다.","Batch는 여러 대상을 모아서 한꺼번에 처리하는 방식을 뜻한다."]},
+      {"id":"s3-encryption-batch.envelope-encryption","name":"봉투 암호화 (Envelope Encryption)","summary":"데이터 키로 암호화한 뒤 그 키를 다시 마스터 키로 암호화하는 방식이다.","paragraphs":["문제에 \"봉투 암호화를 사용해야 한다\"는 조건이 나오면 KMS를 쓰는 SSE-KMS를 가리킨다. 여기에 \"암호화 키가 주기적으로 자동 교체되어야 한다\"는 조건이 붙으면 더 확실해진다. SSE-S3와 SSE-C에는 자동 순환 기능이 없기 때문이다."]},
+      {"id":"s3-encryption-batch.sse-kms-cost","name":"SSE-KMS의 비용 구조와 S3 Bucket Key","summary":"SSE-KMS는 객체마다 KMS API를 호출해 객체가 많으면 비용이 급증한다.","paragraphs":["객체를 암호화할 때마다 KMS API를 부르는 구조라, 초당 수백만 건이 쌓이는 워크로드에서는 KMS 호출 비용이 전체 청구서의 상당 부분을 차지하게 된다.","S3 Bucket Key를 켜면 버킷 단위의 데이터 키를 캐싱해 재사용하므로 KMS API 호출 수가 크게 줄어든다. 암호화 방식은 여전히 SSE-KMS이므로 보안 수준은 그대로다. KMS 키 자동 순환을 끄거나 데이터를 압축하는 것은 이 비용과 무관하다."]}
+    ]
+  },
+  {
+    "id":"block-file-storage","title":"EBS·EFS·FSx·인스턴스 스토어","importance":3,"sourcePages":[14,15],
+    "concepts":[
+      {"id":"block-file-storage.ebs","name":"EBS (Elastic Block Store)","summary":"EC2나 RDS에 외장 디스크처럼 붙여 쓰는 블록 스토리지다.","paragraphs":["EBS는 SSD 또는 HDD를 외부에서 연결하는 것과 같은 방식으로 EC2와 RDS에 저장 공간을 제공한다. 이 두 서비스를 제외한 다른 AWS 서비스에는 연결할 수 없다.","EBS는 하나의 AZ 안에서 동작한다. 용도에 따라 고성능 스토리지로 사용할 수 있는 유형도 선택할 수 있다."]},
+      {"id":"block-file-storage.efs","name":"EFS (Elastic File System)","summary":"여러 컴퓨터가 하나의 파일 시스템을 함께 쓰게 하는 NFS 스토리지다.","paragraphs":["EFS에서는 여러 컴퓨터가 같은 파일 시스템에 동시에 접근할 수 있다. 여러 사용자가 공통 저장 공간을 이용하는 Google Cloud나 iCloud와 비슷한 방식으로 이해할 수 있다.","EFS는 여러 AZ에서 동작할 수 있지만 고성능 스토리지에 해당하지 않으며, 파일 공유에는 NFS 프로토콜만 지원한다.","EFS Intelligent-Tiering은 접근이 뜸한 파일을 EFS IA(Infrequent Access) 클래스로 이동한다. 이 클래스로 옮겨진 파일도 기다리지 않고 바로 접근할 수 있다."]},
+      {"id":"block-file-storage.instance-store","name":"인스턴스 스토어 (Instance Store)","summary":"EC2 컴퓨터 안에 들어 있는 임시 저장 디스크다.","paragraphs":["인스턴스 스토어는 EC2에 내장된 디스크이므로 영구 저장소가 아니다. 해당 EC2 인스턴스를 중지하거나 종료하면 그 안의 데이터는 모두 사라진다."]},
+      {"id":"block-file-storage.fsx","name":"FSx (File System for Extended use)","summary":"높은 처리량과 낮은 지연 시간을 제공하는 고성능 파일 스토리지다.","paragraphs":["FSx for Lustre는 머신러닝이나 빅데이터 분석에 자주 활용한다. S3와 연동할 수 있으며, 파일 공유에는 Lustre 고유 프로토콜만 사용한다.","FSx for NetApp ONTAP은 Windows, macOS, Linux에서 사용할 수 있고 NFS와 SMB를 모두 지원한다. NFS는 Linux와 Unix 계열에서, SMB는 Windows에서 사용하는 파일 공유 프로토콜이다.","FSx for Windows File Server가 지원하는 프로토콜은 SMB뿐이다.","FSx for OpenZFS는 NFS 프로토콜만 지원한다."]},
+      {"id":"block-file-storage.cluster-placement-group","name":"클러스터 배치 그룹","summary":"EC2를 밀집 배치해 낮은 네트워크 지연과 높은 처리량을 얻는 방식이다.","paragraphs":["수천 개 노드가 동시에 데이터를 읽고 쓰는 HPC(고성능 컴퓨팅) 워크로드에서 FSx for Lustre 같은 고성능 스토리지와 짝을 이뤄 등장한다."]},
+      {"id":"block-file-storage.ebs-elastic-volumes","name":"EBS Elastic Volumes","summary":"EC2에 연결된 상태 그대로 EBS 볼륨 크기를 늘릴 수 있는 기능이다.","paragraphs":["볼륨을 떼었다 붙이거나 새 볼륨을 추가하지 않아도 되므로 운영 중단이 발생하지 않는다. 파일 시스템 확장 작업까지 Lambda로 자동화하면 스토리지 확장을 무중단으로 처리할 수 있다.","EBS를 EFS로 옮기거나 새 EBS를 연결하는 방식은 중단이 생긴다."]},
+      {"id":"block-file-storage.efs-lifecycle-management","name":"EFS 수명 주기 관리","summary":"미접근 파일을 자동으로 EFS IA로 옮겨 비용을 줄이는 기능이다.","paragraphs":["EFS가 파일의 액세스 패턴을 감지해서 자동으로 옮긴다. EFS IA로 이동한 파일도 밀리초 단위 지연으로 즉시 액세스할 수 있으므로, \"오래된 데이터도 필요할 때는 즉시 써야 한다\"는 조건과 충돌하지 않는다.","같은 상황에서 S3 Glacier Deep Archive로 옮기는 선택지는 즉시 액세스가 불가능해 오답이 된다."]},
+      {"id":"block-file-storage.fsx-ontap-multi-az","name":"FSx for NetApp ONTAP의 다중 AZ 배포","summary":"ONTAP은 다중 AZ 배포와 밀리초 미만 공유 스토리지를 지원한다.","paragraphs":["여러 AZ에 분산된 서버들이 공유 데이터에 밀리초 미만으로 동시 접근해야 하는 상황에서, EBS는 다중 AZ를 지원하지 않고 EFS와 S3는 고성능 스토리지가 아니라서 답이 되지 못한다. 남는 선택지가 FSx for NetApp ONTAP이다."]}
+    ]
+  },
+  {
+    "id":"data-transfer-services","title":"DataSync·Snowball Edge·Transfer Family·Storage Gateway","importance":3,"sourcePages":[16,18],
+    "concepts":[
+      {"id":"data-transfer-services.datasync","name":"DataSync","summary":"서로 다른 저장 환경 사이에서 대량의 데이터를 옮기는 서비스다.","paragraphs":["DataSync는 온프레미스 스토리지와 AWS 시스템 사이의 대용량 전송에 사용한다. AWS의 스토리지 서비스끼리 데이터를 이동할 때도 이용한다."]},
+      {"id":"data-transfer-services.snowball-edge","name":"Snowball Edge","summary":"배송되는 물리 장비를 이용해 대용량 데이터를 AWS로 옮기는 서비스다.","paragraphs":["먼저 AWS 사이트에서 Snowball Edge를 신청하면 AWS가 장비를 배송한다. 받은 장비를 데이터를 보관한 컴퓨터에 직접 연결하고 내용을 복사한다.","장비를 물리적으로 연결해 복사하기 때문에 데이터를 빠르게 담을 수 있다. 작업을 마친 뒤에는 데이터가 든 Snowball Edge를 AWS에 돌려보낸다."]},
+      {"id":"data-transfer-services.transfer-family","name":"Transfer Family","summary":"SFTP와 FTPS를 포함한 FTP 방식으로 파일을 주고받게 하는 서버 서비스다.","paragraphs":["Transfer Family는 AWS 스토리지와 다른 클라우드 스토리지 시스템 사이에서 데이터를 전송할 때 사용한다. S3와 연결해 파일을 송수신할 수도 있다."]},
+      {"id":"data-transfer-services.storage-gateway","name":"Storage Gateway","summary":"온프레미스에서 S3를 로컬 저장소처럼 이용하도록 이어 주는 서비스다.","paragraphs":["Storage Gateway의 목적은 데이터를 한 번 옮기는 것이 아니라 스토리지를 연결한 채 사용하는 데 있다. 자체 저장 공간을 제공하지 않으며 온프레미스와 S3 사이의 통로로 동작한다.","파일 게이트웨이는 온프레미스 데이터를 공유 폴더 형태로 연동한다. NFS 또는 SMB를 통해 파일 자체를 S3에 올리므로 저장한 파일을 실시간으로 사용할 수 있다.","볼륨 게이트웨이는 온프레미스 데이터를 디스크와 같은 블록 스토리지 형태로 연결한다. 파일 대신 EBS 스냅샷을 S3에 업로드하므로 실시간 사용은 할 수 없다.","테이프 게이트웨이는 온프레미스의 물리 테이프 데이터를 S3에 보관한다. 물리 테이프는 값싸게 장기간 보관하는 오래된 저장 장치이며, 이 게이트웨이는 AWS의 테이프에 넣는 것과 같은 방식으로 S3에 백업한다. 주된 용도는 백업과 아카이빙이다."]}
+    ]
+  },
+  {
+    "id":"rds-storage-features","title":"RDS 스토리지 유형과 기능","importance":3,"sourcePages":[19,20],
+    "concepts":[
+      {"id":"rds-storage-features.rds","name":"RDS","summary":"RDS는 MySQL과 PostgreSQL 등을 제공하는 관계형 데이터베이스 서비스다.","paragraphs":["관계형 데이터베이스 관리 시스템(RDBMS)을 AWS에서 이용하도록 제공하며, 대표적인 데이터베이스로 MySQL과 PostgreSQL이 있다."]},
+      {"id":"rds-storage-features.storage-types","name":"RDS 스토리지 유형","summary":"일반 용도의 범용 SSD와 성능을 지정하는 프로비저닝된 IOPS SSD 중에서 선택한다.","paragraphs":["gp3와 gp2는 보편적인 워크로드에 쓰는 범용 SSD 스토리지다. 특별한 성능 요구가 없다면 일반적으로 이 유형을 사용한다.","높은 처리량과 낮은 지연 시간이 필요할 때는 프로비저닝된 IOPS SSD를 선택한다. 사용자가 직접 지정하는 IOPS는 Input과 Output에 대한 초당 작업 수(Operations Per Second), 즉 1초 동안 처리할 수 있는 읽기·쓰기 횟수를 뜻한다."]},
+      {"id":"rds-storage-features.features","name":"RDS 기능","summary":"RDS는 고가용성, 읽기 확장, 연결 관리, 안전한 변경 배포를 위한 기능을 제공한다.","paragraphs":["Multi AZ 배포는 기존 DB의 복제본을 대기 DB(Standby DB)로 마련해 고가용성을 확보한다. 장애가 나면 이 대기 DB가 주 DB(Primary DB) 역할을 자동으로 넘겨받는다. 평소 함께 요청을 처리하는 구성이 아니므로 성능 향상 효과는 없다.","Multi AZ DB Cluster는 기존 DB를 복제한 읽기 전용 DB를 두 대 이상 배치한다. 한 DB에 장애가 생겨도 나머지 DB로 운영할 수 있으며, 여러 읽기 전용 DB를 활용해 읽기 성능까지 높인다.","Read Replica는 읽기 요청을 맡을 전용 DB를 더해 읽기 처리 능력을 키우고 기존 DB에 걸리는 부하를 덜어 준다. 리전을 달리해 만드는 Cross Region Read Replica는 대규모 재해 후 서비스를 복구하는 DR(Disaster Recovery) 용도로 사용한다.","RDS Proxy는 애플리케이션과 DB 사이에서 연결을 재사용하고 관리한다. 연결이 지나치게 많이 생성될 때 발생할 수 있는 문제를 이 방식으로 예방한다.","RDS Blue/Green Deployment는 운영 환경인 블루와 동기화된 별도의 스테이징 환경인 그린을 준비한다. 그린에서 DB 변경 사항을 적용하고 검증한 다음 트래픽을 그린으로 넘길 수 있으며, 이때 다운타임은 1분 미만으로 줄일 수 있다."]},
+      {"id":"rds-storage-features.storage-type-names","name":"RDS 스토리지 유형의 실제 이름","summary":"범용 SSD는 gp2·gp3, 프로비저닝된 IOPS SSD는 io1·io2로 표기된다.","paragraphs":["문제와 선택지에는 서술형 이름 대신 이 약칭이 그대로 나온다. 쓰기 작업량이 급격히 치솟는 워크로드에서 지연 시간을 보장해야 하면 IOPS를 직접 지정할 수 있는 io1/io2를 고른다."]},
+      {"id":"rds-storage-features.multi-az-standby-limits","name":"다중 AZ 대기 인스턴스로는 할 수 없는 것","summary":"대기 인스턴스는 읽기를 처리하지 못하며 쓰기는 주 인스턴스에서만 일어난다.","paragraphs":["다중 AZ 배포는 고가용성 전용 기능이다. 대기 인스턴스는 장애 조치를 기다릴 뿐 아무 트래픽도 처리하지 않으므로, 분석 쿼리를 대기 인스턴스로 보내는 선택지는 오답이다. 읽기 부하를 나누려면 읽기 전용 복제본을 따로 만들어야 한다.","다중 AZ라고 해서 쓰기가 분산되지도 않는다. 쓰기는 언제나 주 인스턴스 한 곳으로 몰린다."]},
+      {"id":"rds-storage-features.automated-backup-retention","name":"RDS 자동 백업의 보존 한계","summary":"RDS 자동 백업의 최대 보존 기간은 35일이다.","paragraphs":["\"90일 이상 보관해야 한다\" 같은 규정 준수 요구가 나오면 RDS 자동 백업만으로는 충족할 수 없다. 이때는 AWS Backup으로 백업 계획을 세워 보존 기간·리전 간 복제·만료 후 자동 삭제를 한꺼번에 관리한다. 수동 스냅샷을 직접 관리하는 방식은 운영 부담이 크다."]},
+      {"id":"rds-storage-features.connection-issue-heuristic","name":"연결(Connection) 문제의 정답 신호","summary":"DB 연결 수·연결 지연·연결 거부가 문제의 증상이면 RDS Proxy가 답이다.","paragraphs":["\"Too many connections\", \"Connection refused\", 연결이 빈번하게 열리고 닫히면서 생기는 지연, Lambda의 폭발적인 동시 연결 — 이런 증상은 전부 연결 관리 문제다.","읽기 전용 복제본은 읽기 부하를 나눌 뿐 연결 관리를 해결하지 않고, 다중 AZ는 가용성 기능이라 최대 연결 수를 늘려주지 않으며, ElastiCache는 캐시 미스와 쓰기 시의 연결 급증을 막지 못한다. 인스턴스 사양을 올리는 것도 근본 원인을 그대로 둔다."]}
+    ]
+  },
+  {
+    "id":"aurora-dynamodb-cache","title":"Aurora·DynamoDB·ElastiCache","importance":3,"sourcePages":[21,21],
+    "concepts":[
+      {"id":"aurora-dynamodb-cache.aurora","name":"Aurora","summary":"Aurora는 MySQL 및 PostgreSQL 유형을 갖춘 고성능 관계형 데이터베이스 서비스다.","paragraphs":["Aurora는 RDBMS를 제공하며, 대표 유형은 Aurora MySQL과 Aurora PostgreSQL이다.","Global Database를 사용하면 여러 리전에 DB를 구성할 수 있다. 이 구성은 재해 복구에 활용되며 전 세계 사용자의 읽기 성능을 최적화한다.","Auto Scaling은 CPU 사용량 등의 지표를 살피다가 사전에 지정한 임계치를 초과하면 읽기 전용 복제본을 자동으로 추가한다."]},
+      {"id":"aurora-dynamodb-cache.dynamodb","name":"DynamoDB","summary":"DynamoDB는 관계형 데이터베이스 대신 NoSQL 모델을 제공하는 서비스다.","paragraphs":["NoSQL 서비스인 DynamoDB에서는 MySQL이나 PostgreSQL과 같은 RDBMS를 지원하지 않는다.","DynamoDB Streams는 테이블 데이터에 생긴 변화를 실시간으로 추적해 전달한다.","DynamoDB Accelerator(DAX)는 DynamoDB와 호환되는 캐시로 곧바로 결합할 수 있다. DynamoDB의 성능을 더 높여야 할 때 사용하며 특히 읽기 성능을 개선한다."]},
+      {"id":"aurora-dynamodb-cache.elasticache","name":"ElastiCache","summary":"ElastiCache는 반복해서 조회하는 데이터를 빠르게 돌려주는 캐시 서비스다.","paragraphs":["자주 요청되는 데이터를 ElastiCache가 대신 제공하면 읽기 속도가 향상된다. 또한 조회 트래픽 일부를 처리하므로 DB가 받는 부하도 감소한다.","동일한 데이터를 되풀이해 조회하는 상황에 알맞다. 반면 조회할 때마다 결과가 자주 달라지는 데이터에는 적합하지 않다."]},
+      {"id":"aurora-dynamodb-cache.aurora-serverless-v2","name":"Aurora Serverless v2","summary":"데이터베이스 용량을 워크로드에 맞춰 1초 단위로 자동 조정한다.","paragraphs":["플레이어 수가 시시각각 바뀌는 게임 서버처럼 변동이 심한 트래픽에 쓴다. 관계형 데이터베이스가 필요하면서 용량 예측이 어려울 때 선택지에 등장한다."]},
+      {"id":"aurora-dynamodb-cache.aurora-reader-endpoint","name":"Reader Endpoint는 Aurora 전용","summary":"읽기 전용 복제본에 자동 분산하는 Reader Endpoint는 Aurora에만 있다.","paragraphs":["RDS for MySQL에는 Reader Endpoint를 통한 부하 분산 기능이 없다. RDS에서 읽기를 나누려면 읽기 전용 복제본을 만들고 애플리케이션이 분석 쿼리를 그쪽으로 직접 라우팅해야 한다."]},
+      {"id":"aurora-dynamodb-cache.documentdb","name":"Amazon DocumentDB","summary":"MongoDB와 호환되는 NoSQL 데이터베이스 서비스다.","paragraphs":["\"기존에 MongoDB를 쓰고 있는데 코드를 바꿀 수 없다\"는 조건이 나오면 DocumentDB가 답이다. DynamoDB는 쿼리 방식과 데이터 구조가 달라 애플리케이션 코드를 대폭 고쳐야 하고, EC2에 MongoDB를 직접 설치하면 운영 부담이 크다.","DocumentDB도 DynamoDB와 마찬가지로 영상 같은 대용량 파일을 담기에는 적합하지 않다."]},
+      {"id":"aurora-dynamodb-cache.dynamodb-pitr","name":"DynamoDB PITR의 보존 한계","summary":"특정 시점 복구(PITR)는 최대 35일까지만 되돌릴 수 있다.","paragraphs":["\"7년 보관\" 같은 장기 보존 요구에는 PITR을 쓸 수 없고 AWS Backup으로 간다. RDS 자동 백업의 35일 한계와 같은 구조의 함정이다."]},
+      {"id":"aurora-dynamodb-cache.dax-dynamodb-only","name":"DAX는 DynamoDB 전용","summary":"DAX는 DynamoDB에만 붙는 캐시이고, RDS 앞에는 붙일 수 없다.","paragraphs":["DynamoDB의 읽기 용량이 소진되어 다른 애플리케이션 접속이 지연되는 상황이면 아키텍처 변경 없이 DAX를 얹는 것이 답이다.","반대로 RDS의 읽기 부하를 줄이려면 ElastiCache를 쓴다. RDS 문제에 DAX가 보이면 오답이다."]}
+    ]
+  },
+  {
+    "id":"compute-delivery","title":"EC2·ELB·Global Accelerator·CloudFront","importance":3,"sourcePages":[22,24],
+    "concepts":[
+      {"id":"compute-delivery.ec2","name":"EC2","summary":"EC2는 원격으로 접속해 사용하는 가상 컴퓨터를 빌려주는 서비스다.","paragraphs":["EC2 인스턴스는 컴퓨터 한 대, 즉 서버 한 대를 임대해 쓰는 것으로 이해할 수 있다.","Auto Scaling은 서버 수를 자동으로 늘리거나 줄인다. 대상 추적 정책을 적용하면 지표가 지정한 목표를 유지하도록 용량을 조정하므로 변화가 불규칙한 트래픽에 알맞다. 예를 들어 평균 CPU 사용률이 70%를 넘을 때 인스턴스를 최대 3대까지 늘리도록 정할 수 있다.","온디맨드 인스턴스는 이용한 시간에 따라 나중에 비용을 내는 방식이다. 계속 실행하는 범용 서버에 널리 쓰인다.","스팟 인스턴스는 AWS의 여유 용량을 매우 낮은 가격으로 이용한다. 다만 AWS가 자원을 회수하면 실행이 멈출 수 있으므로, 중단을 감수하면서 비용을 최소화할 작업에 적합하다.","예약 인스턴스는 1년 또는 3년 동안 사용하기로 약정해 할인을 받는다. 서버를 계속 가동할 계획이고 장기간 사용할 것이 확실할 때 선택한다."]},
+      {"id":"compute-delivery.elb","name":"ELB","summary":"ELB는 들어오는 트래픽을 여러 서버에 자동으로 나눠 보내는 서비스다.","paragraphs":["ALB(Application Load Balancer)는 HTTP와 HTTPS를 사용하는 웹 애플리케이션에 주로 쓴다. TCP와 UDP는 지원하지 않으며 WAF와 연결할 수 있다. Sticky Session을 설정하면 같은 사용자의 요청이 계속 동일한 서버로 전달된다.","NLB(Network Load Balancer)는 TCP와 UDP 트래픽을 모두 다루며 매우 빠른 응답 속도를 제공한다.","GLB(Gateway Load Balancer)는 네트워크 방화벽을 비롯한 보안 장비에 트래픽을 분산하는 용도의 로드 밸런서다."]},
+      {"id":"compute-delivery.cloudfront","name":"CloudFront","summary":"CloudFront는 캐시를 이용해 콘텐츠를 전 세계에 빠르게 전달하는 서비스다.","paragraphs":["이미지나 파일 등의 콘텐츠를 캐싱한 뒤 세계 각지의 사용자에게 빠른 속도로 제공한다."]},
+      {"id":"compute-delivery.global-accelerator","name":"Global Accelerator","summary":"Global Accelerator는 전 세계 사용자의 네트워크 통신 속도를 높이는 서비스다.","paragraphs":["지역이 서로 다른 사용자에게 빠른 네트워크 연결을 제공하는 데 사용한다."]},
+      {"id":"compute-delivery.warm-pool","name":"Auto Scaling 웜 풀","summary":"설정을 끝낸 인스턴스를 중지 상태로 대기시켜 초기화 지연을 없앰다.","paragraphs":["트래픽이 급증할 때 새 인스턴스가 부팅되고 애플리케이션이 뜨기까지 시간이 오래 걸려 응답이 지연되는 문제를 푼다.","중지 상태로 두기 때문에 EC2 실행 비용은 발생하지 않고 EBS 스토리지 비용만 든다. 여유 인스턴스를 계속 실행 상태로 두는 오버 프로비저닝보다 훨씬 저렴하다."]},
+      {"id":"compute-delivery.scheduled-scaling","name":"예약된 조정과 대상 추적의 갈림길","summary":"트래픽 시점이 예측 가능하면 예약된 조정, 예측 불가능하면 대상 추적이다.","paragraphs":["예약된 조정(Scheduled Scaling)은 \"매일 아침 9시\"처럼 몰리는 시각을 미리 알 때 용량을 앞당겨 늘려두는 방식이다.","문제에 \"예측할 수 없는(unpredictable, unexpected) 트래픽 급증\"이라고 못 박혀 있으면 예약된 조정은 무조건 오답이고, 지표 목표값을 벗어나면 즉시 반응하는 대상 추적이 답이다."]},
+      {"id":"compute-delivery.alb-l7-vs-nlb-l4","name":"계층으로 갈리는 ALB와 NLB","summary":"ALB는 7계층이라 URL 경로 라우팅이 되고, NLB는 4계층이라 되지 않는다.","paragraphs":["\"요청의 URL 경로를 분석해 적절한 페이지로 연결한다\"는 요구가 나오면 ALB다. NLB는 전송 계층 로드 밸런서라 경로를 들여다볼 수 없다.","웹 애플리케이션의 보안을 이야기할 때 등장하는 L7은 애플리케이션 계층, TCP/UDP를 이야기할 때의 L4는 전송 계층을 가리킨다."]},
+      {"id":"compute-delivery.sticky-session-tradeoff","name":"스티키 세션의 부작용","summary":"세션을 같은 서버에 고정하는 대신, 특정 인스턴스에만 부하가 몰릴 수 있다.","paragraphs":["ALB 뒤의 인스턴스 하나에만 트래픽이 집중되고 나머지는 유휴 상태인 불균형이 보이면 스티키 세션이 켜져 있는지 의심한다. 헤비 유저가 소수이거나 트래픽 패턴이 편중되면 그 사용자들이 붙은 인스턴스만 과부하가 된다.","끄면 라운드 로빈으로 고르게 분산된다. 로드 밸런서 타입을 바꾸거나 인스턴스를 더 붙이는 것은 원인을 그대로 두는 조치다."]},
+      {"id":"compute-delivery.global-accelerator-protocols","name":"Global Accelerator가 처리하는 것","summary":"TCP와 UDP를 모두 지원하고, 리전 장애 시 정상 리전으로 자동 우회한다.","paragraphs":["전 세계 사용자를 가장 가까운 AWS 엣지로 진입시켜 지연을 줄이고, 네트워크 상태에 따라 트래픽을 정상 리전으로 라우팅한다. 실시간 게임 서버나 TCP 기반 영상 전송처럼 HTTP가 아닌 트래픽을 가속할 때 쓴다.","CloudFront는 HTTP/HTTPS 콘텐츠 캐싱에 특화되어 있어 일반 TCP 가속에는 맞지 않는다. 둘의 갈림길은 \"캐싱할 콘텐츠인가, 가속할 연결인가\"다."]},
+      {"id":"compute-delivery.cloudfront-ttl","name":"CloudFront TTL과 캐시 무효화의 관계","summary":"TTL이 만료되기 전에는 원본이 바뀌어도 엣지가 옛 파일을 계속 내보낸다.","paragraphs":["배포는 성공했는데 브라우저에 여전히 이전 버전이 보이는 상황의 원인이 이것이다. S3에는 최신 파일이 올라가 있어도, 엣지 로케이션에 캐싱된 사본의 TTL이 남아 있으면 CloudFront는 그 사본을 제공한다.","무효화(Invalidation)를 실행하면 엣지 캐시가 삭제되어 다음 요청 때 원본에서 새로 가져온다."]},
+      {"id":"compute-delivery.edge-keyword","name":"'Edge'라는 키워드","summary":"전 세계 AWS 서버 중 사용자와 가장 가까운 곳에서 요청을 처리한다는 뜻이다.","paragraphs":["엣지 최적화 API 엔드포인트, 엣지 로케이션, Lambda@Edge처럼 여러 서비스에 붙어 나온다. API Gateway의 엣지 최적화 엔드포인트는 CloudFront의 글로벌 네트워크를 사용해 가장 가까운 엣지에서 API 요청을 받는다.","\"전 세계 사용자의 지연 시간을 줄여야 한다\"는 조건과 함께 나오면 이 방향이 답이다."]}
+    ]
+  },
+  {
+    "id":"serverless-containers","title":"ECS·Lambda·Step Functions·API Gateway","importance":3,"sourcePages":[25,26],
+    "concepts":[
+      {"id":"serverless-containers.ecs","name":"ECS","summary":"ECS는 Docker 컨테이너를 손쉽게 운영하도록 지원하는 서비스다.","paragraphs":["EC2 기반 ECS에서는 사용자가 EC2를 직접 관리한다. 세부 구성을 조정할 수 있는 대신 운영 부담이 크다.","Fargate 기반 ECS는 서버 관리를 AWS에 맡기는 완전 관리형 방식이다. 서버의 확장과 축소도 AWS가 담당하므로 관리할 일이 비교적 적고, 예측하기 어려운 트래픽 변화에 유연하게 대응할 수 있다."]},
+      {"id":"serverless-containers.lambda","name":"Lambda","summary":"Lambda는 서버 운영을 AWS에 맡기고 개발자가 올린 코드만 실행하는 서비스다.","paragraphs":["서버를 AWS가 관리하고 개발자는 코드에 집중하는 실행 방식을 서버리스라고 한다. Lambda는 요청이 생길 때만 동작하고 요청이 없으면 멈춘 채 기다리므로 비용을 아낄 수 있으며, 가끔 실행하는 작업에 유용하다.","한동안 요청이 없다가 새 요청이 오면 실행 환경을 준비하는 동안 지연이 생길 수 있다. 이를 콜드 스타트라고 하며, 프로비저닝된 동시성을 설정해 실행 환경을 미리 준비하면 줄일 수 있다.","한 번의 실행은 최대 15분까지만 보장된다. 따라서 15분을 초과하는 작업은 Lambda에서 실행할 수 없다."]},
+      {"id":"serverless-containers.step-functions","name":"Step Functions","summary":"Step Functions는 여러 작업을 정해진 순서로 이어 실행하는 서비스다.","paragraphs":["Lambda 등의 작업을 여러 단계로 연결하며, 각 단계의 실행 상태와 재시도, 오류 처리, 실패를 자동으로 관리한다.","Lambda의 실행 제한과 달리 15분보다 오래 걸리는 작업도 수행할 수 있어 여러 단계의 장기 작업에 자주 사용한다."]},
+      {"id":"serverless-containers.api-gateway","name":"API Gateway","summary":"API Gateway는 외부의 요청을 백엔드에 안전하게 전달하는 서비스다.","paragraphs":["요청을 받아 ALB, Lambda, ECS 또는 EC2 같은 백엔드로 보낸다.","REST API는 기능이 다양하지만 비용이 비싸고 지연 시간은 보통이며, JWT 인증을 기본 기능으로 제공하지 않는다.","HTTP API는 제공 기능이 제한적인 대신 비용이 저렴하고 지연 시간도 낮다. JWT 인증은 기본으로 제공한다.","Edge-optimized 기능을 사용하면 세계 각지 사용자가 API 응답을 받는 시간을 줄일 수 있다."]},
+      {"id":"serverless-containers.eks","name":"Amazon EKS (Elastic Kubernetes Service)","summary":"쿠버네티스를 AWS에서 관리형으로 운영하는 서비스다.","paragraphs":["기존 환경이 쿠버네티스면 EKS로 옮겨야 코드와 배포 프로세스를 그대로 쓸 수 있다. 같은 컨테이너 서비스라도 ECS로 옮기면 공수가 많이 든다.","반대로 온프레미스에서 순수 Docker 컨테이너로 돌리던 것을 옮길 때는 ECS가 맞다. EKS와 ECS는 \"원래 쿠버네티스였는가\"로 갈린다."]},
+      {"id":"serverless-containers.fargate-no-time-limit","name":"Fargate에는 실행 시간 제한이 없다","summary":"Lambda의 15분 제한을 넘기는 작업은 Fargate로 간다.","paragraphs":["비디오 한 편 처리에 20분, 배치 작업에 2~3시간이 걸리는 워크로드에서 Lambda는 선택지에서 바로 지워진다.","Fargate는 서버를 프로비저닝·관리할 필요가 없고 사용한 vCPU·메모리와 시간만큼만 과금되므로, 하루 몇 시간만 도는 작업에 EC2 예약 인스턴스를 사는 것보다 저렴하다.","다만 10초짜리 초단기 작업이라면 컨테이너를 띄우는 오버헤드 때문에 Lambda가 낫다."]},
+      {"id":"serverless-containers.lambda-function-url","name":"Lambda 함수 URL","summary":"API Gateway 없이 Lambda 함수에 직접 HTTP(S) 엔드포인트를 부여한다.","paragraphs":["관리자가 필요할 때 눌러서 보고서를 만드는 정도의 단순한 호출이면 API Gateway를 앞에 두는 것보다 구성이 간단하고 비용이 적게 든다."]},
+      {"id":"serverless-containers.lambda-at-edge","name":"Lambda@Edge","summary":"CloudFront의 엣지 로케이션에서 코드를 실행하는 방식이다.","paragraphs":["인증·권한 부여 로직을 사용자와 가장 가까운 곳에서 처리하므로 로그인 과정의 지연까지 줄일 수 있다.","같은 로직을 리전의 일반 Lambda로 돌리면 엣지보다 지연이 길어진다."]},
+      {"id":"serverless-containers.lambda-vpc-access","name":"Lambda의 VPC 연결","summary":"프라이빗 서브넷의 EC2와 사설 IP로 통신하려면 Lambda도 같은 VPC에 연결해야 한다.","paragraphs":["Lambda를 VPC 밖에 두고 공용 인터넷으로 통신하는 방식은 프라이빗 서브넷의 리소스에 닿지 못하고 보안상으로도 맞지 않는다. Lambda를 퍼블릭 서브넷에 둔다고 해서 프라이빗 서브넷의 EC2와 직접 통신할 수 있게 되는 것도 아니다."]},
+      {"id":"serverless-containers.api-gateway-jwt-authorizer","name":"HTTP API의 JWT 권한 부여자","summary":"API Gateway HTTP API는 JWT 인증과 ALB 프라이빗 통합을 기본 지원한다.","paragraphs":["JWT로 사용자를 인증하는 퍼블릭 API를 ALB와 직접 통합해야 한다는 요구가 나오면 REST API가 아니라 HTTP API가 답이다. REST API로도 가능하지만 비용이 높고 설정이 복잡하다.","API Gateway가 제공하는 유형은 REST API와 HTTP API 둘뿐이다."]},
+      {"id":"serverless-containers.aws-batch","name":"AWS Batch","summary":"여러 작업을 한꺼번에 모아서 처리하는 배치 처리 서비스다.","paragraphs":["이름 때문에 \"여러 단계를 순서대로 실행\"과 헷갈리기 쉽지만, 순차 워크플로를 조율하는 서비스가 아니다. 그건 Step Functions의 역할이다."]}
+    ]
+  },
+  {
+    "id":"messaging-backup","title":"SQS·SNS·EventBridge·AWS Backup","importance":3,"sourcePages":[27,29],
+    "concepts":[
+      {"id":"messaging-backup.sqs","name":"SQS (Simple Queue Service)","summary":"SQS는 메시지를 대기열에 보관해 작업이 차례로 처리되도록 하는 서비스다.","paragraphs":["구성 요소 사이에 큐를 두면 각 요소의 의존성과 결합도가 낮아져 서로 독립적으로 분리할 수 있다. 작업을 순서대로 처리해야 하거나 데이터 손실 없이 정확하게 다뤄야 하는 경우에 자주 활용한다.","트래픽이 갑자기 증가해도 메시지를 큐에 쌓아 둘 수 있으므로 요청을 잃지 않고 처리할 수 있다.","표준 대기열(Standard Queue)은 메시지 순서보다 높은 처리량이 중요한 상황에 알맞다.","선입선출 대기열(FIFO Queue)은 메시지를 보낸 순서 그대로 정확히 한 번 처리해야 할 때 선택한다."]},
+      {"id":"messaging-backup.sns","name":"SNS (Simple Notification Service)","summary":"SNS는 하나의 메시지를 여러 수신 대상으로 전달하는 서비스다.","paragraphs":["이 이름의 SNS는 소셜 네트워크 서비스를 뜻하지 않는다.","예를 들어 주문 완료 이벤트 하나를 SES의 이메일 발송, Lambda의 로그 저장, SQS의 주문 처리로 각각 보낼 수 있다."]},
+      {"id":"messaging-backup.eventbridge","name":"EventBridge","summary":"EventBridge는 AWS 서비스 사이의 기능과 동작을 이어 주는 서비스다.","paragraphs":["S3에 이미지 업로드가 끝난 뒤 Lambda가 이미지 크기를 조정하도록 S3, EventBridge, Lambda를 연결할 수 있다."]},
+      {"id":"messaging-backup.backup","name":"AWS Backup","summary":"AWS Backup은 여러 AWS 서비스의 백업을 자동화하고 관리하는 서비스다.","paragraphs":["서비스별 백업 작업을 한곳에서 자동화하고 관리할 수 있게 한다."]},
+      {"id":"messaging-backup.msk","name":"Amazon MSK (Managed Streaming for Apache Kafka)","summary":"Apache Kafka를 AWS가 관리해주는 완전 관리형 서비스다.","paragraphs":["이미 Kafka로 이벤트 기반 아키텍처를 돌리고 있다면, 코드를 크게 바꾸지 않고 그대로 옮길 수 있는 곳이 MSK다.","SQS는 Kafka와 동작 방식이 다르고 EventBridge는 이벤트 버스라 성격이 달라서, 둘 다 단순 마이그레이션 대상이 되지 못한다. EC2에 Kafka를 직접 설치하면 패치·관리·확장을 전부 떠안게 된다."]},
+      {"id":"messaging-backup.sqs-details","name":"SQS의 보존 기간과 표준 대기열의 약점","summary":"보존 기간은 최대 14일이고, 표준 대기열은 중복과 순서 뒤바뀌이 생길 수 있다.","paragraphs":["\"저장된 지 48시간이 지나면 자동 삭제\"와 같은 요구를 SQS 보존 기간 설정만으로 처리할 수 있다.","표준 대기열은 무제한에 가까운 처리량을 주는 대신 드물게 메시지가 중복 전달되고 순서가 바뀌 수 있다. \"정확히 한 번(Exactly-Once)\"처리가 필요한 결제나 수강 신청에는 FIFO 대기열을 써야 한다."]},
+      {"id":"messaging-backup.sqs-queue-depth-scaling","name":"대기열 깊이 기반 오토 스케일링","summary":"CPU가 아니라 대기열에 쌓인 메시지 수로 처리 인스턴스를 조정한다.","paragraphs":["웹 계층이 SQS에 넣고 백엔드가 꺼내 처리하는 구조에서, 백엔드 CPU가 100%를 치고 큐가 가득 차면 병목은 처리 용량이다. 이때 큐에 쌓인 메시지 수를 기준으로 백엔드를 자동 확장하는 것이 근본 해결책이다.","\"처리해야 할 작업의 양\"을 직접 재는 지표이므로 CPU 사용률보다 반응이 빠르고 정확하다. 프런트엔드에 CloudFront나 API Gateway를 붙이는 것은 백엔드 병목을 풀지 못한다."]},
+      {"id":"messaging-backup.eventbridge-scheduler","name":"EventBridge Scheduler","summary":"특정 시각이나 주기에 작업을 실행시키는 기능이다.","paragraphs":["\"평일 업무 시간에만 개발용 RDS를 켜둔다\"와 같은 스케줄 기반 자동화에서 Lambda와 짝을 이뤄 나오는 정석 조합이다.","주의할 점은 시간 기반이라는 것이다. \"업로드되는 즉시\"와 같은 요구에는 주기적으로 확인하는 방식이 되어 오히려 오답이 된다. 그때는 S3 이벤트 알림이다."]},
+      {"id":"messaging-backup.step-functions-features","name":"Step Functions의 수동 승인과 재시도","summary":"워크플로 중간에 사람의 승인을 넣을 수 있고, 실패 시 재시도가 내장돼 있다.","paragraphs":["여러 단계를 순서대로 실행하면서 오류 처리와 자동 재시도가 필요하고, 중간에 관리자 승인이 끼어야 하는 워크플로는 Step Functions로 간다. 같은 로직을 애플리케이션 코드로 짜면 개발·운영 부담이 훨씬 커진다.","12시간짜리 장기 작업도 조율할 수 있어 Lambda의 15분 제한을 우회하는 통로가 된다."]},
+      {"id":"messaging-backup.ses","name":"Amazon SES (Simple Email Service)","summary":"이메일 발송에 최적화된 서비스다.","paragraphs":["보고서를 만들어 담당자 이메일로 보내야 하거나, 문의 양식 제출을 알려야 할 때 Lambda에서 SES를 호출한다. SNS로도 알림은 가능하지만, 이메일 자체가 목적이면 SES가 제 자리다."]},
+      {"id":"messaging-backup.backup-long-term-retention","name":"AWS Backup으로 넘어가야 하는 순간","summary":"서비스 자체 백업의 보존 한계를 넘거나 리전 간 복제가 필요하면 AWS Backup이다.","paragraphs":["RDS 자동 백업 35일, DynamoDB PITR 35일을 넘는 보존 요구가 나오면 AWS Backup으로 백업 계획을 세운다. 스케줄링·보존 정책·리전 간 복제·만료 후 자동 삭제를 코드 없이 콘솔 설정으로 처리한다.","EC2를 백업할 때 'EBS 볼륨'이 아니라 'EC2 인스턴스'를 리소스로 지정하면 연결된 모든 볼륨뿐 아니라 인스턴스 유형·네트워크 설정 같은 구성 정보까지 함께 백업되어, 다른 리전에서 바로 복구할 수 있다."]}
+    ]
+  },
+  {
+    "id":"vpc-networking","title":"VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링","importance":3,"sourcePages":[30,33],
+    "concepts":[
+      {"id":"vpc-networking.vpc-subnet","name":"VPC, 서브넷","summary":"VPC는 컴퓨터 사이의 통신을 구성하는 가상 네트워크 공간이다.","paragraphs":["서브넷은 VPC나 회사 네트워크처럼 규모가 큰 네트워크를 더 작은 단위로 구획한 것이다.","VPC를 나누는 대표적인 기준은 외부에서 접근할 수 있는지 여부다. 접근을 허용하는 영역은 퍼블릭 서브넷, 허용하지 않는 영역은 프라이빗 서브넷으로 구분한다."]},
+      {"id":"vpc-networking.internet-gateway","name":"인터넷 게이트웨이","summary":"인터넷 게이트웨이는 VPC와 외부 인터넷 사이에 양방향 통신 경로를 마련한다.","paragraphs":["VPC는 기본적으로 외부 인터넷과 분리된 독립 네트워크다. 인터넷 게이트웨이를 연결하면 서브넷이 외부와 요청을 주고받을 수 있으며, 이렇게 인터넷 통신이 가능한 서브넷을 퍼블릭 서브넷이라고 한다."]},
+      {"id":"vpc-networking.nat-gateway","name":"NAT 게이트웨이","summary":"NAT 게이트웨이는 프라이빗 서브넷에서 인터넷으로 나가는 통신만 가능하게 한다.","paragraphs":["내부에서는 외부 인터넷에 접속할 수 있지만 인터넷에서 서브넷으로 시작하는 접근은 허용하지 않는다. 따라서 외부에 노출하지 않으면서 인터넷 이용은 보장해야 하는 프라이빗 서브넷에 알맞다.","NAT 게이트웨이의 배치 위치는 서비스를 이용하는 프라이빗 서브넷이 아니라 퍼블릭 서브넷이다. VPC 자체에 연결하는 인터넷 게이트웨이와도 위치가 다르다.","이 구성은 프라이빗 서브넷을 인터넷에 직접 공개하지 않은 채 외부 방향의 접속 경로를 제공한다."]},
+      {"id":"vpc-networking.vpc-endpoint","name":"VPC Endpoint","summary":"VPC Endpoint는 인터넷을 통하지 않고 VPC를 AWS 서비스와 직접 연결한다.","paragraphs":["외부 인터넷을 우회하는 통신 경로를 제공하므로 AWS 서비스에 더 안전하게 접근하려는 경우에 사용한다.","게이트웨이 VPC 엔드포인트의 연결 대상은 S3와 DynamoDB다.","인터페이스 VPC 엔드포인트는 S3와 DynamoDB를 제외한 AWS 리소스에 연결한다.","두 유형을 구분해 사용하면 S3와 DynamoDB를 비롯한 AWS 리소스에 인터넷 연결 없이 접근할 수 있다."]},
+      {"id":"vpc-networking.privatelink","name":"PrivateLink","summary":"PrivateLink는 한 VPC에서 다른 VPC의 애플리케이션으로 사설 접속을 제공한다.","paragraphs":["인터넷을 경유하지 않고 특정 VPC의 사용자를 다른 VPC에 있는 애플리케이션과 연결한다. 외부망을 피하는 방식이므로 보안이 중요한 연결에 사용한다."]},
+      {"id":"vpc-networking.vpc-peering","name":"VPC 피어링","summary":"VPC 피어링은 별개의 VPC 사이에 직접 연결을 만든다.","paragraphs":["서로 다른 VPC가 인터넷을 경유하지 않고 사설 네트워크를 통해 통신하도록 구성하는 기능이다."]},
+      {"id":"vpc-networking.comparison","name":"NAT Gateway vs VPC Endpoint vs PrivateLink vs VPC 피어링","summary":"연결 대상을 확인하면 네 가지 VPC 네트워킹 기능을 구분할 수 있다.","paragraphs":["모두 VPC 내부에서 바깥의 대상과 통신할 때 쓰지만, 목적지는 인터넷, AWS 서비스, 다른 VPC의 애플리케이션 또는 VPC 자체로 나뉜다.","NAT Gateway는 프라이빗 EC2가 외부 인터넷에 접속할 때 선택한다. VPC Endpoint는 인터넷 없이 AWS 서비스로, PrivateLink는 인터넷 없이 다른 VPC의 애플리케이션으로 연결한다. VPC 피어링은 두 VPC 전체를 사설 경로로 잇는다."]},
+      {"id":"vpc-networking.endpoint-pricing","name":"엔드포인트 유형별 비용 차이","summary":"게이트웨이 엔드포인트는 무료이고, 인터페이스는 시간당 비용이 발생한다.","paragraphs":["S3와 DynamoDB는 두 유형 모두로 접근할 수 있지만, 비용 효율을 묻는 문제에서는 게이트웨이 엔드포인트가 답이다. 인터페이스 엔드포인트는 S3 접근에도 쓸 수 있으나 시간당 요금이 붙는다.","접근해야 할 AWS 서비스가 여러 종류(S3, DynamoDB, CloudWatch 등)로 넓어지면 그때는 포괄적인 인터페이스 엔드포인트로 간다. 인터페이스 엔드포인트라도 NAT 게이트웨이 대비 데이터 처리 비용은 저렴하다."]},
+      {"id":"vpc-networking.egress-only-igw","name":"Egress-only 인터넷 게이트웨이","summary":"IPv6 전용 아웃바운드 게이트웨이다.","paragraphs":["IPv4에서 NAT 게이트웨이가 하는 역할(안에서 밖으로만 나가기)을 IPv6에서 담당한다. 선택지에 나왔는데 문제가 IPv4 상황이면 오답이다."]},
+      {"id":"vpc-networking.nat-instance","name":"NAT 인스턴스와 NAT 게이트웨이의 차이","summary":"NAT 인스턴스는 EC2로 직접 운영해 트래픽이 몰리면 병목이 된다.","paragraphs":["관리형인 NAT 게이트웨이와 달리 인스턴스 사양에 묶여 있어 네트워크가 포화되면 그 뒤의 Lambda나 EC2가 간헐적으로 타임아웃을 낸다.","S3처럼 엔드포인트로 우회할 수 있는 대상이면, NAT를 키우는 대신 게이트웨이 엔드포인트로 트래픽을 빼는 것이 병목과 보안을 한 번에 푼다."]},
+      {"id":"vpc-networking.vpc-peering-scaling-limit","name":"VPC 피어링의 확장 한계","summary":"피어링은 1:1 연결이라 VPC가 늘면 연결 수가 폭증한다.","paragraphs":["수백 개 VPC로 확장할 계획이 있다는 조건이 나오면 피어링은 관리가 불가능해진다. 그 자리는 Transit Gateway다.","반대로, 두 VPC가 서로 통신하면 안 된다는 조건이 있으면 피어링과 Transit Gateway 둘 다 조건 위반이 된다. 이때는 각 VPC에 Site-to-Site VPN을 따로 맺는다."]},
+      {"id":"vpc-networking.s3-is-regional","name":"S3는 리전 수준 서비스다","summary":"S3는 VPC나 서브넷 안에 만들 수 없고, 보안 그룹도 쓰지 않는다.","paragraphs":["\"S3를 VPC 내부로 옮긴다\", \"S3를 프라이빗 서브넷에 생성한다\", \"S3에 보안 그룹을 붙인다\"는 선택지는 전부 성립하지 않는 문장이다.","VPC에서 S3로 가는 트래픽을 인터넷 밖으로 빼려면 VPC 엔드포인트를 쓰고, S3의 접근 제어는 버킷 정책이나 ACL로 한다. 같은 리전에 버킷을 만든다고 해서 네트워크 경로가 바뀌지도 않는다."]}
+    ]
+  },
+  {
+    "id":"hybrid-connectivity","title":"Site-to-Site VPN·Direct Connect·Transit Gateway","importance":3,"sourcePages":[34,35],
+    "concepts":[
+      {"id":"hybrid-connectivity.site-to-site-vpn","name":"Site-to-Site VPN","summary":"Site-to-Site VPN은 인터넷의 암호화 터널로 온프레미스와 AWS를 연결한다.","paragraphs":["두 사이트의 네트워크를 연결할 때 인터넷 위에 암호화된 통신 경로를 구성하는 서비스다.","VPN은 암호화를, Site-to-Site는 개별 사용자가 아니라 사이트 사이를 잇는 연결을 나타낸다."]},
+      {"id":"hybrid-connectivity.direct-connect","name":"Direct Connect","summary":"Direct Connect는 전용 회선으로 온프레미스 네트워크와 AWS를 잇는다.","paragraphs":["인터넷을 통과하지 않는 전용선을 설치해 두 환경 사이에 직접적인 네트워크 연결을 구성한다.","전용 회선을 사용하므로 높은 보안성과 대역폭, 빠른 성능을 얻을 수 있다. 반면 불특정 다수가 공유하는 인터넷 경로는 통신 속도가 일정하지 않을 수 있다.","서비스 이름처럼 전용선을 직접 연결한다는 점이 핵심이다."]},
+      {"id":"hybrid-connectivity.vpn-vs-direct-connect","name":"Site-to-Site VPN vs Direct Connect","summary":"두 방식 모두 온프레미스와 AWS를 하나의 네트워크처럼 묶는다.","paragraphs":["Site-to-Site VPN은 인터넷에 암호화 터널을 구성한다. 설정하기 쉽고 비용이 낮은 대신, 인터넷 상황에 따라 속도가 고르지 않을 수 있다.","Direct Connect는 인터넷 대신 전용선을 설치한다. 구축 기간이 길고 비용도 높지만 일정한 통신 속도를 제공한다."]},
+      {"id":"hybrid-connectivity.transit-gateway","name":"Transit Gateway","summary":"Transit Gateway는 다수의 VPC와 온프레미스 네트워크를 한데 연결한다.","paragraphs":["여러 VPC와 온프레미스 환경을 하나의 네트워크로 묶어 통신하게 하는 서비스다."]},
+      {"id":"hybrid-connectivity.direct-connect-caveats","name":"Direct Connect의 두 가지 함정","summary":"전용선이지만 트래픽을 암호화하지 않고, 설치에 몇 주~몇 달이 걸린다.","paragraphs":["\"네트워크 계층에서 암호화되어야 한다\"는 요구가 나오면 Direct Connect는 오답이고 Site-to-Site VPN이 답이다. Direct Connect는 인터넷을 우회할 뿐 암호화 서비스가 아니다.","\"빠리 연결해야 한다\"는 조건도 마찬가지다. 물리 회선을 깔아야 해서 즉시 설정이 불가능하다. 소량 트래픽을 빨리 붙여야 하면 VPN이 비용과 시간 양쪽에서 낫다.","Direct Connect가 답이 되는 조건은 \"일관되고 지연 시간이 짧은\" 성능과 \"퍼블릭 인터넷을 쓰지 않는다\"가 함께 나올 때다."]},
+      {"id":"hybrid-connectivity.direct-connect-gateway","name":"Direct Connect Gateway","summary":"Direct Connect와 Transit Gateway를 묶어 대규모 하이브리드 네트워크를 구성한다.","paragraphs":["\"일관되고 낮은 지연 시간\"(Direct Connect)과 \"수백 개 VPC 연결\"(Transit Gateway)이 동시에 요구되면 이 둘을 Direct Connect Gateway로 통합한다."]},
+      {"id":"hybrid-connectivity.client-vpn","name":"AWS Client VPN","summary":"개별 사용자가 원격에서 VPC에 접속하기 위한 서비스다.","paragraphs":["Site-to-Site VPN이 네트워크 대 네트워크를 잇는 것과 달리, Client VPN은 사람 한 명이 자기 노트북에서 붙는 용도다. 온프레미스 데이터 센터와 AWS를 연결하는 문제에서 Client VPN이 보이면 오답이다."]},
+      {"id":"hybrid-connectivity.access-terms","name":"Customer Gateway와 Bastion Host","summary":"Customer Gateway는 VPN 종단, Bastion Host는 내부 서버로 들어가는 중간 서버다.","paragraphs":["Customer Gateway는 Site-to-Site VPN을 맺을 때 고객 측 종단을 가리키는 구성 요소다. VPC에서 S3로 가는 경로 같은 문제에 나오면 맥락이 다른 오답이다.","Bastion Host는 인터넷에서 프라이빗 서브넷의 서버로 안전하게 접속하기 위해 두는 중간 서버다. 이것도 온프레미스와 AWS를 잇는 용도가 아니다."]},
+      {"id":"hybrid-connectivity.data-locality-cost","name":"데이터 지역성으로 전송 비용 줄이기","summary":"큰 중간 데이터는 AWS 안에서 처리하고, 작은 결과물만 밖으로 내보낸다.","paragraphs":["쿼리 결과가 50MB인데 최종 시각화 결과물은 500KB라면, 시각화 도구를 AWS 안에 두어야 한다. 도구를 온프레미스에 두면 매번 50MB가 Direct Connect를 타고 나가면서 전송 비용이 커진다.","처리는 데이터 가까이서 하고 결과만 옮긴다 — 데이터 전송 비용 문제의 일반 원칙이다."]},
+      {"id":"hybrid-connectivity.onprem-connectivity-heuristic","name":"온프레미스 연결 문제의 출발점","summary":"온프레미스와 AWS가 통신하면 Site-to-Site VPN과 Direct Connect부터 떠올린다.","paragraphs":["이 둘 중 무엇이냐는 \"암호화가 필요한가 / 일관된 성능이 필요한가 / 얼마나 빨리 붙여야 하는가\"로 갈린다. 여기에 VPC가 여러 개거나 앞으로 늘어난다는 조건이 붙으면 Transit Gateway가 더해진다.","PrivateLink는 VPC 간 애플리케이션 연결용이라 온프레미스와는 통신하지 못하고, NAT 게이트웨이는 인터넷 액세스를 줄 뿐 터널을 만들지 않는다."]}
+    ]
+  },
+  {
+    "id":"route53","title":"Route 53","importance":2,"sourcePages":[36,37],
+    "concepts":[
+      {"id":"route53.route53","name":"Route53","summary":"Route 53은 도메인 이름을 IP 주소로 바꾸고 트래픽의 전달 방향을 정한다.","paragraphs":["www.example.com 같은 도메인을 52.123.25.11 같은 IP 주소로 변환하며, 요청을 지정된 대상으로 라우팅하는 서비스다."]},
+      {"id":"route53.routing-policies","name":"Route53 라우팅 정책","summary":"Route 53은 여러 정책을 이용해 조건에 맞는 리소스로 요청을 보낸다.","paragraphs":["단순 라우팅(Simple Routing)은 단일 리소스를 선택한다. 지리적 위치 라우팅(Geolocation Routing)은 국가를, 지리적 근접 라우팅(Geoproximity Routing)은 사용자와 리소스 사이의 거리를 기준으로 삼는다.\n다중값 응답 라우팅(Multi-value Answer Routing)은 여러 IP를 응답해 트래픽을 분산한다. 가중치 기반 라우팅(Weighted Routing)은 미리 정한 가중치를 따르고, 지연시간 기반 라우팅(Latency-based Routing)은 지연이 가장 짧은 리전을 고른다. IP 기반 라우팅(IP-based Routing)은 클라이언트의 IP 주소 범위인 CIDR에 따라 서로 다른 리소스를 선택한다."]},
+      {"id":"route53.resolver","name":"Route53 Resolver","summary":"Route 53 Resolver는 온프레미스와 AWS VPC 사이의 도메인 이름 기반 접속을 지원한다.","paragraphs":["엔드포인트의 인바운드와 아웃바운드는 AWS를 기준으로 방향을 구분한다.","아웃바운드 엔드포인트는 AWS VPC에서 온프레미스로 향한다. 이를 통해 EC2 같은 AWS 서비스가 db.corp.local처럼 온프레미스 내부에서만 쓰는 도메인에 요청할 수 있다.","인바운드 엔드포인트는 온프레미스에서 AWS VPC로 들어오는 방향이다. 온프레미스 서버가 app.internal.aws처럼 VPC 내부 전용 도메인에 요청할 때 사용한다."]},
+      {"id":"route53.private-hosted-zone","name":"프라이빗 호스팅 영역과 퍼블릭 호스팅 영역","summary":"프라이빗 호스팅 영역은 VPC 내부에서만 쓰는 DNS 관리용이다.","paragraphs":["VPC 안에서만 통하는 도메인 이름을 관리할 때 쓴다. 온프레미스에 있는 Active Directory 도메인을 해석하는 문제는 프라이빗 호스팅 영역으로 풀리지 않는다. 그건 Route 53 Resolver 아웃바운드 엔드포인트의 몹이다.","사내 내부 도메인을 퍼블릭 호스팅 영역에 올리는 것도 답이 아니다. 외부에 노출되면 안 되고, 해석되지도 않을 수 있다."]},
+      {"id":"route53.multivalue-answer-details","name":"다중값 응답 라우팅의 세부 동작","summary":"최대 8개의 정상 레코드를 무작위로 반환하며, 헬스 체크를 연동한다.","paragraphs":["두 리전에 같은 사이트를 띄워 트래픽을 나누되 한쪽이 비정상이면 그쪽으로 보내지 않아야 한다면 이 정책이 답이다. 헬스 체크가 붙어 있어 장애가 난 곳은 응답에서 빠진다.","단순 라우팅은 상태 확인 기반 조건부 라우팅을 지원하지 않는다. 다중값 응답은 사용자의 위치를 고려하지 않는다는 점도 기억해 둠다."]}
+    ]
+  },
+  {
+    "id":"analytics-monitoring","title":"EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch","importance":2,"sourcePages":[38,40],
+    "concepts":[
+      {"id":"analytics-monitoring.emr","name":"EMR (Elastic MapReduce)","summary":"EMR은 빅데이터 작업에 필요한 컴퓨팅을 제공한다.","paragraphs":["대량의 데이터를 처리해야 할 때 사용하는 컴퓨팅 서비스다."]},
+      {"id":"analytics-monitoring.spark","name":"Spark","summary":"Spark는 큰 규모의 데이터를 처리하고 분석하는 오픈소스 엔진이다.","paragraphs":["여러 서버가 대량의 데이터를 동시에 나누어 처리하므로 빠른 작업이 가능하다.","실시간 분석에 알맞은 기술은 아니다."]},
+      {"id":"analytics-monitoring.redshift","name":"RedShift","summary":"RedShift는 대규모 데이터의 신속한 분석을 지원하는 데이터베이스 서비스다.","paragraphs":["많은 양의 데이터를 빠르게 분석해야 하는 작업에 쓰는 AWS 데이터베이스 서비스다."]},
+      {"id":"analytics-monitoring.athena","name":"Athena","summary":"Athena는 S3 데이터를 SQL로 곧바로 조회하는 서비스다.","paragraphs":["데이터를 S3에 둔 채 SQL 쿼리를 실행할 수 있다. 별도의 이동 없이 저장된 데이터를 즉시 분석하는 용도다."]},
+      {"id":"analytics-monitoring.performance-insight","name":"Performance Insight","summary":"Performance Insight는 데이터베이스의 성능을 관찰하는 서비스다.","paragraphs":["데이터베이스가 어떤 성능을 내는지 모니터링할 때 사용한다."]},
+      {"id":"analytics-monitoring.cloudwatch","name":"CloudWatch","summary":"CloudWatch는 AWS 리소스와 애플리케이션의 상태를 관찰한다.","paragraphs":["리소스와 애플리케이션을 모니터링하며 로그를 이용해 동작을 살펴보는 서비스다."]},
+      {"id":"analytics-monitoring.glue","name":"Glue","summary":"Glue는 데이터의 추출·변환·로드를 관리해 주는 ETL 서비스다.","paragraphs":["ETL은 데이터를 꺼내고(Extract), 형태를 바꾸고(Transform), 대상에 적재하는(Load) 과정을 말한다. Glue 자체에는 데이터를 분석하는 기능이 없다."]},
+      {"id":"analytics-monitoring.x-ray","name":"X-Ray","summary":"X-Ray는 요청이 거쳐 가는 서비스 경로를 추적해 보여 준다.","paragraphs":["요청이 인프라 안의 여러 서비스를 통과하며 처리되는 과정을 추적하고 시각화한다. 구성 요소가 많은 인프라나 마이크로서비스에서 요청 흐름을 확인할 때 주로 사용한다."]},
+      {"id":"analytics-monitoring.data-firehose","name":"Data Firehose","summary":"Data Firehose는 실시간 스트림을 목적지 서비스까지 안정적으로 전달한다.","paragraphs":["연속해서 들어오는 실시간 데이터를 지정한 서비스로 전송하고 배달하는 역할을 한다."]},
+      {"id":"analytics-monitoring.kinesis-data-streams","name":"Kinesis Data Streams","summary":"Kinesis Data Streams는 실시간 스트림을 중단 없이 수집한다.","paragraphs":["계속 발생하는 스트림 데이터를 끊김 없이 받아들이는 수집 서비스다."]},
+      {"id":"analytics-monitoring.managed-service-apache-flink","name":"Managed Service for Apache Flink","summary":"들어오는 스트림의 실시간 처리와 분석을 맡는 서비스다.","paragraphs":["흐르는 데이터를 실시간으로 처리하거나 분석하는 데 사용한다."]},
+      {"id":"analytics-monitoring.streaming-services-comparison","name":"Data Firehose vs Kinesis Data Streams vs Managed Service for Apache Flink","summary":"세 서비스는 모두 실시간 스트림을 다루지만 담당 단계가 다르다.","paragraphs":["Data Firehose는 데이터를 목적지로 전송·배달하고, Kinesis Data Streams는 데이터를 수집해 스트림 저장소 역할을 한다.","Managed Service for Apache Flink는 들어오는 스트림을 실시간으로 처리하고 분석한다."]},
+      {"id":"analytics-monitoring.glue-crawler","name":"AWS Glue Crawler","summary":"S3 데이터를 스캔해 바로 쿼리할 수 있는 상태로 준비한다.","paragraphs":["Glue의 ETL 작업(Glue Job)과 역할이 다르다. Crawler는 데이터를 훑어 구조를 파악해두고, 그 결과를 Athena가 SQL로 조회한다.","S3에 막 들어온 데이터를 신속하게 분석해야 하는 문제에서 Crawler + Athena 조합이 정석이다."]},
+      {"id":"analytics-monitoring.log-analysis-options","name":"로그 분석 선택지: OpenSearch와 CloudWatch Logs Insights","summary":"간헐적 대용량 로그는 S3 + Athena, 실시간 로그는 CloudWatch Logs Insights다.","paragraphs":["Amazon OpenSearch는 강력하지만 클러스터를 계속 띄워두어야 해서, \"필요할 때만 가끔 조회한다\"는 요구에는 비용과 운영 부담이 과하다.","CloudWatch Logs Insights는 실시간성 로그와 모니터링에 맞고, 대용량 로그의 장기 저장과 복잡한 분석에서는 S3 + Athena 조합보다 떨어진다."]}
+    ]
+  },
+  {
+    "id":"security-groups-nacl","title":"보안 그룹·NACL","importance":3,"sourcePages":[41,43],
+    "concepts":[
+      {"id":"security-groups-nacl.security-group","name":"보안 그룹 (Security Group)","summary":"보안 그룹은 개별 AWS 리소스로 오가는 트래픽을 통제한다.","paragraphs":["EC2 인스턴스 같은 리소스를 집에 비유하면, 보안 그룹은 바깥의 울타리와 출입문에 해당한다. 리소스에 도달하려는 요청을 문 앞에서 검사하는 방화벽 역할을 한다.","규칙은 들어오는 인바운드와 밖으로 나가는 아웃바운드 트래픽에 각각 적용한다. 허용할 IP 범위와 포트를 지정할 수 있다.","한 보안 그룹에는 여러 AWS 리소스를 넣을 수 있으며 특정 서브넷에 매이지 않는다. 규칙의 대상으로 AWS 리소스나 IP를 사용할 수 있다.","초기 상태에서는 모든 인바운드 트래픽이 막히고 모든 아웃바운드 트래픽은 허용된다. 특정 트래픽을 허용하는 규칙은 추가할 수 있지만 차단 규칙은 추가할 수 없다."]},
+      {"id":"security-groups-nacl.nacl","name":"NACL (Network Access Control List, 네트워크 ACL)","summary":"NACL은 서브넷 경계에서 트래픽을 허용하거나 거부한다.","paragraphs":["기본 규칙은 인바운드와 아웃바운드 모두 모든 트래픽을 허용한다. 필요한 트래픽에 대해서는 허용 규칙뿐 아니라 차단 규칙도 추가할 수 있다.","규칙을 정할 때는 IP만 사용할 수 있으며 AWS 리소스를 대상으로 지정할 수는 없다."]},
+      {"id":"security-groups-nacl.security-group-referencing","name":"보안 그룹 참조","summary":"보안 그룹 규칙의 소스로 다른 보안 그룹 ID를 지정한다.","paragraphs":["특정 EC2 인스턴스들만 DB에 접근하게 하려는데 Auto Scaling으로 인스턴스 IP가 계속 바뀐다면, IP 기반 규칙으로는 관리할 수 없다.","DB 보안 그룹의 인바운드 소스로 애플리케이션 보안 그룹의 ID를 지정하면, 그 보안 그룹에 속한 인스턴스만 통과한다. IP가 바뀌어도 자동으로 따라간다."]},
+      {"id":"security-groups-nacl.nacl-rule-limit","name":"NACL의 규칙 수 제한","summary":"NACL은 규칙 수가 일반적으로 20~40개로 제한된다.","paragraphs":["매장 5만 곳의 공인 IP를 허용하거나 국가별 IP 대역을 차단하는 요구는 NACL로 처리할 수 없다. 이 규모의 IP·국가 필터링은 WAF의 IP 세트나 지리적 일치 규칙으로 간다."]},
+      {"id":"security-groups-nacl.web-acl-vs-nacl","name":"Web ACL과 네트워크 ACL은 다른 것","summary":"Web ACL은 WAF에서만 쓰며 네트워크 ACL과 관계가 없다.","paragraphs":["이름이 비슷해서 헷갈리기 쉽다. Web ACL은 웹 요청을 허용할지 차단할지 판단하는 WAF의 규칙 묶음이고, NACL은 서브넷 경계에서 IP 기반으로 트래픽을 통제하는 기능이다."]}
+    ]
+  },
+  {
+    "id":"secrets-encryption","title":"Secrets Manager·Parameter Store·KMS·ACM","importance":3,"sourcePages":[44,44],
+    "concepts":[
+      {"id":"secrets-encryption.secrets-manager","name":"Secrets Manager","summary":"민감한 비밀값과 설정값을 안전하게 보관하는 서비스다.","paragraphs":["보안에 치명적인 자격 증명 같은 비밀값을 관리할 때 주로 사용한다."]},
+      {"id":"secrets-encryption.parameter-store","name":"System Manager Parameter Store","summary":"애플리케이션의 설정값과 비밀값을 안전하게 보관한다.","paragraphs":["보안에 치명적이지 않은 설정값을 관리하는 용도로 주로 선택한다."]},
+      {"id":"secrets-encryption.secrets-manager-vs-parameter-store","name":"Secrets Manager vs System Manager Parameter Store","summary":"두 서비스는 안전한 값 저장이라는 공통점이 있지만 자동 순환과 주용도가 다르다.","paragraphs":["Secrets Manager와 Systems Manager Parameter Store는 모두 설정값과 비밀값을 안전하게 보관할 수 있다.","Secrets Manager는 저장된 암호 값을 일정 주기로 자동 교체하는 순환 기능을 제공하지만 Parameter Store에는 이 기능이 없다. 따라서 보안에 더 특화된 Secrets Manager는 치명적인 비밀값에, Parameter Store는 상대적으로 덜 민감한 설정값에 주로 사용한다."]},
+      {"id":"secrets-encryption.kms","name":"KMS (Key Management Service)","summary":"암호화에 사용할 키를 만들고 보관하는 서비스다.","paragraphs":["KMS가 관리하는 대상은 암호화 키이며, 애플리케이션 설정값이나 비밀값을 저장하는 서비스는 아니다.","관리 중인 암호화 키를 일정한 주기로 자동 교체하는 순환 기능도 제공한다."]},
+      {"id":"secrets-encryption.acm","name":"ACM (AWS Certificate Manager)","summary":"HTTPS에 필요한 SSL/TLS 인증서를 관리하는 서비스다.","paragraphs":["SSL/TLS 인증서의 발급과 갱신을 ACM이 맡는다."]},
+      {"id":"secrets-encryption.acm-cloudfront-region","name":"CloudFront에 붙일 인증서는 us-east-1에서 발급한다","summary":"CloudFront용 인증서는 us-east-1에서 발급해야 한다.","paragraphs":["S3 버킷이 eu-west-1에 있든 어디에 있든 상관없다. CloudFront는 글로벌 서비스지만 인증서 관리가 us-east-1과 연동되어 있어서, 다른 리전에서 발급한 ACM 인증서는 CloudFront가 직접 쓸 수 없다.","이 제약은 리전 이름까지 그대로 묻는 형태로 출제된다."]},
+      {"id":"secrets-encryption.lambda-env-var-kms","name":"Lambda 환경 변수의 KMS 암호화","summary":"KMS 암호화 시 복호화 권한이 있어야 환경 변수 값을 볼 수 있다.","paragraphs":["Lambda 환경 변수에 DB 접속 정보나 API 키를 평문으로 두면 콘솔 접근 권한이 있는 개발자가 그대로 읽을 수 있다. KMS 키로 암호화하면 저장 시 암호화되고, 콘솔에서도 별도의 복호화 권한을 가진 사용자만 내용을 볼 수 있다.","다만 자격 증명을 주기적으로 자동 교체해야 한다면 이 방식으로는 부족하다. 순환 로직을 직접 만들어야 하므로 Secrets Manager로 간다."]},
+      {"id":"secrets-encryption.cloudhsm","name":"AWS CloudHSM","summary":"매우 높은 수준의 키 보안이 필요할 때 쓰는 전용 하드웨어 모듈이다.","paragraphs":["KMS로 충분한 일반적인 암호화에 CloudHSM을 도입하는 것은 비용과 관리 복잡성이 지나치게 높다. 선택지에 나오면 \"이 정도 요구에 이게 필요한가\"를 먼저 따진다."]},
+      {"id":"secrets-encryption.rotation-heuristic","name":"자동 순환이 나오면 Secrets Manager","summary":"자격 증명의 주기적 자동 교체에는 Secrets Manager를 쓴다.","paragraphs":["\"30일마다 마스터 비밀번호 변경\", \"자격 증명을 정기적으로 교체\", \"자동 순환(Rotation)\" — 표현이 무엇이든 같은 신호다. Secrets Manager는 RDS와 통합되어 이 기능을 기본 제공한다.","Systems Manager Parameter Store는 비밀값을 저장할 수는 있지만 자동 순환 기능이 없고, KMS는 암호화 키를 관리하는 서비스이지 비밀값을 저장하는 서비스가 아니다. Lambda + EventBridge로 직접 구현하는 선택지는 관리 부담 때문에 오답이 된다."]}
+    ]
+  },
+  {
+    "id":"threat-protection","title":"WAF·Shield·GuardDuty·Macie·CloudFront","importance":3,"sourcePages":[45,47],
+    "concepts":[
+      {"id":"threat-protection.waf","name":"WAF (Web Application Firewall)","summary":"웹 요청을 검사해 애플리케이션 계층의 공격을 차단한다.","paragraphs":["WAF는 웹 애플리케이션 앞단에서 HTTP와 HTTPS 요청을 살펴보고 공격 트래픽을 막는다. 인프라에서는 외부 요청이 처음 들어오는 지점에 주로 둔다.","방어 범위는 L7 애플리케이션 계층이다. TCP와 UDP가 속한 L4 전송 계층 공격은 WAF로 막을 수 없다.","IP Set을 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 SQL Injection과 XSS 공격을 방어한다."]},
+      {"id":"threat-protection.shield","name":"Shield","summary":"DDoS 공격을 자동으로 찾아내고 방어하는 보안 서비스다.","paragraphs":["DDoS 위협의 탐지부터 방어까지 Shield가 자동으로 수행한다."]},
+      {"id":"threat-protection.guardduty","name":"GuardDuty","summary":"AWS 계정을 겨냥한 해킹 징후를 감시하고 탐지한다.","paragraphs":["계정과 관련된 공격 활동을 계속 모니터링하여 의심스러운 징후를 찾아낸다.","탐지 결과를 제공할 뿐 공격에 직접 대응하지는 않는다."]},
+      {"id":"threat-protection.macie","name":"Macie","summary":"S3 안의 민감한 데이터를 자동으로 식별하는 서비스다.","paragraphs":["S3에 보관된 데이터에서 개인정보처럼 보호해야 할 내용을 찾아낸다.","민감한 데이터를 자동으로 식별하는 과정에 머신러닝을 활용한다."]},
+      {"id":"threat-protection.cloudfront","name":"CloudFront","summary":"콘텐츠를 캐싱해 세계 각지의 사용자에게 빠르게 전달한다.","paragraphs":["이미지나 파일 등의 콘텐츠를 캐시에 저장해 전 세계 사용자에게 낮은 지연으로 제공한다.","OAC는 원본 접근 주체를 CloudFront로 한정하는 최신 보안 방식이다. 배포 직후 새 결과를 바로 보여줘야 한다면 캐시 무효화로 기존 캐시를 강제로 지울 수 있다.","멀티 오리진을 사용하면 하나의 CloudFront 배포에 여러 원본을 두고 요청 경로별로 응답할 원본을 나눌 수 있다. 예를 들어 `/api/*` 요청은 ELB로, `/images/*` 요청은 S3로 보낼 수 있다."]},
+      {"id":"threat-protection.waf-attach-targets","name":"WAF를 붙일 수 있는 곳","summary":"WAF는 ALB와 CloudFront에 붙지만 NLB에는 붙지 않는다.","paragraphs":["S3 정적 웹사이트 엔드포인트에는 WAF를 직접 연결할 수 없다. S3를 WAF로 보호하려면 앞에 CloudFront를 두고 CloudFront에 WAF를 붙인다.","CloudFront에 붙이면 트래픽이 AWS 네트워크나 온프레미스 오리진에 닿기 전에 검사되므로, 멀티 오리진 구성에서 전체 시스템을 한 번에 보호할 수 있다."]},
+      {"id":"threat-protection.waf-bot-control","name":"AWS WAF Bot Control","summary":"봇 트래픽을 탐지하고 제어하는 데 특화된 WAF 기능이다.","paragraphs":["전 세계에서 오는 악성 봇이 불필요한 요청을 대량으로 보내 컴퓨팅 리소스를 낭비하는 상황에 쓴다. 요청 속도 같은 행동 패턴을 기준으로 판단한다.","알려진 악성 IP를 막는 IP 평판 규칙보다 범위가 넓고, DDoS 방어에 초점을 둔 Shield와는 목적이 다르다."]},
+      {"id":"threat-protection.waf-rule-types","name":"WAF 규칙의 종류","summary":"IP 세트, 지리적 일치, IP 평판 규칙으로 트래픽을 걸러낸다.","paragraphs":["IP 세트는 수많은 IP 주소를 묶어서 허용하거나 차단할 때 쓴다. 단일 악성 IP를 즉시 막는 것도, 매장 5만 곳의 IP만 허용하는 것도 IP 세트다.","지리적 일치 규칙은 국가 코드 기준으로 허용·차단한다. \"미국과 한국에서 오는 트래픽만 허용\"이 여기에 해당한다.","IP 평판 규칙은 이미 알려진 악성 IP를 차단하는 관리형 규칙이다."]},
+      {"id":"threat-protection.shield-advanced-drt","name":"Shield Advanced와 DRT","summary":"DRT 지원이 필요한 정교한 DDoS 방어에는 Shield Advanced를 쓴다.","paragraphs":["기본 Shield를 넘어서는 영역이다. 문제에 \"AWS의 전담 대응 팀 지원\"이나 \"대규모 볼륨 공격에 대한 인프라 보호\"가 나오면 Advanced를 고른다.","WAF는 애플리케이션 계층 공격 방어에는 유효하지만 DRT 지원은 제공하지 않는다."]},
+      {"id":"threat-protection.guardduty-db-login","name":"GuardDuty의 데이터베이스 로그인 이상 탐지","summary":"GuardDuty는 비정상 DB 로그인 실패와 수상한 접속을 탐지한다.","paragraphs":["계정 수준의 해킹 모니터링만 하는 것이 아니라 데이터베이스 로그인 이상까지 잡아낸다. CloudTrail은 AWS API 호출을 기록할 뿐 데이터베이스 내부의 로그인 시도는 남기지 않으므로 같은 요구를 충족하지 못한다."]},
+      {"id":"threat-protection.security-service-lineup","name":"헷갈리기 쉬운 보안 서비스 네 가지","summary":"헷갈리기 쉬운 네 가지 보안 서비스의 역할을 구분한다.","paragraphs":["**Amazon Detective** — 보안 문제를 조사하고 분석하는 도구다. 트래픽을 능동적으로 차단하지 않으므로 \"즉시 차단\"이 요구인 문제에서는 오답이다.","**Amazon Inspector** — EC2 인스턴스의 보안 취약점을 스캔한다. 소프트웨어 패치 누락, CVE 취약점을 탐지하며 DDoS 방어와는 무관하다.","**AWS Firewall Manager** — 여러 계정의 방화벽 규칙을 통합 관리한다. 단일 계정·단일 ALB 상황이라면 WAF를 직접 쓰는 편이 간단하다.","**AWS Network Firewall** — 네트워크 계층 방화벽이다. 웹 애플리케이션 계층(L7) 보안에는 WAF가 더 적합하고, 정적 웹 호스팅에 쓰기에는 과한 구성이 된다."]}
+    ]
+  },
+  {
+    "id":"identity-access","title":"IAM·Identity Center·STS·Cognito·CloudTrail","importance":3,"sourcePages":[48,49],
+    "concepts":[
+      {"id":"identity-access.iam","name":"IAM (Identity And Access Management)","summary":"AWS 리소스를 누가 사용할 수 있는지 접근 권한을 관리한다.","paragraphs":["IAM 사용자는 AWS 서비스를 이용하는 사람이나 애플리케이션을 나타낸다. 이 사용자는 발급받은 Access Key로 AWS 서비스에 접근하며, 키의 보관 책임도 직접 진다. 키가 노출되면 보안에 큰 피해를 줄 수 있다.","Access Key에는 만료 시점이 없어서 장기 자격 증명으로 분류한다. 유출된 장기 자격 증명은 회수할 방법이 없으므로, 권한을 줄 때는 IAM 사용자보다 IAM 역할을 이용하는 방식이 권장된다.","IAM 역할은 원래 접근 권한이 없는 사용자나 서비스에 AWS 리소스 권한을 부여한다. Access Key 같은 자격 증명을 서로 전달할 필요가 없으며, 필요할 때 언제든 역할을 해제할 수 있다."]},
+      {"id":"identity-access.identity-center","name":"Identity Center","summary":"여러 AWS 계정의 인증과 권한 부여를 한곳에서 통합 관리한다.","paragraphs":["Identity Center는 여러 계정의 사용자 인증을 중앙에서 일괄 처리한다. 허용 권한을 미리 정의한 템플릿인 Permission Set을 사용자 또는 그룹에 부여해 권한을 인가하며, 그룹을 이용하면 여러 사용자에게 같은 권한을 한 번에 적용할 수 있다.","AWS 외부에서 신원을 확인하는 IdP와도 연동한다. 그 대상으로는 온프레미스 AD를 비롯해 Google Workspace와 Microsoft Entra ID가 있다. 또한 관리 대상인 모든 계정에 OTP나 SMS 인증 코드 같은 MFA 사용을 의무화할 수 있다."]},
+      {"id":"identity-access.sts","name":"STS (Security Token Service)","summary":"Access Key나 Token 형태로 쓸 수 있는 임시 권한을 발급한다.","paragraphs":["STS가 제공하는 자격 증명은 일정 시간이 지나면 만료된다.","토큰의 유효 기간이 제한되어 있으므로 노출되었을 때의 위험은 장기 자격 증명보다 상대적으로 작다."]},
+      {"id":"identity-access.cognito","name":"Cognito","summary":"웹 및 모바일 앱에서 JWT 기반 사용자 인증과 인가를 처리한다.","paragraphs":["애플리케이션에 필요한 로그인과 회원가입 기능을 제공하며, 그 과정에서 JWT를 기반으로 인증과 인가를 담당한다."]},
+      {"id":"identity-access.cloudtrail","name":"CloudTrail","summary":"AWS 계정 안에서 실행된 API 호출 이벤트를 빠짐없이 기록한다.","paragraphs":["계정에서 발생한 모든 AWS API 호출을 이벤트로 남긴다.","기록에는 어느 계정이 어떤 AWS 기능을 사용했는지가 담기므로 활동을 감시하는 로그로 활용한다."]},
+      {"id":"identity-access.aws-config","name":"AWS Config","summary":"AWS 리소스의 설정 변경 이력을 기록하고 검사한다.","paragraphs":["리소스 구성이 시간의 흐름에 따라 어떻게 달라졌는지 추적한다. 설정을 바꾼 시점과 주체, 변경 내용을 기록으로 남긴다."]},
+      {"id":"identity-access.least-privilege","name":"최소 권한 원칙 (Least Privilege)","summary":"업무 수행에 딱 필요한 만큼의 권한만 부여하는 원칙이다.","paragraphs":["개발자 실수로 인한 데이터 유출을 막으려는 문제에서 답의 방향을 정하는 원칙이다. 계정 공유나 모든 리소스에 접근 가능한 액세스 키 지급은 이 원칙을 정면으로 어긴다.","권한을 IAM 사용자 개개인에게 직접 붙이는 대신 IAM 역할로 관리하면 권한 관리가 쉬워지고 보안성도 올라간다."]},
+      {"id":"identity-access.instance-profile","name":"IAM 인스턴스 프로파일","summary":"IAM 역할을 EC2에 붙이는 매개체이며 역할은 장기 키를 갖지 않는다.","paragraphs":["EC2가 S3나 Secrets Manager 같은 다른 AWS 서비스를 호출해야 할 때는 인스턴스 안에 액세스 키를 저장하지 않고 IAM 역할을 인스턴스 프로파일에 연결한다. 이것이 보안 모범 사례이며, 어떤 형태로든(하드코딩·파일 저장·스크립트 조회) 장기 키를 인스턴스에 두는 선택지는 오답이다.","IAM 역할은 액세스 키 ID와 비밀 액세스 키를 갖지 않는다. 대신 STS를 통해 임시 자격 증명을 받는다. \"역할의 키를 만들어 연결한다\"는 선택지는 기술적으로 성립하지 않는 문장이다."]},
+      {"id":"identity-access.iam-group-users-only","name":"IAM 그룹에는 EC2를 넣을 수 없다","summary":"IAM 그룹은 사용자 집합이라 EC2 같은 리소스를 넣을 수 없다.","paragraphs":["EC2에 권한을 주는 선택지로 \"IAM 그룹에 인스턴스를 추가한다\"가 나오면 성립하지 않는 문장이다. 컴퓨팅 리소스에는 IAM 역할을 쓴다.","리소스 자체에 ID 기반 정책을 직접 붙이는 것도 불가능하다. 반드시 IAM 역할이라는 자격 증명 주체를 거쳐야 한다."]},
+      {"id":"identity-access.sts-assume-role","name":"STS로 임시 자격 증명 받기","summary":"AWS 밖의 주체가 장기 키 없이 리소스를 쓰도록 임시 자격 증명을 준다.","paragraphs":["온프레미스 애플리케이션이 S3에 로그를 올려야 하는데 장기 자격 증명을 쓸 수 없다면, STS로 역할을 맡아(AssumeRole) 유효 기간이 있는 임시 자격 증명을 받는다.","단기 프로젝트에 투입된 외부 인원에게 권한을 줄 때도 마찬가지다. 시간이 지나면 자동으로 만료되므로 별도의 회수 절차가 필요 없다. 영구적인 IAM 사용자를 만들었다가 나중에 지우는 방식은 삭제를 잊으면 보안 구멍이 된다."]},
+      {"id":"identity-access.cognito-pools","name":"Cognito 사용자 풀과 자격 증명 풀","summary":"사용자 풀은 인증, 자격 증명 풀은 AWS 리소스 접근 권한을 맡는다.","paragraphs":["사용자 풀(User Pool)로 로그인을 처리하고, 자격 증명 풀(Identity Pool)로 인증된 사용자에게 S3 같은 AWS 리소스에 접근할 임시 권한을 준다. \"사용자 풀만으로 S3 접근 권한을 준다\"는 선택지는 역할이 어긋난 문장이다.","Cognito는 구글·페이스북 같은 외부 소셜 ID 공급자(IdP)를 통한 로그인도 지원한다. API Gateway를 보호하면서 소셜 로그인을 붙여야 하는 문제에서 이 조합이 답이 된다."]},
+      {"id":"identity-access.organizations-scp","name":"AWS Organizations와 SCP","summary":"SCP는 계정이 절대 해서는 안 되는 행동을 제한하는 정책이다.","paragraphs":["SCP(서비스 제어 정책)는 금지 목록을 거는 도구다. 비정상 패턴을 탐지하거나 분석하는 기능은 없으므로, 위협 탐지를 묻는 문제에서 SCP가 보이면 오답이다.","Organizations 환경에서 비용 할당 태그를 쓸 때는 관리 계정에서 한 번만 활성화하면 되고, 멤버 계정에서 개별로 활성화할 필요가 없다."]}
+    ]
+  },
+  {
+    "id":"cost-management","title":"절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor","importance":2,"sourcePages":[50,50],
+    "concepts":[
+      {"id":"cost-management.savings-plan","name":"절약 플랜 (Savings Plan)","summary":"정해진 기간과 사용량을 약속하는 대신 AWS 요금을 할인받는 모델이다.","paragraphs":["약정 조건에 따라 할인 요금이 적용되어 AWS 비용을 줄일 수 있다.","컴퓨팅 절약 플랜은 가장 유연한 유형으로, EC2뿐 아니라 AWS Fargate와 AWS Lambda에도 할인이 적용된다. EC2 인스턴스 절약 플랜은 m5 계열처럼 특정 인스턴스 유형과 리전을 정해 약정하는 방식이다."]},
+      {"id":"cost-management.aws-budgets","name":"AWS Budgets","summary":"향후 사용량과 비용을 예측해 예산을 세우고 초과 알림을 제공한다.","paragraphs":["예상되는 AWS 사용량과 지출을 바탕으로 예산을 설정하며, 실제 값이 예산을 넘으면 알려준다.","리소스에 비용 태그를 지정하면 해당 태그가 달린 리소스만 별도로 예산에 포함해 초과 여부를 감시할 수 있다."]},
+      {"id":"cost-management.cost-explorer","name":"Cost Explorer","summary":"이미 발생한 과거 및 현재의 AWS 비용을 분석한다.","paragraphs":["발생한 지출을 살펴보는 비용 분석 서비스다.","AWS 리소스에 붙인 태그를 기준으로 비용을 나누고 합산할 수 있다. 팀별, 프로젝트별 또는 환경별 지출을 확인하려는 경우에 활용한다."]},
+      {"id":"cost-management.billing-and-cost-management","name":"Billing and Cost Management","summary":"AWS 사용 요금을 조회하고 결제하며 관리하는 콘솔이다.","paragraphs":["청구된 요금을 확인하는 일부터 결제와 비용 관리까지 한곳에서 처리한다."]},
+      {"id":"cost-management.trusted-advisor","name":"Trusted Advisor","summary":"AWS 환경을 자동 진단하고 개선 방향을 권고한다.","paragraphs":["환경을 점검한 결과를 토대로 비용을 줄이거나 성능을 높이는 등의 권장 사항을 제시한다."]},
+      {"id":"cost-management.cost-allocation-tag-activation","name":"비용 할당 태그는 활성화해야 보인다","summary":"비용 할당 태그는 결제 콘솔에서 활성화해야 Cost Explorer에 보인다.","paragraphs":["순서가 중요하다. 먼저 리소스에 태그를 붙이고, 그다음 결제 대시보드에서 그 사용자 정의 태그를 활성화(Activate)해야 비용 분석 도구에서 쓸 수 있다.","이 두 단계를 함께 고르는 형태로 반복 출제된다. `aws:createdBy` 같은 시스템 태그는 부서별 비용 분석용이 아니다."]},
+      {"id":"cost-management.savings-plan-details","name":"절약 플랜의 적용 범위와 결제 옵션","summary":"컴퓨팅 절약 플랜은 EC2·Fargate·Lambda에 적용되며 1년/3년 약정이다.","paragraphs":["EC2와 Lambda를 함께 쓰거나 EC2와 Fargate를 섞어 쓰는 환경에서는 EC2 인스턴스 절약 플랜으로 할인을 받지 못하는 부분이 생긴다. 컴퓨팅 절약 플랜을 고른다.","결제 옵션은 선결제 없음(No Upfront), 부분 선결제(Partial Upfront), 전액 선결제(All Upfront)가 있다. \"다년 계약에 묶이고 싶지 않다\"는 조건이면 1년 + 선결제 없음이 답이다."]},
+      {"id":"cost-management.cost-anomaly-detection","name":"Cost Anomaly Detection","summary":"예산 초과가 아닌 평소와 다른 이상 지출 패턴을 감지한다.","paragraphs":["\"예산의 60%에 도달하면 알림\"처럼 임계값 기반 요구에는 AWS Budgets가 맞다. 이상 탐지는 목적이 다르므로 그런 문제에서는 오답이다."]},
+      {"id":"cost-management.compute-optimizer","name":"AWS Compute Optimizer","summary":"리소스 사양 최적화를 권장하며 비용 집계나 보고는 하지 않는다.","paragraphs":["팀별 비용을 집계해 보고서를 만드는 문제에 나오면 오답이다. 그 자리는 비용 할당 태그 + Cost Explorer다.","권장 사항을 제공한다는 점에서 Trusted Advisor와 성격이 비슷하고, 둘 다 예산 임계값 알림 기능은 없다."]}
+    ]
+  }
+]

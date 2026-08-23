@@ -1,0 +1,88 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "1-exam-gaps",
+  "steps": [
+    {
+      "step": 0,
+      "name": "concepts-gap-foundation",
+      "status": "completed",
+      "summary": "4개 기존 주제의 concepts 배열 끝에 exam-gaps 보충 개념 9개를 추가하고 무결성 테스트를 보강함",
+      "started_at": "2026-08-23T20:44:57+0900",
+      "completed_at": "2026-08-23T20:47:58+0900"
+    },
+    {
+      "step": 1,
+      "name": "concepts-gap-database",
+      "status": "completed",
+      "summary": "RDS와 Aurora·DynamoDB 주제의 concepts 배열 끝에 exam-gaps 보충 개념 9개를 추가하고 무결성 테스트를 보강함",
+      "started_at": "2026-08-23T20:54:25+0900",
+      "completed_at": "2026-08-23T20:56:34+0900"
+    },
+    {
+      "step": 2,
+      "name": "concepts-gap-compute",
+      "status": "completed",
+      "started_at": "2026-08-23T20:57:12+0900",
+      "summary": "컴퓨팅·서버리스·메시징 3개 주제의 concepts 배열 끝에 exam-gaps 보충 개념 21개를 추가하고 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:08:48+09:00"
+    },
+    {
+      "step": 3,
+      "name": "concepts-gap-network",
+      "status": "completed",
+      "started_at": "2026-08-23T21:08:57+0900",
+      "summary": "네트워크·하이브리드·라우팅·분석 4개 주제의 concepts 배열 끝에 exam-gaps 보충 개념 15개를 추가하고 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:14:58+0900"
+    },
+    {
+      "step": 4,
+      "name": "concepts-gap-security",
+      "status": "completed",
+      "started_at": "2026-08-23T21:15:34+0900",
+      "summary": "보안·자격 증명·비용 관리 5개 주제의 concepts 배열 끝에 exam-gaps 보충 개념 23개를 추가하고 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:20:23+0900"
+    },
+    {
+      "step": 5,
+      "name": "questions-gap-foundation",
+      "status": "completed",
+      "started_at": "2026-08-23T21:20:58+0900",
+      "summary": "기초·S3·스토리지 보충 개념 9개에 대응하는 q170–q178 문항을 추가하고 데이터 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:23:04+0900"
+    },
+    {
+      "step": 6,
+      "name": "questions-gap-database",
+      "status": "completed",
+      "started_at": "2026-08-23T21:23:59+0900",
+      "summary": "RDS와 Aurora·DynamoDB 보충 개념 9개에 대응하는 q179–q187 문항을 추가하고 데이터 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:27:24+0900"
+    },
+    {
+      "step": 7,
+      "name": "questions-gap-compute",
+      "status": "completed",
+      "started_at": "2026-08-23T21:27:38+0900",
+      "summary": "컴퓨팅·서버리스·메시징 보충 개념 21개에 대응하는 q188–q208 문항을 추가하고 데이터 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:30:27+0900"
+    },
+    {
+      "step": 8,
+      "name": "questions-gap-network",
+      "status": "completed",
+      "started_at": "2026-08-23T21:30:48+0900",
+      "summary": "네트워크·하이브리드·라우팅·분석 보충 개념 15개에 대응하는 q209–q223 문항을 추가하고 데이터 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:33:03+0900"
+    },
+    {
+      "step": 9,
+      "name": "questions-gap-security",
+      "status": "completed",
+      "started_at": "2026-08-23T21:33:29+0900",
+      "summary": "보안·자격 증명·비용 관리 보충 개념 23개에 대응하는 q224–q246 문항을 추가하고 phase 전체 정답 분포 테스트를 보강함",
+      "completed_at": "2026-08-23T21:42:44+0900"
+    }
+  ],
+  "created_at": "2026-08-23T20:44:57+0900",
+  "completed_at": "2026-08-23T21:42:44+0900"
+}

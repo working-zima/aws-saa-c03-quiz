@@ -1,0 +1,120 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "0-mvp",
+  "steps": [
+    {
+      "step": 0,
+      "name": "project-setup",
+      "status": "completed",
+      "summary": "Vite 5.4.21, React 18.3.1, Tailwind CSS 3.4.19, Vitest 1.6.1 기반 프로젝트 설정 및 최소 App 테스트 완료",
+      "started_at": "2026-08-23T15:32:38+0900",
+      "completed_at": "2026-08-23T15:34:42+0900"
+    },
+    {
+      "step": 1,
+      "name": "content-types",
+      "status": "completed",
+      "summary": "학습 콘텐츠·진행 상태 타입과 빈 정적 JSON 진입점, 데이터 무결성 검증 테스트 9개를 추가",
+      "started_at": "2026-08-23T15:38:58+0900",
+      "completed_at": "2026-08-23T15:40:31+0900"
+    },
+    {
+      "step": 2,
+      "name": "concepts-core",
+      "status": "completed",
+      "summary": "원본 1~18페이지 기반 8개 주제와 30개 concept 데이터 및 개념 스키마 검증 테스트 4개 추가",
+      "started_at": "2026-08-23T15:43:10+0900",
+      "completed_at": "2026-08-23T15:48:28+0900"
+    },
+    {
+      "step": 3,
+      "name": "progress-lib",
+      "status": "completed",
+      "summary": "React 비의존 진행 상태 갱신·채점·통계·복습 계산과 장애 안전 localStorage 계층 및 순수 단위 테스트 15개 추가",
+      "started_at": "2026-08-23T15:53:57+0900",
+      "completed_at": "2026-08-23T15:55:58+0900"
+    },
+    {
+      "step": 4,
+      "name": "app-shell",
+      "status": "completed",
+      "summary": "HashRouter 기반 4개 화면 라우팅과 공통 Layout, useProgress 훅, UI 색상 토큰 및 React Hooks 린트 규칙을 추가",
+      "started_at": "2026-08-23T15:58:28+0900",
+      "completed_at": "2026-08-23T16:02:29+0900"
+    },
+    {
+      "step": 5,
+      "name": "topic-list-page",
+      "status": "completed",
+      "summary": "전체 진행률과 중요도·학습 상태를 표시하는 주제 카드 목록 및 주입형 React 테스트 5개를 추가",
+      "started_at": "2026-08-23T16:23:42+0900",
+      "completed_at": "2026-08-23T16:25:02+0900"
+    },
+    {
+      "step": 6,
+      "name": "concept-read-page",
+      "status": "completed",
+      "summary": "주제별 개념 본문·중요도·퀴즈 이동과 안전한 미존재 안내, 진입 시 읽음 처리를 갖춘 개념 읽기 화면 및 테스트 4개를 추가",
+      "started_at": "2026-08-23T16:26:22+0900",
+      "completed_at": "2026-08-23T16:28:21+0900"
+    },
+    {
+      "step": 7,
+      "name": "questions-core",
+      "status": "completed",
+      "summary": "원본 1~18페이지 기반 주제 1~8 확인 문제 총 57문항(q001~q057)과 균등한 정답 위치 분포를 추가",
+      "started_at": "2026-08-23T16:42:23+0900",
+      "completed_at": "2026-08-23T16:44:48+0900"
+    },
+    {
+      "step": 8,
+      "name": "quiz-page",
+      "status": "completed",
+      "summary": "문항별 즉시 채점·정오답 표시·해설·진행 기록과 완료 결과 및 빈 문항 안내를 갖춘 확인 문제 화면과 테스트 6개를 추가",
+      "started_at": "2026-08-23T16:47:29+0900",
+      "completed_at": "2026-08-23T16:50:39+0900"
+    },
+    {
+      "step": 9,
+      "name": "review-page",
+      "status": "completed",
+      "summary": "오답 개념을 주제별로 묶고 상태별 빈 안내와 개념·퀴즈 이동 링크를 제공하는 복습 화면 및 테스트 5개를 추가",
+      "started_at": "2026-08-23T16:53:04+0900",
+      "completed_at": "2026-08-23T16:55:06+0900"
+    },
+    {
+      "step": 10,
+      "name": "concepts-data-network",
+      "status": "completed",
+      "summary": "원본 19~35페이지 기반 7개 주제와 29개 concept 데이터 및 네트워크 데이터 검증 테스트 2개 추가",
+      "started_at": "2026-08-23T17:12:37+0900",
+      "completed_at": "2026-08-23T17:15:57+0900"
+    },
+    {
+      "step": 11,
+      "name": "concepts-security-ops",
+      "status": "completed",
+      "summary": "원본 36~50페이지 기반 7개 주제와 38개 concept 데이터 및 보안·운영 데이터 검증 테스트 2개 추가",
+      "started_at": "2026-08-23T17:15:58+0900",
+      "completed_at": "2026-08-23T17:19:16+0900"
+    },
+    {
+      "step": 12,
+      "name": "questions-data-network",
+      "status": "completed",
+      "summary": "원본 19~35페이지 기반 주제 9~15 확인 문제 59문항을 추가해 누적 총 116문항(q001~q116)을 완성",
+      "started_at": "2026-08-23T17:20:53+0900",
+      "completed_at": "2026-08-23T17:25:43+0900"
+    },
+    {
+      "step": 13,
+      "name": "questions-security-ops",
+      "status": "completed",
+      "summary": "원본 36~50페이지 기반 주제 16~22 확인 문제 53문항을 추가해 누적 총 169문항(q001~q169)을 완성",
+      "started_at": "2026-08-23T17:25:44+0900",
+      "completed_at": "2026-08-23T17:29:21+0900"
+    }
+  ],
+  "created_at": "2026-08-23T15:32:38+0900",
+  "completed_at": "2026-08-23T17:32:09+0900"
+}
