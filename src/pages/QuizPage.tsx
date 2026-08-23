@@ -28,7 +28,7 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
 
   if (!topicId || topicQuestions.length === 0) {
     return (
-      <section className="max-w-2xl space-y-8 break-keep">
+      <section className="max-w-2xl space-y-8 break-keep break-anywhere">
         <div className="space-y-3">
           <h1 className="text-2xl font-semibold text-title">아직 확인 문제가 없습니다.</h1>
           <p className="text-[15px] leading-7 text-neutral-300">이 주제의 확인 문제는 준비 중입니다.</p>
@@ -42,7 +42,7 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
   if (complete) {
     const hasIncorrectAnswer = correctCount < topicQuestions.length
     return (
-      <section className="max-w-2xl space-y-8 break-keep">
+      <section className="max-w-2xl space-y-8 break-keep break-anywhere">
         <div className="space-y-3">
           <h1 className="text-2xl font-semibold text-title">확인 문제 완료</h1>
           <p className="text-[15px] leading-7 text-neutral-300">맞힌 개수 {correctCount} / {topicQuestions.length}</p>
@@ -77,7 +77,7 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
   }
 
   return (
-    <section className="max-w-2xl space-y-8 break-keep">
+    <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <header className="space-y-3">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">확인 문제</h1>

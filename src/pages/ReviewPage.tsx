@@ -30,7 +30,7 @@ export function ReviewPage({
   const hasAnswered = questions.some((question) => question.id in progress.answers)
 
   return (
-    <section className="max-w-3xl space-y-8 break-keep">
+    <section className="max-w-3xl space-y-8 break-keep break-anywhere">
       <h1 className="text-2xl font-semibold text-title">복습</h1>
 
       {reviewGroups.length === 0 ? (

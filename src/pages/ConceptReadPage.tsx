@@ -26,7 +26,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
 
   if (!topic) {
     return (
-      <section className="max-w-2xl space-y-8 break-keep">
+      <section className="max-w-2xl space-y-8 break-keep break-anywhere">
         <div className="space-y-3">
           <h1 className="text-2xl font-semibold text-title">주제를 찾을 수 없습니다.</h1>
           <p className="text-[15px] leading-7 text-neutral-300">요청한 학습 주제가 존재하지 않습니다.</p>
@@ -41,7 +41,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
   const importance = topic.importance === 0 ? null : importanceLabel[topic.importance]
 
   return (
-    <section className="max-w-2xl space-y-8 break-keep">
+    <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <header className="space-y-3">
         <div className="flex items-start justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">{topic.title}</h1>

@@ -42,6 +42,12 @@ function renderPage(progress: Progress) {
 }
 
 describe('ReviewPage', () => {
+  it('최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
+    const { container } = renderPage({ version: 1, read: {}, answers: {} })
+
+    expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
+  })
+
   it('오답이 있는 개념을 주제별로 묶어 렌더한다', () => {
     renderPage({ version: 1, read: {}, answers: { q001: false, q003: false } })
 
