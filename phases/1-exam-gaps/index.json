@@ -61,7 +61,10 @@
     {
       "step": 7,
       "name": "questions-gap-compute",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T21:27:38+0900",
+      "summary": "컴퓨팅·서버리스·메시징 보충 개념 21개에 대응하는 q188–q208 문항을 추가하고 데이터 무결성 테스트를 보강함",
+      "completed_at": "2026-08-23T21:30:27+0900"
     },
     {
       "step": 8,
