@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "app-shell",
-      "status": "pending"
+      "status": "completed",
+      "summary": "HashRouter 기반 4개 화면 라우팅과 공통 Layout, useProgress 훅, UI 색상 토큰 및 React Hooks 린트 규칙을 추가",
+      "started_at": "2026-08-23T15:58:28+0900",
+      "completed_at": "2026-08-23T16:02:29+0900"
     },
     {
       "step": 5,
