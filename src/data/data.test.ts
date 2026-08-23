@@ -453,6 +453,83 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('보안·자격 증명·비용 관리 보충 문제 23개가 새 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(223, 246)
+    const expectedConceptIds = [
+      'security-groups-nacl.security-group-referencing',
+      'security-groups-nacl.nacl-rule-limit',
+      'security-groups-nacl.web-acl-vs-nacl',
+      'secrets-encryption.acm-cloudfront-region',
+      'secrets-encryption.lambda-env-var-kms',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.rotation-heuristic',
+      'threat-protection.waf-attach-targets',
+      'threat-protection.waf-bot-control',
+      'threat-protection.waf-rule-types',
+      'threat-protection.shield-advanced-drt',
+      'threat-protection.guardduty-db-login',
+      'threat-protection.security-service-lineup',
+      'identity-access.least-privilege',
+      'identity-access.instance-profile',
+      'identity-access.iam-group-users-only',
+      'identity-access.sts-assume-role',
+      'identity-access.cognito-pools',
+      'identity-access.organizations-scp',
+      'cost-management.cost-allocation-tag-activation',
+      'cost-management.savings-plan-details',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.compute-optimizer',
+    ]
+
+    expect(addedQuestions).toHaveLength(23)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 23 }, (_, index) => `q${index + 224}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(3).fill('security-groups-nacl'),
+      ...Array(4).fill('secrets-encryption'),
+      ...Array(6).fill('threat-protection'),
+      ...Array(6).fill('identity-access'),
+      ...Array(4).fill('cost-management'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...expectedConceptIds].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(23)
+  })
+
+  it('보안·자격 증명·비용 관리 보충 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(223, 246)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    expect(answerCounts).toEqual([6, 6, 6, 5])
+    addedQuestions.forEach(({ choices }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+  })
+
+  it('전체 보충 문제 q170~q246의 정답 위치가 고르게 퍼져 있다', () => {
+    const gapQuestions = questions.slice(169, 246)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => gapQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+
+    expect(gapQuestions).toHaveLength(77)
+    answerCounts.forEach((count) => {
+      expect(count / gapQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / gapQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+  })
+
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
     expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
       id,
