@@ -61,7 +61,10 @@
     {
       "step": 7,
       "name": "rewrite-security",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T23:13:45+0900",
+      "summary": "비밀·암호화와 위협 방어 2개 주제의 개념 10개를 사실과 문항 근거를 보존한 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T23:15:53+0900"
     },
     {
       "step": 8,
