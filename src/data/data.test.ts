@@ -214,7 +214,7 @@ describe('학습 데이터 무결성', () => {
       ...Array(9).fill('identity-access'),
       ...Array(6).fill('cost-management'),
     ]
-    const addedQuestions = questions.slice(116)
+    const addedQuestions = questions.slice(116, 169)
 
     expect(addedQuestions).toHaveLength(53)
     expect(addedQuestions.map(({ id }) => id)).toEqual(
@@ -224,7 +224,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 주제 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
-    const addedQuestions = questions.slice(116)
+    const addedQuestions = questions.slice(116, 169)
     const answerCounts = [0, 1, 2, 3].map(
       (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
     )
@@ -237,6 +237,58 @@ describe('학습 데이터 무결성', () => {
       expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
     })
     expect(learnerFacingText).not.toMatch(/원본에서|원본은|문서에서|본문에서|위 글에 따르면/)
+  })
+
+  it('기초·스토리지 보충 문제 9개가 새 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(169)
+    const expectedConceptIds = [
+      'aws-core-services.exam-heuristics',
+      's3-versioning-lifecycle.object-lock-prerequisites',
+      's3-versioning-lifecycle.event-notification',
+      's3-encryption-batch.envelope-encryption',
+      's3-encryption-batch.sse-kms-cost',
+      'block-file-storage.cluster-placement-group',
+      'block-file-storage.ebs-elastic-volumes',
+      'block-file-storage.efs-lifecycle-management',
+      'block-file-storage.fsx-ontap-multi-az',
+    ]
+
+    expect(addedQuestions).toHaveLength(9)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 9 }, (_, index) => `q${index + 170}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      'aws-core-services',
+      's3-versioning-lifecycle',
+      's3-versioning-lifecycle',
+      's3-encryption-batch',
+      's3-encryption-batch',
+      'block-file-storage',
+      'block-file-storage',
+      'block-file-storage',
+      'block-file-storage',
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId)).toEqual(expectedConceptIds)
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(9)
+  })
+
+  it('기초·스토리지 보충 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(169)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    expect(answerCounts).toEqual([2, 2, 2, 3])
+    addedQuestions.forEach(({ choices }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
   })
 
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
