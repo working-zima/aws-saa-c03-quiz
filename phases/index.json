@@ -12,7 +12,8 @@
     },
     {
       "dir": "2-rewrite",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-23T23:18:17+0900"
     }
   ]
 }
