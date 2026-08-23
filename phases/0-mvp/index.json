@@ -1,0 +1,20 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "0-mvp",
+  "steps": [
+    { "step": 0,  "name": "project-setup",           "status": "pending" },
+    { "step": 1,  "name": "content-types",           "status": "pending" },
+    { "step": 2,  "name": "concepts-core",           "status": "pending" },
+    { "step": 3,  "name": "progress-lib",            "status": "pending" },
+    { "step": 4,  "name": "app-shell",               "status": "pending" },
+    { "step": 5,  "name": "topic-list-page",         "status": "pending" },
+    { "step": 6,  "name": "concept-read-page",       "status": "pending" },
+    { "step": 7,  "name": "questions-core",          "status": "pending" },
+    { "step": 8,  "name": "quiz-page",               "status": "pending" },
+    { "step": 9,  "name": "review-page",             "status": "pending" },
+    { "step": 10, "name": "concepts-data-network",   "status": "pending" },
+    { "step": 11, "name": "concepts-security-ops",   "status": "pending" },
+    { "step": 12, "name": "questions-data-network",  "status": "pending" },
+    { "step": 13, "name": "questions-security-ops",  "status": "pending" }
+  ]
+}
