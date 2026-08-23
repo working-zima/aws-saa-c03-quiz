@@ -67,9 +67,10 @@ rounded-lg bg-[#141414] border border-neutral-800 p-5 hover:border-neutral-700
 
 ### 버튼
 ```
-Primary: rounded-md bg-neutral-100 text-neutral-900 px-4 py-2 hover:bg-white
-Ghost:   rounded-md text-neutral-400 px-4 py-2 hover:text-neutral-100
+Primary: inline-flex items-center min-h-[44px] rounded-md bg-neutral-100 text-neutral-900 px-4 py-2 hover:bg-white
+Ghost:   inline-flex items-center min-h-[44px] rounded-md text-neutral-400 px-4 py-2 hover:text-neutral-100
 ```
+`min-h-[44px]`는 장식이 아니다. 손가락으로 누르는 최소 크기다. 아래 "터치 영역"을 봐라.
 
 ### 진행률 표시
 막대 하나. 퍼센트 숫자를 옆에 둔다.
@@ -86,6 +87,25 @@ h-1 rounded-full bg-neutral-800  /  내부: bg-neutral-300
 - 정렬: 좌측 정렬 기본. 본문을 중앙 정렬하지 마라.
 - 간격: 요소 간 `gap-3`, 섹션 간 `space-y-8`
 
+### 모바일
+
+**세로 스크롤만 있는 앱이다. 가로 스크롤이 생기면 버그다.**
+
+기준 폭은 **320px**이다. 이 폭에서 어떤 요소도 화면 밖으로 나가면 안 된다.
+`max-w-*`는 상한일 뿐 하한을 보장하지 않는다 — 좁은 화면에서 무엇이 안 줄어드는지가 문제다.
+
+- 좁힐 수 없는 폭을 만들지 마라. `flex`/`grid` 자식은 기본값이 `min-width: auto`라서
+  **내용의 min-content보다 작아지지 않는다.** 긴 텍스트가 든 자식은 이 값 때문에 컨테이너를 밀어낸다.
+- 가로줄에 `shrink-0`을 붙인 요소가 있으면, 나머지가 0까지 줄어든 뒤 그 요소가 화면 밖으로 밀려난다.
+  `shrink-0`은 폭이 확정된 작은 요소(별 표시·배지)에만 쓴다.
+
+### 터치 영역
+
+누를 수 있는 모든 것(`a`, `button`)은 **최소 높이 44px**을 확보한다.
+`px-4 py-2`만으로는 36~40px에 그친다. `inline-flex items-center min-h-[44px]`를 함께 쓴다.
+
+카드처럼 이미 `p-5` 이상인 블록 링크는 예외다. 이미 충분히 크다.
+
 ## 타이포그래피
 
 | 용도 | 스타일 |
@@ -98,6 +118,23 @@ h-1 rounded-full bg-neutral-800  /  내부: bg-neutral-300
 | 라벨·메타 | `text-xs text-neutral-500` |
 
 한글 본문에는 `break-keep`을 적용한다. 이유: 기본 줄바꿈은 한글 단어를 중간에서 끊는다.
+
+**`break-keep`은 항상 `break-anywhere`와 함께 쓴다.**
+
+`break-keep`(`word-break: keep-all`)만 쓰면 공백 없는 긴 문자열이 아예 줄바꿈되지 않는다.
+이 앱의 주제 제목은 `EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch`처럼
+가운뎃점으로 이어진 55자짜리 한 덩어리다. 가운뎃점은 줄바꿈 기회가 아니다.
+
+`break-anywhere`는 `overflow-wrap: anywhere`이며 `src/index.css`에 정의돼 있다.
+줄에 들어가지 않는 긴 덩어리만 강제로 끊고, 평소에는 공백에서 정상적으로 줄바꿈한다.
+한글 단어는 `break-keep`이 계속 보호한다.
+
+Tailwind의 `break-words`(`overflow-wrap: break-word`)로 대체하지 마라.
+`break-word`는 **min-content 크기를 줄이지 않아** flex/grid 자식의 `min-width: auto`를 이기지 못한다.
+390px 화면에서 실측했을 때 `break-words`는 오버플로를 전혀 해소하지 못했고, `anywhere`만 통했다.
+`break-all`은 통하지만 영문·한글을 아무 데서나 끊어 가독성을 잃는다.
+
+`overflow-wrap`은 상속되므로 화면 최상위 `section`에 한 번만 붙이면 하위 전체에 적용된다.
 
 ## 애니메이션
 
