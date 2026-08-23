@@ -5,7 +5,10 @@
     {
       "step": 0,
       "name": "rewrite-foundation",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-23T22:47:11+0900",
+      "summary": "기초 3개 주제의 개념 15개를 사실과 문항 근거를 보존해 직접 쓴 문장으로 재작성",
+      "completed_at": "2026-08-23T22:49:35+0900"
     },
     {
       "step": 1,
@@ -47,5 +50,6 @@
       "name": "rewrite-identity-cost",
       "status": "pending"
     }
-  ]
+  ],
+  "created_at": "2026-08-23T22:47:11+0900"
 }
