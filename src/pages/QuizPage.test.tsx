@@ -52,11 +52,12 @@ describe('QuizPage', () => {
   })
 
   it('첫 문제와 보기 4개를 렌더한다', () => {
-    renderPage()
+    const { container } = renderPage()
 
     expect(screen.getByText('1 / 2')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '첫 번째 질문' })).toBeInTheDocument()
     expect(screen.getAllByRole('button')).toHaveLength(4)
+    expect(container.querySelector('.sticky')).toBeNull()
   })
 
   it('정답을 고르면 해설을 보여주고 진행 상태를 기록한다', async () => {
@@ -82,6 +83,17 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '다음 문제' }))
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
     expect(screen.getByRole('button', { name: '결과 보기' })).toHaveClass('min-h-[44px]')
+  })
+
+  it('정답 공개 후 다음 문제 액션 바를 section의 마지막 자식으로 렌더한다', async () => {
+    const user = userEvent.setup()
+    const { container } = renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    const actionBar = screen.getByRole('button', { name: '다음 문제' }).parentElement
+    expect(actionBar).toHaveClass('sticky', 'bottom-0', 'bg-page', 'border-t')
+    expect(container.querySelector('section')?.lastElementChild).toBe(actionBar)
   })
 
   it('오답을 고르면 고른 보기와 정답 보기를 함께 표시한다', async () => {

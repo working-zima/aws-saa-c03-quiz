@@ -110,11 +110,14 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
           <Link className="inline-flex min-h-[44px] items-center text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${topicId}`}>
             근거 개념으로 돌아가기
           </Link>
-          <div>
-            <button className={primaryButtonClass} onClick={advance} type="button">
-              {questionIndex === topicQuestions.length - 1 ? '결과 보기' : '다음 문제'}
-            </button>
-          </div>
+        </div>
+      )}
+
+      {revealed && (
+        <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:-mx-8 sm:px-8">
+          <button className={primaryButtonClass} onClick={advance} type="button">
+            {questionIndex === topicQuestions.length - 1 ? '결과 보기' : '다음 문제'}
+          </button>
         </div>
       )}
     </section>
