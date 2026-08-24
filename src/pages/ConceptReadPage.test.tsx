@@ -22,7 +22,7 @@ const testTopics: Topic[] = [
 ]
 
 function renderPage(path: string, markRead = vi.fn()) {
-  render(
+  const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route
@@ -33,10 +33,19 @@ function renderPage(path: string, markRead = vi.fn()) {
     </MemoryRouter>,
   )
 
-  return markRead
+  return { ...result, markRead }
 }
 
 describe('ConceptReadPage', () => {
+  it.each(['/topic/storage-topic', '/topic/missing-topic'])(
+    '%s의 최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다',
+    (path) => {
+      const { container } = renderPage(path)
+
+      expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
+    },
+  )
+
   it('주어진 주제의 개념 이름, 요약, 본문을 렌더한다', () => {
     renderPage('/topic/storage-topic')
 
@@ -50,20 +59,21 @@ describe('ConceptReadPage', () => {
     renderPage('/topic/missing-topic')
 
     expect(screen.getByText('주제를 찾을 수 없습니다.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '주제 목록으로 돌아가기' })).toHaveAttribute('href', '/')
+    const topicListLink = screen.getByRole('link', { name: '주제 목록으로 돌아가기' })
+    expect(topicListLink).toHaveAttribute('href', '/')
+    expect(topicListLink).toHaveClass('min-h-[44px]')
   })
 
   it('확인 문제 링크가 해당 주제의 퀴즈 경로를 가리킨다', () => {
     renderPage('/topic/storage-topic')
 
-    expect(screen.getByRole('link', { name: '확인 문제 풀기' })).toHaveAttribute(
-      'href',
-      '/topic/storage-topic/quiz',
-    )
+    const quizLink = screen.getByRole('link', { name: '확인 문제 풀기' })
+    expect(quizLink).toHaveAttribute('href', '/topic/storage-topic/quiz')
+    expect(quizLink).toHaveClass('min-h-[44px]')
   })
 
   it('화면 진입 시 해당 주제를 읽음 처리한다', () => {
-    const markRead = renderPage('/topic/storage-topic')
+    const { markRead } = renderPage('/topic/storage-topic')
 
     expect(markRead).toHaveBeenCalledOnce()
     expect(markRead).toHaveBeenCalledWith('storage-topic')

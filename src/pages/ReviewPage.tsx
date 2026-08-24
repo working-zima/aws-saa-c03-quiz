@@ -30,7 +30,7 @@ export function ReviewPage({
   const hasAnswered = questions.some((question) => question.id in progress.answers)
 
   return (
-    <section className="max-w-3xl space-y-8 break-keep">
+    <section className="max-w-3xl space-y-8 break-keep break-anywhere">
       <h1 className="text-2xl font-semibold text-title">복습</h1>
 
       {reviewGroups.length === 0 ? (
@@ -43,7 +43,7 @@ export function ReviewPage({
             <p className="text-[15px] leading-7 text-body">
               확인 문제를 풀면 여기에 복습할 개념이 모입니다.
             </p>
-            <Link className="inline-block rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100" to="/">
+            <Link className="inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100" to="/">
               주제 목록으로 가기
             </Link>
           </div>
@@ -64,7 +64,7 @@ export function ReviewPage({
                     {topic.title}
                   </h2>
                   <Link
-                    className="shrink-0 rounded-md px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100"
+                    className="inline-flex min-h-[44px] shrink-0 items-center rounded-md px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100"
                     to={`/topic/${topic.id}/quiz`}
                   >
                     확인 문제 다시 풀기

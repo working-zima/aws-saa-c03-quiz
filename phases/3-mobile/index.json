@@ -2,7 +2,31 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "3-mobile",
   "steps": [
-    { "step": 0, "name": "no-horizontal-overflow", "status": "pending" },
-    { "step": 1, "name": "touch-targets",          "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "no-horizontal-overflow",
+      "status": "completed",
+      "summary": "break-anywhere 유틸리티와 4개 페이지 전 분기의 회귀 테스트를 추가해 모바일 가로 오버플로를 방지함",
+      "started_at": "2026-08-24T07:37:12+0900",
+      "completed_at": "2026-08-24T07:38:46+0900"
+    },
+    {
+      "step": 1,
+      "name": "touch-targets",
+      "status": "completed",
+      "summary": "지정된 로고·내비·학습 링크와 퀴즈 버튼에 44px 최소 터치 높이와 회귀 테스트를 추가함",
+      "started_at": "2026-08-24T18:47:21+0900",
+      "completed_at": "2026-08-24T18:50:03+0900"
+    },
+    {
+      "step": 2,
+      "name": "touch-targets-empty-states",
+      "status": "completed",
+      "summary": "개념 읽기 오류 상태와 복습 빈 상태 링크에 44px 최소 터치 높이와 회귀 테스트를 추가함",
+      "started_at": "2026-08-24T18:52:39+0900",
+      "completed_at": "2026-08-24T18:53:47+0900"
+    }
+  ],
+  "created_at": "2026-08-24T07:37:12+0900",
+  "completed_at": "2026-08-24T18:53:47+0900"
 }

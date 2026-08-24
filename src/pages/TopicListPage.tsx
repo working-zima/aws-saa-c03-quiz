@@ -27,7 +27,7 @@ export function TopicListPage({
   const percent = overallPercent(stats)
 
   return (
-    <section className="max-w-3xl space-y-8 break-keep">
+    <section className="max-w-3xl space-y-8 break-keep break-anywhere">
       <div className="space-y-3">
         <div className="flex items-end justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">주제 목록</h1>

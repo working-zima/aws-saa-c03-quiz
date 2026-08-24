@@ -27,7 +27,7 @@ const testQuestions: Question[] = [
 ]
 
 function renderPage(path = '/topic/test-topic/quiz', answer = vi.fn(), questions = testQuestions) {
-  render(
+  const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} questions={questions} />} />
@@ -35,10 +35,22 @@ function renderPage(path = '/topic/test-topic/quiz', answer = vi.fn(), questions
     </MemoryRouter>,
   )
 
-  return answer
+  return { ...result, answer }
 }
 
 describe('QuizPage', () => {
+  it('문제 화면의 최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
+    const { container } = renderPage()
+
+    expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
+  })
+
+  it('문항 없음 화면의 최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
+    const { container } = renderPage('/topic/empty-topic/quiz', vi.fn(), [])
+
+    expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
+  })
+
   it('첫 문제와 보기 4개를 렌더한다', () => {
     renderPage()
 
@@ -49,13 +61,27 @@ describe('QuizPage', () => {
 
   it('정답을 고르면 해설을 보여주고 진행 상태를 기록한다', async () => {
     const user = userEvent.setup()
-    const answer = renderPage()
+    const { answer } = renderPage()
 
     await user.click(screen.getByRole('button', { name: '정답 보기' }))
 
     expect(screen.getByText('첫 번째 해설')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '근거 개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
+    const conceptLink = screen.getByRole('link', { name: '근거 개념으로 돌아가기' })
+    expect(conceptLink).toHaveAttribute('href', '/topic/test-topic')
+    expect(conceptLink).toHaveClass('min-h-[44px]')
     expect(answer).toHaveBeenCalledWith('q001', true)
+  })
+
+  it('다음 문제와 결과 보기 버튼의 최소 터치 높이를 보장한다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    expect(screen.getByRole('button', { name: '다음 문제' })).toHaveClass('min-h-[44px]')
+
+    await user.click(screen.getByRole('button', { name: '다음 문제' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    expect(screen.getByRole('button', { name: '결과 보기' })).toHaveClass('min-h-[44px]')
   })
 
   it('오답을 고르면 고른 보기와 정답 보기를 함께 표시한다', async () => {
@@ -86,6 +112,7 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '오답 보기 A' }))
     await user.click(screen.getByRole('button', { name: '결과 보기' }))
 
+    expect(document.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
     expect(screen.getByRole('heading', { name: '확인 문제 완료' })).toBeInTheDocument()
     expect(screen.getByText('맞힌 개수 1 / 2')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
