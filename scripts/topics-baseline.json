@@ -1,7 +1,7 @@
 {
- "note": "phase 2-rewrite 시작 시점의 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 재작성은 본문만 바꾸므로 이 파일은 갱신하지 않는다.",
- "conceptLineCount": 174,
- "questionsSha256": "dcfefecc5e3a38ad326700deaa75f3788bfc87da6fbbbcd5776bba00a7379d27",
+ "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
+ "conceptLineCount": 182,
+ "questionsSha256": "a87b2dd3228d536183a8ab57b8bc3d6e20dd038fc0601fea344ded8a91e30a3a",
  "topics": [
   {
    "id": "aws-core-services",
@@ -110,8 +110,40 @@
    ],
    "concepts": [
     {
-     "id": "s3-storage-classes.storage-classes",
-     "name": "S3 스토리지 클래스 유형"
+     "id": "s3-storage-classes.standard",
+     "name": "S3 Standard"
+    },
+    {
+     "id": "s3-storage-classes.intelligent-tiering",
+     "name": "S3 Intelligent-Tiering"
+    },
+    {
+     "id": "s3-storage-classes.standard-ia",
+     "name": "S3 Standard-IA (Infrequent Access)"
+    },
+    {
+     "id": "s3-storage-classes.one-zone-ia",
+     "name": "S3 One Zone-IA"
+    },
+    {
+     "id": "s3-storage-classes.glacier-instant-retrieval",
+     "name": "S3 Glacier Instant Retrieval"
+    },
+    {
+     "id": "s3-storage-classes.glacier-flexible-retrieval",
+     "name": "S3 Glacier Flexible Retrieval"
+    },
+    {
+     "id": "s3-storage-classes.glacier-deep-archive",
+     "name": "S3 Glacier Deep Archive"
+    },
+    {
+     "id": "s3-storage-classes.retrieval-time",
+     "name": "즉시 조회와 대기 조회"
+    },
+    {
+     "id": "s3-storage-classes.glacier-or-standard-ia",
+     "name": "Glacier와 Standard-IA 중 고르기"
     }
    ]
   },
