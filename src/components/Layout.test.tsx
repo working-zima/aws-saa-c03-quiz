@@ -60,6 +60,23 @@ describe('Layout', () => {
     expect(screen.getByRole('link', { name: '복습' })).toHaveClass('min-h-[44px]')
   })
 
+  it('헤더를 불투명한 sticky 영역으로 고정한다', () => {
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>화면 내용</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const header = screen.getByRole('banner')
+
+    expect(header).toHaveClass('sticky', 'top-0', 'bg-page', 'border-b')
+    expect(header).not.toHaveClass('fixed')
+  })
+
   it('헤더와 화면 내용을 동일한 중앙 정렬 셸에 배치한다', () => {
     render(
       <MemoryRouter>
