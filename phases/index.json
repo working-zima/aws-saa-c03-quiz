@@ -37,7 +37,8 @@
     },
     {
       "dir": "7-scroll-reset",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-25T00:38:02+0900"
     },
     {
       "dir": "8-sticky-header",
