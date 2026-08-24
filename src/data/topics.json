@@ -149,7 +149,7 @@
   {
     "id":"messaging-backup","title":"SQS·SNS·EventBridge·AWS Backup","importance":3,"sourcePages":[27,29],
     "concepts":[
-      {"id":"messaging-backup.sqs","name":"SQS (Simple Queue Service)","summary":"SQS는 메시지를 대기열에 보관해 작업이 차례로 처리되도록 하는 서비스다.","paragraphs":["구성 요소 사이에 큐를 두면 각 요소의 의존성과 결합도가 낮아져 서로 독립적으로 분리할 수 있다. 작업을 순서대로 처리해야 하거나 데이터 손실 없이 정확하게 다뤄야 하는 경우에 자주 활용한다.","트래픽이 갑자기 증가해도 메시지를 큐에 쌓아 둘 수 있으므로 요청을 잃지 않고 처리할 수 있다.","**표준 대기열**(Standard Queue)은 메시지 순서보다 높은 처리량이 중요한 상황에 알맞다.","선입선출 대기열(FIFO Queue)은 메시지를 보낸 순서 그대로 정확히 한 번 처리해야 할 때 선택한다."]},
+      {"id":"messaging-backup.sqs","name":"SQS (Simple Queue Service)","summary":"SQS는 메시지를 대기열에 보관해 작업이 차례로 처리되도록 하는 서비스다.","paragraphs":["구성 요소 사이에 큐를 두면 각 요소의 의존성과 결합도가 낮아져 서로 독립적으로 분리할 수 있다. 작업을 순서대로 처리해야 하거나 데이터 손실 없이 정확하게 다뤄야 하는 경우에 자주 활용한다.","트래픽이 갑자기 증가해도 메시지를 큐에 쌓아 둘 수 있으므로 요청을 잃지 않고 처리할 수 있다.","**표준 대기열**(Standard Queue)은 메시지 순서보다 높은 처리량이 중요한 상황에 알맞다.","**선입선출 대기열**(FIFO Queue)은 메시지를 보낸 순서 그대로 정확히 한 번 처리해야 할 때 선택한다."]},
       {"id":"messaging-backup.sns","name":"SNS (Simple Notification Service)","summary":"SNS는 하나의 메시지를 여러 수신 대상으로 전달하는 서비스다.","paragraphs":["이 이름의 SNS는 소셜 네트워크 서비스를 뜻하지 않는다.","예를 들어 주문 완료 이벤트 하나를 SES의 이메일 발송, Lambda의 로그 저장, SQS의 주문 처리로 각각 보낼 수 있다."]},
       {"id":"messaging-backup.eventbridge","name":"EventBridge","summary":"EventBridge는 AWS 서비스 사이의 기능과 동작을 이어 주는 서비스다.","paragraphs":["S3에 이미지 업로드가 끝난 뒤 Lambda가 이미지 크기를 조정하도록 S3, EventBridge, Lambda를 연결할 수 있다."]},
       {"id":"messaging-backup.backup","name":"AWS Backup","summary":"AWS Backup은 여러 AWS 서비스의 백업을 자동화하고 관리하는 서비스다.","paragraphs":["서비스별 백업 작업을 한곳에서 자동화하고 관리할 수 있게 한다."]},
