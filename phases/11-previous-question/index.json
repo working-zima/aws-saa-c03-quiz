@@ -1,0 +1,11 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "11-previous-question",
+  "steps": [
+    {
+      "step": 0,
+      "name": "previous-question",
+      "status": "pending"
+    }
+  ]
+}
