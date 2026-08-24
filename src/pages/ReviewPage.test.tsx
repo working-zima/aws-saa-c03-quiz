@@ -76,7 +76,9 @@ describe('ReviewPage', () => {
   it('아무것도 안 푼 상태와 전부 맞힌 상태를 다르게 안내한다', () => {
     const { unmount } = renderPage({ version: 1, read: {}, answers: {} })
     expect(screen.getByText('확인 문제를 풀면 여기에 복습할 개념이 모입니다.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '주제 목록으로 가기' })).toHaveAttribute('href', '/')
+    const topicListLink = screen.getByRole('link', { name: '주제 목록으로 가기' })
+    expect(topicListLink).toHaveAttribute('href', '/')
+    expect(topicListLink).toHaveClass('min-h-[44px]')
 
     unmount()
     renderPage({ version: 1, read: {}, answers: { q001: true, q002: true, q003: true } })

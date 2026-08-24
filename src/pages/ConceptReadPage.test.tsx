@@ -59,7 +59,9 @@ describe('ConceptReadPage', () => {
     renderPage('/topic/missing-topic')
 
     expect(screen.getByText('주제를 찾을 수 없습니다.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '주제 목록으로 돌아가기' })).toHaveAttribute('href', '/')
+    const topicListLink = screen.getByRole('link', { name: '주제 목록으로 돌아가기' })
+    expect(topicListLink).toHaveAttribute('href', '/')
+    expect(topicListLink).toHaveClass('min-h-[44px]')
   })
 
   it('확인 문제 링크가 해당 주제의 퀴즈 경로를 가리킨다', () => {

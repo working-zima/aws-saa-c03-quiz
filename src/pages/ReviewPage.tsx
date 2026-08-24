@@ -43,7 +43,7 @@ export function ReviewPage({
             <p className="text-[15px] leading-7 text-body">
               확인 문제를 풀면 여기에 복습할 개념이 모입니다.
             </p>
-            <Link className="inline-block rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100" to="/">
+            <Link className="inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100" to="/">
               주제 목록으로 가기
             </Link>
           </div>

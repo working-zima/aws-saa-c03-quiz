@@ -31,7 +31,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
           <h1 className="text-2xl font-semibold text-title">주제를 찾을 수 없습니다.</h1>
           <p className="text-[15px] leading-7 text-neutral-300">요청한 학습 주제가 존재하지 않습니다.</p>
         </div>
-        <Link className="inline-block rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to="/">
+        <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to="/">
           주제 목록으로 돌아가기
         </Link>
       </section>
