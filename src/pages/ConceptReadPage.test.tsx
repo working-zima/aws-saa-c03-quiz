@@ -71,11 +71,14 @@ describe('ConceptReadPage', () => {
   })
 
   it('확인 문제 링크가 해당 주제의 퀴즈 경로를 가리킨다', () => {
-    renderPage('/topic/storage-topic')
+    const { container } = renderPage('/topic/storage-topic')
 
     const quizLink = screen.getByRole('link', { name: '확인 문제 풀기' })
+    const actionBar = quizLink.parentElement
     expect(quizLink).toHaveAttribute('href', '/topic/storage-topic/quiz')
     expect(quizLink).toHaveClass('min-h-[44px]')
+    expect(actionBar).toHaveClass('sticky', 'bottom-0', 'bg-page', 'border-t')
+    expect(container.querySelector('section')?.lastElementChild).toBe(actionBar)
   })
 
   it('본문과 요약의 키워드 표기를 굵고 밝은 강조로 렌더한다', () => {
