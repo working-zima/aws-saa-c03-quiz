@@ -17,7 +17,8 @@
     },
     {
       "dir": "3-mobile",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-24T18:53:47+0900"
     }
   ]
 }
