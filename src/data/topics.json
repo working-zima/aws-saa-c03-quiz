@@ -1,9 +1,9 @@
 [
   {
     "id": "aws-core-services",
-    "title": "AWS 핵심 서비스 개요 — EC2·RDS·S3·Route 53·ELB·CloudFront·Lambda",
+    "title": "AWS 핵심 서비스·리전·가용 영역·온프레미스",
     "importance": 0,
-    "sourcePages": [1, 4],
+    "sourcePages": [1, 7],
     "concepts": [
       {"id":"aws-core-services.ec2","name":"EC2 (Elastic Compute Cloud)","summary":"원격 접속할 수 있는 컴퓨터를 AWS에서 빌려 쓰는 서비스다.","paragraphs":["EC2의 기본 단위는 컴퓨터 한 대라고 이해할 수 있다."]},
       {"id":"aws-core-services.rds","name":"RDS (Relational Database Service)","summary":"AWS에서 관계형 데이터베이스를 빌려 사용하는 서비스다.","paragraphs":["MySQL과 MariaDB를 포함한 여러 관계형 데이터베이스를 직접 마련하는 대신 AWS에서 제공받아 쓴다."]},
@@ -13,24 +13,14 @@
       {"id":"aws-core-services.elb","name":"ELB (Elastic Load Balancer)","summary":"들어오는 트래픽을 여러 서버에 알맞게 나누는 장치다.","paragraphs":["트래픽, 즉 부하를 분배하는 장치를 로드 밸런서(Load Balancer)라고 한다. 서버를 두 대 이상 운용하는 구성에는 ELB를 필수로 도입한다."]},
       {"id":"aws-core-services.cloudfront","name":"CloudFront","summary":"파일과 동영상 등의 콘텐츠를 사용자에게 빠르게 전달하는 서비스다.","paragraphs":["콘텐츠가 한국의 S3에만 저장되어 있다고 가정하면, 가까운 한국 사용자는 빠르게 받을 수 있지만 멀리 있는 미국 사용자는 전송에 더 많은 시간이 걸린다.","CloudFront는 이 거리 문제를 줄이기 위해 세계 여러 곳의 임시 저장소에 콘텐츠 복사본을 둔다. 사용자가 가장 가까운 저장소에서 파일을 받게 하여 전송 속도를 높인다.","콘텐츠 복사본을 분산해 전달하는 형태를 CDN(Content Delivery Network)이라고 하며, CloudFront는 CDN 서비스에 해당한다."]},
       {"id":"aws-core-services.lambda","name":"Lambda","summary":"AWS가 서버를 맡고 개발자는 필요한 코드만 실행하는 서비스다.","paragraphs":["EC2를 사용할 때처럼 서버를 직접 만들고 관리하지 않아도 된다. 실행할 코드를 작성하면 Lambda가 작동시킨다."]},
+      {"id":"aws-core-services.region","name":"리전 (Region)","summary":"AWS 인프라를 지리적 위치에 따라 나누어 둔 데이터 센터 단위다.","paragraphs":["EC2에서 빌려 쓸 수 있는 컴퓨터는 세계 여러 지역에 흩어져 있다. AWS는 이 컴퓨터들이 자리한 각각의 위치를 리전(Region)이라고 부른다."]},
+      {"id":"aws-core-services.availability","name":"가용성 (Availability)","summary":"시스템이 서비스를 정상 상태로 제공할 수 있는 가능성이다.","paragraphs":["장애가 발생할 가능성이 매우 작은 시스템은 가용성이 높거나 고가용성이라고 한다. 반대로 서비스 중단 시간이 길수록 가용성이 낮다.","가용성은 서비스의 정상 가동률을 백분율로 나타낸다. 99.99%라면 전체 시간 중 그 비율만큼 정상적으로 이용할 수 있고, 1년 기준으로는 약 53분의 중단이 가능하다는 의미다."]},
+      {"id":"aws-core-services.availability-zone","name":"가용 영역 (Availability Zone)","summary":"리전 내부에서 물리적으로 떨어져 있는 데이터 센터다.","paragraphs":["AWS는 자연재해로 데이터 센터가 파괴될 가능성에 대비해 시설을 물리적으로 분리한다. 한 리전 안에 이렇게 나뉜 데이터 센터를 가용 영역(Availability Zone, AZ)이라고 한다."]},
+      {"id":"aws-core-services.multi-az","name":"다중 AZ (Multi-AZ)","summary":"같은 리전의 여러 가용 영역에 시스템을 나누어 배치하는 구성이다.","paragraphs":["서비스 구성 요소를 서로 다른 AZ에 동시에 두면 한 AZ에서 장애가 나더라도 서비스를 계속할 수 있다. 다중 AZ는 이러한 분산을 통해 고가용성(High Availability)을 달성하는 핵심 전략이다."]},
+      {"id":"aws-core-services.single-az","name":"단일 AZ (Single-AZ)","summary":"시스템 전체를 하나의 가용 영역에 두는 구성이다.","paragraphs":["비용은 다중 AZ보다 상대적으로 적지만, 해당 AZ에 장애가 생기면 서비스가 중단될 수 있어 가용성에는 취약하다."]},
+      {"id":"aws-core-services.on-premise","name":"온프레미스 (On-premise)","summary":"회사가 자체 장비를 구입해 사내 전산실에서 운영하는 방식이다.","paragraphs":["서버를 비롯한 인프라 장비를 회사가 직접 마련하고 회사 건물 안에서 관리한다. 클라우드(AWS)는 온프레미스와 반대되는 개념이다."]},
+      {"id":"aws-core-services.migration","name":"마이그레이션 (Migration)","summary":"시스템이나 서비스를 한 환경에서 다른 환경으로 옮기는 일이다.","paragraphs":["시험에서는 온프레미스 환경에 있던 대상을 AWS 환경으로 이동하려는 상황에서 자주 등장한다."]},
       {"id":"aws-core-services.exam-heuristics","name":"시험에서 자주 통하는 판단 기준","summary":"선택지를 지우는 데 쓰는 시험 판단 기준이다.","paragraphs":["선택지에 '수동으로', '직접 스크립트를 짜서', '매번 담당자가' 같은 표현이 들어가면 대부분 오답이다. AWS가 이미 관리형 기능으로 제공하는 일을 사람이 하겠다는 뜻이기 때문이다.","사용자가 급격히 늘고, 이미지·파일 처리가 끼어 있고, 운영 비용을 최소화하라는 조건이 함께 나오면 서버리스(Lambda + S3 + DynamoDB) 조합이 정답인 경우가 많다."]}
-    ]
-  },
-  {
-    "id":"region-availability","title":"리전·가용성·가용 영역·다중 AZ","importance":0,"sourcePages":[5,6],
-    "concepts":[
-      {"id":"region-availability.region","name":"리전 (Region)","summary":"AWS 인프라를 지리적 위치에 따라 나누어 둔 데이터 센터 단위다.","paragraphs":["EC2에서 빌려 쓸 수 있는 컴퓨터는 세계 여러 지역에 흩어져 있다. AWS는 이 컴퓨터들이 자리한 각각의 위치를 리전(Region)이라고 부른다."]},
-      {"id":"region-availability.availability","name":"가용성 (Availability)","summary":"시스템이 서비스를 정상 상태로 제공할 수 있는 가능성이다.","paragraphs":["장애가 발생할 가능성이 매우 작은 시스템은 가용성이 높거나 고가용성이라고 한다. 반대로 서비스 중단 시간이 길수록 가용성이 낮다.","가용성은 서비스의 정상 가동률을 백분율로 나타낸다. 99.99%라면 전체 시간 중 그 비율만큼 정상적으로 이용할 수 있고, 1년 기준으로는 약 53분의 중단이 가능하다는 의미다."]},
-      {"id":"region-availability.availability-zone","name":"가용 영역 (Availability Zone)","summary":"리전 내부에서 물리적으로 떨어져 있는 데이터 센터다.","paragraphs":["AWS는 자연재해로 데이터 센터가 파괴될 가능성에 대비해 시설을 물리적으로 분리한다. 한 리전 안에 이렇게 나뉜 데이터 센터를 가용 영역(Availability Zone, AZ)이라고 한다."]},
-      {"id":"region-availability.multi-az","name":"다중 AZ (Multi-AZ)","summary":"같은 리전의 여러 가용 영역에 시스템을 나누어 배치하는 구성이다.","paragraphs":["서비스 구성 요소를 서로 다른 AZ에 동시에 두면 한 AZ에서 장애가 나더라도 서비스를 계속할 수 있다. 다중 AZ는 이러한 분산을 통해 고가용성(High Availability)을 달성하는 핵심 전략이다."]},
-      {"id":"region-availability.single-az","name":"단일 AZ (Single-AZ)","summary":"시스템 전체를 하나의 가용 영역에 두는 구성이다.","paragraphs":["비용은 다중 AZ보다 상대적으로 적지만, 해당 AZ에 장애가 생기면 서비스가 중단될 수 있어 가용성에는 취약하다."]}
-    ]
-  },
-  {
-    "id":"onpremise-migration","title":"온프레미스와 마이그레이션","importance":0,"sourcePages":[7,7],
-    "concepts":[
-      {"id":"onpremise-migration.on-premise","name":"온프레미스 (On-premise)","summary":"회사가 자체 장비를 구입해 사내 전산실에서 운영하는 방식이다.","paragraphs":["서버를 비롯한 인프라 장비를 회사가 직접 마련하고 회사 건물 안에서 관리한다. 클라우드(AWS)는 온프레미스와 반대되는 개념이다."]},
-      {"id":"onpremise-migration.migration","name":"마이그레이션 (Migration)","summary":"시스템이나 서비스를 한 환경에서 다른 환경으로 옮기는 일이다.","paragraphs":["시험에서는 온프레미스 환경에 있던 대상을 AWS 환경으로 이동하려는 상황에서 자주 등장한다."]}
     ]
   },
   {

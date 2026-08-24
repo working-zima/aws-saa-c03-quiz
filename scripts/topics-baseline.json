@@ -1,15 +1,15 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 182,
- "questionsSha256": "a87b2dd3228d536183a8ab57b8bc3d6e20dd038fc0601fea344ded8a91e30a3a",
+ "questionsSha256": "ec8daddc138a926e7c9f38a7b120f87d61458baf126b79922cac775dcdf51e49",
  "topics": [
   {
    "id": "aws-core-services",
-   "title": "AWS 핵심 서비스 개요 — EC2·RDS·S3·Route 53·ELB·CloudFront·Lambda",
+   "title": "AWS 핵심 서비스·리전·가용 영역·온프레미스",
    "importance": 0,
    "sourcePages": [
     1,
-    4
+    7
    ],
    "concepts": [
     {
@@ -45,58 +45,36 @@
      "name": "Lambda"
     },
     {
-     "id": "aws-core-services.exam-heuristics",
-     "name": "시험에서 자주 통하는 판단 기준"
-    }
-   ]
-  },
-  {
-   "id": "region-availability",
-   "title": "리전·가용성·가용 영역·다중 AZ",
-   "importance": 0,
-   "sourcePages": [
-    5,
-    6
-   ],
-   "concepts": [
-    {
-     "id": "region-availability.region",
+     "id": "aws-core-services.region",
      "name": "리전 (Region)"
     },
     {
-     "id": "region-availability.availability",
+     "id": "aws-core-services.availability",
      "name": "가용성 (Availability)"
     },
     {
-     "id": "region-availability.availability-zone",
+     "id": "aws-core-services.availability-zone",
      "name": "가용 영역 (Availability Zone)"
     },
     {
-     "id": "region-availability.multi-az",
+     "id": "aws-core-services.multi-az",
      "name": "다중 AZ (Multi-AZ)"
     },
     {
-     "id": "region-availability.single-az",
+     "id": "aws-core-services.single-az",
      "name": "단일 AZ (Single-AZ)"
-    }
-   ]
-  },
-  {
-   "id": "onpremise-migration",
-   "title": "온프레미스와 마이그레이션",
-   "importance": 0,
-   "sourcePages": [
-    7,
-    7
-   ],
-   "concepts": [
+    },
     {
-     "id": "onpremise-migration.on-premise",
+     "id": "aws-core-services.on-premise",
      "name": "온프레미스 (On-premise)"
     },
     {
-     "id": "onpremise-migration.migration",
+     "id": "aws-core-services.migration",
      "name": "마이그레이션 (Migration)"
+    },
+    {
+     "id": "aws-core-services.exam-heuristics",
+     "name": "시험에서 자주 통하는 판단 기준"
     }
    ]
   },

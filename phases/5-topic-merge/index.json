@@ -2,6 +2,15 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "5-topic-merge",
   "steps": [
-    { "step": 0, "name": "merge-basic-topics", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "merge-basic-topics",
+      "status": "completed",
+      "started_at": "2026-08-24T21:07:39+0900",
+      "summary": "기초 주제 3개를 aws-core-services로 병합하고 문항 참조·구조 스냅샷·문서 주제 수를 갱신",
+      "completed_at": "2026-08-24T21:11:16+0900"
+    }
+  ],
+  "created_at": "2026-08-24T21:07:39+0900",
+  "completed_at": "2026-08-24T21:11:17+0900"
 }
