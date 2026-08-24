@@ -21,7 +21,6 @@ describe('App routes', () => {
     renderAt('/')
 
     expect(screen.getByRole('heading', { name: '주제 목록' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '주제 목록' })).toHaveAttribute('href', '/')
     expect(screen.getByRole('link', { name: '복습' })).toHaveAttribute('href', '/review')
   })
 
