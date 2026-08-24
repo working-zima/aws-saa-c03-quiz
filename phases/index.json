@@ -57,8 +57,7 @@
     },
     {
       "dir": "11-previous-question",
-      "status": "completed",
-      "completed_at": "2026-08-25T07:29:51+0900"
+      "status": "pending"
     }
   ]
 }
