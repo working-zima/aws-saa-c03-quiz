@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "sticky-action-bar",
-      "status": "pending"
+      "status": "completed",
+      "summary": "개념 읽기와 퀴즈 진행 액션을 section 마지막 자식인 하단 sticky 바로 배치하고 DOM 회귀 테스트를 추가했다.",
+      "started_at": "2026-08-24T19:53:37+0900",
+      "completed_at": "2026-08-24T19:54:56+0900"
     }
   ],
   "created_at": "2026-08-24T19:52:16+0900"
