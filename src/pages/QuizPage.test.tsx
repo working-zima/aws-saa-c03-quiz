@@ -66,8 +66,22 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '정답 보기' }))
 
     expect(screen.getByText('첫 번째 해설')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '근거 개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
+    const conceptLink = screen.getByRole('link', { name: '근거 개념으로 돌아가기' })
+    expect(conceptLink).toHaveAttribute('href', '/topic/test-topic')
+    expect(conceptLink).toHaveClass('min-h-[44px]')
     expect(answer).toHaveBeenCalledWith('q001', true)
+  })
+
+  it('다음 문제와 결과 보기 버튼의 최소 터치 높이를 보장한다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    expect(screen.getByRole('button', { name: '다음 문제' })).toHaveClass('min-h-[44px]')
+
+    await user.click(screen.getByRole('button', { name: '다음 문제' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    expect(screen.getByRole('button', { name: '결과 보기' })).toHaveClass('min-h-[44px]')
   })
 
   it('오답을 고르면 고른 보기와 정답 보기를 함께 표시한다', async () => {

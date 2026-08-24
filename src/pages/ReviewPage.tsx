@@ -64,7 +64,7 @@ export function ReviewPage({
                     {topic.title}
                   </h2>
                   <Link
-                    className="shrink-0 rounded-md px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100"
+                    className="inline-flex min-h-[44px] shrink-0 items-center rounded-md px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100"
                     to={`/topic/${topic.id}/quiz`}
                   >
                     확인 문제 다시 풀기

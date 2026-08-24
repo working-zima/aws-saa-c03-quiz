@@ -13,8 +13,8 @@ interface QuizPageProps {
 const choiceBaseClass = 'w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-left text-neutral-300'
 const choiceCorrectClass = 'border-green-500/60 bg-green-500/5'
 const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
-const primaryButtonClass = 'rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
-const ghostLinkClass = 'rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
+const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
+const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
 
 export function QuizPage({ questions = defaultQuestions, answer: providedAnswer }: QuizPageProps) {
   const { topicId } = useParams()
@@ -108,7 +108,7 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
       {revealed && (
         <div className="animate-[fade-in_0.2s_ease-out] space-y-3 border-t border-neutral-800 pt-5">
           <p className="text-[15px] leading-7 text-neutral-300">{question.explanation}</p>
-          <Link className="inline-block text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${topicId}`}>
+          <Link className="inline-flex min-h-[44px] items-center text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${topicId}`}>
             근거 개념으로 돌아가기
           </Link>
           <div>

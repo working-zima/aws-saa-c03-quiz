@@ -67,7 +67,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
         ))}
       </div>
 
-      <Link className="inline-block rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
+      <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
         확인 문제 풀기
       </Link>
     </section>

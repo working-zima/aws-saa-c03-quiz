@@ -55,7 +55,9 @@ describe('ReviewPage', () => {
     const databaseGroup = screen.getByRole('region', { name: '데이터베이스' })
     expect(within(storageGroup).getByText('Amazon S3')).toBeInTheDocument()
     expect(within(databaseGroup).getByText('Amazon RDS')).toBeInTheDocument()
-    expect(within(storageGroup).getByRole('link', { name: '확인 문제 다시 풀기' })).toHaveAttribute('href', '/topic/storage/quiz')
+    const retryLink = within(storageGroup).getByRole('link', { name: '확인 문제 다시 풀기' })
+    expect(retryLink).toHaveAttribute('href', '/topic/storage/quiz')
+    expect(retryLink).toHaveClass('min-h-[44px]')
   })
 
   it('맞힌 문제의 개념은 목록에 표시하지 않는다', () => {

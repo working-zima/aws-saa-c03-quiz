@@ -65,10 +65,9 @@ describe('ConceptReadPage', () => {
   it('확인 문제 링크가 해당 주제의 퀴즈 경로를 가리킨다', () => {
     renderPage('/topic/storage-topic')
 
-    expect(screen.getByRole('link', { name: '확인 문제 풀기' })).toHaveAttribute(
-      'href',
-      '/topic/storage-topic/quiz',
-    )
+    const quizLink = screen.getByRole('link', { name: '확인 문제 풀기' })
+    expect(quizLink).toHaveAttribute('href', '/topic/storage-topic/quiz')
+    expect(quizLink).toHaveClass('min-h-[44px]')
   })
 
   it('화면 진입 시 해당 주제를 읽음 처리한다', () => {
