@@ -73,27 +73,13 @@ describe('QuizPage', () => {
     expect(answer).toHaveBeenCalledWith('q001', true)
   })
 
-  it('다음 문제와 결과 보기 버튼의 최소 터치 높이를 보장한다', async () => {
-    const user = userEvent.setup()
-    renderPage()
-
-    await user.click(screen.getByRole('button', { name: '정답 보기' }))
-    expect(screen.getByRole('button', { name: '다음 문제' })).toHaveClass('min-h-[44px]')
-
-    await user.click(screen.getByRole('button', { name: '다음 문제' }))
-    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
-    expect(screen.getByRole('button', { name: '결과 보기' })).toHaveClass('min-h-[44px]')
-  })
-
-  it('정답 공개 후 다음 문제 액션 바를 section의 마지막 자식으로 렌더한다', async () => {
+  it('정답 공개 후에도 하단 고정 바를 렌더하지 않는다', async () => {
     const user = userEvent.setup()
     const { container } = renderPage()
 
     await user.click(screen.getByRole('button', { name: '정답 보기' }))
 
-    const actionBar = screen.getByRole('button', { name: '다음 문제' }).parentElement
-    expect(actionBar).toHaveClass('sticky', 'bottom-0', 'bg-page', 'border-t')
-    expect(container.querySelector('section')?.lastElementChild).toBe(actionBar)
+    expect(container.querySelector('.sticky')).toBeNull()
   })
 
   it('오답을 고르면 고른 보기와 정답 보기를 함께 표시한다', async () => {
@@ -106,13 +92,16 @@ describe('QuizPage', () => {
     expect(screen.getByRole('button', { name: '정답 보기' })).toHaveClass('border-green-500/60')
   })
 
-  it('정답 공개 후 모든 보기 버튼을 비활성화한다', async () => {
+  it('정답 공개 후 정답 보기만 활성으로 남긴다', async () => {
     const user = userEvent.setup()
     renderPage()
 
     await user.click(screen.getByRole('button', { name: '정답 보기' }))
 
-    screen.getAllByRole('button').slice(0, 4).forEach((button) => expect(button).toBeDisabled())
+    expect(screen.getByRole('button', { name: '정답 보기' })).toBeEnabled()
+    expect(screen.getByRole('button', { name: '오답 보기 1' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '오답 보기 2' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '오답 보기 3' })).toBeDisabled()
   })
 
   it('마지막 문제를 푼 뒤 맞힌 개수를 표시한다', async () => {
@@ -120,9 +109,9 @@ describe('QuizPage', () => {
     renderPage()
 
     await user.click(screen.getByRole('button', { name: '정답 보기' }))
-    await user.click(screen.getByRole('button', { name: '다음 문제' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
     await user.click(screen.getByRole('button', { name: '오답 보기 A' }))
-    await user.click(screen.getByRole('button', { name: '결과 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
 
     expect(document.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
     expect(screen.getByRole('heading', { name: '확인 문제 완료' })).toBeInTheDocument()
@@ -130,6 +119,49 @@ describe('QuizPage', () => {
     expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.queryByRole('link', { name: '주제 목록으로 돌아가기' })).toBeNull()
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toBeInTheDocument()
+  })
+
+  it('정답을 맞힌 뒤 정답 보기를 한 번 더 눌러도 진행 상태를 한 번만 기록한다', async () => {
+    const user = userEvent.setup()
+    const { answer } = renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    expect(answer).toHaveBeenCalledTimes(1)
+  })
+
+  it('오답 뒤 정답 보기 재탭으로 끝까지 진행해도 맞힌 개수가 늘어나지 않는다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '오답 보기 1' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '오답 보기 A' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.getByText('맞힌 개수 0 / 2')).toBeInTheDocument()
+  })
+
+  it('마지막 문항에서는 결과 안내 문구를 보여준다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.getByText('정답을 한 번 더 누르면 결과를 봅니다')).toBeInTheDocument()
+  })
+
+  it('정답 보기에서 조작 안내 문구를 설명으로 참조한다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    const instruction = screen.getByText('정답을 한 번 더 누르면 다음 문제로 넘어갑니다')
+    expect(screen.getByRole('button', { name: '정답 보기' })).toHaveAttribute('aria-describedby', instruction.id)
   })
 
   it('문항이 없는 주제에서 안내 문구와 개념 링크를 렌더한다', () => {
