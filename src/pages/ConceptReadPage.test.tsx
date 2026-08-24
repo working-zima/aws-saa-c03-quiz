@@ -27,13 +27,58 @@ const testTopics: Topic[] = [
   },
 ]
 
-function renderPage(path: string, markRead = vi.fn()) {
+const navigationTestTopics: Topic[] = [
+  {
+    id: 'first-topic',
+    title: '첫 번째 주제',
+    importance: 3,
+    sourcePages: [1, 1],
+    concepts: [
+      {
+        id: 'first-topic.concept',
+        name: '첫 번째 개념',
+        summary: '첫 번째 요약',
+        paragraphs: ['첫 번째 설명'],
+      },
+    ],
+  },
+  {
+    id: 'middle-topic',
+    title: '가운데 주제',
+    importance: 2,
+    sourcePages: [2, 2],
+    concepts: [
+      {
+        id: 'middle-topic.concept',
+        name: '가운데 개념',
+        summary: '가운데 요약',
+        paragraphs: ['가운데 설명'],
+      },
+    ],
+  },
+  {
+    id: 'last-topic',
+    title: '마지막 주제',
+    importance: 0,
+    sourcePages: [3, 3],
+    concepts: [
+      {
+        id: 'last-topic.concept',
+        name: '마지막 개념',
+        summary: '마지막 요약',
+        paragraphs: ['마지막 설명'],
+      },
+    ],
+  },
+]
+
+function renderPage(path: string, markRead = vi.fn(), topics = testTopics) {
   const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route
           path="/topic/:topicId"
-          element={<ConceptReadPage markRead={markRead} topics={testTopics} />}
+          element={<ConceptReadPage markRead={markRead} topics={topics} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -74,13 +119,46 @@ describe('ConceptReadPage', () => {
     const { container } = renderPage('/topic/storage-topic')
 
     const quizLink = screen.getByRole('link', { name: '확인 문제 풀기' })
-    const actionBar = quizLink.parentElement
+    const actionBar = quizLink.parentElement?.parentElement
     expect(quizLink).toHaveAttribute('href', '/topic/storage-topic/quiz')
     expect(quizLink).toHaveClass('min-h-[44px]')
     expect(actionBar).toHaveClass('sticky', 'bottom-0', 'bg-page', 'border-t')
     expect(actionBar).toHaveClass('-mx-5', 'px-5', 'sm:mx-0', 'sm:px-0')
     expect(actionBar).not.toHaveClass('sm:-mx-8')
     expect(container.querySelector('section')?.lastElementChild).toBe(actionBar)
+  })
+
+  it('가운데 주제에서 이전·다음 주제 링크와 확인 문제 링크를 렌더한다', () => {
+    renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics)
+
+    expect(screen.getByLabelText('이전 주제')).toHaveAttribute('href', '/topic/first-topic')
+    expect(screen.getByLabelText('다음 주제')).toHaveAttribute('href', '/topic/last-topic')
+    expect(screen.getByRole('link', { name: '확인 문제 풀기' })).toHaveAttribute(
+      'href',
+      '/topic/middle-topic/quiz',
+    )
+  })
+
+  it('첫 주제에서 이전 주제 링크 없이 다음 주제 링크와 확인 문제 링크를 렌더한다', () => {
+    renderPage('/topic/first-topic', vi.fn(), navigationTestTopics)
+
+    expect(screen.queryByLabelText('이전 주제')).toBeNull()
+    expect(screen.getByLabelText('다음 주제')).toHaveAttribute('href', '/topic/middle-topic')
+    expect(screen.getByRole('link', { name: '확인 문제 풀기' })).toHaveAttribute(
+      'href',
+      '/topic/first-topic/quiz',
+    )
+  })
+
+  it('마지막 주제에서 다음 주제 링크 없이 이전 주제 링크와 확인 문제 링크를 렌더한다', () => {
+    renderPage('/topic/last-topic', vi.fn(), navigationTestTopics)
+
+    expect(screen.getByLabelText('이전 주제')).toHaveAttribute('href', '/topic/middle-topic')
+    expect(screen.queryByLabelText('다음 주제')).toBeNull()
+    expect(screen.getByRole('link', { name: '확인 문제 풀기' })).toHaveAttribute(
+      'href',
+      '/topic/last-topic/quiz',
+    )
   })
 
   it('본문과 요약의 키워드 표기를 굵고 밝은 강조로 렌더한다', () => {
