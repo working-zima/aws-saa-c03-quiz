@@ -113,7 +113,7 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
           <p className="text-xs text-neutral-500" id={advanceInstructionId}>
             {questionIndex === topicQuestions.length - 1
               ? '정답을 한 번 더 누르면 결과를 봅니다'
-              : '정답을 한 번 더 누르면 다음 ' + '문제로 넘어갑니다'}
+              : '정답을 한 번 더 누르면 다음 문제로 넘어갑니다'}
           </p>
           <Link className="inline-flex min-h-[44px] items-center text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${topicId}`}>
             근거 개념으로 돌아가기
