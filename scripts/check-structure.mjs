@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
- * phase 2-rewrite 가드레일: 개념 본문 외의 것이 바뀌지 않았는지 검사한다.
+ * 구조 가드레일: 개념 본문 외의 것이 의도치 않게 바뀌지 않았는지 검사한다.
  *
- * 재작성은 summary·paragraphs만 교체한다. 개념 id·name, 주제 메타데이터, 개념 개수와
- * 순서, 문항 파일은 그대로여야 한다. 이유: 문항 169개가 conceptId로 개념을 참조하고
+ * 본문 손질은 summary·paragraphs만 바꾼다. 개념 id·name, 주제 메타데이터, 개념 개수와
+ * 순서, 문항 파일은 그대로여야 한다. 이유: 문항이 conceptId로 개념을 참조하고
  * src/data/data.test.ts가 개념 개수·주제 메타데이터를 하드코딩으로 검증한다.
  *
- * 기준은 scripts/topics-baseline.json (phase 시작 시점 스냅샷)이다.
+ * 기준은 scripts/topics-baseline.json (현재 구조 스냅샷)이다.
+ * 구조를 의도적으로 바꿨다면 이 스냅샷도 같은 커밋에서 갱신한다.
  *
  * 사용법: node scripts/check-structure.mjs
  * 위반이 있으면 exit 1.
@@ -71,8 +72,9 @@ baseline.topics.forEach((want, i) => {
 const sha = createHash('sha256').update(readFileSync(join(ROOT, 'src/data/questions.json'))).digest('hex')
 if (sha !== baseline.questionsSha256) {
   problems.push(
-    'src/data/questions.json이 바뀌었다. 이 phase에서 문항은 읽기 전용이다.\n' +
-    '    문항의 정답 근거가 사라졌다면 문항이 아니라 개념 본문을 보강해서 해결하라.',
+    'src/data/questions.json이 바뀌었다.\n' +
+    '    문항의 정답 근거가 사라졌다면 문항이 아니라 개념 본문을 보강해서 해결하라.\n' +
+    '    문항을 의도적으로 고쳤다면 scripts/topics-baseline.json의 questionsSha256을 갱신하라.',
   )
 }
 

@@ -19,6 +19,21 @@
       "dir": "3-mobile",
       "status": "completed",
       "completed_at": "2026-08-24T18:53:47+0900"
+    },
+    {
+      "dir": "4-sticky-actions",
+      "status": "completed",
+      "completed_at": "2026-08-24T20:26:36+0900"
+    },
+    {
+      "dir": "5-topic-merge",
+      "status": "completed",
+      "completed_at": "2026-08-24T21:11:17+0900"
+    },
+    {
+      "dir": "6-desktop-layout",
+      "status": "completed",
+      "completed_at": "2026-08-24T21:32:44+0900"
     }
   ]
 }

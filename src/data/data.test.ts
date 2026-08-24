@@ -172,16 +172,14 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 22개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 20개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
       sourcePages,
     }))).toEqual([
-      { id: 'aws-core-services', title: 'AWS 핵심 서비스 개요 — EC2·RDS·S3·Route 53·ELB·CloudFront·Lambda', importance: 0, sourcePages: [1, 4] },
-      { id: 'region-availability', title: '리전·가용성·가용 영역·다중 AZ', importance: 0, sourcePages: [5, 6] },
-      { id: 'onpremise-migration', title: '온프레미스와 마이그레이션', importance: 0, sourcePages: [7, 7] },
+      { id: 'aws-core-services', title: 'AWS 핵심 서비스·리전·가용 영역·온프레미스', importance: 0, sourcePages: [1, 7] },
       { id: 's3-storage-classes', title: 'S3 스토리지 클래스 유형', importance: 3, sourcePages: [8, 9] },
       { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기 정책', importance: 3, sourcePages: [10, 12] },
       { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·S3 Batch Operations', importance: 2, sourcePages: [13, 13] },
@@ -531,7 +529,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(13, 20).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -548,13 +546,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(15, 22).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(13, 20).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(8, 15).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(6, 13).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -571,9 +569,66 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(8, 15).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(6, 13).map((topic) => topic.concepts.length)).toEqual([
       7, 8, 11, 11, 11, 12, 10,
     ])
+  })
+
+  it('S3 스토리지 클래스 주제가 클래스별 개념 7개와 정리 개념 2개로 나뉜다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-storage-classes')
+
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-storage-classes.standard',
+      's3-storage-classes.intelligent-tiering',
+      's3-storage-classes.standard-ia',
+      's3-storage-classes.one-zone-ia',
+      's3-storage-classes.glacier-instant-retrieval',
+      's3-storage-classes.glacier-flexible-retrieval',
+      's3-storage-classes.glacier-deep-archive',
+      's3-storage-classes.retrieval-time',
+      's3-storage-classes.glacier-or-standard-ia',
+    ])
+    expect(topic?.concepts.map((concept) => concept.name)).toEqual([
+      'S3 Standard',
+      'S3 Intelligent-Tiering',
+      'S3 Standard-IA (Infrequent Access)',
+      'S3 One Zone-IA',
+      'S3 Glacier Instant Retrieval',
+      'S3 Glacier Flexible Retrieval',
+      'S3 Glacier Deep Archive',
+      '즉시 조회와 대기 조회',
+      'Glacier와 Standard-IA 중 고르기',
+    ])
+  })
+
+  it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
+    const storageClassQuestions = questions.filter(
+      (question) => question.topicId === 's3-storage-classes',
+    )
+
+    expect(storageClassQuestions.map(({ id }) => id)).toEqual([
+      'q016',
+      'q017',
+      'q018',
+      'q019',
+      'q020',
+      'q021',
+      'q022',
+      'q023',
+      'q024',
+    ])
+    expect(storageClassQuestions.map(({ conceptId }) => conceptId)).toEqual([
+      's3-storage-classes.intelligent-tiering',
+      's3-storage-classes.standard',
+      's3-storage-classes.standard-ia',
+      's3-storage-classes.one-zone-ia',
+      's3-storage-classes.glacier-instant-retrieval',
+      's3-storage-classes.glacier-flexible-retrieval',
+      's3-storage-classes.glacier-deep-archive',
+      's3-storage-classes.glacier-or-standard-ia',
+      's3-storage-classes.retrieval-time',
+    ])
+    expect(new Set(storageClassQuestions.map(({ conceptId }) => conceptId)).size).toBe(9)
   })
 
   it('주제 id가 유일하다', () => {

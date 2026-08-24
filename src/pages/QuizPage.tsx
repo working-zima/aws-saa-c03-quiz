@@ -50,7 +50,6 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
         <nav className="flex flex-wrap gap-3" aria-label="퀴즈 완료 후 이동">
           {hasIncorrectAnswer && <Link className={primaryButtonClass} to="/review">틀린 개념 복습하기</Link>}
           <Link className={ghostLinkClass} to={`/topic/${topicId}`}>개념으로 돌아가기</Link>
-          <Link className={ghostLinkClass} to="/">주제 목록으로 돌아가기</Link>
         </nav>
       </section>
     )
@@ -58,6 +57,7 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
 
   const question = topicQuestions[questionIndex]
   const revealed = selectedIndex !== null
+  const advanceInstructionId = `quiz-advance-instruction-${question.id}`
 
   function selectChoice(choiceIndex: number) {
     if (revealed) return
@@ -91,12 +91,14 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
           const correctChoice = revealed && isCorrect(question, choiceIndex)
           const selectedIncorrectChoice = revealed && selectedIndex === choiceIndex && !correctChoice
           const resultClass = correctChoice ? choiceCorrectClass : selectedIncorrectChoice ? choiceIncorrectClass : ''
+          const advanceClass = correctChoice ? 'cursor-pointer hover:border-green-500' : ''
           return (
             <button
-              className={`${choiceBaseClass} ${resultClass}`}
-              disabled={revealed}
+              aria-describedby={correctChoice ? advanceInstructionId : undefined}
+              className={`${choiceBaseClass} ${resultClass} ${advanceClass}`}
+              disabled={revealed && !correctChoice}
               key={`${question.id}-${choiceIndex}`}
-              onClick={() => selectChoice(choiceIndex)}
+              onClick={() => revealed ? advance() : selectChoice(choiceIndex)}
               type="button"
             >
               {choice}
@@ -108,14 +110,14 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
       {revealed && (
         <div className="animate-[fade-in_0.2s_ease-out] space-y-3 border-t border-neutral-800 pt-5">
           <p className="text-[15px] leading-7 text-neutral-300">{question.explanation}</p>
+          <p className="text-xs text-neutral-500" id={advanceInstructionId}>
+            {questionIndex === topicQuestions.length - 1
+              ? '정답을 한 번 더 누르면 결과를 봅니다'
+              : '정답을 한 번 더 누르면 다음 문제로 넘어갑니다'}
+          </p>
           <Link className="inline-flex min-h-[44px] items-center text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${topicId}`}>
             근거 개념으로 돌아가기
           </Link>
-          <div>
-            <button className={primaryButtonClass} onClick={advance} type="button">
-              {questionIndex === topicQuestions.length - 1 ? '결과 보기' : '다음 문제'}
-            </button>
-          </div>
         </div>
       )}
     </section>

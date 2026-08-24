@@ -9,6 +9,18 @@ interface ConceptReadPageProps {
   markRead?: (topicId: string) => void
 }
 
+function renderEmphasis(text: string, keyPrefix: string) {
+  return text.split(/(\*\*.+?\*\*)/g).map((part, index) =>
+    part.startsWith('**') && part.endsWith('**') ? (
+      <strong className="font-medium text-neutral-100" key={`${keyPrefix}-${index}`}>
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      part
+    ),
+  )
+}
+
 const importanceLabel = {
   3: { label: '★★★', className: 'text-importance-high' },
   2: { label: '★★☆', className: 'text-importance-medium' },
@@ -54,12 +66,12 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
           <article className="space-y-3" key={concept.id}>
             <div className="space-y-1">
               <h2 className="text-base font-medium text-neutral-100">{concept.name}</h2>
-              <p className="text-sm text-neutral-400">{concept.summary}</p>
+              <p className="text-sm text-neutral-400">{renderEmphasis(concept.summary, `${concept.id}-summary`)}</p>
             </div>
             <div className="space-y-3">
               {concept.paragraphs.map((paragraph, index) => (
                 <p className="whitespace-pre-line break-keep text-[15px] leading-7 text-neutral-300" key={`${concept.id}-${index}`}>
-                  {paragraph}
+                  {renderEmphasis(paragraph, `${concept.id}-${index}`)}
                 </p>
               ))}
             </div>
@@ -67,9 +79,11 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
         ))}
       </div>
 
-      <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
-        확인 문제 풀기
-      </Link>
+      <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0">
+        <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
+          확인 문제 풀기
+        </Link>
+      </div>
     </section>
   )
 }

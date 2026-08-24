@@ -7,15 +7,19 @@ export function Layout() {
   return (
     <div className="min-h-screen bg-page text-body">
       <header className="border-b border-border">
-        <div className="flex items-center justify-between px-5 py-4 sm:px-8">
-          <NavLink className="inline-flex min-h-[44px] items-center text-base font-medium text-title" to="/">AWS SAA-C03</NavLink>
-          <nav aria-label="주요 내비게이션" className="flex items-center gap-1">
-            <NavLink className={linkClassName} end to="/">주제 목록</NavLink>
-            <NavLink className={linkClassName} to="/review">복습</NavLink>
-          </nav>
+        <div className="px-5 py-4 sm:px-8">
+          <div className="mx-auto flex max-w-3xl items-center justify-between">
+            <NavLink className="inline-flex min-h-[44px] items-center text-base font-medium text-title" to="/">AWS SAA-C03</NavLink>
+            <nav aria-label="주요 내비게이션" className="flex items-center gap-1">
+              <NavLink className={linkClassName} end to="/">주제 목록</NavLink>
+              <NavLink className={linkClassName} to="/review">복습</NavLink>
+            </nav>
+          </div>
         </div>
       </header>
-      <main className="px-5 py-8 sm:px-8"><Outlet /></main>
+      <main className="px-5 py-8 sm:px-8">
+        <div className="mx-auto max-w-3xl"><Outlet /></div>
+      </main>
     </div>
   )
 }
