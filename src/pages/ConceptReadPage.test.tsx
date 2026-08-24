@@ -17,6 +17,12 @@ const testTopics: Topic[] = [
         summary: '접근 방식에 맞는 저장소를 선택한다.',
         paragraphs: ['첫 번째 설명이다.', '항목 1\n항목 2'],
       },
+      {
+        id: 'storage-topic.object-lock',
+        name: '객체 잠금',
+        summary: '**규정 준수 모드**는 루트 사용자도 막는다.',
+        paragraphs: ['보존 모드는 **거버넌스 모드**와 **규정 준수 모드**로 나뉜다.'],
+      },
     ],
   },
 ]
@@ -70,6 +76,26 @@ describe('ConceptReadPage', () => {
     const quizLink = screen.getByRole('link', { name: '확인 문제 풀기' })
     expect(quizLink).toHaveAttribute('href', '/topic/storage-topic/quiz')
     expect(quizLink).toHaveClass('min-h-[44px]')
+  })
+
+  it('본문과 요약의 키워드 표기를 굵고 밝은 강조로 렌더한다', () => {
+    renderPage('/topic/storage-topic')
+
+    const emphasized = screen.getAllByText('규정 준수 모드')
+
+    expect(emphasized).toHaveLength(2)
+    emphasized.forEach((node) => {
+      expect(node.tagName).toBe('STRONG')
+      expect(node).toHaveClass('font-medium', 'text-neutral-100')
+    })
+    expect(screen.getByText('거버넌스 모드')).toHaveClass('font-medium', 'text-neutral-100')
+  })
+
+  it('강조 표기 기호를 화면에 노출하지 않는다', () => {
+    const { container } = renderPage('/topic/storage-topic')
+
+    expect(container.textContent).not.toContain('**')
+    expect(screen.getByText(/보존 모드는/)).toHaveTextContent('보존 모드는 거버넌스 모드와 규정 준수 모드로 나뉜다.')
   })
 
   it('화면 진입 시 해당 주제를 읽음 처리한다', () => {
