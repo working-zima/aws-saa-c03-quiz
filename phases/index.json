@@ -14,6 +14,11 @@
       "dir": "2-rewrite",
       "status": "completed",
       "completed_at": "2026-08-23T23:18:17+0900"
+    },
+    {
+      "dir": "3-mobile",
+      "status": "completed",
+      "completed_at": "2026-08-24T18:53:47+0900"
     }
   ]
 }

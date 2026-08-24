@@ -62,6 +62,12 @@ function renderPage(
 }
 
 describe('TopicListPage', () => {
+  it('최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
+    const { container } = renderPage()
+
+    expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
+  })
+
   it('주제 제목들을 렌더한다', () => {
     renderPage()
 

@@ -42,6 +42,12 @@ function renderPage(progress: Progress) {
 }
 
 describe('ReviewPage', () => {
+  it('최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
+    const { container } = renderPage({ version: 1, read: {}, answers: {} })
+
+    expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
+  })
+
   it('오답이 있는 개념을 주제별로 묶어 렌더한다', () => {
     renderPage({ version: 1, read: {}, answers: { q001: false, q003: false } })
 
@@ -49,7 +55,9 @@ describe('ReviewPage', () => {
     const databaseGroup = screen.getByRole('region', { name: '데이터베이스' })
     expect(within(storageGroup).getByText('Amazon S3')).toBeInTheDocument()
     expect(within(databaseGroup).getByText('Amazon RDS')).toBeInTheDocument()
-    expect(within(storageGroup).getByRole('link', { name: '확인 문제 다시 풀기' })).toHaveAttribute('href', '/topic/storage/quiz')
+    const retryLink = within(storageGroup).getByRole('link', { name: '확인 문제 다시 풀기' })
+    expect(retryLink).toHaveAttribute('href', '/topic/storage/quiz')
+    expect(retryLink).toHaveClass('min-h-[44px]')
   })
 
   it('맞힌 문제의 개념은 목록에 표시하지 않는다', () => {
@@ -68,7 +76,9 @@ describe('ReviewPage', () => {
   it('아무것도 안 푼 상태와 전부 맞힌 상태를 다르게 안내한다', () => {
     const { unmount } = renderPage({ version: 1, read: {}, answers: {} })
     expect(screen.getByText('확인 문제를 풀면 여기에 복습할 개념이 모입니다.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '주제 목록으로 가기' })).toHaveAttribute('href', '/')
+    const topicListLink = screen.getByRole('link', { name: '주제 목록으로 가기' })
+    expect(topicListLink).toHaveAttribute('href', '/')
+    expect(topicListLink).toHaveClass('min-h-[44px]')
 
     unmount()
     renderPage({ version: 1, read: {}, answers: { q001: true, q002: true, q003: true } })

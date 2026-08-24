@@ -19,4 +19,20 @@ describe('Layout', () => {
     expect(screen.getByRole('navigation', { name: '주요 내비게이션' })).toBeInTheDocument()
     expect(screen.getByText('화면 내용')).toBeInTheDocument()
   })
+
+  it('로고와 내비게이션 링크의 최소 터치 높이를 보장한다', () => {
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>화면 내용</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('link', { name: 'AWS SAA-C03' })).toHaveClass('min-h-[44px]')
+    expect(screen.getByRole('link', { name: '주제 목록' })).toHaveClass('min-h-[44px]')
+    expect(screen.getByRole('link', { name: '복습' })).toHaveClass('min-h-[44px]')
+  })
 })

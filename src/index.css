@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .break-anywhere {
+    overflow-wrap: anywhere;
+  }
+}
+
 body {
   margin: 0;
   background: theme('colors.page');
