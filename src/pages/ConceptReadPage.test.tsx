@@ -78,6 +78,8 @@ describe('ConceptReadPage', () => {
     expect(quizLink).toHaveAttribute('href', '/topic/storage-topic/quiz')
     expect(quizLink).toHaveClass('min-h-[44px]')
     expect(actionBar).toHaveClass('sticky', 'bottom-0', 'bg-page', 'border-t')
+    expect(actionBar).toHaveClass('-mx-5', 'px-5', 'sm:mx-0', 'sm:px-0')
+    expect(actionBar).not.toHaveClass('sm:-mx-8')
     expect(container.querySelector('section')?.lastElementChild).toBe(actionBar)
   })
 
