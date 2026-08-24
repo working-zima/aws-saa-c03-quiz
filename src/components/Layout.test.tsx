@@ -56,8 +56,68 @@ describe('Layout', () => {
     )
 
     expect(screen.getByRole('link', { name: 'AWS SAA-C03' })).toHaveClass('min-h-[44px]')
-    expect(screen.getByRole('link', { name: '주제 목록' })).toHaveClass('min-h-[44px]')
     expect(screen.getByRole('link', { name: '복습' })).toHaveClass('min-h-[44px]')
+  })
+
+  it('확인 문제 화면에서 현재 주제의 근거 개념 링크를 렌더링한다', () => {
+    render(
+      <MemoryRouter initialEntries={['/topic/vpc/quiz']}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('link', { name: '근거 개념' })).toHaveAttribute('href', '/topic/vpc')
+    expect(screen.getByRole('link', { name: '근거 개념' })).toHaveClass('min-h-[44px]')
+  })
+
+  it('개념 읽기 화면에서 근거 개념 링크를 렌더링하지 않는다', () => {
+    render(
+      <MemoryRouter initialEntries={['/topic/vpc']}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.queryByRole('link', { name: '근거 개념' })).toBeNull()
+  })
+
+  it.each(['/', '/review'])('%s에서 근거 개념 링크를 렌더링하지 않는다', (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>주제 목록</p>} />
+            <Route path="review" element={<p>복습 화면</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.queryByRole('link', { name: '근거 개념' })).toBeNull()
+  })
+
+  it.each(['/', '/topic/vpc', '/topic/vpc/quiz', '/review'])('%s에서 주제 목록 링크를 렌더링하지 않는다', (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>주제 목록</p>} />
+            <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
+            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
+            <Route path="review" element={<p>복습 화면</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.queryByRole('link', { name: '주제 목록' })).toBeNull()
   })
 
   it('헤더를 불투명한 sticky 영역으로 고정한다', () => {

@@ -2,6 +2,15 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "10-header-concept-link",
   "steps": [
-    { "step": 0, "name": "header-concept-link", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "header-concept-link",
+      "status": "completed",
+      "summary": "주제 목록 중복 링크를 제거하고 확인 문제 화면에만 현재 주제의 근거 개념 링크를 추가했다.",
+      "started_at": "2026-08-25T07:00:18+0900",
+      "completed_at": "2026-08-25T07:02:04+0900"
+    }
+  ],
+  "created_at": "2026-08-25T07:00:18+0900",
+  "completed_at": "2026-08-25T07:02:04+0900"
 }
