@@ -35,4 +35,26 @@ describe('Layout', () => {
     expect(screen.getByRole('link', { name: '주제 목록' })).toHaveClass('min-h-[44px]')
     expect(screen.getByRole('link', { name: '복습' })).toHaveClass('min-h-[44px]')
   })
+
+  it('헤더와 화면 내용을 동일한 중앙 정렬 셸에 배치한다', () => {
+    render(
+      <MemoryRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>화면 내용</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const headerShell = screen.getByRole('link', { name: 'AWS SAA-C03' }).parentElement
+    const mainShell = screen.getByText('화면 내용').parentElement
+
+    expect(headerShell).toHaveClass('mx-auto', 'max-w-3xl')
+    expect(mainShell).toHaveClass('mx-auto', 'max-w-3xl')
+
+    const headerWidthClass = [...(headerShell?.classList ?? [])].find((className) => className.startsWith('max-w-'))
+    const mainWidthClass = [...(mainShell?.classList ?? [])].find((className) => className.startsWith('max-w-'))
+    expect(headerWidthClass).toBe(mainWidthClass)
+  })
 })
