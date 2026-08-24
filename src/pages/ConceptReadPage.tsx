@@ -2,12 +2,27 @@ import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
+import { adjacentTopics } from '../lib/navigation'
 import type { Topic } from '../types/content'
 
 interface ConceptReadPageProps {
   topics?: Topic[]
   markRead?: (topicId: string) => void
 }
+
+const previousIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M15 19l-7-7 7-7" />
+  </svg>
+)
+
+const nextIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M9 5l7 7-7 7" />
+  </svg>
+)
+
+const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
 
 function renderEmphasis(text: string, keyPrefix: string) {
   return text.split(/(\*\*.+?\*\*)/g).map((part, index) =>
@@ -31,6 +46,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
   const { markRead: storedMarkRead } = useProgress()
   const markRead = providedMarkRead ?? storedMarkRead
   const topic = topics.find((candidate) => candidate.id === topicId)
+  const { prev, next } = adjacentTopics(topics, topicId)
 
   useEffect(() => {
     if (topicId && topic) markRead(topicId)
@@ -80,9 +96,29 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
       </div>
 
       <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0">
-        <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
-          확인 문제 풀기
-        </Link>
+        <div className="flex items-center justify-between gap-3">
+          {prev ? (
+            <Link aria-label="이전 주제" className={ghostLinkClass} to={`/topic/${prev.id}`}>
+              {previousIcon}
+            </Link>
+          ) : (
+            <span aria-hidden="true" className={`${ghostLinkClass} text-neutral-500`}>
+              {previousIcon}
+            </span>
+          )}
+          <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
+            확인 문제 풀기
+          </Link>
+          {next ? (
+            <Link aria-label="다음 주제" className={ghostLinkClass} to={`/topic/${next.id}`}>
+              {nextIcon}
+            </Link>
+          ) : (
+            <span aria-hidden="true" className={`${ghostLinkClass} text-neutral-500`}>
+              {nextIcon}
+            </span>
+          )}
+        </div>
       </div>
     </section>
   )
