@@ -42,7 +42,8 @@
     },
     {
       "dir": "8-sticky-header",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-25T00:50:56+0900"
     },
     {
       "dir": "9-topic-navigation",

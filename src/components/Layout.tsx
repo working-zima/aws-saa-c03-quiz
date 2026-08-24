@@ -16,7 +16,7 @@ export function Layout() {
 
   return (
     <div className="min-h-screen bg-page text-body">
-      <header className="border-b border-border">
+      <header className="sticky top-0 border-b border-border bg-page">
         <div className="px-5 py-4 sm:px-8">
           <div className="mx-auto flex max-w-3xl items-center justify-between">
             <NavLink className="inline-flex min-h-[44px] items-center text-base font-medium text-title" to="/">AWS SAA-C03</NavLink>
