@@ -5,7 +5,11 @@
     {
       "step": 0,
       "name": "previous-question",
-      "status": "pending"
+      "status": "completed",
+      "summary": "문항별 선택 상태와 이전 문제 탐색을 추가하고 되돌아보기·중복 집계 회귀 테스트를 완료함",
+      "started_at": "2026-08-25T07:27:53+0900",
+      "completed_at": "2026-08-25T07:29:51+0900"
     }
-  ]
+  ],
+  "created_at": "2026-08-25T07:27:53+0900"
 }
