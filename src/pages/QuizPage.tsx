@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { questions as defaultQuestions } from '../data'
+import { questions as defaultQuestions, topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { isCorrect } from '../lib/grading'
-import type { Question } from '../types/content'
+import { adjacentTopics } from '../lib/navigation'
+import type { Question, Topic } from '../types/content'
 
 interface QuizPageProps {
   questions?: Question[]
+  topics?: Topic[]
   answer?: (questionId: string, correct: boolean) => void
 }
 
@@ -16,11 +18,12 @@ const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
 const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
 
-export function QuizPage({ questions = defaultQuestions, answer: providedAnswer }: QuizPageProps) {
+export function QuizPage({ questions = defaultQuestions, topics = defaultTopics, answer: providedAnswer }: QuizPageProps) {
   const { topicId } = useParams()
   const { answer: storedAnswer } = useProgress()
   const answer = providedAnswer ?? storedAnswer
   const topicQuestions = questions.filter((question) => question.topicId === topicId)
+  const { next } = adjacentTopics(topics, topicId)
   const [questionIndex, setQuestionIndex] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [correctCount, setCorrectCount] = useState(0)
@@ -49,6 +52,11 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
         </div>
         <nav className="flex flex-wrap gap-3" aria-label="퀴즈 완료 후 이동">
           {hasIncorrectAnswer && <Link className={primaryButtonClass} to="/review">틀린 개념 복습하기</Link>}
+          {next && (
+            <Link className={hasIncorrectAnswer ? ghostLinkClass : primaryButtonClass} to={`/topic/${next.id}`}>
+              다음 주제 이어가기
+            </Link>
+          )}
           <Link className={ghostLinkClass} to={`/topic/${topicId}`}>개념으로 돌아가기</Link>
         </nav>
       </section>

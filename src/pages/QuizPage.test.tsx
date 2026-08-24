@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
-import type { Question } from '../types/content'
+import type { Question, Topic } from '../types/content'
 import { QuizPage } from './QuizPage'
 
 const testQuestions: Question[] = [
@@ -26,11 +26,33 @@ const testQuestions: Question[] = [
   },
 ]
 
-function renderPage(path = '/topic/test-topic/quiz', answer = vi.fn(), questions = testQuestions) {
+const testTopics: Topic[] = [
+  {
+    id: 'test-topic',
+    title: '테스트 주제',
+    importance: 0,
+    sourcePages: [1, 1],
+    concepts: [],
+  },
+  {
+    id: 'next-topic',
+    title: '다음 주제',
+    importance: 0,
+    sourcePages: [2, 2],
+    concepts: [],
+  },
+]
+
+function renderPage(
+  path = '/topic/test-topic/quiz',
+  answer = vi.fn(),
+  questions = testQuestions,
+  topics?: Topic[],
+) {
   const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} questions={questions} />} />
+        <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} questions={questions} topics={topics} />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -119,6 +141,47 @@ describe('QuizPage', () => {
     expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.queryByRole('link', { name: '주제 목록으로 돌아가기' })).toBeNull()
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toBeInTheDocument()
+  })
+
+  it('오답이 있고 다음 주제가 있으면 복습과 다음 주제 링크를 함께 렌더한다', async () => {
+    const user = userEvent.setup()
+    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, testTopics)
+
+    await user.click(screen.getByRole('button', { name: '오답 보기 1' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
+    expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
+  })
+
+  it('전부 맞히고 다음 주제가 있으면 다음 주제 링크만 주요 출구로 렌더한다', async () => {
+    const user = userEvent.setup()
+    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, testTopics)
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
+    expect(screen.queryByRole('link', { name: '틀린 개념 복습하기' })).toBeNull()
+    expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
+  })
+
+  it('마지막 주제에서는 다음 주제 링크 없이 개념 링크를 렌더한다', async () => {
+    const user = userEvent.setup()
+    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, [testTopics[0]])
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.queryByRole('link', { name: '다음 주제 이어가기' })).toBeNull()
+    expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
   })
 
   it('정답을 맞힌 뒤 정답 보기를 한 번 더 눌러도 진행 상태를 한 번만 기록한다', async () => {
