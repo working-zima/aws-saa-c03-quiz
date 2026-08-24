@@ -88,6 +88,18 @@ describe('QuizPage', () => {
     expect(screen.queryByRole('button', { name: '이전 문제' })).toBeNull()
   })
 
+  it('제목 줄은 이전 문제 버튼 유무와 무관하게 최소 높이를 유지한다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    expect(screen.getByRole('heading', { name: '확인 문제' }).parentElement).toHaveClass('min-h-[44px]')
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    expect(screen.getByRole('heading', { name: '확인 문제' }).parentElement).toHaveClass('min-h-[44px]')
+  })
+
   it('두 번째 문항에서는 최소 터치 높이를 가진 이전 문제 버튼을 렌더한다', async () => {
     const user = userEvent.setup()
     renderPage()

@@ -90,7 +90,7 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
   return (
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <header className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex min-h-[44px] items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">확인 문제</h1>
           <div className="flex items-center gap-3">
             {questionIndex > 0 && (
