@@ -27,7 +27,8 @@
     },
     {
       "dir": "5-topic-merge",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-24T21:11:17+0900"
     }
   ]
 }
