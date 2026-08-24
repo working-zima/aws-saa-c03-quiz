@@ -29,8 +29,10 @@
     {
       "step": 3,
       "name": "fix-split-instruction-string",
-      "status": "pending",
-      "started_at": "2026-08-24T20:13:09+0900"
+      "status": "completed",
+      "summary": "퀴즈 진행 안내 문구를 문자열 연결 없이 하나의 리터럴로 복원했다.",
+      "started_at": "2026-08-24T20:13:09+0900",
+      "completed_at": "2026-08-24T20:26:35+0900"
     }
   ],
   "created_at": "2026-08-24T19:52:16+0900"
