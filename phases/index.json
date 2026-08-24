@@ -42,6 +42,10 @@
     {
       "dir": "8-sticky-header",
       "status": "pending"
+    },
+    {
+      "dir": "9-topic-navigation",
+      "status": "pending"
     }
   ]
 }

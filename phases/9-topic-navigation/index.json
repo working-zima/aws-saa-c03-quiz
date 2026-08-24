@@ -1,0 +1,22 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "9-topic-navigation",
+  "steps": [
+    {
+      "step": 0,
+      "name": "adjacent-topics-lib",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "concept-read-bar",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "quiz-complete-exit",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-08-25T00:30:00+0900"
+}
