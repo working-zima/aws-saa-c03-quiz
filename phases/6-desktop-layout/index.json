@@ -1,0 +1,24 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "6-desktop-layout",
+  "steps": [
+    {
+      "step": 0,
+      "name": "shell-container",
+      "status": "completed",
+      "summary": "헤더와 main에 동일한 max-w-3xl 중앙 정렬 셸을 추가하고 레이아웃 클래스 테스트를 보강함",
+      "started_at": "2026-08-24T21:27:57+0900",
+      "completed_at": "2026-08-24T21:29:45+0900"
+    },
+    {
+      "step": 1,
+      "name": "action-bar-width",
+      "status": "completed",
+      "summary": "개념 읽기 액션 바의 모바일 전폭 동작은 유지하고 데스크톱 폭을 본문에 맞추도록 반응형 클래스를 수정함",
+      "started_at": "2026-08-24T21:31:16+0900",
+      "completed_at": "2026-08-24T21:32:44+0900"
+    }
+  ],
+  "created_at": "2026-08-24T21:27:57+0900",
+  "completed_at": "2026-08-24T21:32:44+0900"
+}

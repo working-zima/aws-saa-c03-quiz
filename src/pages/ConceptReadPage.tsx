@@ -79,7 +79,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
         ))}
       </div>
 
-      <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:-mx-8 sm:px-8">
+      <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0">
         <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
           확인 문제 풀기
         </Link>
