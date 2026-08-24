@@ -34,6 +34,10 @@
       "dir": "6-desktop-layout",
       "status": "completed",
       "completed_at": "2026-08-24T21:32:44+0900"
+    },
+    {
+      "dir": "7-scroll-reset",
+      "status": "pending"
     }
   ]
 }
