@@ -102,7 +102,8 @@ grep -c 'justify-between' src/pages/QuizPage.tsx              # 1
 grep -c 'items-center' src/pages/QuizPage.tsx                  # 5
 grep -c '<button' src/pages/QuizPage.tsx                       # 2
 grep -c 'aria-label="이전 문제"' src/pages/QuizPage.tsx        # 1
-grep -nE 'invisible|opacity-0|h-\[44px\]|sticky|fixed|useEffect' src/pages/QuizPage.tsx   # 결과 없음
+grep -nE 'invisible|opacity-0|sticky|fixed|useEffect' src/pages/QuizPage.tsx   # 결과 없음
+grep -nE '(^|[^-])h-\[44px\]' src/pages/QuizPage.tsx        # 결과 없음 (고정 높이 금지. min-h-[44px]는 걸리지 않는다)
 git diff --name-only                                           # 아래 세 개뿐
 ```
 
