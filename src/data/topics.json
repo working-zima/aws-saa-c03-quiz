@@ -36,7 +36,15 @@
   {
     "id":"s3-storage-classes","title":"S3 스토리지 클래스 유형","importance":3,"sourcePages":[8,9],
     "concepts":[
-      {"id":"s3-storage-classes.storage-classes","name":"S3 스토리지 클래스 유형","summary":"S3는 데이터의 접근 방식과 보관 목적에 맞춰 선택할 수 있는 여러 저장소 유형을 제공한다.","paragraphs":["자주 읽는 데이터에는 기본 클래스인 S3 Standard를 사용한다. 접근 시점이 일정하지 않다면 S3 Intelligent-Tiering이 사용 패턴을 분석하고 비용 효율적인 계층에 데이터를 자동으로 배치한다.","접근은 드물어도 바로 읽어야 하는 데이터에는 S3 Standard-IA가 알맞다. S3 One Zone-IA도 같은 용도이지만 데이터가 하나의 AZ에만 저장되므로 고가용성은 제공하지 않는다.","Glacier 계열 가운데 S3 Glacier Instant Retrieval은 드물게 찾는 데이터를 즉시 읽을 수 있게 한다. S3 Glacier Flexible Retrieval은 조회에 최대 1시간이 걸려도 될 때, S3 Glacier Deep Archive는 최대 12시간까지 기다릴 수 있을 때 선택한다.","바로 조회할 수 있는 유형에는 S3 Standard와 S3 Standard-IA가 있다. S3 Intelligent-Tiering, S3 Glacier Instant Retrieval, S3 One Zone-IA 역시 대기 없이 읽을 수 있다. 반면 Flexible Retrieval과 Deep Archive에서는 데이터를 꺼내는 데 시간이 필요하다.","Glacier 클래스는 법률, 감사 또는 규정 준수를 위해 데이터를 오래 보관할 때 사용한다. 이런 장기 보관 목적 없이 단지 접근 빈도만 낮다면 S3 Standard-IA를 선택한다."]}
+      {"id":"s3-storage-classes.standard","name":"S3 Standard","summary":"자주 읽는 데이터에 사용하는 기본 스토리지 클래스다.","paragraphs":["따로 지정하지 않으면 쓰이는 기본 클래스이며, 접근이 잦은 데이터에 알맞다.","저장한 데이터는 기다림 없이 곧바로 조회할 수 있다."]},
+      {"id":"s3-storage-classes.intelligent-tiering","name":"S3 Intelligent-Tiering","summary":"접근 시점이 일정하지 않은 데이터를 알맞은 계층에 자동으로 배치하는 클래스다.","paragraphs":["AWS가 사용 패턴을 분석해 비용 효율적인 계층으로 데이터를 옮겨 준다. 얼마나 자주 읽힐지 예측하기 어려울 때 선택한다.","어느 계층에 있든 데이터는 대기 없이 읽을 수 있다."]},
+      {"id":"s3-storage-classes.standard-ia","name":"S3 Standard-IA (Infrequent Access)","summary":"접근은 드물어도 필요할 때는 바로 읽어야 하는 데이터에 쓰는 클래스다.","paragraphs":["접근 빈도가 낮은 데이터를 더 싸게 보관하면서도, 조회 요청이 들어오면 기다림 없이 꺼낼 수 있다."]},
+      {"id":"s3-storage-classes.one-zone-ia","name":"S3 One Zone-IA","summary":"Standard-IA와 용도는 같지만 데이터를 단일 AZ에만 저장하는 클래스다.","paragraphs":["접근이 드문 데이터를 즉시 조회할 수 있다는 점은 S3 Standard-IA와 같다.","다만 데이터가 하나의 AZ에만 저장되므로 고가용성은 제공하지 않는다."]},
+      {"id":"s3-storage-classes.glacier-instant-retrieval","name":"S3 Glacier Instant Retrieval","summary":"Glacier 계열이면서 드물게 찾는 데이터를 즉시 읽을 수 있는 클래스다.","paragraphs":["거의 읽지 않는 데이터를 보관하면서도, 조회 요청이 들어오면 대기 없이 바로 꺼낼 수 있다."]},
+      {"id":"s3-storage-classes.glacier-flexible-retrieval","name":"S3 Glacier Flexible Retrieval","summary":"조회에 최대 1시간이 걸려도 괜찮은 데이터를 보관하는 클래스다.","paragraphs":["거의 읽지 않는 데이터를 맡기며, 꺼낼 때 최대 1시간까지 기다릴 수 있을 때 선택한다."]},
+      {"id":"s3-storage-classes.glacier-deep-archive","name":"S3 Glacier Deep Archive","summary":"조회에 최대 12시간이 걸려도 괜찮은 데이터를 보관하는 클래스다.","paragraphs":["거의 읽지 않는 데이터를 맡기며, 꺼낼 때 최대 12시간까지 기다릴 수 있을 때 선택한다."]},
+      {"id":"s3-storage-classes.retrieval-time","name":"즉시 조회와 대기 조회","summary":"일곱 개 클래스는 조회 요청에 바로 응답하는 쪽과 시간이 필요한 쪽으로 나뉜다.","paragraphs":["대기 없이 읽을 수 있는 것은 S3 Standard, S3 Standard-IA, S3 One Zone-IA, S3 Glacier Instant Retrieval, S3 Intelligent-Tiering이다.","S3 Glacier Flexible Retrieval과 S3 Glacier Deep Archive에서는 데이터를 꺼내는 데 시간이 필요하다."]},
+      {"id":"s3-storage-classes.glacier-or-standard-ia","name":"Glacier와 Standard-IA 중 고르기","summary":"장기 보관 목적이 있는지에 따라 Glacier 계열과 Standard-IA가 갈린다.","paragraphs":["Glacier 클래스는 법률, 감사 또는 규정 준수를 위해 데이터를 오래 보관할 때 사용한다.","이런 장기 보관 목적 없이 단지 접근 빈도만 낮다면 S3 Standard-IA를 선택한다."]}
     ]
   },
   {

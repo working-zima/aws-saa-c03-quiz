@@ -576,6 +576,63 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
+  it('S3 스토리지 클래스 주제가 클래스별 개념 7개와 정리 개념 2개로 나뉜다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-storage-classes')
+
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-storage-classes.standard',
+      's3-storage-classes.intelligent-tiering',
+      's3-storage-classes.standard-ia',
+      's3-storage-classes.one-zone-ia',
+      's3-storage-classes.glacier-instant-retrieval',
+      's3-storage-classes.glacier-flexible-retrieval',
+      's3-storage-classes.glacier-deep-archive',
+      's3-storage-classes.retrieval-time',
+      's3-storage-classes.glacier-or-standard-ia',
+    ])
+    expect(topic?.concepts.map((concept) => concept.name)).toEqual([
+      'S3 Standard',
+      'S3 Intelligent-Tiering',
+      'S3 Standard-IA (Infrequent Access)',
+      'S3 One Zone-IA',
+      'S3 Glacier Instant Retrieval',
+      'S3 Glacier Flexible Retrieval',
+      'S3 Glacier Deep Archive',
+      '즉시 조회와 대기 조회',
+      'Glacier와 Standard-IA 중 고르기',
+    ])
+  })
+
+  it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
+    const storageClassQuestions = questions.filter(
+      (question) => question.topicId === 's3-storage-classes',
+    )
+
+    expect(storageClassQuestions.map(({ id }) => id)).toEqual([
+      'q016',
+      'q017',
+      'q018',
+      'q019',
+      'q020',
+      'q021',
+      'q022',
+      'q023',
+      'q024',
+    ])
+    expect(storageClassQuestions.map(({ conceptId }) => conceptId)).toEqual([
+      's3-storage-classes.intelligent-tiering',
+      's3-storage-classes.standard',
+      's3-storage-classes.standard-ia',
+      's3-storage-classes.one-zone-ia',
+      's3-storage-classes.glacier-instant-retrieval',
+      's3-storage-classes.glacier-flexible-retrieval',
+      's3-storage-classes.glacier-deep-archive',
+      's3-storage-classes.glacier-or-standard-ia',
+      's3-storage-classes.retrieval-time',
+    ])
+    expect(new Set(storageClassQuestions.map(({ conceptId }) => conceptId)).size).toBe(9)
+  })
+
   it('주제 id가 유일하다', () => {
     const ids = topics.map((topic) => topic.id)
 
