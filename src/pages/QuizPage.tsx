@@ -50,7 +50,6 @@ export function QuizPage({ questions = defaultQuestions, answer: providedAnswer 
         <nav className="flex flex-wrap gap-3" aria-label="퀴즈 완료 후 이동">
           {hasIncorrectAnswer && <Link className={primaryButtonClass} to="/review">틀린 개념 복습하기</Link>}
           <Link className={ghostLinkClass} to={`/topic/${topicId}`}>개념으로 돌아가기</Link>
-          <Link className={ghostLinkClass} to="/">주제 목록으로 돌아가기</Link>
         </nav>
       </section>
     )

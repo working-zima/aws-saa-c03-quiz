@@ -116,6 +116,8 @@ describe('QuizPage', () => {
     expect(screen.getByRole('heading', { name: '확인 문제 완료' })).toBeInTheDocument()
     expect(screen.getByText('맞힌 개수 1 / 2')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
+    expect(screen.queryByRole('link', { name: '주제 목록으로 돌아가기' })).toBeNull()
+    expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toBeInTheDocument()
   })
 
   it('문항이 없는 주제에서 안내 문구와 개념 링크를 렌더한다', () => {
