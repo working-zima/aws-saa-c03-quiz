@@ -5,7 +5,10 @@
     {
       "step": 0,
       "name": "scroll-reset-on-push",
-      "status": "pending"
+      "status": "completed",
+      "summary": "PUSH·REPLACE 라우트 이동은 맨 위로 리셋하고 POP 이동은 브라우저 스크롤 복원을 유지하도록 구현 및 테스트",
+      "started_at": "2026-08-25T00:36:18+0900",
+      "completed_at": "2026-08-25T00:38:02+0900"
     }
   ],
   "created_at": "2026-08-24T22:00:00+0900"
