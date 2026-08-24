@@ -38,6 +38,10 @@
     {
       "dir": "7-scroll-reset",
       "status": "pending"
+    },
+    {
+      "dir": "8-sticky-header",
+      "status": "pending"
     }
   ]
 }
