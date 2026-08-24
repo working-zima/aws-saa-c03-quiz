@@ -25,9 +25,11 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
   const topicQuestions = questions.filter((question) => question.topicId === topicId)
   const { next } = adjacentTopics(topics, topicId)
   const [questionIndex, setQuestionIndex] = useState(0)
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-  const [correctCount, setCorrectCount] = useState(0)
+  const [selections, setSelections] = useState<(number | null)[]>(() => topicQuestions.map(() => null))
   const [complete, setComplete] = useState(false)
+  const correctCount = selections.filter(
+    (selection, index) => selection !== null && isCorrect(topicQuestions[index], selection),
+  ).length
 
   if (!topicId || topicQuestions.length === 0) {
     return (
@@ -64,14 +66,16 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
   }
 
   const question = topicQuestions[questionIndex]
-  const revealed = selectedIndex !== null
+  const selectedChoice = selections[questionIndex]
+  const revealed = selectedChoice !== null
   const advanceInstructionId = `quiz-advance-instruction-${question.id}`
 
   function selectChoice(choiceIndex: number) {
     if (revealed) return
     const correct = isCorrect(question, choiceIndex)
-    setSelectedIndex(choiceIndex)
-    if (correct) setCorrectCount((count) => count + 1)
+    setSelections((currentSelections) => currentSelections.map(
+      (selection, index) => index === questionIndex ? choiceIndex : selection,
+    ))
     answer(question.id, correct)
   }
 
@@ -81,15 +85,28 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
       return
     }
     setQuestionIndex((index) => index + 1)
-    setSelectedIndex(null)
   }
 
   return (
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <header className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex min-h-[44px] items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">확인 문제</h1>
-          <span className="text-xs text-neutral-500">{questionIndex + 1} / {topicQuestions.length}</span>
+          <div className="flex items-center gap-3">
+            {questionIndex > 0 && (
+              <button
+                aria-label="이전 문제"
+                className={ghostLinkClass}
+                onClick={() => setQuestionIndex((index) => index - 1)}
+                type="button"
+              >
+                <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+                  <path d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+            <span className="text-xs text-neutral-500">{questionIndex + 1} / {topicQuestions.length}</span>
+          </div>
         </div>
         <h2 className="text-lg font-medium text-neutral-100">{question.prompt}</h2>
       </header>
@@ -97,7 +114,7 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
       <div className="space-y-3">
         {question.choices.map((choice, choiceIndex) => {
           const correctChoice = revealed && isCorrect(question, choiceIndex)
-          const selectedIncorrectChoice = revealed && selectedIndex === choiceIndex && !correctChoice
+          const selectedIncorrectChoice = revealed && selectedChoice === choiceIndex && !correctChoice
           const resultClass = correctChoice ? choiceCorrectClass : selectedIncorrectChoice ? choiceIncorrectClass : ''
           const advanceClass = correctChoice ? 'cursor-pointer hover:border-green-500' : ''
           return (
