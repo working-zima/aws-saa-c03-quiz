@@ -1,7 +1,31 @@
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { Link, MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Layout } from './Layout'
+
+function ConceptRoute() {
+  const navigate = useNavigate()
+
+  return <button onClick={() => navigate(-1)}>뒤로 가기</button>
+}
+
+function renderTestRoutes() {
+  return render(
+    <MemoryRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<Link to="/topic/example">개념 보기</Link>} />
+          <Route path="topic/example" element={<ConceptRoute />} />
+        </Route>
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('Layout', () => {
   it('앱 이름과 공통 내비게이션을 렌더링한다', () => {
@@ -56,5 +80,35 @@ describe('Layout', () => {
     const headerWidthClass = [...(headerShell?.classList ?? [])].find((className) => className.startsWith('max-w-'))
     const mainWidthClass = [...(mainShell?.classList ?? [])].find((className) => className.startsWith('max-w-'))
     expect(headerWidthClass).toBe(mainWidthClass)
+  })
+
+  it('초기 렌더에서는 스크롤 위치를 변경하지 않는다', () => {
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+
+    renderTestRoutes()
+
+    expect(scrollTo).not.toHaveBeenCalled()
+  })
+
+  it('링크로 다른 화면에 이동하면 맨 위로 스크롤한다', async () => {
+    const user = userEvent.setup()
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    renderTestRoutes()
+
+    await user.click(screen.getByRole('link', { name: '개념 보기' }))
+
+    expect(scrollTo).toHaveBeenCalledWith(0, 0)
+  })
+
+  it('뒤로 가기에서는 스크롤 위치를 변경하지 않는다', async () => {
+    const user = userEvent.setup()
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    renderTestRoutes()
+    await user.click(screen.getByRole('link', { name: '개념 보기' }))
+    const callCountBeforeBack = scrollTo.mock.calls.length
+
+    await user.click(screen.getByRole('button', { name: '뒤로 가기' }))
+
+    expect(scrollTo).toHaveBeenCalledTimes(callCountBeforeBack)
   })
 })
