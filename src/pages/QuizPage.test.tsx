@@ -82,6 +82,103 @@ describe('QuizPage', () => {
     expect(container.querySelector('.sticky')).toBeNull()
   })
 
+  it('첫 문항에서는 이전 문제 버튼을 렌더하지 않는다', () => {
+    renderPage()
+
+    expect(screen.queryByRole('button', { name: '이전 문제' })).toBeNull()
+  })
+
+  it('두 번째 문항에서는 최소 터치 높이를 가진 이전 문제 버튼을 렌더한다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    expect(screen.getByRole('button', { name: '이전 문제' })).toHaveClass('min-h-[44px]')
+  })
+
+  it('이전 문제 버튼을 누르면 첫 문항으로 돌아간다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '이전 문제' }))
+
+    expect(screen.getByText('1 / 2')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '첫 번째 질문' })).toBeInTheDocument()
+  })
+
+  it('되돌아간 문항에 선택 결과와 해설이 남아 있다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '오답 보기 1' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '이전 문제' }))
+
+    expect(screen.getByRole('button', { name: '오답 보기 1' })).toHaveClass('border-red-500/60')
+    expect(screen.getByRole('button', { name: '정답 보기' })).toHaveClass('border-green-500/60')
+    expect(screen.getByText('첫 번째 해설')).toBeInTheDocument()
+  })
+
+  it('되돌아간 문항에서는 답을 다시 고를 수 없다', async () => {
+    const user = userEvent.setup()
+    const { answer } = renderPage()
+
+    await user.click(screen.getByRole('button', { name: '오답 보기 1' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '이전 문제' }))
+    await user.click(screen.getByRole('button', { name: '오답 보기 2' }))
+
+    expect(answer).toHaveBeenCalledTimes(1)
+  })
+
+  it('되돌아간 문항의 정답 보기를 누르면 다음 문항으로 다시 이동한다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '이전 문제' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    expect(screen.getByText('2 / 2')).toBeInTheDocument()
+  })
+
+  it('되돌아갔다가 끝까지 풀어도 맞힌 개수를 중복 집계하지 않는다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '이전 문제' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.getByText('맞힌 개수 2 / 2')).toBeInTheDocument()
+  })
+
+  it('완료 화면에는 이전 문제 버튼을 렌더하지 않는다', async () => {
+    const user = userEvent.setup()
+    renderPage()
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.queryByRole('button', { name: '이전 문제' })).toBeNull()
+  })
+
+  it('문항이 없는 주제에는 이전 문제 버튼을 렌더하지 않는다', () => {
+    renderPage('/topic/empty-topic/quiz', vi.fn(), [])
+
+    expect(screen.queryByRole('button', { name: '이전 문제' })).toBeNull()
+  })
+
   it('정답을 고르면 해설을 보여주고 진행 상태를 기록한다', async () => {
     const user = userEvent.setup()
     const { answer } = renderPage()
