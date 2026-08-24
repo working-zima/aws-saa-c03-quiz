@@ -63,13 +63,15 @@ npm run test
    ```
 
 3. 확인 문제에 넘어가기 버튼이 없다는 것은 **문구가 아니라 구조로** 확인한다.
-   아래 두 명령이 각각 `1`과 `1`을 뱉어야 한다.
-   보기 버튼 하나뿐이고, `advance`를 호출하는 곳도 그 하나뿐이라는 뜻이다:
 
    ```bash
-   grep -c '<button' src/pages/QuizPage.tsx
-   grep -c 'advance()' src/pages/QuizPage.tsx
+   grep -c '<button' src/pages/QuizPage.tsx        # 1 — 보기 버튼 하나뿐
+   grep -c 'advance()' src/pages/QuizPage.tsx      # 2 — 함수 정의 1 + 호출 1
+   grep -c 'onClick' src/pages/QuizPage.tsx        # 1 — 클릭 핸들러가 붙은 곳은 보기 버튼뿐
    ```
+
+   `advance()`가 2인 것은 정상이다. `function advance() {` 정의 한 줄과
+   보기 버튼의 `onClick` 안 호출 한 줄이다.
 
 4. 결과에 따라 `phases/4-sticky-actions/index.json`의 해당 step을 업데이트한다:
    - 성공 → `"status": "completed"`, `"summary": "산출물 한 줄 요약"`
