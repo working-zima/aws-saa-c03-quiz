@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "concept-read-bar",
-      "status": "pending"
+      "status": "completed",
+      "summary": "개념 읽기 하단 바에 접근 가능한 이전·다음 주제 화살표와 첫·마지막 경계 처리를 추가함",
+      "started_at": "2026-08-25T00:52:51+0900",
+      "completed_at": "2026-08-25T00:54:58+0900"
     },
     {
       "step": 2,
