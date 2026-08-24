@@ -5,7 +5,10 @@
     {
       "step": 0,
       "name": "adjacent-topics-lib",
-      "status": "pending"
+      "status": "completed",
+      "summary": "배열 순서를 기준으로 이전·다음 주제를 계산하는 순수 함수와 7개 경계 사례 테스트를 추가함",
+      "started_at": "2026-08-25T00:51:11+0900",
+      "completed_at": "2026-08-25T00:52:50+0900"
     },
     {
       "step": 1,
