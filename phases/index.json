@@ -62,6 +62,15 @@
     },
     {
       "dir": "12-glacier-legal-keyword",
+      "status": "completed",
+      "completed_at": "2026-08-25T22:10:20+0900"
+    },
+    {
+      "dir": "13-term-gloss",
+      "status": "pending"
+    },
+    {
+      "dir": "14-contrast-clarify",
       "status": "pending"
     }
   ]
