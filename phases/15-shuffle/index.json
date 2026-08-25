@@ -1,0 +1,24 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "15-shuffle",
+  "steps": [
+    {
+      "step": 0,
+      "name": "shuffle-lib",
+      "status": "completed",
+      "summary": "주입된 난수로 문항과 보기를 불변 셔플하고 정답 인덱스를 보정하는 순수 함수 3개와 단위 테스트를 추가했다.",
+      "started_at": "2026-08-25T23:26:40+0900",
+      "completed_at": "2026-08-25T23:28:41+0900"
+    },
+    {
+      "step": 1,
+      "name": "quiz-shuffle",
+      "status": "completed",
+      "summary": "확인 문제 진입 시 문항과 보기를 한 번 섞고 재렌더 동안 순서를 고정하도록 QuizPage와 회귀 테스트를 갱신했다.",
+      "started_at": "2026-08-25T23:29:37+0900",
+      "completed_at": "2026-08-25T23:31:42+0900"
+    }
+  ],
+  "created_at": "2026-08-25T23:26:00+0900",
+  "completed_at": "2026-08-25T23:31:42+0900"
+}

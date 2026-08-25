@@ -1,0 +1,37 @@
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { describe, expect, it } from 'vitest'
+import type { Question } from '../types/content'
+import { RandomStartPage } from './RandomStartPage'
+
+function questions(count: number): Question[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: `q${index}`,
+    topicId: 'topic-a',
+    conceptId: 'topic-a.concept',
+    prompt: `질문 ${index}`,
+    choices: ['정답', '오답 1', '오답 2', '오답 3'],
+    answerIndex: 0,
+    explanation: '해설',
+  }))
+}
+
+function renderPage(count: number) {
+  return render(<MemoryRouter><RandomStartPage questions={questions(count)} /></MemoryRouter>)
+}
+
+describe('RandomStartPage', () => {
+  it('허용 문항 수마다 랜덤 문제 링크를 렌더한다', () => {
+    renderPage(25)
+
+    expect(screen.getByRole('link', { name: '10문항' })).toHaveAttribute('href', '/random/10')
+    expect(screen.getByRole('link', { name: '20문항' })).toHaveAttribute('href', '/random/20')
+    expect(screen.getByRole('link', { name: '30문항' })).toHaveAttribute('href', '/random/30')
+  })
+
+  it.each([7, 43])('전체 문항 수 %i를 주입된 배열 길이로 표시한다', (count) => {
+    renderPage(count)
+
+    expect(screen.getByText(new RegExp(`전체 ${count}문항`))).toBeInTheDocument()
+  })
+})

@@ -45,6 +45,16 @@ export function TopicListPage({
         </div>
       </div>
 
+      <Link
+        className="block rounded-lg border border-neutral-800 px-5 py-4 transition-colors hover:border-neutral-700"
+        to="/random"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-neutral-100">랜덤 문제</span>
+          <span className="shrink-0 text-sm text-neutral-500">전체 {questions.length}문항</span>
+        </div>
+      </Link>
+
       {topics.length === 0 ? (
         <p className="text-[15px] leading-7 text-muted">표시할 학습 주제가 없습니다.</p>
       ) : (

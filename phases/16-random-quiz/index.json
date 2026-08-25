@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "16-random-quiz",
+  "steps": [
+    {
+      "step": 0,
+      "name": "random-quiz-lib",
+      "status": "completed",
+      "summary": "랜덤 퀴즈 허용 문항 수 상수와 정확 문자열 파서 및 회귀 테스트를 추가했다.",
+      "started_at": "2026-08-26T00:04:03+0900",
+      "completed_at": "2026-08-26T00:05:01+0900"
+    },
+    {
+      "step": 1,
+      "name": "quiz-runner",
+      "status": "completed",
+      "summary": "문항 진행 UI와 상태를 QuizRunner로 분리하고 문항별 주제 링크 및 완료 콜백 계약 테스트를 추가했다.",
+      "started_at": "2026-08-26T00:05:34+0900",
+      "completed_at": "2026-08-26T00:07:48+0900"
+    },
+    {
+      "step": 2,
+      "name": "random-quiz-page",
+      "status": "completed",
+      "summary": "전체 문항 수 선택 화면과 URL 문항 수에 따라 무작위 세트를 푸는 랜덤 퀴즈 화면 및 라우트 테스트를 추가했다.",
+      "started_at": "2026-08-26T00:09:25+0900",
+      "completed_at": "2026-08-26T00:11:35+0900"
+    },
+    {
+      "step": 3,
+      "name": "random-entry",
+      "status": "completed",
+      "summary": "주제 목록 진행률 아래에 전체 문항 수를 표시하는 랜덤 문제 진입 링크와 배치 회귀 테스트를 추가했다.",
+      "started_at": "2026-08-26T00:12:23+0900",
+      "completed_at": "2026-08-26T00:14:01+0900"
+    },
+    {
+      "step": 4,
+      "name": "complete-indent",
+      "status": "completed",
+      "summary": "QuizPage 완료 화면 JSX 블록을 콜백의 return에 맞춰 공백만 다시 들여썼다.",
+      "started_at": "2026-08-26T00:17:37+0900",
+      "completed_at": "2026-08-26T00:18:30+0900"
+    }
+  ],
+  "created_at": "2026-08-26T00:04:03+0900",
+  "completed_at": "2026-08-26T00:18:30+0900"
+}

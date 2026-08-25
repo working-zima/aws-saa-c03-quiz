@@ -727,4 +727,100 @@ describe('학습 데이터 무결성', () => {
       expect(question.explanation.trim()).not.toBe('')
     })
   })
+
+  it('정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다', () => {
+    const glacierAnswered = questions.filter((question) =>
+      question.choices[question.answerIndex].includes('Glacier'),
+    )
+
+    expect(glacierAnswered.map(({ id }) => id)).toEqual([
+      'q020',
+      'q021',
+      'q022',
+      'q023',
+      'q024',
+    ])
+    glacierAnswered.forEach((question) => {
+      expect(question.prompt).toContain('법')
+      expect(question.prompt).toContain('감사')
+    })
+  })
+
+  it('법·감사 키워드가 Glacier의 무조건 신호가 되지 않도록 q018이 부정형을 유지한다', () => {
+    const question = questions.find(({ id }) => id === 'q018')
+
+    expect(question?.choices[question.answerIndex]).toBe('S3 Standard-IA')
+    expect(question?.prompt).toContain('아니면서')
+  })
+
+  it('q024는 Glacier 보기를 둘 이상 두어 법 키워드만으로 답이 정해지지 않는다', () => {
+    const question = questions.find(({ id }) => id === 'q024')
+    const glacierChoices = question?.choices.filter((choice) => choice.includes('Glacier')) ?? []
+
+    expect(glacierChoices.length).toBeGreaterThanOrEqual(2)
+    expect(question?.choices[question.answerIndex]).toBe('S3 Glacier Deep Archive')
+  })
+
+  const termGlosses: Array<{ conceptId: string; anchor: string }> = [
+    { conceptId: 's3-versioning-lifecycle.object-lock-prerequisites', anchor: 'Multi-Factor Authentication' },
+    { conceptId: 'block-file-storage.efs', anchor: 'Network File System' },
+    { conceptId: 'data-transfer-services.transfer-family', anchor: 'File Transfer Protocol' },
+    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '키-값' },
+    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
+    { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
+    { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
+    { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
+    { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
+    { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
+    { conceptId: 'threat-protection.waf', anchor: 'Cross-Site Scripting' },
+    { conceptId: 'threat-protection.security-service-lineup', anchor: 'Common Vulnerabilities' },
+    { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
+  ]
+
+  it('풀이 없이 쓰이던 일반 IT 용어 13종이 첫 등장 개념에서 한 번씩 풀린다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+
+    termGlosses.forEach(({ conceptId, anchor }) => {
+      const holders = concepts.filter((concept) =>
+        concept.paragraphs.some((paragraph) => paragraph.includes(anchor)),
+      )
+
+      expect(holders.map(({ id }) => id)).toEqual([conceptId])
+    })
+  })
+
+  it('용어 풀이가 개념 요약이 아니라 본문에만 들어간다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+
+    concepts.forEach((concept) => {
+      termGlosses.forEach(({ anchor }) => {
+        expect(concept.summary).not.toContain(anchor)
+        expect(concept.name).not.toContain(anchor)
+      })
+    })
+  })
+
+  it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'data-transfer-services.storage-gateway')
+
+    expect(concept?.paragraphs).toHaveLength(4)
+    expect(concept?.paragraphs[0]).toContain('스토리지를 연결한 채 사용하는 데 있다')
+    expect(concept?.paragraphs[0]).toContain('세 유형 모두 데이터를 S3에 저장한다')
+    expect(concept?.paragraphs[0]).toContain('DataSync·Snowball Edge와 달리')
+    expect(concept?.paragraphs[0]).toContain('자체 저장 공간을 제공하지 않으며')
+  })
+
+  it('RDS 세 기능의 목적 차이가 Read Replica 문단에 드러난다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'rds-storage-features.features')
+
+    expect(concept?.paragraphs).toHaveLength(5)
+    expect(concept?.paragraphs[2]).toContain('Multi AZ 배포는 고가용성')
+    expect(concept?.paragraphs[2]).toContain('Read Replica는 읽기 확장')
+    expect(concept?.paragraphs[2]).toContain('Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다')
+    expect(concept?.paragraphs[2]).toContain('Cross Region Read Replica')
+  })
 })
