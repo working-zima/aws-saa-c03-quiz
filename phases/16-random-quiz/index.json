@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "random-quiz-page",
-      "status": "pending"
+      "status": "completed",
+      "summary": "전체 문항 수 선택 화면과 URL 문항 수에 따라 무작위 세트를 푸는 랜덤 퀴즈 화면 및 라우트 테스트를 추가했다.",
+      "started_at": "2026-08-26T00:09:25+0900",
+      "completed_at": "2026-08-26T00:11:35+0900"
     },
     {
       "step": 3,
