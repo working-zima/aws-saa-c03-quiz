@@ -1,8 +1,8 @@
 # Step 0: term-gloss
 
-## 배경 — 풀이 없는 축약어에서 문단이 막힌다
+## 배경 — 풀이 없는 용어에서 문단이 막힌다
 
-개념 182개를 훑으면 **AWS 고유 사실이 아닌 일반 IT 용어 12종**이 풀이 없이 쓰인다.
+개념 182개를 훑으면 **AWS 고유 사실이 아닌 일반 IT 용어 13종**이 풀이 없이 쓰인다.
 `NFS 프로토콜만 지원한다`, `MFA 삭제 조합은`, `JWT 인증을 기본 기능으로 제공하지 않는다` 같은
 문장이다. 원본 교재는 독자가 이 정도는 안다고 전제하고 쓰였지만, 이 앱은 개념을 읽고 바로
 확인 문제를 푸는 학습 도구라서 여기서 막히면 그 문단 전체가 읽히지 않는다.
@@ -14,7 +14,7 @@
 
 ## 결정된 동작
 
-**아래 12개 문장을 지정된 개념의 지정된 문단에 정확히 한 번씩 넣는다.**
+**아래 13개 문장을 지정된 개념의 지정된 문단에 정확히 한 번씩 넣는다.**
 문단을 새로 만들지 않고, 기존 문단 문자열의 앞이나 뒤에 문장 하나를 잇는다.
 
 한 용어는 **처음 등장하는 개념에서 한 번만** 풀이한다. 뒤에 같은 용어가 또 나와도
@@ -42,7 +42,7 @@ CLAUDE.md의 TDD 규칙에 따라 **아래 "테스트" 절을 먼저 작성해 �
 - 해당 문단의 **문자열 값만** 제자리에서 치환해라.
 - 넣는 문장은 앞 문장과 **공백 한 칸**으로 잇는다. 줄바꿈(`\n`)을 넣지 마라.
 
-### 넣을 문장 12개
+### 넣을 문장 13개
 
 각 항목의 `문단`은 그 개념 `paragraphs` 배열의 0부터 세는 인덱스다.
 `앞에`는 문단 맨 앞에, `뒤에`는 문단 맨 뒤에 잇는다는 뜻이다.
@@ -99,7 +99,25 @@ NoSQL은 행과 열로 짜인 표 대신 키-값이나 문서 같은 형태로 �
 
 ---
 
-**6. TCP·UDP** — `compute-delivery.elb` 문단 **1** · **뒤에**
+**6. 엔드포인트** — `aurora-dynamodb-cache.aurora-reader-endpoint` 문단 0 · **앞에**
+
+```
+엔드포인트는 애플리케이션이 접속할 주소를 뜻하며, Aurora의 Reader Endpoint로 요청을 보내면 읽기 전용 복제본들에 자동으로 나뉘어 전달된다.
+```
+
+이 개념이 앱 전체에서 `엔드포인트`가 처음 등장하는 자리다(주제 7 · 개념 4). 뒤에 나오는
+`VPC Endpoint`, `Route 53 Resolver 엔드포인트`, `Lambda 함수 URL`은 **건드리지 마라.**
+
+문단 0이 `RDS for MySQL에는 Reader Endpoint를 통한 부하 분산 기능이 없다`로 시작해서,
+뒤에 붙이면 "없다"는 대비가 그것이 무엇인지보다 먼저 온다. 그래서 **앞에** 붙인다.
+
+뒷절의 `읽기 전용 복제본들에 자동으로 나뉘어 전달된다`는 ADR-010의 예외가 아니라
+`docs/source/exam-gaps.md`의 인용("Reader Endpoint를 통한 부하 분산은 Amazon Aurora에서만
+제공하는 기능이다")에 근거한다. **Writer Endpoint는 두 출처에 없으므로 쓰지 마라.**
+
+---
+
+**7. TCP·UDP** — `compute-delivery.elb` 문단 **1** · **뒤에**
 
 ```
 TCP와 UDP는 데이터를 어떤 방식으로 실어 나를지 정하는 전송 계층 규약이고, HTTP와 HTTPS는 그 위에서 웹 요청을 주고받는 규약이다.
@@ -111,7 +129,7 @@ TCP와 UDP는 데이터를 어떤 방식으로 실어 나를지 정하는 전송
 
 ---
 
-**7. JWT** — `serverless-containers.api-gateway` 문단 1 · **뒤에**
+**8. JWT** — `serverless-containers.api-gateway` 문단 1 · **뒤에**
 
 ```
 JWT(JSON Web Token)는 로그인한 사용자의 정보를 위조할 수 없게 서명해 담은 토큰으로, 요청마다 이것을 보내 신원을 증명한다.
@@ -121,7 +139,7 @@ JWT(JSON Web Token)는 로그인한 사용자의 정보를 위조할 수 없게 
 
 ---
 
-**8. DDoS** — `threat-protection.shield` 문단 0 · **뒤에**
+**9. DDoS** — `threat-protection.shield` 문단 0 · **뒤에**
 
 ```
 DDoS(Distributed Denial of Service)는 여러 곳에서 한꺼번에 대량의 요청을 보내 서비스를 마비시키는 공격이다.
@@ -129,7 +147,7 @@ DDoS(Distributed Denial of Service)는 여러 곳에서 한꺼번에 대량의 �
 
 ---
 
-**9. DRT** — `threat-protection.shield-advanced-drt` 문단 0 · **뒤에**
+**10. DRT** — `threat-protection.shield-advanced-drt` 문단 0 · **뒤에**
 
 ```
 DRT(DDoS Response Team)는 공격이 진행되는 동안 대응을 돕는 AWS의 전담 인력이다.
@@ -137,7 +155,7 @@ DRT(DDoS Response Team)는 공격이 진행되는 동안 대응을 돕는 AWS의
 
 ---
 
-**10. XSS·SQL Injection** — `threat-protection.waf` 문단 2 · **뒤에**
+**11. XSS·SQL Injection** — `threat-protection.waf` 문단 2 · **뒤에**
 
 ```
 SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다.
@@ -145,7 +163,7 @@ SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 
 
 ---
 
-**11. CVE** — `threat-protection.security-service-lineup` 문단 1 · **뒤에**
+**12. CVE** — `threat-protection.security-service-lineup` 문단 1 · **뒤에**
 
 ```
 CVE(Common Vulnerabilities and Exposures)는 공개적으로 알려진 보안 취약점에 붙는 공용 식별 번호다.
@@ -153,7 +171,7 @@ CVE(Common Vulnerabilities and Exposures)는 공개적으로 알려진 보안 �
 
 ---
 
-**12. SSL·TLS** — `secrets-encryption.acm` 문단 0 · **뒤에**
+**13. SSL·TLS** — `secrets-encryption.acm` 문단 0 · **뒤에**
 
 ```
 SSL과 TLS는 브라우저와 서버 사이의 통신을 암호화하는 규약이고 TLS가 SSL의 후속이며, 인증서는 그 상대가 진짜임을 증명하는 파일이다.
@@ -161,7 +179,7 @@ SSL과 TLS는 브라우저와 서버 사이의 통신을 암호화하는 규약�
 
 ---
 
-**이 12개가 이 step의 데이터 변경 전부다.** 문단 12개(개념 11개)만 달라진다.
+**이 13개가 이 step의 데이터 변경 전부다.** 문단 13개(개념 12개)만 달라진다.
 
 ### 핵심 규칙 — 벗어나지 마라
 
@@ -176,7 +194,7 @@ SSL과 TLS는 브라우저와 서버 사이의 통신을 암호화하는 규약�
   제품 이름표라서 몰라도 문장이 읽히므로 대상이 아니다.
 - **AWS 서비스의 사양·제약·비교를 새로 쓰지 마라.** ADR-010의 예외는 용어가 무엇을
   가리키는지에만 적용된다. 어떤 문항의 정답 근거가 될 수 있는 사실이면 예외가 아니다.
-- **문장을 바꿔 쓰지 마라.** 위 12개 문장을 글자 그대로 넣는다.
+- **문장을 바꿔 쓰지 마라.** 위 13개 문장을 글자 그대로 넣는다.
 - **검증 조건과 올바른 구현이 충돌하면 코드를 비틀지 말고 `blocked`로 멈추고 사유를 적어라.**
 
 ## 테스트
@@ -191,6 +209,7 @@ const termGlosses: Array<{ conceptId: string; anchor: string }> = [
   { conceptId: 'data-transfer-services.transfer-family', anchor: 'File Transfer Protocol' },
   { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '키-값' },
   { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
+  { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
   { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
   { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
   { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
@@ -200,7 +219,7 @@ const termGlosses: Array<{ conceptId: string; anchor: string }> = [
   { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
 ]
 
-it('풀이 없이 쓰이던 일반 IT 용어 12종이 첫 등장 개념에서 한 번씩 풀린다', () => {
+it('풀이 없이 쓰이던 일반 IT 용어 13종이 첫 등장 개념에서 한 번씩 풀린다', () => {
   const concepts = topics.flatMap((topic) => topic.concepts)
 
   termGlosses.forEach(({ conceptId, anchor }) => {
@@ -260,7 +279,7 @@ changed = sorted(
     for i, p in enumerate(c['paragraphs'])
     if om[c['id']]['paragraphs'][i] != p
 )
-print('바뀐 문단 수', len(changed), '(기대 12)')
+print('바뀐 문단 수', len(changed), '(기대 13)')
 for cid, i in changed:
     print('   ', cid, 'paragraphs[%d]' % i)
 
@@ -276,9 +295,9 @@ import json
 topics = json.load(open('src/data/topics.json'))
 concepts = [c for t in topics for c in t['concepts']]
 anchors = ['Multi-Factor Authentication', 'Network File System', 'File Transfer Protocol',
-           '키-값', '미리 담아 두었다가', '실어 나를지 정하는', 'JSON Web Token',
-           'Distributed Denial of Service', 'DDoS Response Team', 'Cross-Site Scripting',
-           'Common Vulnerabilities', 'SSL의 후속']
+           '키-값', '미리 담아 두었다가', '애플리케이션이 접속할 주소', '실어 나를지 정하는',
+           'JSON Web Token', 'Distributed Denial of Service', 'DDoS Response Team',
+           'Cross-Site Scripting', 'Common Vulnerabilities', 'SSL의 후속']
 for a in anchors:
     hits = [c['id'] for c in concepts if any(a in p for p in c['paragraphs'])]
     print(f'{a:32s} {len(hits)}개 개념 {hits} (기대 1개)')
@@ -295,7 +314,7 @@ grep -c '^      {"id":"' src/data/topics.json   # 182
 ## 완료 조건
 
 - 위 네 명령(`test`·`lint`·`build`·`check-structure`)이 모두 통과한다.
-- 검증 스크립트의 모든 줄이 기대값과 일치한다. 특히 **바뀐 문단 수가 정확히 12**이고,
+- 검증 스크립트의 모든 줄이 기대값과 일치한다. 특히 **바뀐 문단 수가 정확히 13**이고,
   **id·name·summary·문단 수가 전부 `True`**여야 한다.
 - `grep -c`가 182를 출력한다(개념 한 줄 포맷 유지).
 - 변경된 파일이 `src/data/topics.json`, `src/data/data.test.ts` 둘뿐이다.
