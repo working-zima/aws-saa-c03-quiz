@@ -5,7 +5,10 @@
     {
       "step": 0,
       "name": "shuffle-lib",
-      "status": "pending"
+      "status": "completed",
+      "summary": "주입된 난수로 문항과 보기를 불변 셔플하고 정답 인덱스를 보정하는 순수 함수 3개와 단위 테스트를 추가했다.",
+      "started_at": "2026-08-25T23:26:40+0900",
+      "completed_at": "2026-08-25T23:28:41+0900"
     },
     {
       "step": 1,
