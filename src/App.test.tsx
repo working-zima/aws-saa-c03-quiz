@@ -30,6 +30,19 @@ describe('App routes', () => {
     expect(screen.getByRole('heading', { name: '복습' })).toBeInTheDocument()
   })
 
+  it('/random에서 랜덤 문제 시작 화면을 렌더링한다', () => {
+    renderAt('/random')
+
+    expect(screen.getByRole('heading', { name: '랜덤 문제' })).toBeInTheDocument()
+  })
+
+  it('/random/20에서 랜덤 문제 화면을 렌더링한다', () => {
+    renderAt('/random/20')
+
+    expect(screen.getByRole('heading', { name: '랜덤 문제' })).toBeInTheDocument()
+    expect(screen.getByText('1 / 20')).toBeInTheDocument()
+  })
+
   it('알 수 없는 경로를 /로 리다이렉트한다', () => {
     renderAt('/unknown')
 
