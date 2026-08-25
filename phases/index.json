@@ -82,7 +82,8 @@
     },
     {
       "dir": "16-random-quiz",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-26T00:14:01+0900"
     }
   ]
 }
