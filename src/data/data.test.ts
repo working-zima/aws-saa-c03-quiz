@@ -799,4 +799,28 @@ describe('학습 데이터 무결성', () => {
       })
     })
   })
+
+  it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'data-transfer-services.storage-gateway')
+
+    expect(concept?.paragraphs).toHaveLength(4)
+    expect(concept?.paragraphs[0]).toContain('스토리지를 연결한 채 사용하는 데 있다')
+    expect(concept?.paragraphs[0]).toContain('세 유형 모두 데이터를 S3에 저장한다')
+    expect(concept?.paragraphs[0]).toContain('DataSync·Snowball Edge와 달리')
+    expect(concept?.paragraphs[0]).toContain('자체 저장 공간을 제공하지 않으며')
+  })
+
+  it('RDS 세 기능의 목적 차이가 Read Replica 문단에 드러난다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'rds-storage-features.features')
+
+    expect(concept?.paragraphs).toHaveLength(5)
+    expect(concept?.paragraphs[2]).toContain('Multi AZ 배포는 고가용성')
+    expect(concept?.paragraphs[2]).toContain('Read Replica는 읽기 확장')
+    expect(concept?.paragraphs[2]).toContain('Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다')
+    expect(concept?.paragraphs[2]).toContain('Cross Region Read Replica')
+  })
 })
