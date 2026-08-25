@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "quiz-shuffle",
-      "status": "pending"
+      "status": "completed",
+      "summary": "확인 문제 진입 시 문항과 보기를 한 번 섞고 재렌더 동안 순서를 고정하도록 QuizPage와 회귀 테스트를 갱신했다.",
+      "started_at": "2026-08-25T23:29:37+0900",
+      "completed_at": "2026-08-25T23:31:42+0900"
     }
   ],
   "created_at": "2026-08-25T23:26:00+0900"
