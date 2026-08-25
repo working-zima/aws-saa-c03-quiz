@@ -1,0 +1,11 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "12-glacier-legal-keyword",
+  "steps": [
+    {
+      "step": 0,
+      "name": "glacier-legal-keyword",
+      "status": "pending"
+    }
+  ]
+}
