@@ -5,7 +5,11 @@
     {
       "step": 0,
       "name": "glacier-legal-keyword",
-      "status": "pending"
+      "status": "completed",
+      "summary": "Glacier 정답 5문항의 법·감사 신호를 일관화하고 q024의 Glacier 변별 보기 및 데이터 무결성 테스트를 추가했다.",
+      "started_at": "2026-08-25T22:08:44+0900",
+      "completed_at": "2026-08-25T22:10:20+0900"
     }
-  ]
+  ],
+  "created_at": "2026-08-25T22:08:44+0900"
 }
