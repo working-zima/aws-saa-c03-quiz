@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "quiz-runner",
-      "status": "pending"
+      "status": "completed",
+      "summary": "문항 진행 UI와 상태를 QuizRunner로 분리하고 문항별 주제 링크 및 완료 콜백 계약 테스트를 추가했다.",
+      "started_at": "2026-08-26T00:05:34+0900",
+      "completed_at": "2026-08-26T00:07:48+0900"
     },
     {
       "step": 2,
