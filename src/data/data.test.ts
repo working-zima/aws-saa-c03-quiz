@@ -727,4 +727,37 @@ describe('학습 데이터 무결성', () => {
       expect(question.explanation.trim()).not.toBe('')
     })
   })
+
+  it('정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다', () => {
+    const glacierAnswered = questions.filter((question) =>
+      question.choices[question.answerIndex].includes('Glacier'),
+    )
+
+    expect(glacierAnswered.map(({ id }) => id)).toEqual([
+      'q020',
+      'q021',
+      'q022',
+      'q023',
+      'q024',
+    ])
+    glacierAnswered.forEach((question) => {
+      expect(question.prompt).toContain('법')
+      expect(question.prompt).toContain('감사')
+    })
+  })
+
+  it('법·감사 키워드가 Glacier의 무조건 신호가 되지 않도록 q018이 부정형을 유지한다', () => {
+    const question = questions.find(({ id }) => id === 'q018')
+
+    expect(question?.choices[question.answerIndex]).toBe('S3 Standard-IA')
+    expect(question?.prompt).toContain('아니면서')
+  })
+
+  it('q024는 Glacier 보기를 둘 이상 두어 법 키워드만으로 답이 정해지지 않는다', () => {
+    const question = questions.find(({ id }) => id === 'q024')
+    const glacierChoices = question?.choices.filter((choice) => choice.includes('Glacier')) ?? []
+
+    expect(glacierChoices.length).toBeGreaterThanOrEqual(2)
+    expect(question?.choices[question.answerIndex]).toBe('S3 Glacier Deep Archive')
+  })
 })
