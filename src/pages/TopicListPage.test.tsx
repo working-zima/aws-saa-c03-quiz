@@ -104,4 +104,25 @@ describe('TopicListPage', () => {
 
     expect(screen.getByRole('link', { name: /중요 주제/ })).toHaveAttribute('href', '/topic/high-topic')
   })
+
+  it('주제 카드보다 앞에 전체 문항 수를 표시하는 랜덤 문제 링크를 렌더한다', () => {
+    const { rerender } = renderPage(emptyProgress, testTopics, testQuestions)
+    const randomLink = screen.getByRole('link', { name: /랜덤 문제.*2문항/ })
+    const topicLink = screen.getByRole('link', { name: /중요 주제/ })
+
+    expect(randomLink).toHaveAttribute('href', '/random')
+    expect(randomLink.compareDocumentPosition(topicLink) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+
+    rerender(
+      <MemoryRouter>
+        <TopicListPage
+          progress={emptyProgress}
+          questions={testQuestions.slice(0, 1)}
+          topics={testTopics}
+        />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('link', { name: /랜덤 문제.*1문항/ })).toBeInTheDocument()
+  })
 })
