@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { questions as defaultQuestions, topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { isCorrect } from '../lib/grading'
 import { adjacentTopics } from '../lib/navigation'
+import { shuffleQuestions } from '../lib/shuffle'
 import type { Question, Topic } from '../types/content'
 
 interface QuizPageProps {
   questions?: Question[]
   topics?: Topic[]
   answer?: (questionId: string, correct: boolean) => void
+  shuffle?: (questions: Question[]) => Question[]
 }
+
+const defaultShuffle = (items: Question[]) => shuffleQuestions(items, Math.random)
 
 const choiceBaseClass = 'w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-left text-neutral-300'
 const choiceCorrectClass = 'border-green-500/60 bg-green-500/5'
@@ -18,11 +22,14 @@ const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
 const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
 
-export function QuizPage({ questions = defaultQuestions, topics = defaultTopics, answer: providedAnswer }: QuizPageProps) {
+export function QuizPage({ questions = defaultQuestions, topics = defaultTopics, answer: providedAnswer, shuffle = defaultShuffle }: QuizPageProps) {
   const { topicId } = useParams()
   const { answer: storedAnswer } = useProgress()
   const answer = providedAnswer ?? storedAnswer
-  const topicQuestions = questions.filter((question) => question.topicId === topicId)
+  const topicQuestions = useMemo(
+    () => shuffle(questions.filter((question) => question.topicId === topicId)),
+    [questions, shuffle, topicId],
+  )
   const { next } = adjacentTopics(topics, topicId)
   const [questionIndex, setQuestionIndex] = useState(0)
   const [selections, setSelections] = useState<(number | null)[]>(() => topicQuestions.map(() => null))

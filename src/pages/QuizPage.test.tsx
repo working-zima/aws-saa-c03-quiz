@@ -43,16 +43,19 @@ const testTopics: Topic[] = [
   },
 ]
 
+const noShuffle = (items: Question[]) => items
+
 function renderPage(
   path = '/topic/test-topic/quiz',
   answer = vi.fn(),
   questions = testQuestions,
   topics?: Topic[],
+  shuffle = noShuffle,
 ) {
   const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} questions={questions} topics={topics} />} />
+        <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} questions={questions} shuffle={shuffle} topics={topics} />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -80,6 +83,42 @@ describe('QuizPage', () => {
     expect(screen.getByRole('heading', { name: '첫 번째 질문' })).toBeInTheDocument()
     expect(screen.getAllByRole('button')).toHaveLength(4)
     expect(container.querySelector('.sticky')).toBeNull()
+  })
+
+  it('주입된 순서대로 문항을 낸다', () => {
+    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, undefined, (items) => [...items].reverse())
+
+    expect(screen.getByRole('heading', { name: '두 번째 질문' })).toBeInTheDocument()
+  })
+
+  it('섞인 보기 위치로 채점한다', async () => {
+    const user = userEvent.setup()
+    const shuffledQuestion: Question = {
+      ...testQuestions[0],
+      choices: ['오답 보기 1', '오답 보기 2', '오답 보기 3', '정답 보기'],
+      answerIndex: 3,
+    }
+    const { answer } = renderPage(
+      '/topic/test-topic/quiz',
+      vi.fn(),
+      [testQuestions[0]],
+      undefined,
+      () => [shuffledQuestion],
+    )
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    expect(answer).toHaveBeenCalledWith('q001', true)
+  })
+
+  it('렌더가 다시 일어나도 다시 섞지 않는다', async () => {
+    const user = userEvent.setup()
+    const shuffle = vi.fn(noShuffle)
+    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, undefined, shuffle)
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+
+    expect(shuffle).toHaveBeenCalledTimes(1)
   })
 
   it('첫 문항에서는 이전 문제 버튼을 렌더하지 않는다', () => {
