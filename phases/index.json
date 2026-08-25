@@ -79,6 +79,10 @@
       "dir": "15-shuffle",
       "status": "completed",
       "completed_at": "2026-08-25T23:31:42+0900"
+    },
+    {
+      "dir": "16-random-quiz",
+      "status": "pending"
     }
   ]
 }

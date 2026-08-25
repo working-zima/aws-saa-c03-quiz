@@ -1,0 +1,10 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "16-random-quiz",
+  "steps": [
+    { "step": 0, "name": "random-quiz-lib", "status": "pending" },
+    { "step": 1, "name": "quiz-runner", "status": "pending" },
+    { "step": 2, "name": "random-quiz-page", "status": "pending" },
+    { "step": 3, "name": "random-entry", "status": "pending" }
+  ]
+}
