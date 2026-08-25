@@ -5,7 +5,11 @@
     {
       "step": 0,
       "name": "term-gloss",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-08-25T23:01:51+0900",
+      "summary": "일반 IT 용어 13종의 한 줄 풀이를 지정된 첫 등장 개념 본문에 추가하고 데이터 무결성 테스트를 보강했다.",
+      "completed_at": "2026-08-25T23:04:38+0900"
     }
-  ]
+  ],
+  "created_at": "2026-08-25T23:01:51+0900"
 }
