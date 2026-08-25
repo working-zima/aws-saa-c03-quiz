@@ -760,4 +760,43 @@ describe('학습 데이터 무결성', () => {
     expect(glacierChoices.length).toBeGreaterThanOrEqual(2)
     expect(question?.choices[question.answerIndex]).toBe('S3 Glacier Deep Archive')
   })
+
+  const termGlosses: Array<{ conceptId: string; anchor: string }> = [
+    { conceptId: 's3-versioning-lifecycle.object-lock-prerequisites', anchor: 'Multi-Factor Authentication' },
+    { conceptId: 'block-file-storage.efs', anchor: 'Network File System' },
+    { conceptId: 'data-transfer-services.transfer-family', anchor: 'File Transfer Protocol' },
+    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '키-값' },
+    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
+    { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
+    { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
+    { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
+    { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
+    { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
+    { conceptId: 'threat-protection.waf', anchor: 'Cross-Site Scripting' },
+    { conceptId: 'threat-protection.security-service-lineup', anchor: 'Common Vulnerabilities' },
+    { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
+  ]
+
+  it('풀이 없이 쓰이던 일반 IT 용어 13종이 첫 등장 개념에서 한 번씩 풀린다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+
+    termGlosses.forEach(({ conceptId, anchor }) => {
+      const holders = concepts.filter((concept) =>
+        concept.paragraphs.some((paragraph) => paragraph.includes(anchor)),
+      )
+
+      expect(holders.map(({ id }) => id)).toEqual([conceptId])
+    })
+  })
+
+  it('용어 풀이가 개념 요약이 아니라 본문에만 들어간다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+
+    concepts.forEach((concept) => {
+      termGlosses.forEach(({ anchor }) => {
+        expect(concept.summary).not.toContain(anchor)
+        expect(concept.name).not.toContain(anchor)
+      })
+    })
+  })
 })

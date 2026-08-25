@@ -67,7 +67,8 @@
     },
     {
       "dir": "13-term-gloss",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-08-25T23:04:39+0900"
     },
     {
       "dir": "14-contrast-clarify",
