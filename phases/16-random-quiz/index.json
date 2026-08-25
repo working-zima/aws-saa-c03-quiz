@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "complete-indent",
-      "status": "pending"
+      "status": "completed",
+      "summary": "QuizPage 완료 화면 JSX 블록을 콜백의 return에 맞춰 공백만 다시 들여썼다.",
+      "started_at": "2026-08-26T00:17:37+0900",
+      "completed_at": "2026-08-26T00:18:30+0900"
     }
   ],
   "created_at": "2026-08-26T00:04:03+0900"
