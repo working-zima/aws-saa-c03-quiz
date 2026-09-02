@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "leadin-network",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-02T15:36:52+0900",
+      "summary": "VPC·하이브리드·DNS·분석 보충 문항 5개(q210·q213·q215·q221·q222)의 prompt 앞에 exam-gaps.md 근거만으로 구성한 상황 문장을 세웠다. prompt 외 필드와 나머지 241문항은 그대로다.",
+      "completed_at": "2026-09-02T15:39:31+0900"
     },
     {
       "step": 4,

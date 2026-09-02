@@ -855,4 +855,23 @@ describe('학습 데이터 무결성', () => {
     expect(prompts.q198).toBe('로그인 과정의 지연까지 줄이려고 권한 부여 로직을 사용자와 가장 가까운 곳에서 처리하려 한다. CloudFront 엣지 로케이션에서 코드를 실행하는 방식은?')
     expect(prompts.q200).toBe('JWT로 사용자를 인증하는 퍼블릭 API를 ALB와 직접 통합해야 한다. 이 두 가지를 기본 지원하면서 REST API보다 비용과 지연이 낮은 API Gateway 유형은?')
   })
+
+  it('네트워크·분석 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q210).toBe('Egress-only 인터넷 게이트웨이는 NAT 게이트웨이처럼 안에서 밖으로 나가는 통신만 담당한다. 이 게이트웨이가 아웃바운드 통신을 제공하는 IP 버전은?')
+    expect(prompts.q213).toBe('S3는 VPC나 서브넷 안에 만들 수 없는 리전 수준 서비스다. 이런 S3 버킷의 접근 제어에 사용하는 것은?')
+    expect(prompts.q215).toBe('일관되고 낮은 지연 시간과 수백 개 VPC 연결이 동시에 필요한 하이브리드 네트워크를 만들려 한다. Direct Connect와 Transit Gateway를 묶는 통로는?')
+    expect(prompts.q221).toBe('다중값 응답 라우팅은 각 레코드에 연동된 헬스 체크로 장애가 난 곳을 빼고 무작위로 응답한다. 이 정책이 한 번에 반환할 수 있는 정상 레코드의 최댓값은?')
+    expect(prompts.q222).toBe('S3에 막 들어온 데이터를 Athena로 곧바로 분석하려 한다. 데이터를 스캔해 구조를 파악하고 쿼리할 수 있는 상태로 준비하는 기능은?')
+  })
+
+  it('네트워크 보충 문항의 상황 문장이 오답을 대신 지워주지 않는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q210).not.toContain('IPv4')
+    expect(prompts.q213).not.toContain('보안 그룹')
+    expect(prompts.q221).not.toContain('8개')
+    expect(prompts.q222).not.toContain('Glue Job')
+  })
 })
