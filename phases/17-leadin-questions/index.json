@@ -2,10 +2,33 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "17-leadin-questions",
   "steps": [
-    { "step": 0, "name": "leadin-storage", "status": "pending" },
-    { "step": 1, "name": "leadin-database", "status": "pending" },
-    { "step": 2, "name": "leadin-compute", "status": "pending" },
-    { "step": 3, "name": "leadin-network", "status": "pending" },
-    { "step": 4, "name": "leadin-security", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "leadin-storage",
+      "status": "completed",
+      "started_at": "2026-09-02T15:24:14+0900",
+      "summary": "S3·스토리지 보충 문항 7개(q171~q177)의 prompt 앞에 출처 근거만으로 구성한 상황 문장을 세워, 용어를 처음 보는 사람도 대상이 무엇인지 잡히게 했다. prompt 외 필드와 나머지 239문항은 그대로다."
+    },
+    {
+      "step": 1,
+      "name": "leadin-database",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "leadin-compute",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "leadin-network",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "leadin-security",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-02T15:24:14+0900"
 }
