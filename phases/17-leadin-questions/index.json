@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-09-02T15:28:25+0900",
       "summary": "RDS·Aurora·DynamoDB·Auto Scaling 보충 문항 6개(q179·q181·q183·q184·q186·q188)의 prompt 앞에 exam-gaps.md 근거만으로 구성한 상황 문장을 세웠다. prompt 외 필드와 나머지 240문항은 그대로다.",
-      "completed_at": "2026-09-02T15:31:10+0900"
+      "completed_at": "2026-09-02T15:32:37+0900"
     },
     {
       "step": 2,
