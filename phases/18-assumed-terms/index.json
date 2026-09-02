@@ -2,6 +2,15 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "18-assumed-terms",
   "steps": [
-    { "step": 0, "name": "assumed-terms", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "assumed-terms",
+      "status": "completed",
+      "started_at": "2026-09-02T16:49:29+0900",
+      "summary": "전제 용어를 설명하지 않던 q131·q132·q134·q156의 prompt에 상황 문장을 세우고, 정의를 묻는 제외 5문항이 그대로임을 검증하는 테스트 2개를 추가했다.",
+      "completed_at": "2026-09-02T16:53:11+0900"
+    }
+  ],
+  "created_at": "2026-09-02T16:49:29+0900",
+  "completed_at": "2026-09-02T16:53:12+0900"
 }
