@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "leadin-compute",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-02T15:32:37+0900",
+      "summary": "전송·서버리스 보충 문항 4개(q192·q197·q198·q200)의 prompt 앞에 topics.json Global Accelerator 문단과 exam-gaps.md 근거만으로 구성한 상황 문장을 세웠다. prompt 외 필드와 나머지 242문항은 그대로다.",
+      "completed_at": "2026-09-02T15:36:05+0900"
     },
     {
       "step": 3,
