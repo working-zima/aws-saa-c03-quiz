@@ -1,0 +1,7 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "18-assumed-terms",
+  "steps": [
+    { "step": 0, "name": "assumed-terms", "status": "pending" }
+  ]
+}
