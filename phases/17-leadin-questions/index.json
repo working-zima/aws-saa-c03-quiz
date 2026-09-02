@@ -1,0 +1,11 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "17-leadin-questions",
+  "steps": [
+    { "step": 0, "name": "leadin-storage", "status": "pending" },
+    { "step": 1, "name": "leadin-database", "status": "pending" },
+    { "step": 2, "name": "leadin-compute", "status": "pending" },
+    { "step": 3, "name": "leadin-network", "status": "pending" },
+    { "step": 4, "name": "leadin-security", "status": "pending" }
+  ]
+}
