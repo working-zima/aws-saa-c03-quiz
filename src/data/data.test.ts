@@ -823,4 +823,93 @@ describe('학습 데이터 무결성', () => {
     expect(concept?.paragraphs[2]).toContain('Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다')
     expect(concept?.paragraphs[2]).toContain('Cross Region Read Replica')
   })
+
+  it('S3·스토리지 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q171).toBe('S3 객체 잠금은 정해진 기간 동안 객체의 수정과 삭제를 막는 기능이다. 이 잠금을 걸려면 버킷에 먼저 활성화해야 하는 기능은?')
+    expect(prompts.q172).toBe('S3 이벤트 알림은 파일이 올라오는 즉시 Lambda 같은 서비스를 자동으로 호출한다. 이 알림이 객체 생성 이벤트를 발생시키는 대상은?')
+    expect(prompts.q173).toBe('봉투 암호화는 데이터를 데이터 키로 암호화하고 그 키를 다시 마스터 키로 암호화하는 방식이다. 이 방식과 암호화 키의 주기적 자동 교체가 모두 필요할 때 선택할 것은?')
+    expect(prompts.q174).toBe('SSE-KMS는 객체를 암호화할 때마다 KMS API를 불러서 객체가 많으면 호출 비용이 급증한다. 암호화 방식은 그대로 두고 이 비용을 줄이는 기능은?')
+    expect(prompts.q175).toBe('수천 개 노드가 동시에 데이터를 읽고 쓰는 HPC 워크로드에서 노드 사이의 네트워크 지연을 최대한 줄여야 한다. EC2를 어떻게 배치해야 하는가?')
+    expect(prompts.q176).toBe('서비스를 멈추지 않고 EC2에 붙어 있는 EBS 볼륨의 크기를 늘려야 한다. 볼륨을 떼었다 붙이지 않고 확장하는 기능은?')
+    expect(prompts.q177).toBe('EFS에 오래 방치된 파일의 보관 비용을 줄이되 필요할 때는 즉시 읽을 수 있어야 한다. 접근이 없는 파일을 자동으로 저렴한 클래스로 옮기는 기능은?')
+  })
+
+  it('데이터베이스·확장 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q179).toBe('쓰기 작업량이 급격히 치솟는 RDS 워크로드에서 지연 시간을 보장하려면 IOPS를 직접 지정하는 스토리지를 고른다. 이 프로비저닝된 IOPS SSD의 표기는?')
+    expect(prompts.q181).toBe('규정 준수를 위해 백업을 얼마나 오래 둘 수 있는지부터 확인하려 한다. RDS 자동 백업의 최대 보존 기간은?')
+    expect(prompts.q183).toBe('플레이어 수가 시시각각 바뀌어 용량을 예측하기 어려운 게임 서버에 관계형 데이터베이스가 필요하다. 용량을 1초 단위로 자동 조정하는 구성은?')
+    expect(prompts.q184).toBe('Aurora에 읽기 전용 복제본을 여러 개 두고, 애플리케이션이 어느 쪽으로 보낼지 직접 고르지 않게 하려 한다. 접속 주소 하나로 부하를 자동 분산하는 Aurora 전용 기능은?')
+    expect(prompts.q186).toBe('DynamoDB에서 사고가 나기 직전 시점으로 데이터를 되돌리려고 특정 시점 복구(PITR)를 검토한다. PITR로 되돌릴 수 있는 최대 기간은?')
+    expect(prompts.q188).toBe('트래픽이 급증할 때 새 EC2가 부팅되고 애플리케이션이 뜰 때까지 응답이 지연된다. 실행 비용은 늘리지 않으면서 이 지연을 없애는 Auto Scaling 기능은?')
+  })
+
+  it('전송·서버리스 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q192).toBe('실시간 게임 서버처럼 HTTP가 아닌 트래픽을 전 세계 사용자에게 빠르게 전달하고, 리전에 장애가 나면 정상 리전으로 넘겨야 한다. 적합한 서비스는?')
+    expect(prompts.q197).toBe('관리자가 필요할 때 눌러 보고서를 만드는 정도의 단순한 호출이라 API Gateway를 앞에 두기가 과하다. Lambda 함수에 직접 HTTP(S) 주소를 붙이는 기능은?')
+    expect(prompts.q198).toBe('로그인 과정의 지연까지 줄이려고 권한 부여 로직을 사용자와 가장 가까운 곳에서 처리하려 한다. CloudFront 엣지 로케이션에서 코드를 실행하는 방식은?')
+    expect(prompts.q200).toBe('JWT로 사용자를 인증하는 퍼블릭 API를 ALB와 직접 통합해야 한다. 이 두 가지를 기본 지원하면서 REST API보다 비용과 지연이 낮은 API Gateway 유형은?')
+  })
+
+  it('네트워크·분석 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q210).toBe('Egress-only 인터넷 게이트웨이는 NAT 게이트웨이처럼 안에서 밖으로 나가는 통신만 담당한다. 이 게이트웨이가 아웃바운드 통신을 제공하는 IP 버전은?')
+    expect(prompts.q213).toBe('S3는 VPC나 서브넷 안에 만들 수 없는 리전 수준 서비스다. 이런 S3 버킷의 접근 제어에 사용하는 것은?')
+    expect(prompts.q215).toBe('일관되고 낮은 지연 시간과 수백 개 VPC 연결이 동시에 필요한 하이브리드 네트워크를 만들려 한다. Direct Connect와 Transit Gateway를 묶는 통로는?')
+    expect(prompts.q221).toBe('다중값 응답 라우팅은 각 레코드에 연동된 헬스 체크로 장애가 난 곳을 빼고 무작위로 응답한다. 이 정책이 한 번에 반환할 수 있는 정상 레코드의 최댓값은?')
+    expect(prompts.q222).toBe('S3에 막 들어온 데이터를 Athena로 곧바로 분석하려 한다. 데이터를 스캔해 구조를 파악하고 쿼리할 수 있는 상태로 준비하는 기능은?')
+  })
+
+  it('네트워크 보충 문항의 상황 문장이 오답을 대신 지워주지 않는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q210).not.toContain('IPv4')
+    expect(prompts.q213).not.toContain('보안 그룹')
+    expect(prompts.q221).not.toContain('8개')
+    expect(prompts.q222).not.toContain('Glue Job')
+  })
+
+  it('보안·권한·비용 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q225).toBe('NACL은 규칙 수에 제한이 있어 매장 5만 곳의 IP를 개별 등록할 수 없다. 이 IP에서 오는 웹 요청만 허용할 때 적합한 기능은?')
+    expect(prompts.q227).toBe('S3에 올린 정적 사이트를 CloudFront로 서비스하면서 사용자 지정 도메인에 HTTPS를 적용하려 한다. ACM 인증서를 발급해야 하는 리전은?')
+    expect(prompts.q232).toBe('전 세계에서 오는 악성 봇이 대량의 요청을 보내 컴퓨팅 리소스를 낭비하고 있다. 요청 속도 같은 행동 패턴으로 이를 탐지하고 제어하는 기능은?')
+    expect(prompts.q236).toBe('EC2의 소프트웨어 패치 누락과 공개적으로 알려진 보안 취약점(CVE)을 스캔하는 서비스는?')
+    expect(prompts.q239).toBe('EC2에 S3 접근 권한을 주려고 IAM 그룹에 그 인스턴스를 넣으려 한다. IAM 그룹에 직접 추가할 수 있는 대상은?')
+    expect(prompts.q241).toBe('Cognito로 로그인을 마친 사용자가 S3에 접근할 수 있게 하려 한다. 인증된 사용자에게 임시 권한을 제공하는 구성 요소는?')
+    expect(prompts.q243).toBe('부서별로 비용을 나눠 보려고 리소스에 사용자 정의 태그를 붙였다. Cost Explorer에서 이 태그로 비용을 집계하려면 그다음 무엇을 해야 하는가?')
+  })
+
+  it('보안 보충 문항의 상황 문장이 오답을 대신 지워주지 않는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q225).not.toContain('WAF')
+    expect(prompts.q227).not.toContain('us-east-1')
+    expect(prompts.q241).not.toContain('사용자 풀')
+  })
+
+  it('리드인을 붙인 29문항이 정답을 노출하지 않고 길이 상한을 지킨다', () => {
+    const leadInIds = [
+      'q171', 'q172', 'q173', 'q174', 'q175', 'q176', 'q177',
+      'q179', 'q181', 'q183', 'q184', 'q186', 'q188',
+      'q192', 'q197', 'q198', 'q200',
+      'q210', 'q213', 'q215', 'q221', 'q222',
+      'q225', 'q227', 'q232', 'q236', 'q239', 'q241', 'q243',
+    ]
+
+    const targets = questions.filter(({ id }) => leadInIds.includes(id))
+
+    expect(targets).toHaveLength(29)
+    targets.forEach((question) => {
+      expect(question.prompt.length).toBeLessThanOrEqual(120)
+      expect(question.prompt).not.toContain(question.choices[question.answerIndex])
+    })
+  })
 })
