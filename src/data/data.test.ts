@@ -874,4 +874,42 @@ describe('학습 데이터 무결성', () => {
     expect(prompts.q221).not.toContain('8개')
     expect(prompts.q222).not.toContain('Glue Job')
   })
+
+  it('보안·권한·비용 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q225).toBe('NACL은 규칙 수에 제한이 있어 매장 5만 곳의 IP를 개별 등록할 수 없다. 이 IP에서 오는 웹 요청만 허용할 때 적합한 기능은?')
+    expect(prompts.q227).toBe('S3에 올린 정적 사이트를 CloudFront로 서비스하면서 사용자 지정 도메인에 HTTPS를 적용하려 한다. ACM 인증서를 발급해야 하는 리전은?')
+    expect(prompts.q232).toBe('전 세계에서 오는 악성 봇이 대량의 요청을 보내 컴퓨팅 리소스를 낭비하고 있다. 요청 속도 같은 행동 패턴으로 이를 탐지하고 제어하는 기능은?')
+    expect(prompts.q236).toBe('EC2의 소프트웨어 패치 누락과 공개적으로 알려진 보안 취약점(CVE)을 스캔하는 서비스는?')
+    expect(prompts.q239).toBe('EC2에 S3 접근 권한을 주려고 IAM 그룹에 그 인스턴스를 넣으려 한다. IAM 그룹에 직접 추가할 수 있는 대상은?')
+    expect(prompts.q241).toBe('Cognito로 로그인을 마친 사용자가 S3에 접근할 수 있게 하려 한다. 인증된 사용자에게 임시 권한을 제공하는 구성 요소는?')
+    expect(prompts.q243).toBe('부서별로 비용을 나눠 보려고 리소스에 사용자 정의 태그를 붙였다. Cost Explorer에서 이 태그로 비용을 집계하려면 그다음 무엇을 해야 하는가?')
+  })
+
+  it('보안 보충 문항의 상황 문장이 오답을 대신 지워주지 않는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q225).not.toContain('WAF')
+    expect(prompts.q227).not.toContain('us-east-1')
+    expect(prompts.q241).not.toContain('사용자 풀')
+  })
+
+  it('리드인을 붙인 29문항이 정답을 노출하지 않고 길이 상한을 지킨다', () => {
+    const leadInIds = [
+      'q171', 'q172', 'q173', 'q174', 'q175', 'q176', 'q177',
+      'q179', 'q181', 'q183', 'q184', 'q186', 'q188',
+      'q192', 'q197', 'q198', 'q200',
+      'q210', 'q213', 'q215', 'q221', 'q222',
+      'q225', 'q227', 'q232', 'q236', 'q239', 'q241', 'q243',
+    ]
+
+    const targets = questions.filter(({ id }) => leadInIds.includes(id))
+
+    expect(targets).toHaveLength(29)
+    targets.forEach((question) => {
+      expect(question.prompt.length).toBeLessThanOrEqual(120)
+      expect(question.prompt).not.toContain(question.choices[question.answerIndex])
+    })
+  })
 })
