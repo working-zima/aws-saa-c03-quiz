@@ -941,4 +941,44 @@ describe('학습 데이터 무결성', () => {
       expect(question.prompt).not.toContain(choice)
     })
   })
+
+  it('가리키는 대상이 없던 명사와 전제 용어가 문항 안에서 해결된다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q039).toBe('수백만~수십억 개의 파일을 한꺼번에 복사하거나 삭제하는 것처럼 동일한 작업을 일괄 실행하는 서비스는?')
+    expect(prompts.q043).toBe('EFS IA(Infrequent Access)는 접근이 뜸한 파일을 옮겨 두는 EFS 클래스다. 이 클래스로 옮긴 파일의 접근 특성으로 맞는 것은?')
+    expect(prompts.q075).toBe('평균 CPU 사용률 70% 같은 목표값을 유지하도록 서버를 자동으로 확장하거나 축소하는 정책은?')
+    expect(prompts.q103).toBe('NAT 게이트웨이는 외부에서 시작하는 접근은 막고 내부에서 인터넷으로 나가는 통신만 가능하게 하는 장치다. 이 게이트웨이를 연결하는 위치는?')
+    expect(prompts.q133).toBe('보안 그룹은 리소스에 도달하려는 요청을 문 앞에서 검사하는 방화벽이다. 이 규칙에 추가할 수 있는 동작은?')
+    expect(prompts.q135).toBe('NACL은 서브넷 경계에서 트래픽을 허용하거나 거부하는 기능이다. 이 규칙 설정에 사용할 수 있는 대상은?')
+    expect(prompts.q217).toBe('Site-to-Site VPN은 인터넷에 암호화된 터널을 만들어 온프레미스와 AWS를 연결한다. 이 연결에서 고객 측 종단을 가리키는 구성 요소는?')
+  })
+
+  it('보강한 7문항이 보기를 노출하지 않고 길이 상한을 지킨다', () => {
+    const targetIds = ['q039', 'q043', 'q075', 'q103', 'q133', 'q135', 'q217']
+    const targets = questions.filter(({ id }) => targetIds.includes(id))
+
+    expect(targets).toHaveLength(7)
+    targets.forEach((question) => {
+      expect(question.prompt.length).toBeLessThanOrEqual(120)
+      // 보기 문자열을 꺼내면 오답이 소거된다.
+      question.choices.forEach((choice) => {
+        expect(question.prompt).not.toContain(choice)
+      })
+    })
+  })
+
+  it('리드인이 곧 정답이 되는 문항은 그대로 남는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    // 전수 읽기에서 후보로 올랐지만 손대면 정답이 드러나는 문항들이다. 바뀌면 노출된 것이다.
+    expect(prompts.q066).toBe('Aurora를 가장 잘 설명한 것은?')
+    expect(prompts.q115).toBe('높은 대역폭과 빠른 성능을 제공하며 보안성이 높은 Direct Connect의 통신 기반은?')
+    expect(prompts.q142).toBe('KMS가 저장하는 대상으로 알맞은 것은?')
+    expect(prompts.q147).toBe('WAF가 방어하는 공격이 속한 계층은?')
+    expect(prompts.q180).toBe('RDS 다중 AZ 배포의 대기 인스턴스로 할 수 없는 작업은?')
+    // q201은 출처에 구체적 사례가 없어 명사를 바꿀 수 없다. 사실을 지어내면 ADR-006·008·009 위반이다.
+    expect(prompts.q201).toBe('여러 작업을 한꺼번에 모아서 처리하는 데 적합한 서비스는?')
+    expect(prompts.q226).toBe('Web ACL과 네트워크 ACL의 역할을 올바르게 설명한 것은?')
+  })
 })
