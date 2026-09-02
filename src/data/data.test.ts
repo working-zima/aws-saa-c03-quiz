@@ -912,4 +912,23 @@ describe('학습 데이터 무결성', () => {
       expect(question.prompt).not.toContain(question.choices[question.answerIndex])
     })
   })
+  it('전제 용어를 설명하지 않던 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q131).toBe('보안 그룹은 리소스에 도달하려는 요청을 문 앞에서 검사하는 방화벽이다. 규칙을 하나도 추가하지 않은 초기 상태의 인바운드는?')
+    expect(prompts.q132).toBe('보안 그룹은 리소스에서 밖으로 나가는 트래픽에도 규칙을 적용한다. 규칙을 하나도 추가하지 않은 초기 상태의 아웃바운드는?')
+    expect(prompts.q134).toBe('NACL은 개별 리소스가 아니라 서브넷 경계에서 트래픽을 통제한다. 규칙을 손대지 않은 초기 상태의 인바운드와 아웃바운드는?')
+    expect(prompts.q156).toBe('Access Key는 만료 시점이 없어 장기 자격 증명으로 분류한다. 이런 키를 서로 전달하지 않고 언제든 해제할 수 있는 권한 부여 방식은?')
+  })
+
+  it('정의 자체를 묻는 문항은 상황 문장 없이 그대로 남는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    // 리드인을 붙이면 개념 summary가 곧 정답이 되는 문항들이다. 바뀌면 정답이 노출된 것이다.
+    expect(prompts.q053).toBe('Storage Gateway의 주된 목적은?')
+    expect(prompts.q057).toBe('Storage Gateway 자체의 스토리지 기능에 대한 설명으로 맞는 것은?')
+    expect(prompts.q114).toBe('Site-to-Site VPN과 Direct Connect의 공통 목적은?')
+    expect(prompts.q144).toBe('Secrets Manager와 Parameter Store의 공통 기능은?')
+    expect(prompts.q160).toBe('만료 기간이 있는 Access Key나 Token 형태의 임시 권한을 발급하는 서비스는?')
+  })
 })
