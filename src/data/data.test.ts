@@ -931,4 +931,14 @@ describe('학습 데이터 무결성', () => {
     expect(prompts.q144).toBe('Secrets Manager와 Parameter Store의 공통 기능은?')
     expect(prompts.q160).toBe('만료 기간이 있는 Access Key나 Token 형태의 임시 권한을 발급하는 서비스는?')
   })
+
+  it('막연한 일반 명사를 쓰던 문항이 구체적 사례로 바뀐다', () => {
+    const question = questions.find(({ id }) => id === 'q088')
+
+    expect(question?.prompt).toBe('이미지 리사이징이나 보고서 발송 같은 처리 여러 개를 정해진 순서로 이어 실행하고, 각 단계의 재시도와 오류 처리를 맡는 서비스는?')
+    // 보기에 있는 서비스명을 꺼내면 오답이 소거된다.
+    question?.choices.forEach((choice) => {
+      expect(question.prompt).not.toContain(choice)
+    })
+  })
 })
