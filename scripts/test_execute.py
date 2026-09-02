@@ -549,8 +549,41 @@ class TestInvokeAgent:
         assert "-p" in cmd
         assert "--dangerously-skip-permissions" in cmd
         assert "--output-format" in cmd
-        assert "PREAMBLE" in cmd[-1]
-        assert "UI를 구현하세요" in cmd[-1]
+
+        # 프롬프트는 argv가 아니라 stdin으로 간다.
+        stdin = mock_run.call_args[1]["input"]
+        assert "PREAMBLE" in stdin
+        assert "UI를 구현하세요" in stdin
+
+    def test_claude_prompt_goes_to_stdin_not_argv(self, executor):
+        """Windows CreateProcess의 명령줄 상한(32,767자) 때문에 argv로 넘기면 안 된다.
+
+        가드레일(CLAUDE.md + docs/*.md)만으로 이미 3만 자를 넘기므로, 프롬프트가 argv에
+        들어가면 step 문서 크기와 무관하게 WinError 206으로 죽는다.
+        """
+        mock_result = MagicMock(returncode=0, stdout="{}", stderr="")
+        step = {"step": 2, "name": "ui"}
+
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            executor._invoke_agent(step, "PREAMBLE\n")
+
+        cmd = mock_run.call_args[0][0]
+        assert not any("PREAMBLE" in arg for arg in cmd)
+        assert mock_run.call_args[1]["input"].startswith("PREAMBLE")
+        # 한글 프롬프트가 cp949로 깨지지 않아야 한다.
+        assert mock_run.call_args[1]["encoding"] == "utf-8"
+
+    def test_codex_prompt_stays_in_argv(self, executor):
+        """codex는 프롬프트를 argv로 받는다. input=까지 주면 두 번 전달된다."""
+        executor._agent = "codex"
+        mock_result = MagicMock(returncode=0, stdout="done", stderr="")
+        step = {"step": 2, "name": "ui"}
+
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            executor._invoke_agent(step, "PREAMBLE\n")
+
+        assert "PREAMBLE" in mock_run.call_args[0][0][-1]
+        assert mock_run.call_args[1]["input"] is None
 
     def test_saves_output_json(self, executor):
         mock_result = MagicMock(returncode=0, stdout='{"ok": true}', stderr="")

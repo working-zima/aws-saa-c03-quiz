@@ -26,8 +26,16 @@ ROOT = Path(__file__).resolve().parent.parent
 # step 프롬프트를 받아 CLI 인자 리스트를 만든다. 둘 다 승인 프롬프트 없이 헤드리스로 돈다.
 
 def _claude_cmd(prompt: str) -> list:
+    """claude 헤드리스 실행.
+
+    프롬프트를 argv로 넘기지 않고 stdin으로 넘긴다. 이유: Windows의 CreateProcess는
+    명령줄 전체를 32,767자로 제한한다. _load_guardrails가 주입하는 CLAUDE.md +
+    docs/*.md 만으로 이미 3만 자를 넘어서, argv로 넘기면 step 문서 크기와 무관하게
+    WinError 206으로 죽는다. `claude -p`는 --input-format text(기본)에서 stdin을
+    프롬프트로 읽으므로, prompt 인자는 여기서 쓰지 않고 _invoke_agent가 input=으로 준다.
+    """
     return ["claude", "-p", "--dangerously-skip-permissions",
-            "--output-format", "json", prompt]
+            "--output-format", "json"]
 
 
 def _codex_cmd(prompt: str) -> list:
@@ -52,6 +60,10 @@ def _codex_cmd(prompt: str) -> list:
 
 
 AGENTS = {"claude": _claude_cmd, "codex": _codex_cmd}
+
+# 프롬프트를 argv 대신 stdin으로 받는 에이전트. codex는 argv로 받으므로 여기 넣지 마라.
+# 둘 다에 넣으면 프롬프트가 두 번 전달된다.
+STDIN_AGENTS = {"claude"}
 
 
 @contextlib.contextmanager
@@ -213,11 +225,11 @@ class StepExecutor:
         sections = []
         claude_md = ROOT / "CLAUDE.md"
         if claude_md.exists():
-            sections.append(f"## 프로젝트 규칙 (CLAUDE.md)\n\n{claude_md.read_text()}")
+            sections.append(f"## 프로젝트 규칙 (CLAUDE.md)\n\n{claude_md.read_text(encoding='utf-8')}")
         docs_dir = ROOT / "docs"
         if docs_dir.is_dir():
             for doc in sorted(docs_dir.glob("*.md")):
-                sections.append(f"## {doc.stem}\n\n{doc.read_text()}")
+                sections.append(f"## {doc.stem}\n\n{doc.read_text(encoding='utf-8')}")
         return "\n\n---\n\n".join(sections) if sections else ""
 
     @staticmethod
@@ -277,10 +289,12 @@ class StepExecutor:
             print(f"  ERROR: {step_file} not found")
             sys.exit(1)
 
-        prompt = preamble + step_file.read_text()
+        prompt = preamble + step_file.read_text(encoding="utf-8")
         result = subprocess.run(
             AGENTS[self._agent](prompt),
             cwd=self._root, capture_output=True, text=True, timeout=1800,
+            input=prompt if self._agent in STDIN_AGENTS else None,
+            encoding="utf-8",
         )
 
         if result.returncode != 0:
@@ -294,7 +308,7 @@ class StepExecutor:
             "stdout": result.stdout, "stderr": result.stderr,
         }
         out_path = self._phase_dir / f"step{step_num}-output.json"
-        with open(out_path, "w") as f:
+        with open(out_path, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=2, ensure_ascii=False)
 
         return output
