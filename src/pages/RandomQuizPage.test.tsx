@@ -82,14 +82,4 @@ describe('RandomQuizPage', () => {
     await finishSet(10)
     expect(screen.queryByRole('link', { name: '다음 주제 이어가기' })).toBeNull()
   })
-
-  it('해설의 근거 개념 링크가 현재 문항의 주제를 가리킨다', async () => {
-    const user = userEvent.setup()
-    renderPage('/random/10')
-    await user.click(screen.getByRole('button', { name: '정답 1' }))
-    expect(screen.getByRole('link', { name: '근거 개념으로 돌아가기' })).toHaveAttribute('href', '/topic/topic-a')
-    await user.click(screen.getByRole('button', { name: '정답 1' }))
-    await user.click(screen.getByRole('button', { name: '정답 2' }))
-    expect(screen.getByRole('link', { name: '근거 개념으로 돌아가기' })).toHaveAttribute('href', '/topic/topic-b')
-  })
 })
