@@ -1,0 +1,8 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "21-concept-referents",
+  "steps": [
+    { "step": 0, "name": "leadin-recheck", "status": "pending" },
+    { "step": 1, "name": "concept-examples", "status": "pending" }
+  ]
+}

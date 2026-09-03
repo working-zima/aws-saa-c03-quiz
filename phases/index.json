@@ -104,6 +104,10 @@
       "dir": "20-vague-referents",
       "status": "completed",
       "completed_at": "2026-09-03T08:44:50+0900"
+    },
+    {
+      "dir": "21-concept-referents",
+      "status": "pending"
     }
   ]
 }
