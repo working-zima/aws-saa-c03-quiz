@@ -992,4 +992,27 @@ describe('학습 데이터 무결성', () => {
       expect(question.prompt).not.toContain(choice)
     })
   })
+
+  it('개념 본문이 Lambda가 하는 일과 비용 할당 태그가 무엇인지 알려준다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
+
+    expect(lambda?.paragraphs[0]).toContain('S3에 올라온 이미지를 리사이징하거나')
+    expect(lambda?.paragraphs[0]).toContain('정해진 시각에 개발용 RDS를 켜고 끄는')
+    expect(tag?.paragraphs[0]).toContain('리소스에 직접 붙이는 사용자 정의 태그로')
+    expect(tag?.paragraphs[0]).toContain('부서별로 비용을 나눠 보는 데 쓴다')
+  })
+
+  it('개념 본문 보강이 요약과 문단 개수를 바꾸지 않는다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
+
+    // ADR-010이 정한 편집 범위 — summary와 개념 구조는 건드리지 않는다.
+    expect(lambda?.paragraphs).toHaveLength(3)
+    expect(lambda?.summary).toBe('Lambda는 서버 운영을 AWS에 맡기고 개발자가 올린 코드만 실행하는 서비스다.')
+    expect(tag?.paragraphs).toHaveLength(2)
+    expect(tag?.summary).toBe('비용 할당 태그는 결제 콘솔에서 활성화해야 Cost Explorer에 보인다.')
+  })
 })
