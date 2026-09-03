@@ -112,7 +112,8 @@
     },
     {
       "dir": "22-concept-search",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-03T12:43:18+0900"
     }
   ]
 }
