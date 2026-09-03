@@ -769,6 +769,8 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
     { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
     { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
+    { conceptId: 'compute-delivery.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
+    { conceptId: 'compute-delivery.cloudfront-ttl', anchor: 'Time-to-Live' },
     { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
     { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
     { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
@@ -777,7 +779,7 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
   ]
 
-  it('풀이 없이 쓰이던 일반 IT 용어 13종이 첫 등장 개념에서 한 번씩 풀린다', () => {
+  it('풀이 없이 쓰이던 일반 IT 용어 15종이 첫 등장 개념에서 한 번씩 풀린다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
 
     termGlosses.forEach(({ conceptId, anchor }) => {
@@ -1061,5 +1063,49 @@ describe('학습 데이터 무결성', () => {
     wrongChoices.forEach((choice) => {
       expect(choice.startsWith('SSE')).toBe(false)
     })
+  })
+
+  it('SQS 개념의 잘못된 표기가 바로잡혀 있다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'messaging-backup.sqs-details')
+
+    expect(concept?.summary).toContain('중복과 순서 뒤바뀜이 생길 수 있다')
+    expect(concept?.paragraphs[1]).toContain('순서가 바뀔 수 있다')
+    expect(concept?.paragraphs[1]).toContain('(Exactly-Once)" 처리가')
+  })
+
+  it('TCP와 UDP 풀이가 이름과 계층뿐 아니라 둘의 차이까지 알려준다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'compute-delivery.elb')
+
+    expect(concept?.paragraphs[1]).toContain('빠진 것은 다시 보낸다')
+    expect(concept?.paragraphs[1]).toContain('일부가 유실될 수 있다')
+  })
+
+  it('CloudFront와 Global Accelerator의 갈림길이 추상적인 대비 대신 구체적인 기준으로 쓰인다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'compute-delivery.global-accelerator-protocols')
+
+    // "캐싱할 콘텐츠인가, 가속할 연결인가"는 두 말을 이미 아는 사람에게만 읽힌다.
+    expect(concept?.paragraphs[1]).not.toContain('가속할 연결인가')
+    expect(concept?.paragraphs[1]).toContain('미리 복사해 둘 이미지나 파일이 있느냐')
+  })
+
+  it('용어 풀이를 더해도 개념 요약과 문단 개수는 그대로다', () => {
+    const byId = Object.fromEntries(
+      topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+    )
+
+    // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
+    expect(byId['compute-delivery.elb'].paragraphs).toHaveLength(3)
+    expect(byId['compute-delivery.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
+    expect(byId['compute-delivery.global-accelerator-protocols'].paragraphs).toHaveLength(2)
+    expect(byId['compute-delivery.cloudfront-ttl'].paragraphs).toHaveLength(2)
+    expect(byId['compute-delivery.cloudfront-ttl'].summary).toBe(
+      'TTL이 만료되기 전에는 원본이 바뀌어도 엣지가 옛 파일을 계속 내보낸다.',
+    )
   })
 })
