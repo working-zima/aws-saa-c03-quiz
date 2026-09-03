@@ -39,6 +39,12 @@ const testTopics: Topic[] = [
         summary: '**첫 번째 요약**이다.',
         paragraphs: ['첫 번째 개념 본문', '첫 번째 개념 둘째 문단'],
       },
+      {
+        id: 'first-topic.neighbor',
+        name: '이웃 개념',
+        summary: '이웃 요약',
+        paragraphs: ['이웃 개념 본문'],
+      },
     ],
   },
   {
@@ -93,30 +99,43 @@ describe('QuizRunner', () => {
     expect(screen.getByText('완료')).toBeInTheDocument()
   })
 
-  it('정답을 고르기 전에도 근거 개념을 화면 안에서 펼친다', async () => {
+  it('정답을 고르기 전에도 주제의 개념을 화면 안에서 펼친다', async () => {
     const user = userEvent.setup()
     renderRunner()
 
-    const toggle = screen.getByRole('button', { name: '근거 개념' })
+    const toggle = screen.getByRole('button', { name: '개념 보기' })
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByText('첫 번째 개념 본문')).toBeNull()
 
     await user.click(toggle)
 
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('heading', { name: '첫 번째 주제' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '첫 번째 개념' })).toBeInTheDocument()
     expect(screen.getByText('첫 번째 개념 본문')).toBeInTheDocument()
     expect(screen.getByText('첫 번째 개념 둘째 문단')).toBeInTheDocument()
+  })
+
+  it('문항의 근거 개념뿐 아니라 같은 주제의 이웃 개념까지 펼친다', async () => {
+    const user = userEvent.setup()
+    renderRunner()
+
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
+
+    // q180("다중 AZ 대기 인스턴스로 할 수 없는 작업")처럼, 근거 개념 하나만으로는
+    // 왜 그런지가 서지 않는다. 같은 주제의 개념과 대비해야 이해된다.
+    expect(screen.getByRole('heading', { name: '이웃 개념' })).toBeInTheDocument()
+    expect(screen.getByText('이웃 개념 본문')).toBeInTheDocument()
   })
 
   it('펼친 개념을 다시 눌러 접는다', async () => {
     const user = userEvent.setup()
     renderRunner()
 
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
 
-    expect(screen.getByRole('button', { name: '근거 개념' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByRole('button', { name: '개념 보기' })).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByText('첫 번째 개념 본문')).toBeNull()
   })
 
@@ -127,28 +146,29 @@ describe('QuizRunner', () => {
     await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
     await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
     await user.click(screen.getByRole('button', { name: '오답 보기 A' }))
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
 
     expect(screen.getByText('2 / 2')).toBeInTheDocument()
     expect(screen.getByText('두 번째 해설')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '오답 보기 B' })).toBeDisabled()
   })
 
-  it('문항마다 그 문항의 근거 개념을 펼친다', async () => {
+  it('문항마다 그 문항이 속한 주제를 펼친다', async () => {
     const user = userEvent.setup()
     renderRunner()
 
     await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
-    expect(screen.getByRole('heading', { name: '첫 번째 개념' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
+    expect(screen.getByRole('heading', { name: '첫 번째 주제' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
 
-    expect(screen.getByRole('heading', { name: '두 번째 개념' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: '첫 번째 개념' })).toBeNull()
+    expect(screen.getByRole('heading', { name: '두 번째 주제' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: '첫 번째 주제' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: '이웃 개념' })).toBeNull()
   })
 
   it('다음 문항으로 넘어가면 펼친 개념을 닫는다', async () => {
@@ -156,10 +176,10 @@ describe('QuizRunner', () => {
     renderRunner()
 
     await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
     await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
 
-    expect(screen.getByRole('button', { name: '근거 개념' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByRole('button', { name: '개념 보기' })).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByText('첫 번째 개념 본문')).toBeNull()
   })
 
@@ -167,7 +187,7 @@ describe('QuizRunner', () => {
     const user = userEvent.setup()
     const { container } = renderRunner()
 
-    await user.click(screen.getByRole('button', { name: '근거 개념' }))
+    await user.click(screen.getByRole('button', { name: '개념 보기' }))
 
     expect(screen.getByText('첫 번째 요약')).toHaveClass('font-medium', 'text-neutral-100')
     expect(container.textContent).not.toContain('**')
@@ -183,9 +203,9 @@ describe('QuizRunner', () => {
     expect(screen.queryByRole('link')).toBeNull()
   })
 
-  it('근거 개념을 찾을 수 없는 문항에는 토글을 렌더하지 않는다', () => {
+  it('주제를 찾을 수 없는 문항에는 토글을 렌더하지 않는다', () => {
     renderRunner(vi.fn(() => <section>완료</section>), [])
 
-    expect(screen.queryByRole('button', { name: '근거 개념' })).toBeNull()
+    expect(screen.queryByRole('button', { name: '개념 보기' })).toBeNull()
   })
 })

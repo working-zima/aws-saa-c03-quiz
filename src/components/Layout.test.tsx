@@ -60,7 +60,7 @@ describe('Layout', () => {
   })
 
   // 확인 문제 화면의 근거 개념은 헤더가 아니라 문항 화면 안의 펼치기가 맡는다
-  // (UI_GUIDE "보기 버튼 > 근거 개념 펼치기"). 헤더에 다시 넣으면 링크가 세 개가 된다.
+  // (UI_GUIDE "보기 버튼 > 개념 펼치기"). 헤더에 다시 넣으면 링크가 세 개가 된다.
   it.each(['/', '/topic/vpc', '/topic/vpc/quiz', '/review'])('%s에서 근거 개념 링크를 렌더링하지 않는다', (path) => {
     render(
       <MemoryRouter initialEntries={[path]}>

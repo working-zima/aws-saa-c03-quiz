@@ -1,9 +1,8 @@
 import { useState, type ReactNode } from 'react'
 import { topics as defaultTopics } from '../data'
-import { findConcept } from '../lib/concepts'
 import { isCorrect } from '../lib/grading'
 import type { Question, Topic } from '../types/content'
-import { EmphasizedText } from './EmphasizedText'
+import { ConceptList } from './ConceptList'
 
 interface QuizRunnerProps {
   title: string
@@ -51,7 +50,8 @@ export function QuizRunner({ title, questions, answer, renderComplete, topics = 
   const revealed = selectedChoice !== null
   const advanceInstructionId = `quiz-advance-instruction-${question.id}`
   const conceptPanelId = `quiz-concept-${question.id}`
-  const concept = findConcept(topics, question.conceptId)
+  // 문항의 근거 개념 하나가 아니라 그 문항이 속한 주제 전체를 펼친다 (ADR-016).
+  const topic = topics.find((candidate) => candidate.id === question.topicId)
   const conceptOpen = openConceptIndex === questionIndex
 
   function selectChoice(choiceIndex: number) {
@@ -127,8 +127,8 @@ export function QuizRunner({ title, questions, answer, renderComplete, topics = 
         </div>
       )}
 
-      {concept && (
-        <div className="space-y-3 border-t border-neutral-800 pt-5">
+      {topic && (
+        <div className="space-y-5 border-t border-neutral-800 pt-5">
           <button
             aria-controls={conceptPanelId}
             aria-expanded={conceptOpen}
@@ -137,21 +137,12 @@ export function QuizRunner({ title, questions, answer, renderComplete, topics = 
             type="button"
           >
             {conceptOpen ? chevronUpIcon : chevronDownIcon}
-            근거 개념
+            개념 보기
           </button>
           {conceptOpen && (
-            <div className="space-y-3" id={conceptPanelId}>
-              <div className="space-y-1">
-                <h3 className="text-base font-medium text-neutral-100">{concept.name}</h3>
-                <p className="text-sm text-neutral-400"><EmphasizedText text={concept.summary} /></p>
-              </div>
-              <div className="space-y-3">
-                {concept.paragraphs.map((paragraph, index) => (
-                  <p className="whitespace-pre-line break-keep text-[15px] leading-7 text-neutral-300" key={`${concept.id}-${index}`}>
-                    <EmphasizedText text={paragraph} />
-                  </p>
-                ))}
-              </div>
+            <div className="space-y-5" id={conceptPanelId}>
+              <h3 className="text-lg font-medium text-title">{topic.title}</h3>
+              <ConceptList concepts={topic.concepts} headingLevel={4} />
             </div>
           )}
         </div>
