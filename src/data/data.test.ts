@@ -1108,4 +1108,145 @@ describe('학습 데이터 무결성', () => {
       'TTL이 만료되기 전에는 원본이 바뀌어도 엣지가 옛 파일을 계속 내보낸다.',
     )
   })
+
+  // ADR-015 — 해설에 나오는 약어와 괄호로 붙일 풀네임.
+  // AWS·DB·CPU·MB·KB·IP처럼 상식으로 통하는 약어와, API·URL·SSD처럼 제품이나 유형
+  // 이름의 일부로만 쓰이는 약어는 대상이 아니다.
+  const acronymFullNames: Record<string, string> = {
+    S3: 'Simple Storage Service',
+    EC2: 'Elastic Compute Cloud',
+    RDS: 'Relational Database Service',
+    KMS: 'Key Management Service',
+    WAF: 'Web Application Firewall',
+    NACL: 'Network Access Control List',
+    ACL: 'Access Control List',
+    IAM: 'Identity And Access Management',
+    EBS: 'Elastic Block Store',
+    EFS: 'Elastic File System',
+    FSx: 'File System for Extended use',
+    SQS: 'Simple Queue Service',
+    SNS: 'Simple Notification Service',
+    SES: 'Simple Email Service',
+    DNS: 'Domain Name System',
+    ACM: 'AWS Certificate Manager',
+    ELB: 'Elastic Load Balancer',
+    ALB: 'Application Load Balancer',
+    NLB: 'Network Load Balancer',
+    GLB: 'Gateway Load Balancer',
+    DDoS: 'Distributed Denial of Service',
+    DRT: 'DDoS Response Team',
+    STS: 'Security Token Service',
+    SSE: 'Server Side Encryption',
+    JWT: 'JSON Web Token',
+    DAX: 'DynamoDB Accelerator',
+    PITR: 'Point-in-Time Recovery',
+    CDN: 'Content Delivery Network',
+    EMR: 'Elastic MapReduce',
+    XSS: 'Cross-Site Scripting',
+    MFA: 'Multi-Factor Authentication',
+    TTL: 'Time-to-Live',
+    EKS: 'Elastic Kubernetes Service',
+    MSK: 'Managed Streaming for Apache Kafka',
+    CVE: 'Common Vulnerabilities and Exposures',
+    NFS: 'Network File System',
+    AZ: 'Availability Zone',
+    IA: 'Infrequent Access',
+    FTP: 'File Transfer Protocol',
+    SFTP: 'SSH File Transfer Protocol',
+    FTPS: 'File Transfer Protocol Secure',
+    HTTP: 'HyperText Transfer Protocol',
+    HTTPS: 'HyperText Transfer Protocol Secure',
+    TCP: 'Transmission Control Protocol',
+    UDP: 'User Datagram Protocol',
+    SSL: 'Secure Sockets Layer',
+    TLS: 'Transport Layer Security',
+    VPN: 'Virtual Private Network',
+    NAT: 'Network Address Translation',
+    SMB: 'Server Message Block',
+    SQL: 'Structured Query Language',
+    RDBMS: 'Relational Database Management System',
+    CIDR: 'Classless Inter-Domain Routing',
+    REST: 'Representational State Transfer',
+    FIFO: 'First In First Out',
+    ETL: 'Extract, Transform, Load',
+    IOPS: 'Input/Output Operations Per Second',
+    HPC: 'High Performance Computing',
+    VPC: 'Virtual Private Cloud',
+    ECS: 'Elastic Container Service',
+    OAC: 'Origin Access Control',
+    SCP: 'Service Control Policy',
+  }
+
+  // 풀네임이 서로를 품는 묶음. 한 해설에서 먼저 나온 하나만 풀어야 되풀이가 생기지 않는다.
+  const acronymFamilies = [
+    ['HTTP', 'HTTPS'],
+    ['FTP', 'SFTP', 'FTPS'],
+  ]
+
+  // 괄호 안에 든 약어는 이미 다른 풀이의 일부이므로 대상이 아니다.
+  function usedOutsideParens(text: string, acronym: string) {
+    const pattern = new RegExp(`(?<![A-Za-z0-9-])${acronym}(?![A-Za-z0-9-])`, 'g')
+
+    return [...text.matchAll(pattern)].some(({ index }) => {
+      const before = text.slice(0, index)
+
+      return before.split('(').length === before.split(')').length
+    })
+  }
+
+  it('해설에 나오는 약어가 풀네임을 괄호로 달고 나온다', () => {
+    const singles = Object.keys(acronymFullNames)
+      .filter((acronym) => !acronymFamilies.some((family) => family.includes(acronym)))
+      .map((acronym) => [acronym])
+    const groups = [...acronymFamilies, ...singles]
+
+    questions.forEach((question) => {
+      groups.forEach((family) => {
+        if (!family.some((acronym) => usedOutsideParens(question.explanation, acronym))) return
+
+        const glossed = family.some((acronym) =>
+          question.explanation.includes(`${acronym}(${acronymFullNames[acronym]})`),
+        )
+
+        expect(glossed ? '' : `${question.id}에 ${family.join('/')} 풀이 없음`).toBe('')
+      })
+    })
+  })
+
+  it('한 해설에서 같은 약어를 두 번 풀지 않는다', () => {
+    questions.forEach((question) => {
+      Object.entries(acronymFullNames).forEach(([acronym, fullName]) => {
+        const gloss = `${acronym}(${fullName})`
+
+        expect(question.explanation.split(gloss).length - 1).toBeLessThanOrEqual(1)
+      })
+    })
+  })
+
+  it('상식으로 통하는 약어와 제품 이름 속 약어는 해설에서 풀지 않는다', () => {
+    const allExplanations = questions.map(({ explanation }) => explanation).join(' ')
+
+    const outOfScope = [
+      'Amazon Web Services',
+      'Central Processing Unit',
+      'Internet Protocol',
+      'Uniform Resource Locator',
+      'Solid State Drive',
+    ]
+
+    outOfScope.forEach((fullName) => {
+      expect(allExplanations).not.toContain(fullName)
+    })
+  })
+
+  it('풀이가 그 약어의 첫 등장 자리에 붙는다', () => {
+    const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+    expect(byId.q130.explanation).toBe(
+      'NACL(Network Access Control List)은 서브넷에 대해 트래픽을 허용하거나 거부한다. 보안 그룹은 AWS 리소스의 트래픽을 제어한다.',
+    )
+    expect(byId.q080.explanation).toBe(
+      'NLB(Network Load Balancer)는 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 처리하며 빠른 응답 속도를 제공한다. ALB(Application Load Balancer)는 HTTP(HyperText Transfer Protocol)와 HTTPS에 사용하고 GLB(Gateway Load Balancer)는 보안 장비용이다.',
+    )
+  })
 })
