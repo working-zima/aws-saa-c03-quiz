@@ -237,9 +237,6 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '정답 보기' }))
 
     expect(screen.getByText('첫 번째 해설')).toBeInTheDocument()
-    const conceptLink = screen.getByRole('link', { name: '근거 개념으로 돌아가기' })
-    expect(conceptLink).toHaveAttribute('href', '/topic/test-topic')
-    expect(conceptLink).toHaveClass('min-h-[44px]')
     expect(answer).toHaveBeenCalledWith('q001', true)
   })
 

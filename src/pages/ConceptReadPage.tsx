@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { EmphasizedText } from '../components/EmphasizedText'
 import { topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { adjacentTopics } from '../lib/navigation'
@@ -23,18 +24,6 @@ const nextIcon = (
 )
 
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
-
-function renderEmphasis(text: string, keyPrefix: string) {
-  return text.split(/(\*\*.+?\*\*)/g).map((part, index) =>
-    part.startsWith('**') && part.endsWith('**') ? (
-      <strong className="font-medium text-neutral-100" key={`${keyPrefix}-${index}`}>
-        {part.slice(2, -2)}
-      </strong>
-    ) : (
-      part
-    ),
-  )
-}
 
 const importanceLabel = {
   3: { label: '★★★', className: 'text-importance-high' },
@@ -82,12 +71,12 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
           <article className="space-y-3" key={concept.id}>
             <div className="space-y-1">
               <h2 className="text-base font-medium text-neutral-100">{concept.name}</h2>
-              <p className="text-sm text-neutral-400">{renderEmphasis(concept.summary, `${concept.id}-summary`)}</p>
+              <p className="text-sm text-neutral-400"><EmphasizedText text={concept.summary} /></p>
             </div>
             <div className="space-y-3">
               {concept.paragraphs.map((paragraph, index) => (
                 <p className="whitespace-pre-line break-keep text-[15px] leading-7 text-neutral-300" key={`${concept.id}-${index}`}>
-                  {renderEmphasis(paragraph, `${concept.id}-${index}`)}
+                  <EmphasizedText text={paragraph} />
                 </p>
               ))}
             </div>

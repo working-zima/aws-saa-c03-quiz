@@ -1,24 +1,43 @@
 import { useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { topics as defaultTopics } from '../data'
+import { findConcept } from '../lib/concepts'
 import { isCorrect } from '../lib/grading'
-import type { Question } from '../types/content'
+import type { Question, Topic } from '../types/content'
+import { EmphasizedText } from './EmphasizedText'
 
 interface QuizRunnerProps {
   title: string
   questions: Question[]
   answer: (questionId: string, correct: boolean) => void
   renderComplete: (correctCount: number, total: number) => ReactNode
+  topics?: Topic[]
 }
 
 const choiceBaseClass = 'w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-left text-neutral-300'
 const choiceCorrectClass = 'border-green-500/60 bg-green-500/5'
 const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
+const conceptToggleClass = 'inline-flex min-h-[44px] items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100'
 
-export function QuizRunner({ title, questions, answer, renderComplete }: QuizRunnerProps) {
+const chevronDownIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+)
+
+const chevronUpIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M18 15l-6-6-6 6" />
+  </svg>
+)
+
+export function QuizRunner({ title, questions, answer, renderComplete, topics = defaultTopics }: QuizRunnerProps) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [selections, setSelections] = useState<(number | null)[]>(() => questions.map(() => null))
   const [complete, setComplete] = useState(false)
+  // 펼친 문항의 인덱스를 들고 있는다. boolean을 따로 두면 문항을 옮길 때마다 닫아 줘야 하고,
+  // 한 곳만 빠뜨리면 다음 문항에 앞 문항의 개념이 펼쳐진 채로 남는다.
+  const [openConceptIndex, setOpenConceptIndex] = useState<number | null>(null)
   const correctCount = selections.filter(
     (selection, index) => selection !== null && isCorrect(questions[index], selection),
   ).length
@@ -31,6 +50,9 @@ export function QuizRunner({ title, questions, answer, renderComplete }: QuizRun
   const selectedChoice = selections[questionIndex]
   const revealed = selectedChoice !== null
   const advanceInstructionId = `quiz-advance-instruction-${question.id}`
+  const conceptPanelId = `quiz-concept-${question.id}`
+  const concept = findConcept(topics, question.conceptId)
+  const conceptOpen = openConceptIndex === questionIndex
 
   function selectChoice(choiceIndex: number) {
     if (revealed) return
@@ -102,9 +124,36 @@ export function QuizRunner({ title, questions, answer, renderComplete }: QuizRun
               ? '정답을 한 번 더 누르면 결과를 봅니다'
               : '정답을 한 번 더 누르면 다음 문제로 넘어갑니다'}
           </p>
-          <Link className="inline-flex min-h-[44px] items-center text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${question.topicId}`}>
-            근거 개념으로 돌아가기
-          </Link>
+        </div>
+      )}
+
+      {concept && (
+        <div className="space-y-3 border-t border-neutral-800 pt-5">
+          <button
+            aria-controls={conceptPanelId}
+            aria-expanded={conceptOpen}
+            className={conceptToggleClass}
+            onClick={() => setOpenConceptIndex(conceptOpen ? null : questionIndex)}
+            type="button"
+          >
+            {conceptOpen ? chevronUpIcon : chevronDownIcon}
+            근거 개념
+          </button>
+          {conceptOpen && (
+            <div className="space-y-3" id={conceptPanelId}>
+              <div className="space-y-1">
+                <h3 className="text-base font-medium text-neutral-100">{concept.name}</h3>
+                <p className="text-sm text-neutral-400"><EmphasizedText text={concept.summary} /></p>
+              </div>
+              <div className="space-y-3">
+                {concept.paragraphs.map((paragraph, index) => (
+                  <p className="whitespace-pre-line break-keep text-[15px] leading-7 text-neutral-300" key={`${concept.id}-${index}`}>
+                    <EmphasizedText text={paragraph} />
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </section>
