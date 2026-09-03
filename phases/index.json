@@ -107,7 +107,8 @@
     },
     {
       "dir": "21-concept-referents",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-03T11:05:35+0900"
     }
   ]
 }
