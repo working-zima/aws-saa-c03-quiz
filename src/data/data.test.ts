@@ -823,4 +823,196 @@ describe('학습 데이터 무결성', () => {
     expect(concept?.paragraphs[2]).toContain('Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다')
     expect(concept?.paragraphs[2]).toContain('Cross Region Read Replica')
   })
+
+  it('S3·스토리지 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q171).toBe('S3 객체 잠금은 정해진 기간 동안 객체의 수정과 삭제를 막는 기능이다. 이 잠금을 걸려면 버킷에 먼저 활성화해야 하는 기능은?')
+    expect(prompts.q172).toBe('S3 이벤트 알림은 파일이 올라오는 즉시 Lambda 같은 서비스를 자동으로 호출한다. 이 알림이 객체 생성 이벤트를 발생시키는 대상은?')
+    expect(prompts.q173).toBe('봉투 암호화는 데이터를 데이터 키로 암호화하고 그 키를 다시 마스터 키로 암호화하는 방식이다. 이 방식과 암호화 키의 주기적 자동 교체가 모두 필요할 때 선택할 것은?')
+    expect(prompts.q174).toBe('SSE-KMS는 객체를 암호화할 때마다 KMS API를 불러서 객체가 많으면 호출 비용이 급증한다. 암호화 방식은 그대로 두고 이 비용을 줄이는 기능은?')
+    expect(prompts.q175).toBe('수천 개 노드가 동시에 데이터를 읽고 쓰는 HPC 워크로드에서 노드 사이의 네트워크 지연을 최대한 줄여야 한다. EC2를 어떻게 배치해야 하는가?')
+    expect(prompts.q176).toBe('서비스를 멈추지 않고 EC2에 붙어 있는 EBS 볼륨의 크기를 늘려야 한다. 볼륨을 떼었다 붙이지 않고 확장하는 기능은?')
+    expect(prompts.q177).toBe('EFS에 오래 방치된 파일의 보관 비용을 줄이되 필요할 때는 즉시 읽을 수 있어야 한다. 접근이 없는 파일을 자동으로 저렴한 클래스로 옮기는 기능은?')
+  })
+
+  it('데이터베이스·확장 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q179).toBe('쓰기 작업량이 급격히 치솟는 RDS 워크로드에서 지연 시간을 보장하려면 IOPS를 직접 지정하는 스토리지를 고른다. 이 프로비저닝된 IOPS SSD의 표기는?')
+    expect(prompts.q181).toBe('규정 준수를 위해 백업을 얼마나 오래 둘 수 있는지부터 확인하려 한다. RDS 자동 백업의 최대 보존 기간은?')
+    expect(prompts.q183).toBe('플레이어 수가 시시각각 바뀌어 용량을 예측하기 어려운 게임 서버에 관계형 데이터베이스가 필요하다. 용량을 1초 단위로 자동 조정하는 구성은?')
+    expect(prompts.q184).toBe('Aurora에 읽기 전용 복제본을 여러 개 두고, 애플리케이션이 어느 쪽으로 보낼지 직접 고르지 않게 하려 한다. 접속 주소 하나로 부하를 자동 분산하는 Aurora 전용 기능은?')
+    expect(prompts.q186).toBe('DynamoDB에서 사고가 나기 직전 시점으로 데이터를 되돌리려고 특정 시점 복구(PITR)를 검토한다. PITR로 되돌릴 수 있는 최대 기간은?')
+    expect(prompts.q188).toBe('트래픽이 급증할 때 새 EC2가 부팅되고 애플리케이션이 뜰 때까지 응답이 지연된다. 실행 비용은 늘리지 않으면서 이 지연을 없애는 Auto Scaling 기능은?')
+  })
+
+  it('전송·서버리스 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q192).toBe('실시간 게임 서버처럼 HTTP가 아닌 트래픽을 전 세계 사용자에게 빠르게 전달하고, 리전에 장애가 나면 정상 리전으로 넘겨야 한다. 적합한 서비스는?')
+    expect(prompts.q197).toBe('관리자가 필요할 때 눌러 보고서를 만드는 정도의 단순한 호출이라 API Gateway를 앞에 두기가 과하다. Lambda 함수에 직접 HTTP(S) 주소를 붙이는 기능은?')
+    expect(prompts.q198).toBe('로그인 과정의 지연까지 줄이려고 권한 부여 로직을 사용자와 가장 가까운 곳에서 처리하려 한다. CloudFront 엣지 로케이션에서 코드를 실행하는 방식은?')
+    expect(prompts.q200).toBe('JWT로 사용자를 인증하는 퍼블릭 API를 ALB와 직접 통합해야 한다. 이 두 가지를 기본 지원하면서 REST API보다 비용과 지연이 낮은 API Gateway 유형은?')
+  })
+
+  it('네트워크·분석 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q210).toBe('Egress-only 인터넷 게이트웨이는 NAT 게이트웨이처럼 안에서 밖으로 나가는 통신만 담당한다. 이 게이트웨이가 아웃바운드 통신을 제공하는 IP 버전은?')
+    expect(prompts.q213).toBe('S3는 VPC나 서브넷 안에 만들 수 없는 리전 수준 서비스다. 이런 S3 버킷의 접근 제어에 사용하는 것은?')
+    expect(prompts.q215).toBe('일관되고 낮은 지연 시간과 수백 개 VPC 연결이 동시에 필요한 하이브리드 네트워크를 만들려 한다. Direct Connect와 Transit Gateway를 묶는 통로는?')
+    expect(prompts.q221).toBe('다중값 응답 라우팅은 각 레코드에 연동된 헬스 체크로 장애가 난 곳을 빼고 무작위로 응답한다. 이 정책이 한 번에 반환할 수 있는 정상 레코드의 최댓값은?')
+    expect(prompts.q222).toBe('S3에 막 들어온 데이터를 Athena로 곧바로 분석하려 한다. 데이터를 스캔해 구조를 파악하고 쿼리할 수 있는 상태로 준비하는 기능은?')
+  })
+
+  it('네트워크 보충 문항의 상황 문장이 오답을 대신 지워주지 않는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q210).not.toContain('IPv4')
+    expect(prompts.q213).not.toContain('보안 그룹')
+    expect(prompts.q221).not.toContain('8개')
+    expect(prompts.q222).not.toContain('Glue Job')
+  })
+
+  it('보안·권한·비용 보충 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q225).toBe('NACL은 규칙 수에 제한이 있어 매장 5만 곳의 IP를 개별 등록할 수 없다. 이 IP에서 오는 웹 요청만 허용할 때 적합한 기능은?')
+    expect(prompts.q227).toBe('S3에 올린 정적 사이트를 CloudFront로 서비스하면서 사용자 지정 도메인에 HTTPS를 적용하려 한다. ACM 인증서를 발급해야 하는 리전은?')
+    expect(prompts.q232).toBe('전 세계에서 오는 악성 봇이 대량의 요청을 보내 컴퓨팅 리소스를 낭비하고 있다. 요청 속도 같은 행동 패턴으로 이를 탐지하고 제어하는 기능은?')
+    expect(prompts.q236).toBe('EC2의 소프트웨어 패치 누락과 공개적으로 알려진 보안 취약점(CVE)을 스캔하는 서비스는?')
+    expect(prompts.q239).toBe('EC2에 S3 접근 권한을 주려고 IAM 그룹에 그 인스턴스를 넣으려 한다. IAM 그룹에 직접 추가할 수 있는 대상은?')
+    expect(prompts.q241).toBe('Cognito로 로그인을 마친 사용자가 S3에 접근할 수 있게 하려 한다. 인증된 사용자에게 임시 권한을 제공하는 구성 요소는?')
+    expect(prompts.q243).toBe('부서별로 비용을 나눠 보려고 리소스에 사용자 정의 태그를 붙였다. Cost Explorer에서 이 태그로 비용을 집계하려면 그다음 무엇을 해야 하는가?')
+  })
+
+  it('보안 보충 문항의 상황 문장이 오답을 대신 지워주지 않는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q225).not.toContain('WAF')
+    expect(prompts.q227).not.toContain('us-east-1')
+    expect(prompts.q241).not.toContain('사용자 풀')
+  })
+
+  it('리드인을 붙인 29문항이 정답을 노출하지 않고 길이 상한을 지킨다', () => {
+    const leadInIds = [
+      'q171', 'q172', 'q173', 'q174', 'q175', 'q176', 'q177',
+      'q179', 'q181', 'q183', 'q184', 'q186', 'q188',
+      'q192', 'q197', 'q198', 'q200',
+      'q210', 'q213', 'q215', 'q221', 'q222',
+      'q225', 'q227', 'q232', 'q236', 'q239', 'q241', 'q243',
+    ]
+
+    const targets = questions.filter(({ id }) => leadInIds.includes(id))
+
+    expect(targets).toHaveLength(29)
+    targets.forEach((question) => {
+      expect(question.prompt.length).toBeLessThanOrEqual(120)
+      expect(question.prompt).not.toContain(question.choices[question.answerIndex])
+    })
+  })
+  it('전제 용어를 설명하지 않던 문항이 상황을 세우는 프롬프트로 바뀐다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q131).toBe('보안 그룹은 리소스에 도달하려는 요청을 문 앞에서 검사하는 방화벽이다. 규칙을 하나도 추가하지 않은 초기 상태의 인바운드는?')
+    expect(prompts.q132).toBe('보안 그룹은 리소스에서 밖으로 나가는 트래픽에도 규칙을 적용한다. 규칙을 하나도 추가하지 않은 초기 상태의 아웃바운드는?')
+    expect(prompts.q134).toBe('NACL은 개별 리소스가 아니라 서브넷 경계에서 트래픽을 통제한다. 규칙을 손대지 않은 초기 상태의 인바운드와 아웃바운드는?')
+    expect(prompts.q156).toBe('Access Key는 만료 시점이 없어 장기 자격 증명으로 분류한다. 이런 키를 서로 전달하지 않고 언제든 해제할 수 있는 권한 부여 방식은?')
+  })
+
+  it('정의 자체를 묻는 문항은 상황 문장 없이 그대로 남는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    // 리드인을 붙이면 개념 summary가 곧 정답이 되는 문항들이다. 바뀌면 정답이 노출된 것이다.
+    expect(prompts.q053).toBe('Storage Gateway의 주된 목적은?')
+    expect(prompts.q057).toBe('Storage Gateway 자체의 스토리지 기능에 대한 설명으로 맞는 것은?')
+    expect(prompts.q144).toBe('Secrets Manager와 Parameter Store의 공통 기능은?')
+    expect(prompts.q160).toBe('만료 기간이 있는 Access Key나 Token 형태의 임시 권한을 발급하는 서비스는?')
+  })
+
+  it('막연한 일반 명사를 쓰던 문항이 구체적 사례로 바뀐다', () => {
+    const question = questions.find(({ id }) => id === 'q088')
+
+    expect(question?.prompt).toBe('이미지 리사이징이나 보고서 발송 같은 처리 여러 개를 정해진 순서로 이어 실행하고, 각 단계의 재시도와 오류 처리를 맡는 서비스는?')
+    // 보기에 있는 서비스명을 꺼내면 오답이 소거된다.
+    question?.choices.forEach((choice) => {
+      expect(question.prompt).not.toContain(choice)
+    })
+  })
+
+  it('가리키는 대상이 없던 명사와 전제 용어가 문항 안에서 해결된다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    expect(prompts.q039).toBe('수백만~수십억 개의 파일을 한꺼번에 복사하거나 삭제하는 것처럼 동일한 작업을 일괄 실행하는 서비스는?')
+    expect(prompts.q043).toBe('EFS IA(Infrequent Access)는 접근이 뜸한 파일을 옮겨 두는 EFS 클래스다. 이 클래스로 옮긴 파일의 접근 특성으로 맞는 것은?')
+    expect(prompts.q075).toBe('평균 CPU 사용률 70% 같은 목표값을 유지하도록 서버를 자동으로 확장하거나 축소하는 정책은?')
+    expect(prompts.q103).toBe('NAT 게이트웨이는 외부에서 시작하는 접근은 막고 내부에서 인터넷으로 나가는 통신만 가능하게 하는 장치다. 이 게이트웨이를 연결하는 위치는?')
+    expect(prompts.q133).toBe('보안 그룹은 리소스에 도달하려는 요청을 문 앞에서 검사하는 방화벽이다. 이 규칙에 추가할 수 있는 동작은?')
+    expect(prompts.q135).toBe('NACL은 서브넷 경계에서 트래픽을 허용하거나 거부하는 기능이다. 이 규칙 설정에 사용할 수 있는 대상은?')
+    expect(prompts.q217).toBe('Site-to-Site VPN은 인터넷에 암호화된 터널을 만들어 온프레미스와 AWS를 연결한다. 이 연결에서 고객 측 종단을 가리키는 구성 요소는?')
+  })
+
+  it('보강한 7문항이 보기를 노출하지 않고 길이 상한을 지킨다', () => {
+    const targetIds = ['q039', 'q043', 'q075', 'q103', 'q133', 'q135', 'q217']
+    const targets = questions.filter(({ id }) => targetIds.includes(id))
+
+    expect(targets).toHaveLength(7)
+    targets.forEach((question) => {
+      expect(question.prompt.length).toBeLessThanOrEqual(120)
+      // 보기 문자열을 꺼내면 오답이 소거된다.
+      question.choices.forEach((choice) => {
+        expect(question.prompt).not.toContain(choice)
+      })
+    })
+  })
+
+  it('리드인이 곧 정답이 되는 문항은 그대로 남는다', () => {
+    const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
+
+    // 전수 읽기에서 후보로 올랐지만 손대면 정답이 드러나는 문항들이다. 바뀌면 노출된 것이다.
+    expect(prompts.q066).toBe('Aurora를 가장 잘 설명한 것은?')
+    expect(prompts.q115).toBe('높은 대역폭과 빠른 성능을 제공하며 보안성이 높은 Direct Connect의 통신 기반은?')
+    expect(prompts.q142).toBe('KMS가 저장하는 대상으로 알맞은 것은?')
+    expect(prompts.q147).toBe('WAF가 방어하는 공격이 속한 계층은?')
+    expect(prompts.q180).toBe('RDS 다중 AZ 배포의 대기 인스턴스로 할 수 없는 작업은?')
+    // q201은 출처에 구체적 사례가 없어 명사를 바꿀 수 없다. 사실을 지어내면 ADR-006·008·009 위반이다.
+    expect(prompts.q201).toBe('여러 작업을 한꺼번에 모아서 처리하는 데 적합한 서비스는?')
+    expect(prompts.q226).toBe('Web ACL과 네트워크 ACL의 역할을 올바르게 설명한 것은?')
+  })
+
+  it('phase 18이 제외했던 q114가 정답을 노출하지 않는 리드인을 받는다', () => {
+    const question = questions.find(({ id }) => id === 'q114')
+
+    expect(question?.prompt).toBe('Site-to-Site VPN은 인터넷에 암호화 터널을 구성하고, Direct Connect는 전용선을 설치한다. 이 둘의 공통 목적은?')
+    expect(question?.prompt.length).toBeLessThanOrEqual(120)
+    // 리드인에 온프레미스가 들어가면 오답 세 개가 한꺼번에 소거된다.
+    expect(question?.prompt).not.toContain('온프레미스')
+    question?.choices.forEach((choice) => {
+      expect(question.prompt).not.toContain(choice)
+    })
+  })
+
+  it('개념 본문이 Lambda가 하는 일과 비용 할당 태그가 무엇인지 알려준다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
+
+    expect(lambda?.paragraphs[0]).toContain('S3에 올라온 이미지를 리사이징하거나')
+    expect(lambda?.paragraphs[0]).toContain('정해진 시각에 개발용 RDS를 켜고 끄는')
+    expect(tag?.paragraphs[0]).toContain('리소스에 직접 붙이는 사용자 정의 태그로')
+    expect(tag?.paragraphs[0]).toContain('부서별로 비용을 나눠 보는 데 쓴다')
+  })
+
+  it('개념 본문 보강이 요약과 문단 개수를 바꾸지 않는다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
+
+    // ADR-010이 정한 편집 범위 — summary와 개념 구조는 건드리지 않는다.
+    expect(lambda?.paragraphs).toHaveLength(3)
+    expect(lambda?.summary).toBe('Lambda는 서버 운영을 AWS에 맡기고 개발자가 올린 코드만 실행하는 서비스다.')
+    expect(tag?.paragraphs).toHaveLength(2)
+    expect(tag?.summary).toBe('비용 할당 태그는 결제 콘솔에서 활성화해야 Cost Explorer에 보인다.')
+  })
 })

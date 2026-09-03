@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "17-leadin-questions",
+  "steps": [
+    {
+      "step": 0,
+      "name": "leadin-storage",
+      "status": "completed",
+      "started_at": "2026-09-02T15:24:14+0900",
+      "summary": "S3·스토리지 보충 문항 7개(q171~q177)의 prompt 앞에 출처 근거만으로 구성한 상황 문장을 세워, 용어를 처음 보는 사람도 대상이 무엇인지 잡히게 했다. prompt 외 필드와 나머지 239문항은 그대로다.",
+      "completed_at": "2026-09-02T15:28:24+0900"
+    },
+    {
+      "step": 1,
+      "name": "leadin-database",
+      "status": "completed",
+      "started_at": "2026-09-02T15:28:25+0900",
+      "summary": "RDS·Aurora·DynamoDB·Auto Scaling 보충 문항 6개(q179·q181·q183·q184·q186·q188)의 prompt 앞에 exam-gaps.md 근거만으로 구성한 상황 문장을 세웠다. prompt 외 필드와 나머지 240문항은 그대로다.",
+      "completed_at": "2026-09-02T15:32:37+0900"
+    },
+    {
+      "step": 2,
+      "name": "leadin-compute",
+      "status": "completed",
+      "started_at": "2026-09-02T15:32:37+0900",
+      "summary": "전송·서버리스 보충 문항 4개(q192·q197·q198·q200)의 prompt 앞에 topics.json Global Accelerator 문단과 exam-gaps.md 근거만으로 구성한 상황 문장을 세웠다. prompt 외 필드와 나머지 242문항은 그대로다.",
+      "completed_at": "2026-09-02T15:36:52+0900"
+    },
+    {
+      "step": 3,
+      "name": "leadin-network",
+      "status": "completed",
+      "started_at": "2026-09-02T15:36:52+0900",
+      "summary": "VPC·하이브리드·DNS·분석 보충 문항 5개(q210·q213·q215·q221·q222)의 prompt 앞에 exam-gaps.md 근거만으로 구성한 상황 문장을 세웠다. prompt 외 필드와 나머지 241문항은 그대로다.",
+      "completed_at": "2026-09-02T15:40:10+0900"
+    },
+    {
+      "step": 4,
+      "name": "leadin-security",
+      "status": "completed",
+      "started_at": "2026-09-02T15:40:10+0900",
+      "summary": "보안·권한·비용 보충 문항 7개(q225·q227·q232·q236·q239·q241·q243)의 prompt 앞에 exam-gaps.md와 topics.json CVE 풀이 근거만으로 구성한 상황 문장을 세워, phase 전체 29문항의 리드인 작업을 마쳤다. prompt 외 필드와 나머지 217문항은 그대로다.",
+      "completed_at": "2026-09-02T15:44:42+0900"
+    }
+  ],
+  "created_at": "2026-09-02T15:24:14+0900",
+  "completed_at": "2026-09-02T15:44:43+0900"
+}
