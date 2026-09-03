@@ -927,7 +927,6 @@ describe('학습 데이터 무결성', () => {
     // 리드인을 붙이면 개념 summary가 곧 정답이 되는 문항들이다. 바뀌면 정답이 노출된 것이다.
     expect(prompts.q053).toBe('Storage Gateway의 주된 목적은?')
     expect(prompts.q057).toBe('Storage Gateway 자체의 스토리지 기능에 대한 설명으로 맞는 것은?')
-    expect(prompts.q114).toBe('Site-to-Site VPN과 Direct Connect의 공통 목적은?')
     expect(prompts.q144).toBe('Secrets Manager와 Parameter Store의 공통 기능은?')
     expect(prompts.q160).toBe('만료 기간이 있는 Access Key나 Token 형태의 임시 권한을 발급하는 서비스는?')
   })
@@ -980,5 +979,40 @@ describe('학습 데이터 무결성', () => {
     // q201은 출처에 구체적 사례가 없어 명사를 바꿀 수 없다. 사실을 지어내면 ADR-006·008·009 위반이다.
     expect(prompts.q201).toBe('여러 작업을 한꺼번에 모아서 처리하는 데 적합한 서비스는?')
     expect(prompts.q226).toBe('Web ACL과 네트워크 ACL의 역할을 올바르게 설명한 것은?')
+  })
+
+  it('phase 18이 제외했던 q114가 정답을 노출하지 않는 리드인을 받는다', () => {
+    const question = questions.find(({ id }) => id === 'q114')
+
+    expect(question?.prompt).toBe('Site-to-Site VPN은 인터넷에 암호화 터널을 구성하고, Direct Connect는 전용선을 설치한다. 이 둘의 공통 목적은?')
+    expect(question?.prompt.length).toBeLessThanOrEqual(120)
+    // 리드인에 온프레미스가 들어가면 오답 세 개가 한꺼번에 소거된다.
+    expect(question?.prompt).not.toContain('온프레미스')
+    question?.choices.forEach((choice) => {
+      expect(question.prompt).not.toContain(choice)
+    })
+  })
+
+  it('개념 본문이 Lambda가 하는 일과 비용 할당 태그가 무엇인지 알려준다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
+
+    expect(lambda?.paragraphs[0]).toContain('S3에 올라온 이미지를 리사이징하거나')
+    expect(lambda?.paragraphs[0]).toContain('정해진 시각에 개발용 RDS를 켜고 끄는')
+    expect(tag?.paragraphs[0]).toContain('리소스에 직접 붙이는 사용자 정의 태그로')
+    expect(tag?.paragraphs[0]).toContain('부서별로 비용을 나눠 보는 데 쓴다')
+  })
+
+  it('개념 본문 보강이 요약과 문단 개수를 바꾸지 않는다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
+
+    // ADR-010이 정한 편집 범위 — summary와 개념 구조는 건드리지 않는다.
+    expect(lambda?.paragraphs).toHaveLength(3)
+    expect(lambda?.summary).toBe('Lambda는 서버 운영을 AWS에 맡기고 개발자가 올린 코드만 실행하는 서비스다.')
+    expect(tag?.paragraphs).toHaveLength(2)
+    expect(tag?.summary).toBe('비용 할당 태그는 결제 콘솔에서 활성화해야 Cost Explorer에 보인다.')
   })
 })
