@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { BackButton } from '../components/BackButton'
 import { questions as defaultQuestions, topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { conceptsToReview } from '../lib/stats'
@@ -31,7 +32,10 @@ export function ReviewPage({
 
   return (
     <section className="max-w-3xl space-y-8 break-keep break-anywhere">
-      <h1 className="text-2xl font-semibold text-title">복습</h1>
+      <div className="space-y-3">
+        <BackButton />
+        <h1 className="text-2xl font-semibold text-title">복습</h1>
+      </div>
 
       {reviewGroups.length === 0 ? (
         hasAnswered ? (
