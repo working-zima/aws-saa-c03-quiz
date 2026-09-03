@@ -10,8 +10,13 @@ const RANK_TOPIC_TITLE = 1
 const RANK_CONCEPT_SUMMARY = 2
 const RANK_CONCEPT_BODY = 3
 
+// 요약·본문에 든 `**강조**` 마커를 지운다. 검색 비교와 화면 출력이 같은 규칙을 쓴다.
+export function stripEmphasis(text: string): string {
+  return text.replace(/\*\*/g, '')
+}
+
 function normalize(text: string): string {
-  return text.replace(/\*\*/g, '').toLowerCase()
+  return stripEmphasis(text).toLowerCase()
 }
 
 function tokenize(query: string): string[] {

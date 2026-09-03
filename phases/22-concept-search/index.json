@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "search-page",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-03T11:41:08+0900",
+      "summary": "src/pages/SearchPage.tsx + /search 라우트 — ?q= 질의(useSearchParams, replace:true)를 searchContent에 넘겨 개념·주제 카드로 렌더한다. 요약의 ** 마커는 search.ts에서 export한 stripEmphasis로 지운다. localStorage·questions.json·앵커 점프 없음. 테스트 8개(SearchPage 7 + App 라우트 1).",
+      "completed_at": "2026-09-03T12:40:12+0900"
     },
     {
       "step": 2,

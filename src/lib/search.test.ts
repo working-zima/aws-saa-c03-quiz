@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest'
 import { topics as realTopics } from '../data'
 import type { Topic } from '../types/content'
-import { searchContent } from './search'
+import { searchContent, stripEmphasis } from './search'
 
 const topics: Topic[] = [
   {
@@ -118,5 +118,11 @@ describe('searchContent', () => {
 
   it('실데이터에서 aurora를 찾으면 결과가 비어 있지 않다', () => {
     expect(searchContent(realTopics, 'aurora').length).toBeGreaterThan(0)
+  })
+})
+
+describe('stripEmphasis', () => {
+  it('강조 마커를 지우고 나머지 글자는 그대로 둔다', () => {
+    expect(stripEmphasis('**장기** 보관에 쓰는 클래스다')).toBe('장기 보관에 쓰는 클래스다')
   })
 })
