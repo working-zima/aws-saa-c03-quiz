@@ -22,7 +22,9 @@ export function Layout() {
           <div className="mx-auto flex max-w-3xl items-center justify-between">
             <NavLink className="inline-flex min-h-[44px] items-center text-base font-medium text-title" to="/">AWS SAA-C03</NavLink>
             <nav aria-label="주요 내비게이션" className="flex items-center gap-1">
-              {quizMatch && <NavLink className={linkClassName} to={`/topic/${quizMatch.params.topicId}`}>근거 개념</NavLink>}
+              {quizMatch
+                ? <NavLink className={linkClassName} to={`/topic/${quizMatch.params.topicId}`}>근거 개념</NavLink>
+                : <NavLink className={linkClassName} to="/search">검색</NavLink>}
               <NavLink className={linkClassName} to="/review">복습</NavLink>
             </nav>
           </div>

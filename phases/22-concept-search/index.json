@@ -21,8 +21,12 @@
     {
       "step": 2,
       "name": "search-entry",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-03T12:43:18+0900",
+      "summary": "Layout 헤더의 근거 개념 자리를 quizMatch 삼항으로 바꿔, 확인 문제 화면이 아니면 /search로 가는 \"검색\" 링크를 렌더한다. 판별은 기존 quizMatch 하나뿐이고 두 번째 useMatch를 만들지 않았다. 320px 폭은 jsdom에서 잴 수 없어 \"내비게이션 링크 2개 이하\" 테스트로 제약을 고정했다. 테스트 8개 추가(Layout 23개 통과).",
+      "completed_at": "2026-09-03T12:43:18+0900"
     }
   ],
-  "created_at": "2026-09-03T11:37:27+0900"
+  "created_at": "2026-09-03T11:37:27+0900",
+  "completed_at": "2026-09-03T12:43:18+0900"
 }
