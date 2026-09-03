@@ -769,6 +769,8 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
     { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
     { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
+    { conceptId: 'compute-delivery.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
+    { conceptId: 'compute-delivery.cloudfront-ttl', anchor: 'Time-to-Live' },
     { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
     { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
     { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
@@ -777,7 +779,7 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
   ]
 
-  it('풀이 없이 쓰이던 일반 IT 용어 13종이 첫 등장 개념에서 한 번씩 풀린다', () => {
+  it('풀이 없이 쓰이던 일반 IT 용어 15종이 첫 등장 개념에서 한 번씩 풀린다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
 
     termGlosses.forEach(({ conceptId, anchor }) => {
@@ -1061,5 +1063,190 @@ describe('학습 데이터 무결성', () => {
     wrongChoices.forEach((choice) => {
       expect(choice.startsWith('SSE')).toBe(false)
     })
+  })
+
+  it('SQS 개념의 잘못된 표기가 바로잡혀 있다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'messaging-backup.sqs-details')
+
+    expect(concept?.summary).toContain('중복과 순서 뒤바뀜이 생길 수 있다')
+    expect(concept?.paragraphs[1]).toContain('순서가 바뀔 수 있다')
+    expect(concept?.paragraphs[1]).toContain('(Exactly-Once)" 처리가')
+  })
+
+  it('TCP와 UDP 풀이가 이름과 계층뿐 아니라 둘의 차이까지 알려준다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'compute-delivery.elb')
+
+    expect(concept?.paragraphs[1]).toContain('빠진 것은 다시 보낸다')
+    expect(concept?.paragraphs[1]).toContain('일부가 유실될 수 있다')
+  })
+
+  it('CloudFront와 Global Accelerator의 갈림길이 추상적인 대비 대신 구체적인 기준으로 쓰인다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'compute-delivery.global-accelerator-protocols')
+
+    // "캐싱할 콘텐츠인가, 가속할 연결인가"는 두 말을 이미 아는 사람에게만 읽힌다.
+    expect(concept?.paragraphs[1]).not.toContain('가속할 연결인가')
+    expect(concept?.paragraphs[1]).toContain('미리 복사해 둘 이미지나 파일이 있느냐')
+  })
+
+  it('용어 풀이를 더해도 개념 요약과 문단 개수는 그대로다', () => {
+    const byId = Object.fromEntries(
+      topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+    )
+
+    // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
+    expect(byId['compute-delivery.elb'].paragraphs).toHaveLength(3)
+    expect(byId['compute-delivery.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
+    expect(byId['compute-delivery.global-accelerator-protocols'].paragraphs).toHaveLength(2)
+    expect(byId['compute-delivery.cloudfront-ttl'].paragraphs).toHaveLength(2)
+    expect(byId['compute-delivery.cloudfront-ttl'].summary).toBe(
+      'TTL이 만료되기 전에는 원본이 바뀌어도 엣지가 옛 파일을 계속 내보낸다.',
+    )
+  })
+
+  // ADR-015 — 해설에 나오는 약어와 괄호로 붙일 풀네임.
+  // AWS·DB·CPU·MB·KB·IP처럼 상식으로 통하는 약어와, API·URL·SSD처럼 제품이나 유형
+  // 이름의 일부로만 쓰이는 약어는 대상이 아니다.
+  const acronymFullNames: Record<string, string> = {
+    S3: 'Simple Storage Service',
+    EC2: 'Elastic Compute Cloud',
+    RDS: 'Relational Database Service',
+    KMS: 'Key Management Service',
+    WAF: 'Web Application Firewall',
+    NACL: 'Network Access Control List',
+    ACL: 'Access Control List',
+    IAM: 'Identity And Access Management',
+    EBS: 'Elastic Block Store',
+    EFS: 'Elastic File System',
+    FSx: 'File System for Extended use',
+    SQS: 'Simple Queue Service',
+    SNS: 'Simple Notification Service',
+    SES: 'Simple Email Service',
+    DNS: 'Domain Name System',
+    ACM: 'AWS Certificate Manager',
+    ELB: 'Elastic Load Balancer',
+    ALB: 'Application Load Balancer',
+    NLB: 'Network Load Balancer',
+    GLB: 'Gateway Load Balancer',
+    DDoS: 'Distributed Denial of Service',
+    DRT: 'DDoS Response Team',
+    STS: 'Security Token Service',
+    SSE: 'Server Side Encryption',
+    JWT: 'JSON Web Token',
+    DAX: 'DynamoDB Accelerator',
+    PITR: 'Point-in-Time Recovery',
+    CDN: 'Content Delivery Network',
+    EMR: 'Elastic MapReduce',
+    XSS: 'Cross-Site Scripting',
+    MFA: 'Multi-Factor Authentication',
+    TTL: 'Time-to-Live',
+    EKS: 'Elastic Kubernetes Service',
+    MSK: 'Managed Streaming for Apache Kafka',
+    CVE: 'Common Vulnerabilities and Exposures',
+    NFS: 'Network File System',
+    AZ: 'Availability Zone',
+    IA: 'Infrequent Access',
+    FTP: 'File Transfer Protocol',
+    SFTP: 'SSH File Transfer Protocol',
+    FTPS: 'File Transfer Protocol Secure',
+    HTTP: 'HyperText Transfer Protocol',
+    HTTPS: 'HyperText Transfer Protocol Secure',
+    TCP: 'Transmission Control Protocol',
+    UDP: 'User Datagram Protocol',
+    SSL: 'Secure Sockets Layer',
+    TLS: 'Transport Layer Security',
+    VPN: 'Virtual Private Network',
+    NAT: 'Network Address Translation',
+    SMB: 'Server Message Block',
+    SQL: 'Structured Query Language',
+    RDBMS: 'Relational Database Management System',
+    CIDR: 'Classless Inter-Domain Routing',
+    REST: 'Representational State Transfer',
+    FIFO: 'First In First Out',
+    ETL: 'Extract, Transform, Load',
+    IOPS: 'Input/Output Operations Per Second',
+    HPC: 'High Performance Computing',
+    VPC: 'Virtual Private Cloud',
+    ECS: 'Elastic Container Service',
+    OAC: 'Origin Access Control',
+    SCP: 'Service Control Policy',
+  }
+
+  // 풀네임이 서로를 품는 묶음. 한 해설에서 먼저 나온 하나만 풀어야 되풀이가 생기지 않는다.
+  const acronymFamilies = [
+    ['HTTP', 'HTTPS'],
+    ['FTP', 'SFTP', 'FTPS'],
+  ]
+
+  // 괄호 안에 든 약어는 이미 다른 풀이의 일부이므로 대상이 아니다.
+  function usedOutsideParens(text: string, acronym: string) {
+    const pattern = new RegExp(`(?<![A-Za-z0-9-])${acronym}(?![A-Za-z0-9-])`, 'g')
+
+    return [...text.matchAll(pattern)].some(({ index }) => {
+      const before = text.slice(0, index)
+
+      return before.split('(').length === before.split(')').length
+    })
+  }
+
+  it('해설에 나오는 약어가 풀네임을 괄호로 달고 나온다', () => {
+    const singles = Object.keys(acronymFullNames)
+      .filter((acronym) => !acronymFamilies.some((family) => family.includes(acronym)))
+      .map((acronym) => [acronym])
+    const groups = [...acronymFamilies, ...singles]
+
+    questions.forEach((question) => {
+      groups.forEach((family) => {
+        if (!family.some((acronym) => usedOutsideParens(question.explanation, acronym))) return
+
+        const glossed = family.some((acronym) =>
+          question.explanation.includes(`${acronym}(${acronymFullNames[acronym]})`),
+        )
+
+        expect(glossed ? '' : `${question.id}에 ${family.join('/')} 풀이 없음`).toBe('')
+      })
+    })
+  })
+
+  it('한 해설에서 같은 약어를 두 번 풀지 않는다', () => {
+    questions.forEach((question) => {
+      Object.entries(acronymFullNames).forEach(([acronym, fullName]) => {
+        const gloss = `${acronym}(${fullName})`
+
+        expect(question.explanation.split(gloss).length - 1).toBeLessThanOrEqual(1)
+      })
+    })
+  })
+
+  it('상식으로 통하는 약어와 제품 이름 속 약어는 해설에서 풀지 않는다', () => {
+    const allExplanations = questions.map(({ explanation }) => explanation).join(' ')
+
+    const outOfScope = [
+      'Amazon Web Services',
+      'Central Processing Unit',
+      'Internet Protocol',
+      'Uniform Resource Locator',
+      'Solid State Drive',
+    ]
+
+    outOfScope.forEach((fullName) => {
+      expect(allExplanations).not.toContain(fullName)
+    })
+  })
+
+  it('풀이가 그 약어의 첫 등장 자리에 붙는다', () => {
+    const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+    expect(byId.q130.explanation).toBe(
+      'NACL(Network Access Control List)은 서브넷에 대해 트래픽을 허용하거나 거부한다. 보안 그룹은 AWS 리소스의 트래픽을 제어한다.',
+    )
+    expect(byId.q080.explanation).toBe(
+      'NLB(Network Load Balancer)는 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 처리하며 빠른 응답 속도를 제공한다. ALB(Application Load Balancer)는 HTTP(HyperText Transfer Protocol)와 HTTPS에 사용하고 GLB(Gateway Load Balancer)는 보안 장비용이다.',
+    )
   })
 })
