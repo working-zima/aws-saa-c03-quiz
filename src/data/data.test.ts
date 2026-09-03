@@ -927,7 +927,6 @@ describe('학습 데이터 무결성', () => {
     // 리드인을 붙이면 개념 summary가 곧 정답이 되는 문항들이다. 바뀌면 정답이 노출된 것이다.
     expect(prompts.q053).toBe('Storage Gateway의 주된 목적은?')
     expect(prompts.q057).toBe('Storage Gateway 자체의 스토리지 기능에 대한 설명으로 맞는 것은?')
-    expect(prompts.q114).toBe('Site-to-Site VPN과 Direct Connect의 공통 목적은?')
     expect(prompts.q144).toBe('Secrets Manager와 Parameter Store의 공통 기능은?')
     expect(prompts.q160).toBe('만료 기간이 있는 Access Key나 Token 형태의 임시 권한을 발급하는 서비스는?')
   })
@@ -980,5 +979,17 @@ describe('학습 데이터 무결성', () => {
     // q201은 출처에 구체적 사례가 없어 명사를 바꿀 수 없다. 사실을 지어내면 ADR-006·008·009 위반이다.
     expect(prompts.q201).toBe('여러 작업을 한꺼번에 모아서 처리하는 데 적합한 서비스는?')
     expect(prompts.q226).toBe('Web ACL과 네트워크 ACL의 역할을 올바르게 설명한 것은?')
+  })
+
+  it('phase 18이 제외했던 q114가 정답을 노출하지 않는 리드인을 받는다', () => {
+    const question = questions.find(({ id }) => id === 'q114')
+
+    expect(question?.prompt).toBe('Site-to-Site VPN은 인터넷에 암호화 터널을 구성하고, Direct Connect는 전용선을 설치한다. 이 둘의 공통 목적은?')
+    expect(question?.prompt.length).toBeLessThanOrEqual(120)
+    // 리드인에 온프레미스가 들어가면 오답 세 개가 한꺼번에 소거된다.
+    expect(question?.prompt).not.toContain('온프레미스')
+    question?.choices.forEach((choice) => {
+      expect(question.prompt).not.toContain(choice)
+    })
   })
 })

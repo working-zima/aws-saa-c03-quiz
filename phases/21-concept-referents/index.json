@@ -2,7 +2,19 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "21-concept-referents",
   "steps": [
-    { "step": 0, "name": "leadin-recheck", "status": "pending" },
-    { "step": 1, "name": "concept-examples", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "leadin-recheck",
+      "status": "completed",
+      "started_at": "2026-09-03T11:00:27+0900",
+      "summary": "phase 18이 제외했던 q114에 개념 문단 0·1에서 가져온 리드인을 붙여 되살렸다. prompt 1개만 바뀌었고 q053·q057·q144는 제외를 유지했다.",
+      "completed_at": "2026-09-03T11:02:00+0900"
+    },
+    {
+      "step": 1,
+      "name": "concept-examples",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-03T11:00:27+0900"
 }
