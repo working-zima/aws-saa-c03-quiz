@@ -1015,4 +1015,51 @@ describe('학습 데이터 무결성', () => {
     expect(tag?.paragraphs).toHaveLength(2)
     expect(tag?.summary).toBe('비용 할당 태그는 결제 콘솔에서 활성화해야 Cost Explorer에 보인다.')
   })
+
+  it('오답만으로 소거되던 4문항이 정답과 같은 범주의 보기를 받는다', () => {
+    const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+    expect(byId.q034.choices).toEqual(['KMS', 'SSE', 'CloudHSM', 'ACM'])
+    expect(byId.q034.prompt).toBe('S3에 저장하는 파일은 암호화로 보호하며 이 과정에는 키가 필요하다. 이때 서버가 자체적으로 데이터를 암호화하는 방식을 무엇이라 하는가?')
+    expect(byId.q075.choices).toEqual(['Sticky Session', '대상 추적 정책', '예약 인스턴스', '예약된 조정'])
+    expect(byId.q098.choices).toEqual(['AWS Backup', 'RDS 자동 백업', 'EBS 스냅샷', 'S3 버전 관리'])
+    expect(byId.q164.choices).toEqual(['AWS Budgets', 'Cost Explorer', '온디맨드 인스턴스', '절약 플랜'])
+  })
+
+  it('보기를 고친 4문항의 정답 위치와 프롬프트가 그대로 유지된다', () => {
+    const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+    expect(byId.q034.answerIndex).toBe(1)
+    expect(byId.q075.answerIndex).toBe(1)
+    expect(byId.q098.answerIndex).toBe(0)
+    expect(byId.q164.answerIndex).toBe(3)
+    // 프롬프트가 보기를 꺼내면 오답이 소거된다.
+    ;['q034', 'q075', 'q098', 'q164'].forEach((id) => {
+      expect(byId[id].prompt.length).toBeLessThanOrEqual(120)
+      byId[id].choices.forEach((choice) => {
+        expect(byId[id].prompt).not.toContain(choice)
+      })
+    })
+  })
+
+  it('같은 범주 오답을 만들 수 없어 제외한 문항은 보기가 그대로다', () => {
+    const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+    // 출처에 같은 범주의 대체 항목이 없거나, 넣으면 정답이 애매해지는 문항들이다.
+    expect(byId.q083.choices).toEqual(['Lambda', 'ECS', 'Step Functions', 'API Gateway'])
+    expect(byId.q085.choices).toEqual(['Sticky Session', '대상 추적', '엣지 최적화', '콜드 스타트'])
+    expect(byId.q100.choices).toEqual(['인터넷 게이트웨이', 'VPC 피어링', '서브넷', 'PrivateLink'])
+    expect(byId.q175.choices).toEqual(['클러스터 배치 그룹', 'EFS 수명 주기 관리', 'EBS Elastic Volumes', 'FSx for NetApp ONTAP'])
+  })
+
+  it('q034의 오답이 서버 측 암호화의 하위 방식이 아니다', () => {
+    const question = questions.find(({ id }) => id === 'q034')
+    const wrongChoices = question?.choices.filter((_, index) => index !== question.answerIndex) ?? []
+
+    expect(wrongChoices).toHaveLength(3)
+    // SSE-S3·SSE-KMS·SSE-C는 모두 서버 측 암호화라 오답이 될 수 없다.
+    wrongChoices.forEach((choice) => {
+      expect(choice.startsWith('SSE')).toBe(false)
+    })
+  })
 })

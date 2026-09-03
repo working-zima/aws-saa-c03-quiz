@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Link, MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -187,5 +187,57 @@ describe('Layout', () => {
     await user.click(screen.getByRole('button', { name: '뒤로 가기' }))
 
     expect(scrollTo).toHaveBeenCalledTimes(callCountBeforeBack)
+  })
+
+  it.each(['/', '/topic/vpc', '/review'])('%s에서 검색 링크를 렌더링한다', (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>주제 목록</p>} />
+            <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
+            <Route path="review" element={<p>복습 화면</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('link', { name: '검색' })).toHaveAttribute('href', '/search')
+    expect(screen.getByRole('link', { name: '검색' })).toHaveClass('min-h-[44px]')
+  })
+
+  it('확인 문제 화면에서는 검색 링크를 렌더링하지 않는다', () => {
+    render(
+      <MemoryRouter initialEntries={['/topic/vpc/quiz']}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    expect(screen.queryByRole('link', { name: '검색' })).toBeNull()
+  })
+
+  // 320px에서 헤더 링크가 세 개가 되면 로고와 부딪힌다(UI_GUIDE "헤더 안의 링크").
+  // jsdom에서는 폭을 잴 수 없으므로 링크 개수로 그 제약을 지킨다.
+  it.each(['/', '/topic/vpc', '/topic/vpc/quiz', '/review'])('%s에서 내비게이션 링크가 두 개를 넘지 않는다', (path) => {
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<p>주제 목록</p>} />
+            <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
+            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
+            <Route path="review" element={<p>복습 화면</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    const nav = screen.getByRole('navigation', { name: '주요 내비게이션' })
+
+    expect(within(nav).getAllByRole('link').length).toBeLessThanOrEqual(2)
   })
 })

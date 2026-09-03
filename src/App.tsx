@@ -5,6 +5,7 @@ import { QuizPage } from './pages/QuizPage'
 import { RandomQuizPage } from './pages/RandomQuizPage'
 import { RandomStartPage } from './pages/RandomStartPage'
 import { ReviewPage } from './pages/ReviewPage'
+import { SearchPage } from './pages/SearchPage'
 import { TopicListPage } from './pages/TopicListPage'
 
 export function AppRoutes() {
@@ -15,6 +16,7 @@ export function AppRoutes() {
         <Route path="topic/:topicId" element={<ConceptReadPage />} />
         <Route path="topic/:topicId/quiz" element={<QuizPage />} />
         <Route path="review" element={<ReviewPage />} />
+        <Route path="search" element={<SearchPage />} />
         <Route path="random" element={<RandomStartPage />} />
         <Route path="random/:count" element={<RandomQuizPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

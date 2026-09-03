@@ -21,6 +21,10 @@ from typing import Optional
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# 진행 상황 출력에 ✓·✗ 같은 문자가 섞인다. Windows 콘솔 코드페이지가 cp949면
+# 이 문자에서 UnicodeEncodeError로 죽으므로 stdout을 utf-8로 고정한다.
+sys.stdout.reconfigure(encoding="utf-8")
+
 # --- 실행 에이전트 ---
 #
 # step 프롬프트를 받아 CLI 인자 리스트를 만든다. 둘 다 승인 프롬프트 없이 헤드리스로 돈다.

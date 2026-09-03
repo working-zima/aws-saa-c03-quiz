@@ -1,0 +1,16 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "23-distractor-category",
+  "steps": [
+    {
+      "step": 0,
+      "name": "same-category-distractors",
+      "status": "completed",
+      "started_at": "2026-09-03T12:45:44+0900",
+      "summary": "q034·q075·q098·q164의 오답 보기를 정답과 같은 범주(KMS·CloudHSM·ACM, 예약된 조정, RDS 자동 백업·EBS 스냅샷·S3 버전 관리, 온디맨드 인스턴스)로 교체하고 해설을 갱신했다. q034에는 개념 본문 근거의 리드인을 붙였고 answerIndex·id·topicId·conceptId는 전부 불변이다.",
+      "completed_at": "2026-09-03T12:50:11+0900"
+    }
+  ],
+  "created_at": "2026-09-03T12:45:44+0900",
+  "completed_at": "2026-09-03T12:50:11+0900"
+}
