@@ -5,7 +5,10 @@
     {
       "step": 0,
       "name": "search-lib",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-03T11:37:27+0900",
+      "summary": "src/lib/search.ts의 searchContent(topics, query) — 토큰 AND 매칭(소문자·** 마커 제거)으로 개념 이름·요약·본문과 주제 제목을 훑고 필드 우선순위(이름0·주제1·요약2·본문3)로 정렬한다. questions.json은 읽지 않는다. 테스트 11개. 캐시·인덱스 사전 계산은 넣지 않았다 — 182개 개념 전수 순회로 측정된 문제가 없다.",
+      "completed_at": "2026-09-03T02:39:34.598Z"
     },
     {
       "step": 1,
@@ -17,5 +20,6 @@
       "name": "search-entry",
       "status": "pending"
     }
-  ]
+  ],
+  "created_at": "2026-09-03T11:37:27+0900"
 }
