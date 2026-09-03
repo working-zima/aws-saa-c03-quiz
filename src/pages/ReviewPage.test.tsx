@@ -1,5 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import type { Question, Topic } from '../types/content'
 import type { Progress } from '../types/progress'
@@ -37,6 +38,27 @@ function renderPage(progress: Progress) {
   return render(
     <MemoryRouter>
       <ReviewPage progress={progress} questions={testQuestions} topics={testTopics} />
+    </MemoryRouter>,
+  )
+}
+
+// 돌아가기가 실제로 어느 화면에 닿는지 보려면 복습 화면 밖의 라우트가 있어야 한다.
+function renderWithHistory(entries: string[]) {
+  return render(
+    <MemoryRouter initialEntries={entries} initialIndex={entries.length - 1}>
+      <Routes>
+        <Route element={<p>개념 읽기 화면</p>} path="/topic/storage" />
+        <Route
+          element={
+            <ReviewPage
+              progress={{ version: 1, read: {}, answers: { q001: false } }}
+              questions={testQuestions}
+              topics={testTopics}
+            />
+          }
+          path="/review"
+        />
+      </Routes>
     </MemoryRouter>,
   )
 }
@@ -89,5 +111,12 @@ describe('ReviewPage', () => {
     renderPage({ version: 1, read: {}, answers: { q001: false } })
 
     expect(screen.getByRole('link', { name: /Amazon S3/ })).toHaveAttribute('href', '/topic/storage')
+  })
+  it('돌아가기를 누르면 복습 화면에 들어오기 전 화면으로 간다', async () => {
+    renderWithHistory(['/topic/storage', '/review'])
+
+    await userEvent.click(screen.getByRole('button', { name: '돌아가기' }))
+
+    expect(screen.getByText('개념 읽기 화면')).toBeInTheDocument()
   })
 })

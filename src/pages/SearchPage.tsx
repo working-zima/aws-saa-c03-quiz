@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { BackButton } from '../components/BackButton'
 import { topics as defaultTopics } from '../data'
 import { searchContent, stripEmphasis } from '../lib/search'
 import type { Topic } from '../types/content'
@@ -25,6 +26,7 @@ export function SearchPage({ topics = defaultTopics }: SearchPageProps) {
   return (
     <section className="max-w-3xl space-y-8 break-keep break-anywhere">
       <div className="space-y-3">
+        <BackButton />
         <div className="flex items-end justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">검색</h1>
           {hasQuery && <span className="text-sm text-neutral-500">결과 {hits.length}개</span>}

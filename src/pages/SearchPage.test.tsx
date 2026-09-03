@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import type { Topic } from '../types/content'
 import { SearchPage } from './SearchPage'
@@ -43,6 +43,19 @@ function renderPage(path = '/search') {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <SearchPage topics={testTopics} />
+    </MemoryRouter>,
+  )
+}
+
+// 돌아가기가 실제로 어느 화면에 닿는지 보려면 검색 화면 밖의 라우트가 있어야 한다.
+function renderWithHistory(entries: string[]) {
+  return render(
+    <MemoryRouter initialEntries={entries} initialIndex={entries.length - 1}>
+      <Routes>
+        <Route element={<p>주제 목록 화면</p>} path="/" />
+        <Route element={<p>개념 읽기 화면</p>} path="/topic/database" />
+        <Route element={<SearchPage topics={testTopics} />} path="/search" />
+      </Routes>
     </MemoryRouter>,
   )
 }
@@ -98,5 +111,39 @@ describe('SearchPage', () => {
 
     expect(screen.getByText('장기 보관에 쓰는 가장 저렴한 클래스다')).toBeInTheDocument()
     expect(screen.queryByText(/\*\*/)).not.toBeInTheDocument()
+  })
+
+  it('돌아가기를 누르면 검색 화면에 들어오기 전 화면으로 간다', async () => {
+    renderWithHistory(['/topic/database', '/search'])
+
+    await userEvent.click(screen.getByRole('button', { name: '돌아가기' }))
+
+    expect(screen.getByText('개념 읽기 화면')).toBeInTheDocument()
+  })
+
+  it('글자를 친 뒤에 눌러도 한 글자씩 되감기지 않고 직전 화면으로 간다', async () => {
+    renderWithHistory(['/topic/database', '/search'])
+
+    await userEvent.type(screen.getByLabelText('개념·주제 검색'), 'aurora')
+    await userEvent.click(screen.getByRole('button', { name: '돌아가기' }))
+
+    expect(screen.getByText('개념 읽기 화면')).toBeInTheDocument()
+  })
+
+  it('검색 화면을 직접 열었으면 주제 목록으로 보낸다', async () => {
+    renderWithHistory(['/search'])
+
+    await userEvent.click(screen.getByRole('button', { name: '돌아가기' }))
+
+    expect(screen.getByText('주제 목록 화면')).toBeInTheDocument()
+  })
+
+  it('직접 연 검색 화면에서 글자를 친 뒤에도 주제 목록으로 보낸다', async () => {
+    renderWithHistory(['/search'])
+
+    await userEvent.type(screen.getByLabelText('개념·주제 검색'), 'aurora')
+    await userEvent.click(screen.getByRole('button', { name: '돌아가기' }))
+
+    expect(screen.getByText('주제 목록 화면')).toBeInTheDocument()
   })
 })
