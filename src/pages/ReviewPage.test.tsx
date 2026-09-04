@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { Question, Topic } from '../types/content'
 import type { Progress } from '../types/progress'
 import { ReviewPage } from './ReviewPage'
@@ -34,12 +34,18 @@ const testQuestions: Question[] = [
   { id: 'q003', topicId: 'database', conceptId: 'database.rds', prompt: '질문 3', choices: ['A', 'B', 'C', 'D'], answerIndex: 2, explanation: '해설 3' },
 ]
 
-function renderPage(progress: Progress) {
-  return render(
+function renderPage(progress: Progress, forget = vi.fn()) {
+  const view = render(
     <MemoryRouter>
-      <ReviewPage progress={progress} questions={testQuestions} topics={testTopics} />
+      <ReviewPage
+        forget={forget}
+        progress={progress}
+        questions={testQuestions}
+        topics={testTopics}
+      />
     </MemoryRouter>,
   )
+  return { ...view, forget }
 }
 
 // 돌아가기가 실제로 어느 화면에 닿는지 보려면 복습 화면 밖의 라우트가 있어야 한다.
@@ -51,7 +57,7 @@ function renderWithHistory(entries: string[]) {
         <Route
           element={
             <ReviewPage
-              progress={{ version: 1, read: {}, answers: { q001: false } }}
+              progress={{ version: 2, read: {}, answers: { q001: false }, wrong: { q001: true } }}
               questions={testQuestions}
               topics={testTopics}
             />
@@ -65,53 +71,86 @@ function renderWithHistory(entries: string[]) {
 
 describe('ReviewPage', () => {
   it('최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
-    const { container } = renderPage({ version: 1, read: {}, answers: {} })
+    const { container } = renderPage({ version: 2, read: {}, answers: {}, wrong: {} })
 
     expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
   })
 
-  it('오답이 있는 개념을 주제별로 묶어 렌더한다', () => {
-    renderPage({ version: 1, read: {}, answers: { q001: false, q003: false } })
+  it('오답노트의 문항을 주제별로 묶어 렌더한다', () => {
+    renderPage({
+      version: 2,
+      read: {},
+      answers: { q001: false, q003: false },
+      wrong: { q001: true, q003: true },
+    })
 
     const storageGroup = screen.getByRole('region', { name: '스토리지' })
     const databaseGroup = screen.getByRole('region', { name: '데이터베이스' })
-    expect(within(storageGroup).getByText('Amazon S3')).toBeInTheDocument()
-    expect(within(databaseGroup).getByText('Amazon RDS')).toBeInTheDocument()
-    const retryLink = within(storageGroup).getByRole('link', { name: '확인 문제 다시 풀기' })
-    expect(retryLink).toHaveAttribute('href', '/topic/storage/quiz')
-    expect(retryLink).toHaveClass('min-h-[44px]')
+    expect(within(storageGroup).getByText('질문 1')).toBeInTheDocument()
+    expect(within(databaseGroup).getByText('질문 3')).toBeInTheDocument()
+    expect(within(storageGroup).queryByText('질문 3')).not.toBeInTheDocument()
   })
 
-  it('맞힌 문제의 개념은 목록에 표시하지 않는다', () => {
-    renderPage({ version: 1, read: {}, answers: { q001: false, q002: true } })
+  it('문항마다 근거 개념으로 가는 링크를 붙인다', () => {
+    renderPage({ version: 2, read: {}, answers: { q001: false }, wrong: { q001: true } })
 
-    expect(screen.getByText('Amazon S3')).toBeInTheDocument()
-    expect(screen.queryByText('Amazon EBS')).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Amazon S3/ })).toHaveAttribute('href', '/topic/storage')
   })
 
-  it('아직 안 푼 문제의 개념은 목록에 표시하지 않는다', () => {
-    renderPage({ version: 1, read: {}, answers: { q001: false } })
+  // 오답노트가 줄어드는 경로는 사용자가 지우는 것 하나뿐이다 (ADR-017).
+  it('다시 풀어서 맞힌 문항도 오답노트에 남아 있으면 계속 보여준다', () => {
+    renderPage({ version: 2, read: {}, answers: { q001: true }, wrong: { q001: true } })
 
-    expect(screen.queryByText('Amazon RDS')).not.toBeInTheDocument()
+    expect(screen.getByText('질문 1')).toBeInTheDocument()
   })
 
-  it('아무것도 안 푼 상태와 전부 맞힌 상태를 다르게 안내한다', () => {
-    const { unmount } = renderPage({ version: 1, read: {}, answers: {} })
-    expect(screen.getByText('확인 문제를 풀면 여기에 복습할 개념이 모입니다.')).toBeInTheDocument()
+  it('오답노트에 없는 문항은 마지막 시도가 오답이어도 보여주지 않는다', () => {
+    renderPage({ version: 2, read: {}, answers: { q002: false }, wrong: {} })
+
+    expect(screen.queryByText('질문 2')).not.toBeInTheDocument()
+  })
+
+  it('지우기를 누르면 그 문항만 오답노트에서 뺀다', async () => {
+    const { forget } = renderPage({
+      version: 2,
+      read: {},
+      answers: { q001: false, q002: false },
+      wrong: { q001: true, q002: true },
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: '오답노트에서 지우기: 질문 1' }))
+
+    expect(forget).toHaveBeenCalledTimes(1)
+    expect(forget).toHaveBeenCalledWith('q001')
+  })
+
+  it('전체 오답과 주제별 오답을 다시 푸는 링크를 준다', () => {
+    renderPage({
+      version: 2,
+      read: {},
+      answers: { q001: false, q003: false },
+      wrong: { q001: true, q003: true },
+    })
+
+    expect(screen.getByRole('link', { name: '전체 다시 풀기' })).toHaveAttribute('href', '/review/quiz')
+    const storageGroup = screen.getByRole('region', { name: '스토리지' })
+    const topicLink = within(storageGroup).getByRole('link', { name: '오답 다시 풀기' })
+    expect(topicLink).toHaveAttribute('href', '/review/quiz/storage')
+    expect(topicLink).toHaveClass('min-h-[44px]')
+  })
+
+  it('아무것도 안 푼 상태와 오답노트를 비운 상태를 다르게 안내한다', () => {
+    const { unmount } = renderPage({ version: 2, read: {}, answers: {}, wrong: {} })
+    expect(screen.getByText('확인 문제를 풀면 여기에 틀린 문항이 모입니다.')).toBeInTheDocument()
     const topicListLink = screen.getByRole('link', { name: '주제 목록으로 가기' })
     expect(topicListLink).toHaveAttribute('href', '/')
     expect(topicListLink).toHaveClass('min-h-[44px]')
 
     unmount()
-    renderPage({ version: 1, read: {}, answers: { q001: true, q002: true, q003: true } })
-    expect(screen.getByText('복습할 개념이 없습니다. 모두 잘 익혔습니다.')).toBeInTheDocument()
+    renderPage({ version: 2, read: {}, answers: { q001: true }, wrong: {} })
+    expect(screen.getByText('오답노트가 비어 있습니다.')).toBeInTheDocument()
   })
 
-  it('개념 링크가 MemoryRouter의 주제 경로를 가리킨다', () => {
-    renderPage({ version: 1, read: {}, answers: { q001: false } })
-
-    expect(screen.getByRole('link', { name: /Amazon S3/ })).toHaveAttribute('href', '/topic/storage')
-  })
   it('돌아가기를 누르면 복습 화면에 들어오기 전 화면으로 간다', async () => {
     renderWithHistory(['/topic/storage', '/review'])
 

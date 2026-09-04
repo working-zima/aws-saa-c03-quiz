@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
-import { markTopicRead, recordAnswer } from '../lib/progress'
+import { forgetWrong, markTopicRead, recordAnswer } from '../lib/progress'
 import { loadProgress, saveProgress } from '../lib/storage'
 import type { Progress } from '../types/progress'
 
-export function useProgress(): { progress: Progress; markRead: (topicId: string) => void; answer: (questionId: string, correct: boolean) => void } {
+export function useProgress(): { progress: Progress; markRead: (topicId: string) => void; answer: (questionId: string, correct: boolean) => void; forget: (questionId: string) => void } {
   const [progress, setProgress] = useState<Progress>(loadProgress)
   const updateProgress = useCallback((update: (current: Progress) => Progress) => {
     setProgress((current) => {
@@ -14,5 +14,6 @@ export function useProgress(): { progress: Progress; markRead: (topicId: string)
   }, [])
   const markRead = useCallback((topicId: string) => updateProgress((current) => markTopicRead(current, topicId)), [updateProgress])
   const answer = useCallback((questionId: string, correct: boolean) => updateProgress((current) => recordAnswer(current, questionId, correct)), [updateProgress])
-  return { progress, markRead, answer }
+  const forget = useCallback((questionId: string) => updateProgress((current) => forgetWrong(current, questionId)), [updateProgress])
+  return { progress, markRead, answer, forget }
 }

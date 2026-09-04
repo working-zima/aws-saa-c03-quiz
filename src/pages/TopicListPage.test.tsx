@@ -43,7 +43,7 @@ const testQuestions: Question[] = [
   },
 ]
 
-const emptyProgress: Progress = { version: 1, read: {}, answers: {} }
+const emptyProgress: Progress = { version: 2, read: {}, answers: {}, wrong: {} }
 
 function renderPage(
   progress: Progress = emptyProgress,
@@ -91,7 +91,7 @@ describe('TopicListPage', () => {
 
   it('문제를 푼 주제에 정답 수와 전체 문항 수를 표시한다', () => {
     renderPage(
-      { version: 1, read: { 'high-topic': true }, answers: { q001: true, q002: false } },
+      { version: 2, read: { 'high-topic': true }, answers: { q001: true, q002: false }, wrong: { q002: true } },
       testTopics,
       testQuestions,
     )
