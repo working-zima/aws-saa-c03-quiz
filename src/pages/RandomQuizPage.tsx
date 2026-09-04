@@ -20,7 +20,7 @@ const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py
 
 export function RandomQuizPage({ questions = defaultQuestions, answer: providedAnswer, shuffle = defaultShuffle }: RandomQuizPageProps) {
   const { count: countSegment } = useParams()
-  const count = parseQuizCount(countSegment)
+  const count = parseQuizCount(countSegment, questions.length)
   const { answer: storedAnswer } = useProgress()
   const answer = providedAnswer ?? storedAnswer
   const selectedQuestions = useMemo(

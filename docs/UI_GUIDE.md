@@ -343,16 +343,18 @@ block rounded-lg border border-neutral-800 px-5 py-4 hover:border-neutral-700
 
 ### 랜덤 문제 시작 화면
 
-문항 수 버튼 **세 개뿐인 화면이다.** 폭은 확인 문제와 같은 `max-w-2xl`.
+문항 수 버튼뿐인 화면이다. 10 · 20 · 30 · 50 · 100과 `전체`, 여섯 개다.
+폭은 확인 문제와 같은 `max-w-2xl`.
 
 ```
 inline-flex min-h-[44px] items-center rounded-md border border-neutral-800 bg-[#141414]
 px-4 py-2 text-neutral-300 hover:border-neutral-700 hover:text-neutral-100
 ```
 
-- **셋을 같은 스타일로 둔다.** 하나만 Primary로 만들어 "추천"처럼 보이게 하지 마라.
-  동등한 선택지다.
-- 가로로 `gap-3`. 320px에서 넘칠 수 있으므로 `flex-wrap`을 둔다.
+- **여섯을 같은 스타일로 둔다.** 하나만 Primary로 만들어 "추천"처럼 보이게 하지 마라.
+  동등한 선택지다. `전체`도 예외가 아니다 — 분량이 많다고 경고를 붙이지 마라.
+- 가로로 `gap-3`. 320px에서 넘칠 수 있으므로 `flex-wrap`을 둔다. 버튼이 여섯이라
+  좁은 화면에서는 여러 줄로 접힌다.
 - 예상 소요 시간·난이도 같은 부가 정보를 만들지 마라. 없는 데이터다.
 
 ### 랜덤 문제 완료 화면

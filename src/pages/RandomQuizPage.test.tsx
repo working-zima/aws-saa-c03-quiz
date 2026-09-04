@@ -57,6 +57,16 @@ describe('RandomQuizPage', () => {
     expect(screen.getByText('1 / 10')).toBeInTheDocument()
   })
 
+  it('/random/all은 문제 은행 전체를 낸다', () => {
+    renderPage('/random/all', makeQuestions(37))
+    expect(screen.getByText('1 / 37')).toBeInTheDocument()
+  })
+
+  it('/random/100에서 100문항 세트를 낸다', () => {
+    renderPage('/random/100', makeQuestions(246))
+    expect(screen.getByText('1 / 100')).toBeInTheDocument()
+  })
+
   it('허용하지 않는 문항 수는 /random으로 replace 이동한다', () => {
     renderPage('/random/15')
     expect(screen.getByRole('heading', { name: '랜덤 시작' })).toBeInTheDocument()

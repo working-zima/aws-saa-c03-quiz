@@ -55,6 +55,13 @@ describe('App routes', () => {
     expect(screen.getByText('1 / 20')).toBeInTheDocument()
   })
 
+  it('/random/all에서 문제 은행 전체를 낸다', () => {
+    renderAt('/random/all')
+
+    expect(screen.getByRole('heading', { name: '랜덤 문제' })).toBeInTheDocument()
+    expect(screen.getByText('1 / 246')).toBeInTheDocument()
+  })
+
   it('알 수 없는 경로를 /로 리다이렉트한다', () => {
     renderAt('/unknown')
 
