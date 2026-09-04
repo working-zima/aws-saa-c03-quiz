@@ -1,0 +1,13 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "24-service-category",
+  "steps": [
+    {
+      "step": 0,
+      "name": "service-category-lead",
+      "status": "completed",
+      "summary": "서비스 개념 75개의 paragraphs[0] 앞에 `{주어}는 AWS 분류로는 {카테고리} 쪽 서비스다.` 한 줄을 넣었다. 카테고리 13종과 배치의 근거는 새 출처 docs/source/service-categories.md(AWS 백서 'AWS services by category')이고 ADR-019로 기록했다. data.test.ts의 serviceCategories가 75개와 표기를 강제한다. summary·name·개념 수·주제 배치·questions.json은 불변이다."
+    }
+  ],
+  "note": "execute.py로 돌리지 않고 사용자 확인 후 대화 세션에서 직접 구현했다. 카테고리 매핑을 AWS 공식 문서에서 확인한 세션이 그대로 반영하는 편이 안전하다는 판단이다. step0.md는 같은 작업을 독립 세션에서 재현할 수 있도록 남긴 기록이다."
+}
