@@ -59,41 +59,16 @@ describe('Layout', () => {
     expect(screen.getByRole('link', { name: '복습' })).toHaveClass('min-h-[44px]')
   })
 
-  it('확인 문제 화면에서 현재 주제의 근거 개념 링크를 렌더링한다', () => {
-    render(
-      <MemoryRouter initialEntries={['/topic/vpc/quiz']}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    )
-
-    expect(screen.getByRole('link', { name: '근거 개념' })).toHaveAttribute('href', '/topic/vpc')
-    expect(screen.getByRole('link', { name: '근거 개념' })).toHaveClass('min-h-[44px]')
-  })
-
-  it('개념 읽기 화면에서 근거 개념 링크를 렌더링하지 않는다', () => {
-    render(
-      <MemoryRouter initialEntries={['/topic/vpc']}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    )
-
-    expect(screen.queryByRole('link', { name: '근거 개념' })).toBeNull()
-  })
-
-  it.each(['/', '/review'])('%s에서 근거 개념 링크를 렌더링하지 않는다', (path) => {
+  // 확인 문제 화면의 근거 개념은 헤더가 아니라 문항 화면 안의 펼치기가 맡는다
+  // (UI_GUIDE "보기 버튼 > 개념 펼치기"). 헤더에 다시 넣으면 링크가 세 개가 된다.
+  it.each(['/', '/topic/vpc', '/topic/vpc/quiz', '/review'])('%s에서 근거 개념 링크를 렌더링하지 않는다', (path) => {
     render(
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<p>주제 목록</p>} />
+            <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
+            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
             <Route path="review" element={<p>복습 화면</p>} />
           </Route>
         </Routes>
@@ -189,13 +164,14 @@ describe('Layout', () => {
     expect(scrollTo).toHaveBeenCalledTimes(callCountBeforeBack)
   })
 
-  it.each(['/', '/topic/vpc', '/review'])('%s에서 검색 링크를 렌더링한다', (path) => {
+  it.each(['/', '/topic/vpc', '/topic/vpc/quiz', '/review'])('%s에서 검색 링크를 렌더링한다', (path) => {
     render(
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<p>주제 목록</p>} />
             <Route path="topic/:topicId" element={<p>개념 읽기</p>} />
+            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
             <Route path="review" element={<p>복습 화면</p>} />
           </Route>
         </Routes>
@@ -204,20 +180,6 @@ describe('Layout', () => {
 
     expect(screen.getByRole('link', { name: '검색' })).toHaveAttribute('href', '/search')
     expect(screen.getByRole('link', { name: '검색' })).toHaveClass('min-h-[44px]')
-  })
-
-  it('확인 문제 화면에서는 검색 링크를 렌더링하지 않는다', () => {
-    render(
-      <MemoryRouter initialEntries={['/topic/vpc/quiz']}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="topic/:topicId/quiz" element={<p>확인 문제</p>} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    )
-
-    expect(screen.queryByRole('link', { name: '검색' })).toBeNull()
   })
 
   // 320px에서 헤더 링크가 세 개가 되면 로고와 부딪힌다(UI_GUIDE "헤더 안의 링크").

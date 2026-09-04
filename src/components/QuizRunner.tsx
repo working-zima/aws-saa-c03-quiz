@@ -1,24 +1,42 @@
 import { useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { topics as defaultTopics } from '../data'
 import { isCorrect } from '../lib/grading'
-import type { Question } from '../types/content'
+import type { Question, Topic } from '../types/content'
+import { ConceptList } from './ConceptList'
 
 interface QuizRunnerProps {
   title: string
   questions: Question[]
   answer: (questionId: string, correct: boolean) => void
   renderComplete: (correctCount: number, total: number) => ReactNode
+  topics?: Topic[]
 }
 
 const choiceBaseClass = 'w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-left text-neutral-300'
 const choiceCorrectClass = 'border-green-500/60 bg-green-500/5'
 const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
+const conceptToggleClass = 'inline-flex min-h-[44px] items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100'
 
-export function QuizRunner({ title, questions, answer, renderComplete }: QuizRunnerProps) {
+const chevronDownIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+)
+
+const chevronUpIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M18 15l-6-6-6 6" />
+  </svg>
+)
+
+export function QuizRunner({ title, questions, answer, renderComplete, topics = defaultTopics }: QuizRunnerProps) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [selections, setSelections] = useState<(number | null)[]>(() => questions.map(() => null))
   const [complete, setComplete] = useState(false)
+  // 펼친 문항의 인덱스를 들고 있는다. boolean을 따로 두면 문항을 옮길 때마다 닫아 줘야 하고,
+  // 한 곳만 빠뜨리면 다음 문항에 앞 문항의 개념이 펼쳐진 채로 남는다.
+  const [openConceptIndex, setOpenConceptIndex] = useState<number | null>(null)
   const correctCount = selections.filter(
     (selection, index) => selection !== null && isCorrect(questions[index], selection),
   ).length
@@ -31,6 +49,10 @@ export function QuizRunner({ title, questions, answer, renderComplete }: QuizRun
   const selectedChoice = selections[questionIndex]
   const revealed = selectedChoice !== null
   const advanceInstructionId = `quiz-advance-instruction-${question.id}`
+  const conceptPanelId = `quiz-concept-${question.id}`
+  // 문항의 근거 개념 하나가 아니라 그 문항이 속한 주제 전체를 펼친다 (ADR-016).
+  const topic = topics.find((candidate) => candidate.id === question.topicId)
+  const conceptOpen = openConceptIndex === questionIndex
 
   function selectChoice(choiceIndex: number) {
     if (revealed) return
@@ -102,9 +124,27 @@ export function QuizRunner({ title, questions, answer, renderComplete }: QuizRun
               ? '정답을 한 번 더 누르면 결과를 봅니다'
               : '정답을 한 번 더 누르면 다음 문제로 넘어갑니다'}
           </p>
-          <Link className="inline-flex min-h-[44px] items-center text-sm text-neutral-400 transition-colors hover:text-neutral-100" to={`/topic/${question.topicId}`}>
-            근거 개념으로 돌아가기
-          </Link>
+        </div>
+      )}
+
+      {topic && (
+        <div className="space-y-5 border-t border-neutral-800 pt-5">
+          <button
+            aria-controls={conceptPanelId}
+            aria-expanded={conceptOpen}
+            className={conceptToggleClass}
+            onClick={() => setOpenConceptIndex(conceptOpen ? null : questionIndex)}
+            type="button"
+          >
+            {conceptOpen ? chevronUpIcon : chevronDownIcon}
+            개념 보기
+          </button>
+          {conceptOpen && (
+            <div className="space-y-5" id={conceptPanelId}>
+              <h3 className="text-lg font-medium text-title">{topic.title}</h3>
+              <ConceptList concepts={topic.concepts} headingLevel={4} />
+            </div>
+          )}
         </div>
       )}
     </section>

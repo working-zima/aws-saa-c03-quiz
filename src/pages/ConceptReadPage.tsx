@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { ConceptList } from '../components/ConceptList'
 import { topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { adjacentTopics } from '../lib/navigation'
@@ -23,18 +24,6 @@ const nextIcon = (
 )
 
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
-
-function renderEmphasis(text: string, keyPrefix: string) {
-  return text.split(/(\*\*.+?\*\*)/g).map((part, index) =>
-    part.startsWith('**') && part.endsWith('**') ? (
-      <strong className="font-medium text-neutral-100" key={`${keyPrefix}-${index}`}>
-        {part.slice(2, -2)}
-      </strong>
-    ) : (
-      part
-    ),
-  )
-}
 
 const importanceLabel = {
   3: { label: '★★★', className: 'text-importance-high' },
@@ -77,23 +66,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
         </div>
       </header>
 
-      <div className="space-y-8">
-        {topic.concepts.map((concept) => (
-          <article className="space-y-3" key={concept.id}>
-            <div className="space-y-1">
-              <h2 className="text-base font-medium text-neutral-100">{concept.name}</h2>
-              <p className="text-sm text-neutral-400">{renderEmphasis(concept.summary, `${concept.id}-summary`)}</p>
-            </div>
-            <div className="space-y-3">
-              {concept.paragraphs.map((paragraph, index) => (
-                <p className="whitespace-pre-line break-keep text-[15px] leading-7 text-neutral-300" key={`${concept.id}-${index}`}>
-                  {renderEmphasis(paragraph, `${concept.id}-${index}`)}
-                </p>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
+      <ConceptList concepts={topic.concepts} headingLevel={2} />
 
       <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0">
         <div className="flex items-center justify-between gap-3">
