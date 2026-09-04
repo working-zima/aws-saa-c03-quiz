@@ -1249,4 +1249,160 @@ describe('학습 데이터 무결성', () => {
       'NLB(Network Load Balancer)는 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 처리하며 빠른 응답 속도를 제공한다. ALB(Application Load Balancer)는 HTTP(HyperText Transfer Protocol)와 HTTPS에 사용하고 GLB(Gateway Load Balancer)는 보안 장비용이다.',
     )
   })
+
+  // ADR-019. 표기와 배치의 근거는 docs/source/service-categories.md 하나뿐이다.
+  const categories = {
+    compute: '컴퓨팅(Compute)',
+    containers: '컨테이너(Containers)',
+    storage: '스토리지(Storage)',
+    databases: '데이터베이스(Databases)',
+    analytics: '분석(Analytics)',
+    networking: '네트워킹 및 콘텐츠 전송(Networking and Content Delivery)',
+    appIntegration: '애플리케이션 통합(Application Integration)',
+    management: '관리 및 거버넌스(Management and Governance)',
+    security: '보안·자격 증명·규정 준수(Security, Identity, and Compliance)',
+    migration: '마이그레이션 및 전송(Migration and Transfer)',
+    finance: '클라우드 재무 관리(Cloud Financial Management)',
+    devTools: '개발자 도구(Developer Tools)',
+    business: '비즈니스 애플리케이션(Business Applications)',
+  } as const
+
+  // 절약 플랜만 서술이 다르다. 백서가 서비스가 아니라 pricing model로 소개하기 때문이다.
+  const predicateExceptions: Record<string, string> = {
+    'cost-management.savings-plan': '쪽에 속한다',
+  }
+
+  const serviceCategories: Array<[string, string, keyof typeof categories]> = [
+    ['aws-core-services.ec2', 'EC2는', 'compute'],
+    ['aws-core-services.rds', 'RDS는', 'databases'],
+    ['aws-core-services.s3', 'S3는', 'storage'],
+    ['aws-core-services.route-53', 'Route 53은', 'networking'],
+    ['aws-core-services.elb', 'ELB는', 'networking'],
+    ['aws-core-services.cloudfront', 'CloudFront는', 'networking'],
+    ['aws-core-services.lambda', 'Lambda는', 'compute'],
+    ['block-file-storage.ebs', 'EBS는', 'storage'],
+    ['block-file-storage.efs', 'EFS는', 'storage'],
+    ['block-file-storage.fsx', 'FSx는', 'storage'],
+    ['data-transfer-services.datasync', 'DataSync는', 'migration'],
+    ['data-transfer-services.snowball-edge', 'Snowball Edge는', 'migration'],
+    ['data-transfer-services.transfer-family', 'Transfer Family는', 'migration'],
+    ['data-transfer-services.storage-gateway', 'Storage Gateway는', 'storage'],
+    ['rds-storage-features.rds', 'RDS는', 'databases'],
+    ['aurora-dynamodb-cache.aurora', 'Aurora는', 'databases'],
+    ['aurora-dynamodb-cache.dynamodb', 'DynamoDB는', 'databases'],
+    ['aurora-dynamodb-cache.elasticache', 'ElastiCache는', 'databases'],
+    ['aurora-dynamodb-cache.documentdb', 'DocumentDB는', 'databases'],
+    ['compute-delivery.ec2', 'EC2는', 'compute'],
+    ['compute-delivery.elb', 'ELB는', 'networking'],
+    ['compute-delivery.cloudfront', 'CloudFront는', 'networking'],
+    ['compute-delivery.global-accelerator', 'Global Accelerator는', 'networking'],
+    ['serverless-containers.ecs', 'ECS는', 'containers'],
+    ['serverless-containers.lambda', 'Lambda는', 'compute'],
+    ['serverless-containers.step-functions', 'Step Functions는', 'appIntegration'],
+    ['serverless-containers.api-gateway', 'API Gateway는', 'networking'],
+    ['serverless-containers.eks', 'EKS는', 'containers'],
+    ['serverless-containers.aws-batch', 'AWS Batch는', 'compute'],
+    ['messaging-backup.sqs', 'SQS는', 'appIntegration'],
+    ['messaging-backup.sns', 'SNS는', 'appIntegration'],
+    ['messaging-backup.eventbridge', 'EventBridge는', 'appIntegration'],
+    ['messaging-backup.backup', 'AWS Backup은', 'storage'],
+    ['messaging-backup.msk', 'MSK는', 'analytics'],
+    ['messaging-backup.ses', 'SES는', 'business'],
+    ['vpc-networking.vpc-subnet', 'VPC는', 'networking'],
+    ['vpc-networking.privatelink', 'PrivateLink는', 'networking'],
+    ['hybrid-connectivity.site-to-site-vpn', 'Site-to-Site VPN은', 'networking'],
+    ['hybrid-connectivity.direct-connect', 'Direct Connect는', 'networking'],
+    ['hybrid-connectivity.transit-gateway', 'Transit Gateway는', 'networking'],
+    ['hybrid-connectivity.client-vpn', 'Client VPN은', 'networking'],
+    ['route53.route53', 'Route53은', 'networking'],
+    ['analytics-monitoring.emr', 'EMR은', 'analytics'],
+    ['analytics-monitoring.redshift', 'RedShift는', 'analytics'],
+    ['analytics-monitoring.athena', 'Athena는', 'analytics'],
+    ['analytics-monitoring.cloudwatch', 'CloudWatch는', 'management'],
+    ['analytics-monitoring.glue', 'Glue는', 'analytics'],
+    ['analytics-monitoring.x-ray', 'X-Ray는', 'devTools'],
+    ['analytics-monitoring.data-firehose', 'Data Firehose는', 'analytics'],
+    ['analytics-monitoring.kinesis-data-streams', 'Kinesis Data Streams는', 'analytics'],
+    ['analytics-monitoring.managed-service-apache-flink', 'Managed Service for Apache Flink는', 'analytics'],
+    ['secrets-encryption.secrets-manager', 'Secrets Manager는', 'security'],
+    ['secrets-encryption.parameter-store', 'Parameter Store는', 'management'],
+    ['secrets-encryption.kms', 'KMS는', 'security'],
+    ['secrets-encryption.acm', 'ACM은', 'security'],
+    ['secrets-encryption.cloudhsm', 'CloudHSM은', 'security'],
+    ['threat-protection.waf', 'WAF는', 'security'],
+    ['threat-protection.shield', 'Shield는', 'security'],
+    ['threat-protection.guardduty', 'GuardDuty는', 'security'],
+    ['threat-protection.macie', 'Macie는', 'security'],
+    ['threat-protection.cloudfront', 'CloudFront는', 'networking'],
+    ['identity-access.iam', 'IAM은', 'security'],
+    ['identity-access.identity-center', 'Identity Center는', 'security'],
+    ['identity-access.sts', 'STS는', 'security'],
+    ['identity-access.cognito', 'Cognito는', 'security'],
+    ['identity-access.cloudtrail', 'CloudTrail은', 'management'],
+    ['identity-access.aws-config', 'AWS Config는', 'management'],
+    ['identity-access.organizations-scp', 'AWS Organizations는', 'management'],
+    ['cost-management.savings-plan', '절약 플랜은', 'finance'],
+    ['cost-management.aws-budgets', 'AWS Budgets는', 'finance'],
+    ['cost-management.cost-explorer', 'Cost Explorer는', 'finance'],
+    ['cost-management.billing-and-cost-management', 'Billing and Cost Management는', 'finance'],
+    ['cost-management.trusted-advisor', 'Trusted Advisor는', 'management'],
+    ['cost-management.compute-optimizer', 'Compute Optimizer는', 'management'],
+    ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
+  ]
+
+  it('서비스 개념 75개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+    const byConceptId = Object.fromEntries(
+      topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+    )
+
+    expect(serviceCategories).toHaveLength(75)
+
+    serviceCategories.forEach(([conceptId, subject, key]) => {
+      const concept = byConceptId[conceptId]
+      const predicate = predicateExceptions[conceptId] ?? '쪽 서비스다'
+
+      expect(concept).toBeDefined()
+      expect(concept.paragraphs[0]).toContain(
+        `${subject} AWS 분류로는 ${categories[key]} ${predicate}.`,
+      )
+      expect(concept.paragraphs[0].startsWith(`${subject} AWS 분류로는`)).toBe(true)
+    })
+  })
+
+  it('카테고리 문장이 그 75개 개념의 본문에만 한 번씩 들어간다', () => {
+    const concepts = topics.flatMap((topic) => topic.concepts)
+    const marker = 'AWS 분류로는'
+    const holders = concepts.filter((concept) =>
+      concept.paragraphs.some((paragraph) => paragraph.includes(marker)),
+    )
+
+    expect(holders.map(({ id }) => id).sort()).toEqual(
+      serviceCategories.map(([conceptId]) => conceptId).sort(),
+    )
+
+    holders.forEach((concept) => {
+      const carrying = concept.paragraphs.filter((paragraph) => paragraph.includes(marker))
+      expect(carrying).toHaveLength(1)
+    })
+
+    concepts.forEach((concept) => {
+      expect(concept.summary).not.toContain(marker)
+      expect(concept.name).not.toContain(marker)
+    })
+  })
+
+  it('카테고리 표기가 백서의 13종을 벗어나지 않는다', () => {
+    const declared = Object.values(categories)
+    const used = new Set(serviceCategories.map(([, , key]) => categories[key]))
+
+    expect(declared).toHaveLength(13)
+    expect([...used].sort()).toEqual([...declared].sort())
+  })
+
+  it('카테고리 문장이 문항 프롬프트나 해설로 새지 않는다', () => {
+    questions.forEach((question) => {
+      expect(question.prompt).not.toContain('AWS 분류로는')
+      expect(question.explanation).not.toContain('AWS 분류로는')
+    })
+  })
 })
