@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { questions as defaultQuestions } from '../data'
-import { RANDOM_QUIZ_COUNTS } from '../lib/random-quiz'
+import { RANDOM_QUIZ_ALL, RANDOM_QUIZ_COUNTS } from '../lib/random-quiz'
 import type { Question } from '../types/content'
 
 interface RandomStartPageProps {
@@ -24,6 +24,7 @@ export function RandomStartPage({ questions = defaultQuestions }: RandomStartPag
             {count}문항
           </Link>
         ))}
+        <Link className={countLinkClass} to={`/random/${RANDOM_QUIZ_ALL}`}>전체</Link>
       </nav>
     </section>
   )
