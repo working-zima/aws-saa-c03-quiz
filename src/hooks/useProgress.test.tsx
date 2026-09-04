@@ -17,9 +17,10 @@ describe('useProgress', () => {
 
   it('저장된 진행 상태로 초기화한다', () => {
     vi.mocked(loadProgress).mockReturnValue({
-      version: 1,
+      version: 2,
       read: { ec2: true },
       answers: {},
+      wrong: {},
     })
 
     const { result } = renderHook(() => useProgress())
@@ -36,6 +37,17 @@ describe('useProgress', () => {
 
     act(() => result.current.answer('q001', false))
     expect(result.current.progress.answers.q001).toBe(false)
+    expect(saveProgress).toHaveBeenLastCalledWith(result.current.progress)
+  })
+
+  it('오답노트에서 문항을 지우고 저장한다', () => {
+    const { result } = renderHook(() => useProgress())
+
+    act(() => result.current.answer('q001', false))
+    expect(result.current.progress.wrong.q001).toBe(true)
+
+    act(() => result.current.forget('q001'))
+    expect(result.current.progress.wrong).toEqual({})
     expect(saveProgress).toHaveBeenLastCalledWith(result.current.progress)
   })
 })

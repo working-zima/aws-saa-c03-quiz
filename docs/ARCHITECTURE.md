@@ -52,11 +52,21 @@ interface Question {
 
 ```ts
 interface Progress {
-  version: 1;                                  // 스키마 변경 시 올린다
+  version: 2;                                  // 스키마 변경 시 올린다
   read: Record<string, boolean>;               // topicId → 개념을 끝까지 읽었는가
   answers: Record<string, boolean>;            // questionId → 마지막 시도가 정답이었는가
+  wrong: Record<string, true>;                 // 오답노트. 사용자가 지울 때만 빠진다 (ADR-017)
 }
 ```
+
+`answers`와 `wrong`은 **다른 것을 재는 값이라 갈라진다.** `answers`는 마지막 시도만 남기므로
+다시 맞히면 `true`로 덮인다. `wrong`은 그 덮어쓰기를 따라가지 않는다 — 오답노트를 마지막
+채점 결과에서 파생시키면 다시 맞히는 순간 목록에서 사라지는데, 찍어서 맞힌 것과 익힌 것을
+앱이 구분할 수 없으므로 무엇을 뺄지는 사용자가 정한다 (ADR-017).
+
+`version 1`에는 `wrong`이 없었다. `loadProgress`가 v1 저장분을 읽으면 그때 틀린 문항
+(`answers`가 `false`인 것)을 `wrong`의 씨앗으로 채워 v2로 옮긴다. 이 마이그레이션은
+`src/lib/storage.ts` 한 곳에 있다.
 
 ## 라우트
 
@@ -68,7 +78,9 @@ interface Progress {
 | `/` | 주제 목록 (20개, 중요도·진행 상태 표시) |
 | `/topic/:topicId` | 개념 읽기 |
 | `/topic/:topicId/quiz` | 확인 문제 |
-| `/review` | 복습 — 틀린 문제가 속한 개념 모아보기 |
+| `/review` | 복습 — 오답노트. 틀린 문항을 주제별로 모아보고 개별 삭제 |
+| `/review/quiz` | 오답 다시 풀기 — 오답노트 전체 |
+| `/review/quiz/:topicId` | 오답 다시 풀기 — 그 주제의 오답만 |
 | `/random` | 랜덤 문제 시작 — 문항 수(10·20·30) 선택 |
 | `/random/:count` | 랜덤 문제 — 전체 문항에서 뽑은 `count`개 |
 | `/search` | 개념·주제 검색. 질의는 `?q=`에 담긴다 |
@@ -181,10 +193,11 @@ interface Progress {
 수단이 아니다. 화면 구성과 조작 규칙은 UI_GUIDE "보기 버튼 > 문항 사이 이동"에 있다.
 
 이 상태는 **화면 안 일시 상태다. localStorage에 넣지 마라.** `Progress`에 남는 것은
-`answers[questionId]`의 정오답 boolean 하나뿐이고, 어느 보기를 골랐는지는 저장하지 않는다.
+`answers[questionId]`의 정오답 boolean과 `wrong`의 오답노트 등재 여부뿐이고, 어느 보기를
+골랐는지는 저장하지 않는다.
 새로고침하면 그 주제의 확인 문제는 처음부터 다시 시작한다. 이유: 되돌아보기는 푸는 동안의
 편의다. 이걸 남기려면 `Progress`의 `version`을 올리고 기존 저장분 마이그레이션까지 붙어야
-하는데, 얻는 것에 비해 비싸다. 오답이 가리키는 개념은 `/review`가 이미 영구히 들고 있다.
+하는데, 얻는 것에 비해 비싸다. 틀린 문항 자체는 `/review`의 오답노트가 이미 영구히 들고 있다.
 
 `QuizPage`는 문항별 선택을 **배열 하나로 들고 있는다.**
 

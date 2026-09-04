@@ -30,6 +30,12 @@ describe('App routes', () => {
     expect(screen.getByRole('heading', { name: '복습' })).toBeInTheDocument()
   })
 
+  it('/review/quiz에서 오답 다시 풀기 화면을 렌더링한다', () => {
+    renderAt('/review/quiz')
+
+    expect(screen.getByRole('heading', { name: '오답 다시 풀기' })).toBeInTheDocument()
+  })
+
   it('/search에서 검색 화면을 렌더링한다', () => {
     renderAt('/search')
 

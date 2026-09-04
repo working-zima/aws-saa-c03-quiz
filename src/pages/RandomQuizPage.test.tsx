@@ -73,7 +73,7 @@ describe('RandomQuizPage', () => {
   it('오답이 있으면 복습과 다시 뽑기 링크를 제공한다', async () => {
     renderPage('/random/10')
     await finishSet(10, true)
-    expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: '틀린 문제 복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.getByRole('link', { name: '다시 뽑기' })).toHaveAttribute('href', '/random')
   })
 

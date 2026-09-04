@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Question, Topic } from '../types/content'
 import type { Progress } from '../types/progress'
-import { conceptsToReview, overallPercent, topicStats } from './stats'
+import { overallPercent, topicStats, wrongQuestions } from './stats'
 
 const topics: Topic[] = [
   {
@@ -47,9 +47,10 @@ const questions = [
 describe('stats', () => {
   it('주제별 읽기 및 답안 통계를 계산한다', () => {
     const progress: Progress = {
-      version: 1,
+      version: 2,
       read: { 'topic-a': true },
       answers: { q001: true, q002: false, q004: true },
+      wrong: { q002: true },
     }
 
     expect(topicStats(topics, questions, progress)).toEqual([
@@ -71,15 +72,20 @@ describe('stats', () => {
     ])).toBe(0)
   })
 
-  it('마지막 시도가 오답인 개념만 중복 없이 반환한다', () => {
+  it('오답노트에 담긴 문항만 문제 은행 순서로 반환한다', () => {
     const progress: Progress = {
-      version: 1,
+      version: 2,
       read: {},
-      answers: { q001: false, q002: false, q003: true },
+      answers: {},
+      wrong: { q003: true, q001: true },
     }
 
-    expect(conceptsToReview(topics, questions, progress)).toEqual([
-      topics[0].concepts[0],
-    ])
+    expect(wrongQuestions(questions, progress)).toEqual([questions[0], questions[2]])
+  })
+
+  it('오답노트가 비어 있으면 빈 배열을 반환한다', () => {
+    const progress: Progress = { version: 2, read: {}, answers: { q001: false }, wrong: {} }
+
+    expect(wrongQuestions(questions, progress)).toEqual([])
   })
 })

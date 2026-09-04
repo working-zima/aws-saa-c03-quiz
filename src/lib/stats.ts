@@ -1,4 +1,4 @@
-import type { Concept, Question, Topic } from '../types/content'
+import type { Question, Topic } from '../types/content'
 import type { Progress } from '../types/progress'
 
 export interface TopicStat {
@@ -42,18 +42,7 @@ export function overallPercent(stats: TopicStat[]): number {
   return Math.round((answered / total) * 100)
 }
 
-export function conceptsToReview(
-  topics: Topic[],
-  questions: Question[],
-  progress: Progress,
-): Concept[] {
-  const incorrectConceptIds = new Set(
-    questions
-      .filter((question) => progress.answers[question.id] === false)
-      .map((question) => question.conceptId),
-  )
-
-  return topics.flatMap((topic) => (
-    topic.concepts.filter((concept) => incorrectConceptIds.has(concept.id))
-  ))
+// 마지막 채점 결과가 아니라 오답노트를 본다. 다시 맞혀도 사용자가 지우기 전에는 남는다 (ADR-017).
+export function wrongQuestions(questions: Question[], progress: Progress): Question[] {
+  return questions.filter((question) => question.id in progress.wrong)
 }

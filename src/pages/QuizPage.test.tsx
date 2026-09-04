@@ -283,7 +283,7 @@ describe('QuizPage', () => {
     expect(document.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
     expect(screen.getByRole('heading', { name: '확인 문제 완료' })).toBeInTheDocument()
     expect(screen.getByText('맞힌 개수 1 / 2')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: '틀린 문제 복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.queryByRole('link', { name: '주제 목록으로 돌아가기' })).toBeNull()
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toBeInTheDocument()
   })
@@ -297,7 +297,7 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
 
-    expect(screen.getByRole('link', { name: '틀린 개념 복습하기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: '틀린 문제 복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
   })
@@ -312,7 +312,7 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
 
     expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
-    expect(screen.queryByRole('link', { name: '틀린 개념 복습하기' })).toBeNull()
+    expect(screen.queryByRole('link', { name: '틀린 문제 복습하기' })).toBeNull()
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
   })
 

@@ -362,7 +362,7 @@ px-4 py-2 text-neutral-300 hover:border-neutral-700 hover:text-neutral-100
 
 | 상황 | Primary | Ghost |
 |---|---|---|
-| 틀린 문항이 있다 | `틀린 개념 복습하기` → `/review` | `다시 뽑기` → `/random`, `주제 목록으로` → `/` |
+| 틀린 문항이 있다 | `틀린 문제 복습하기` → `/review` | `다시 뽑기` → `/random`, `주제 목록으로` → `/` |
 | 전부 맞혔다 | `다시 뽑기` → `/random` | `주제 목록으로` → `/` |
 
 **`다시 뽑기`는 방금 푼 `/random/:count`가 아니라 `/random`으로 보낸다.** 같은 경로로

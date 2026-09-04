@@ -46,7 +46,7 @@ export function RandomQuizPage({ questions = defaultQuestions, answer: providedA
               <p className="text-[15px] leading-7 text-neutral-300">맞힌 개수 {correctCount} / {total}</p>
             </div>
             <nav aria-label="랜덤 문제 완료 후 이동" className="flex flex-wrap gap-3">
-              {hasIncorrectAnswer && <Link className={primaryButtonClass} to="/review">틀린 개념 복습하기</Link>}
+              {hasIncorrectAnswer && <Link className={primaryButtonClass} to="/review">틀린 문제 복습하기</Link>}
               <Link className={hasIncorrectAnswer ? ghostLinkClass : primaryButtonClass} to="/random">다시 뽑기</Link>
               <Link className={ghostLinkClass} to="/">주제 목록으로 돌아가기</Link>
             </nav>
