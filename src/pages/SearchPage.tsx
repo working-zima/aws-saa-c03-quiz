@@ -52,7 +52,11 @@ export function SearchPage({ topics = defaultTopics }: SearchPageProps) {
         <div className="grid gap-3">
           {hits.map((hit) =>
             hit.kind === 'concept' ? (
-              <Link className={cardClass} key={hit.concept.id} to={`/topic/${hit.topic.id}`}>
+              <Link
+                className={cardClass}
+                key={hit.concept.id}
+                to={`/topic/${hit.topic.id}#${hit.concept.id}`}
+              >
                 <span className="block text-base font-medium text-neutral-100">
                   {hit.concept.name}
                 </span>

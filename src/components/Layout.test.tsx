@@ -15,7 +15,15 @@ function renderTestRoutes() {
     <MemoryRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Link to="/topic/example">개념 보기</Link>} />
+          <Route
+            index
+            element={
+              <>
+                <Link to="/topic/example">개념 보기</Link>
+                <Link to="/topic/example#example.concept">개념 위치로 보기</Link>
+              </>
+            }
+          />
           <Route path="topic/example" element={<ConceptRoute />} />
         </Route>
       </Routes>
@@ -162,6 +170,18 @@ describe('Layout', () => {
     await user.click(screen.getByRole('button', { name: '뒤로 가기' }))
 
     expect(scrollTo).toHaveBeenCalledTimes(callCountBeforeBack)
+  })
+
+  // ADR-020. 목적지가 앵커를 지정했으면 그 화면이 스크롤 주인이다.
+  // 여기서 0으로 되돌리면 착지 직후 개념 위치가 지워진다.
+  it('앵커를 지정한 링크로 이동하면 맨 위로 스크롤하지 않는다', async () => {
+    const user = userEvent.setup()
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    renderTestRoutes()
+
+    await user.click(screen.getByRole('link', { name: '개념 위치로 보기' }))
+
+    expect(scrollTo).not.toHaveBeenCalled()
   })
 
   it.each(['/', '/topic/vpc', '/topic/vpc/quiz', '/review'])('%s에서 검색 링크를 렌더링한다', (path) => {

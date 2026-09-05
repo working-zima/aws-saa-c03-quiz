@@ -5,14 +5,17 @@ const linkClassName = ({ isActive }: { isActive: boolean }) =>
   `inline-flex min-h-[44px] items-center px-4 py-2 text-sm transition-colors hover:text-title ${isActive ? 'text-title' : 'text-muted'}`
 
 export function Layout() {
-  const { key } = useLocation()
+  const { hash, key } = useLocation()
   const navigationType = useNavigationType()
 
   useEffect(() => {
     if (navigationType === 'POP') return
+    // 목적지가 앵커를 지정했으면 스크롤 주인은 그 화면이다(ADR-020).
+    // 여기서 0으로 되돌리면 착지 직후 개념 위치가 지워진다.
+    if (hash) return
 
     window.scrollTo(0, 0)
-  }, [key, navigationType])
+  }, [hash, key, navigationType])
 
   return (
     <div className="min-h-screen bg-page text-body">
