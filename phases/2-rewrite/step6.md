@@ -15,7 +15,7 @@
 
 ## 배경 — 이 step이 하는 일
 
-`src/data/topics.json`의 개념 본문 중 97개는 유료 교재 추출본(`docs/source/concepts-raw.md`)을
+`src/data/topics.json`의 개념 본문 중 97개는 외부 참고 자료 추출본(`docs/source/concepts-raw.md`)을
 거의 그대로 옮긴 전사본이다. "원본의 표현과 어투를 유지한다"는 당시 규칙 때문이다.
 저장소를 공개하려면 이걸 해소해야 한다. phase 2는 그 97개를 직접 쓴 문장으로 교체한다.
 

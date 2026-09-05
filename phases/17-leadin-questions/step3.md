@@ -44,7 +44,7 @@
 - `CLAUDE.md` — 출처 제한과 TDD 규칙.
 - `docs/ADR.md`의 ADR-006·ADR-008·ADR-009·ADR-010 — 무엇을 쓸 수 있고 무엇을 못 쓰는지.
 - `docs/source/exam-gaps.md` — 이 step이 근거로 삼는 유일한 원본 파일.
-  (`docs/source/concepts-raw.md`는 저장소에 없다. ADR-009에 따라 gitignore된 유료 교재
+  (`docs/source/concepts-raw.md`는 저장소에 없다. ADR-009에 따라 gitignore된 외부 참고 자료
   추출본이며, 이 step의 5문항은 전부 `exam-gaps.md`에서 나왔으므로 필요하지 않다.)
 - `src/data/questions.json` — 이 step에서 값을 고치는 **유일한 데이터 파일**이다.
 - `src/data/data.test.ts` — 테스트를 덧붙인다. 기존 테스트는 건드리지 마라.
