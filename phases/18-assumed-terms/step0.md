@@ -22,7 +22,7 @@ phase 17이 `q170`~`q246`(exam-gaps 유래) 중 29문항에 상황 리드인을 
 ## 이 step이 새 사실을 넣지 않는다는 근거
 
 대상 4문항은 `q001`~`q169` 구간이라 원래 출처는 `docs/source/concepts-raw.md`인데
-**그 파일은 저장소에 없다**(ADR-009에 따라 gitignore된 유료 교재 추출본). 대신 그것을
+**그 파일은 저장소에 없다**(ADR-009에 따라 gitignore된 외부 참고 자료 추출본). 대신 그것을
 재작성한 `src/data/topics.json`의 개념 본문이 근거다. 상황 문장의 사실은 전부 그 안에 있다.
 
 | 문항 | 상황 문장이 쓰는 사실 | 근거 (`src/data/topics.json`) |
