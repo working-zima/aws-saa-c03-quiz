@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { ConceptList } from '../components/ConceptList'
 import { topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
@@ -32,6 +32,7 @@ const importanceLabel = {
 
 export function ConceptReadPage({ topics = defaultTopics, markRead: providedMarkRead }: ConceptReadPageProps) {
   const { topicId } = useParams()
+  const { hash } = useLocation()
   const { markRead: storedMarkRead } = useProgress()
   const markRead = providedMarkRead ?? storedMarkRead
   const topic = topics.find((candidate) => candidate.id === topicId)
@@ -40,6 +41,16 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
   useEffect(() => {
     if (topicId && topic) markRead(topicId)
   }, [markRead, topic, topicId])
+
+  // 검색 결과가 개념 하나를 지목해 들어오는 경로다(ADR-020).
+  // `Layout`은 해시가 있으면 맨 위로 되돌리지 않으므로 여기가 스크롤 주인이다.
+  useEffect(() => {
+    if (!hash) return
+
+    // 개념 id는 `aws-core-services.ec2`처럼 점을 품는다. CSS 선택자로 읽으면
+    // 점이 클래스 구분자로 해석되므로 getElementById로 찾는다.
+    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView()
+  }, [hash])
 
   if (!topic) {
     return (

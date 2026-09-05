@@ -86,10 +86,24 @@ describe('SearchPage', () => {
     expect(screen.getByRole('link', AURORA_CONCEPT_LINK)).toBeInTheDocument()
   })
 
-  it('개념 히트 카드가 그 개념이 속한 주제로 링크한다', () => {
+  // ADR-020. 주제 상단이 아니라 개념 위치로 보낸다.
+  it('개념 히트 카드가 그 개념의 위치로 링크한다', () => {
     renderPage('/search?q=aurora')
 
-    expect(screen.getByRole('link', AURORA_CONCEPT_LINK)).toHaveAttribute('href', '/topic/database')
+    expect(screen.getByRole('link', AURORA_CONCEPT_LINK)).toHaveAttribute(
+      'href',
+      '/topic/database#database.aurora',
+    )
+  })
+
+  // 주제 히트는 지목할 개념이 없다. 앵커를 붙이면 주제의 첫 개념을 임의로 고르는 셈이 된다.
+  it('주제 히트 카드는 앵커 없이 주제 상단으로 링크한다', () => {
+    renderPage('/search?q=스토리지')
+
+    expect(screen.getByRole('link', { name: /S3 스토리지 클래스 유형/ })).toHaveAttribute(
+      'href',
+      '/topic/storage',
+    )
   })
 
   it('맞는 것이 없는 질의에는 결과 없음 문구를 보여준다', () => {
