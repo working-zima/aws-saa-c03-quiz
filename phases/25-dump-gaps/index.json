@@ -5,7 +5,9 @@
     {
       "step": 0,
       "name": "dump-extract",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-05T21:56:37+0900",
+      "summary": "extract-dump.py(pypdfium2)로 880문항 덤프를 50문항 단위 슬라이스 18개로 분할하고, concept-index.py로 기존 개념 182개 인덱스를 생성. ADR-021(네 번째 출처 인정)과 dump-gaps/ 뼈대(README·_index) 추가, 파생물 3종은 gitignore 처리."
     },
     {
       "step": 1,
@@ -97,5 +99,6 @@
       "name": "dump-gaps-851",
       "status": "pending"
     }
-  ]
+  ],
+  "created_at": "2026-09-05T21:56:37+0900"
 }

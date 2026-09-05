@@ -31,3 +31,11 @@ phases/**/step*-facts.md
 # 외부 참고 자료 추출본. 개념 본문은 ADR-009에 따라 직접 쓴 문장으로 대체됐다.
 # 로컬에만 두고 저장소에는 넣지 않는다.
 docs/source/concepts-raw.md
+
+# pypdfium2 설치용 가상환경. 덤프 추출 스크립트에만 쓴다.
+.venv/
+
+# 880문항 덤프 슬라이스와 개념 인덱스. 스크립트로 재생성되는 파생물이고,
+# 슬라이스는 덤프 전문이라 저장소에 넣지 않는다 (concepts-raw.md와 같은 취급).
+docs/source/dump-slices/
+docs/source/concept-index.md
