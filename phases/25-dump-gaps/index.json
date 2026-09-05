@@ -1,0 +1,101 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "25-dump-gaps",
+  "steps": [
+    {
+      "step": 0,
+      "name": "dump-extract",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "dump-gaps-001",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "dump-gaps-051",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "dump-gaps-101",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "dump-gaps-151",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "dump-gaps-201",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "dump-gaps-251",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "dump-gaps-301",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "dump-gaps-351",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "dump-gaps-401",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "dump-gaps-451",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "dump-gaps-501",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "dump-gaps-551",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "dump-gaps-601",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "dump-gaps-651",
+      "status": "pending"
+    },
+    {
+      "step": 15,
+      "name": "dump-gaps-701",
+      "status": "pending"
+    },
+    {
+      "step": 16,
+      "name": "dump-gaps-751",
+      "status": "pending"
+    },
+    {
+      "step": 17,
+      "name": "dump-gaps-801",
+      "status": "pending"
+    },
+    {
+      "step": 18,
+      "name": "dump-gaps-851",
+      "status": "pending"
+    }
+  ]
+}

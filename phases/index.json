@@ -123,6 +123,10 @@
     {
       "dir": "24-service-category",
       "status": "completed"
+    },
+    {
+      "dir": "25-dump-gaps",
+      "status": "pending"
     }
   ]
 }
