@@ -16,7 +16,7 @@ export function ConceptList({ concepts, headingLevel }: ConceptListProps) {
   return (
     <div className="space-y-8">
       {concepts.map((concept) => (
-        <article className="space-y-3" key={concept.id}>
+        <article className="space-y-3 scroll-mt-24" id={concept.id} key={concept.id}>
           <div className="space-y-1">
             <Heading className="text-base font-medium text-neutral-100">{concept.name}</Heading>
             <p className="text-sm text-neutral-400"><EmphasizedText text={concept.summary} /></p>

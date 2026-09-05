@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Topic } from '../types/content'
 import { ConceptReadPage } from './ConceptReadPage'
 
@@ -86,6 +86,10 @@ function renderPage(path: string, markRead = vi.fn(), topics = testTopics) {
 
   return { ...result, markRead }
 }
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('ConceptReadPage', () => {
   it.each(['/topic/storage-topic', '/topic/missing-topic'])(
@@ -186,5 +190,73 @@ describe('ConceptReadPage', () => {
 
     expect(markRead).toHaveBeenCalledOnce()
     expect(markRead).toHaveBeenCalledWith('storage-topic')
+  })
+
+  // ADR-020. 검색 결과가 개념 하나를 지목해 들어오는 경로다.
+  describe('앵커로 지목된 개념', () => {
+    it('해시가 가리키는 개념 위치로 스크롤한다', () => {
+      const scrollIntoView = vi.fn()
+      vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(scrollIntoView)
+
+      renderPage('/topic/storage-topic#storage-topic.object-lock')
+
+      expect(scrollIntoView).toHaveBeenCalledOnce()
+      expect(scrollIntoView.mock.instances[0]).toBe(
+        document.getElementById('storage-topic.object-lock'),
+      )
+    })
+
+    // UI_GUIDE "애니메이션"이 화면 전환 애니메이션을 금지한다.
+    it('스크롤을 부드럽게 움직이지 않는다', () => {
+      const scrollIntoView = vi.fn()
+      vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(scrollIntoView)
+
+      renderPage('/topic/storage-topic#storage-topic.object-lock')
+
+      const [options] = scrollIntoView.mock.calls[0] ?? []
+      expect(options?.behavior).not.toBe('smooth')
+    })
+
+    it('해시가 없으면 스크롤을 건드리지 않는다', () => {
+      const scrollIntoView = vi.fn()
+      vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(scrollIntoView)
+
+      renderPage('/topic/storage-topic')
+
+      expect(scrollIntoView).not.toHaveBeenCalled()
+    })
+
+    // 개념 id는 `storage-topic.classes`처럼 점을 품는다. CSS 선택자로 읽으면
+    // 점이 클래스 구분자로 해석돼 아무것도 못 찾는다.
+    it('점이 든 개념 id도 찾아낸다', () => {
+      const scrollIntoView = vi.fn()
+      vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(scrollIntoView)
+
+      renderPage('/topic/storage-topic#storage-topic.classes')
+
+      expect(scrollIntoView.mock.instances[0]).toBe(
+        document.getElementById('storage-topic.classes'),
+      )
+    })
+
+    // 다른 주제의 개념을 가리키는 등 이 화면에 없는 해시로 들어올 수 있다.
+    it('없는 개념을 가리키면 아무 일도 일어나지 않는다', () => {
+      const scrollIntoView = vi.fn()
+      vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(scrollIntoView)
+
+      renderPage('/topic/storage-topic#storage-topic.does-not-exist')
+
+      expect(scrollIntoView).not.toHaveBeenCalled()
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('스토리지 주제')
+    })
+
+    it('개념마다 id와 헤더 높이만큼의 스크롤 여백을 둔다', () => {
+      renderPage('/topic/storage-topic')
+
+      const article = document.getElementById('storage-topic.object-lock')
+
+      expect(article).not.toBeNull()
+      expect(article).toHaveClass('scroll-mt-24')
+    })
   })
 })
