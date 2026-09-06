@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "dump-gaps-151",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T19:37:36+0900",
+      "summary": "Q151–Q200에서 앱에 없는 개념 37개를 뽑아 docs/source/dump-gaps/Q151-Q200.md에 기록. 기존 182개념·앞 step 112개념과 중복 0, 인용 37/37이 [Q번호 p쪽] 형식. 주요 항목: neptune·neptune-streams·aurora-pgvector·lambda-snapstart·gateway-load-balancer·s3-access-point·s3-multi-region-access-point·eks-connector·amazon-mq·cloudtrail-data-events. Athena DynamoDB 커넥터가 읽기 용량을 쓰지 않는다는 서술(Q179)은 사실 오류라 싣지 않았고, SSE-KMS 정답과 문제문이 어긋나는 Q182는 가져온 사실만 밝혀 두었다. [AI 작성 해설] 4건(Q165·Q166·Q170·Q185)은 교차 확인이 안 돼 '원본 수정 이력'에 남겼다. _index.md에 37줄 등록됨.",
+      "completed_at": "2026-09-06T19:56:23+0900"
     },
     {
       "step": 5,
