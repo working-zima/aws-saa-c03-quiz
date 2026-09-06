@@ -133,7 +133,10 @@
     {
       "step": 16,
       "name": "dump-gaps-751",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T22:17:47+0900",
+      "summary": "Q751–Q800에서 앱에 없는 개념 13개를 뽑아 docs/source/dump-gaps/Q751-Q800.md에 기록. 기존 182개념·앞 step 396개념과 중복 0, 인용 13/13이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: iam-requested-region-condition·efs-posix-permissions·fsx-lustre-s3-data-repository-association·efs-replication-one-way·application-migration-service·transfer-deadline-vs-bandwidth·alb-listener-rule-fixed-response·cloudfront-reduces-data-transfer-cost·serverless-runtime-no-os-access·step-functions-express-workflow·emr-security-configuration·s3-account-level-public-access-block·block-public-access-allows-explicit-grants. NLB가 세션 어피니티를 지원하지 않는다는 서술(Q795)과 보기에 없는 스토리지 유형을 오답 설명에 쓴 Q763은 근거로 삼지 않고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q777, aws:MultiFactorAuthPresent)은 교차 확인이 안 돼 채택하지 않았다. 이 슬라이스는 중복 비율이 높아 27문항이 기존 개념으로 풀린다. _index.md에 13줄 등록됨.",
+      "completed_at": "2026-09-06T22:27:43+0900"
     },
     {
       "step": 17,
