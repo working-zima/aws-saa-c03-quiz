@@ -575,3 +575,48 @@ ADR-009의 전사 금지 취지와 정면으로 부딪힌다 — 이 해설집�
 **트레이드오프**: 출처가 넷이 되어 검수 기준이 하나 더 늘었다. 대신 모든 항목에
 `[Q번호 p쪽]` 인용을 붙여 어느 해설에서 왔는지 되짚을 수 있게 한다. `exam-gaps.md`가
 `[섹션 #문항 pP]`로 한 것과 같고, 이 덤프는 문항 번호가 전체에서 유일해 섹션명이 필요 없다.
+
+### ADR-022: 카테고리를 13종에서 15종으로 넓힌다 (ADR-019 "카테고리 이름 13종" 개정)
+**결정**: ADR-019가 고정한 카테고리 목록에 두 종을 더해 **15종**으로 한다.
+
+| 표기 | 백서 카테고리 |
+| --- | --- |
+| `기계 학습(Machine Learning and Artificial Intelligence)` | Machine Learning (ML) and Artificial Intelligence (AI) |
+| `프런트엔드 웹 및 모바일(Front-end Web and Mobile)` | Front-end web and mobile |
+
+출처는 바뀌지 않는다. ADR-019가 정한 그 백서, 그 페이지의 같은 목록이다.
+`src/data/data.test.ts`의 `categories`가 15종을 선언하고 표기를 강제한다.
+
+**이유**: phase 26이 들여오는 서비스 여덟이 13종 밖 카테고리였다.
+`SageMaker AI`·`Comprehend`·`Rekognition`·`Lex`·`Transcribe`·`Translate`·`Textract`가
+Machine Learning (ML) and Artificial Intelligence (AI)이고 `Amplify`가 Front-end web and mobile이다.
+앞의 일곱은 새 주제 `ai-ml-services` 전체다. 13종을 그대로 두면 **그 주제가 만드는 개념에
+카테고리 한 줄이 하나도 붙지 않는다.** ADR-019가 이 문장을 넣은 목적은 학습자가 "이게 무슨
+갈래의 서비스인지" 모른 채 읽는 것을 막는 것이었는데, 하필 가장 낯선 주제가 통째로 빠지면
+그 목적이 그 자리에서만 무너진다. **사용자가 판단해 허용했다.**
+
+**이것은 출처가 늘어나는 것이 아니다**: ADR-019가 13종으로 못박은 것은 목록이 슬금슬금
+늘어나는 것을 막기 위해서였지, 13이라는 수가 백서의 전부여서가 아니다. 백서는 21종을 싣고
+있고 13종은 그중 **그때 앱에 서비스가 있던 것만**이었다. 앱에 없는 서비스의 카테고리를
+미리 적어 둘 이유가 없었을 뿐이다. 이번에 그 서비스들이 들어오므로 같은 목록에서 두 종을
+더 쓴다. 여전히 백서에 없는 카테고리를 만들지 않고, 모델이 아는 분류로 채우지도 않는다.
+
+**표기에서 괄호 약어를 뺀다**: 백서의 이름은 `Machine Learning (ML) and Artificial
+Intelligence (AI)`인데 표기는 `기계 학습(Machine Learning and Artificial Intelligence)`으로
+적는다. 이유는 두 가지다. 표기 형식이 `한글 이름(백서 영문 이름)`이라 괄호가 중첩되고,
+이 표기는 개념 본문 문장 안으로 들어가 `SageMaker AI는 AWS 분류로는 기계 학습(...) 쪽
+서비스다`가 되므로 읽기가 어려워진다. `(ML)`·`(AI)`는 바로 앞 단어를 줄인 것이라 빼도
+가리키는 대상이 달라지지 않는다. 기존 13종도 백서의 문장형 대소문자(`Networking and content
+delivery`)를 제목형(`Networking and Content Delivery`)으로 고쳐 적고 있어 같은 성격의
+정규화다. 백서의 원래 이름은 `service-categories.md`에 그대로 남겨 대조할 수 있게 한다.
+
+**주제 배치는 여전히 옮기지 않는다**: ADR-019의 "주제를 옮기지 않는다"는 그대로다.
+`Amplify`는 `api-gateway-step-functions` 주제에 있으면서 카테고리만 프런트엔드 웹 및 모바일로
+밝힌다. 어긋나는 자리는 `service-categories.md`의 "주제 배치와 어긋나는 자리"에 적는다.
+
+**트레이드오프**: `data.test.ts`의 「선언한 카테고리 집합 = 실제로 쓰인 카테고리 집합」
+등식이 깨진다. 새 두 종은 step 11(`Amplify`)과 step 20(`ai-ml-services`)이 개념을 만들 때까지
+아무도 쓰지 않기 때문이다. 등식을 **부분집합 검사**로 바꾼다 — 이 단언의 목적인 "선언 밖의
+표기를 쓰지 않는다"는 그대로 지켜지고, 선언만 해 두고 아직 안 쓰는 상태를 허용한다.
+대신 "선언했는데 끝내 아무도 안 쓰는 카테고리"를 테스트가 잡아주지 못하게 되므로,
+목록을 늘릴 때는 이 ADR과 `service-categories.md`를 함께 고치는 규칙이 더 중요해진다.

@@ -7,7 +7,7 @@
 - `/CLAUDE.md` — 특히 "아키텍처 규칙"과 "원본 데이터" 절
 - `/docs/PRD.md` — **특히 "사용자"와 "목표" 절.** 이 step의 판단 기준이다.
 - `/docs/ARCHITECTURE.md` — "데이터 모델", "주제 간 이동", "개념·주제 검색"
-- `/docs/ADR.md` — ADR-019(카테고리 한 줄), ADR-021(덤프 해설의 지위)
+- `/docs/ADR.md` — ADR-019·ADR-022(카테고리 한 줄. 카테고리는 15종이다), ADR-021(덤프 해설의 지위)
 - `/docs/source/dump-gaps/README.md` — 이 개념들이 어떻게 만들어졌는지
 - `/docs/source/dump-gaps/_index.md` — **새 개념 436개의 목록.** slug와 한 줄 제목이 전부 있다.
 - `/src/data/topics.json` — **현재 20개 주제·개념 182개.** 재편 대상.

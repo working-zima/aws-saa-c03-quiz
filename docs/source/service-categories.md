@@ -53,9 +53,13 @@
 서비스의 사양·제약·비교는 여전히 `concepts-raw.md`와 `exam-gaps.md`에서만 가져온다.
 ADR-010이 세운 기준("이 사실이 어떤 문항의 정답 근거가 될 수 있는가")은 그대로 살아 있다.
 
-## 카테고리 13종
+## 카테고리 15종
 
 앱에 쓰는 표기는 `한글 이름(백서의 영문 이름)`이다.
+
+마지막 두 종은 phase 26에서 더했다. 근거는 ADR-022이고, 출처는 위와 같은 백서
+같은 페이지다. 백서는 카테고리 21종을 싣고 있는데 앞의 13종은 **그때 앱에 서비스가
+있던 것만** 적어 둔 것이었다.
 
 | 표기 | 백서 카테고리 |
 | --- | --- |
@@ -72,6 +76,15 @@ ADR-010이 세운 기준("이 사실이 어떤 문항의 정답 근거가 될 �
 | `클라우드 재무 관리(Cloud Financial Management)` | Cloud Financial Management |
 | `개발자 도구(Developer Tools)` | Developer tools |
 | `비즈니스 애플리케이션(Business Applications)` | Business applications |
+| `기계 학습(Machine Learning and Artificial Intelligence)` | Machine Learning (ML) and Artificial Intelligence (AI) |
+| `프런트엔드 웹 및 모바일(Front-end Web and Mobile)` | Front-end web and mobile |
+
+표기의 영문은 백서의 문장형 대소문자를 제목형으로 고쳐 적는다
+(`Networking and content delivery` → `Networking and Content Delivery`).
+`기계 학습`은 여기에 더해 **괄호 약어를 뺐다.** 백서의 이름이
+`Machine Learning (ML) and Artificial Intelligence (AI)`라 표기 형식의 괄호와 중첩되고,
+이 표기가 개념 본문 문장 안으로 들어가면 읽기 어려워지기 때문이다. `(ML)`·`(AI)`는
+바로 앞 단어를 줄인 것이라 빼도 가리키는 대상이 달라지지 않는다. 근거는 ADR-022.
 
 ## 주제 배치와 어긋나는 자리
 
@@ -102,6 +115,7 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
 | `Elastic Disaster Recovery` | `backup-disaster-recovery` | 스토리지 (AWS Backup과 같은 자리) |
 | `Resource Access Manager` | `governance-iac` | 보안·자격 증명·규정 준수 |
 | `Audit Manager` | `organizations-cloudtrail-config` | 보안·자격 증명·규정 준수 |
+| `Amplify` | `api-gateway-step-functions` | 프런트엔드 웹 및 모바일 |
 
 ## 매핑 — 개념 75개
 
@@ -231,10 +245,21 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
 | Application Migration Service | Application Migration Service는 | 마이그레이션 및 전송 | |
 | Elastic Disaster Recovery | Elastic Disaster Recovery는 | 스토리지 | |
 | Cost and Usage Report | Cost and Usage Report는 | 클라우드 재무 관리 | |
+| SageMaker AI | SageMaker AI는 | 기계 학습 | |
+| Comprehend | Comprehend는 | 기계 학습 | |
+| Rekognition | Rekognition은 | 기계 학습 | |
+| Lex | Lex는 | 기계 학습 | |
+| Transcribe | Transcribe는 | 기계 학습 | |
+| Translate | Translate는 | 기계 학습 | |
+| Textract | Textract는 | 기계 학습 | |
+| Amplify | Amplify는 | 프런트엔드 웹 및 모바일 | |
 
-30개다. 카테고리별 분포는 컴퓨팅 6 · 보안·자격 증명·규정 준수 6 · 관리 및 거버넌스 5 ·
-마이그레이션 및 전송 3 · 분석 3 · 컨테이너 2 · 데이터베이스 2 · 애플리케이션 통합 1 ·
-스토리지 1 · 클라우드 재무 관리 1이다.
+38개다. 카테고리별 분포는 기계 학습 7 · 컴퓨팅 6 · 보안·자격 증명·규정 준수 6 ·
+관리 및 거버넌스 5 · 마이그레이션 및 전송 3 · 분석 3 · 컨테이너 2 · 데이터베이스 2 ·
+애플리케이션 통합 1 · 스토리지 1 · 클라우드 재무 관리 1 · 프런트엔드 웹 및 모바일 1이다.
+
+마지막 여덟은 **처음에 "카테고리 없음"으로 뺐다가 되돌린 것이다.** 백서 카테고리가
+그때의 13종 밖이었기 때문인데, ADR-022가 13종을 15종으로 넓히면서 붙일 수 있게 됐다.
 
 `보조`란의 뜻은 위 표와 같다. 둘뿐이다.
 
@@ -251,30 +276,11 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
 ## 카테고리 없음
 
 아래 서비스는 카테고리 한 줄을 **붙이지 않는다.** 뒤 step은 이 절을 보고 건너뛴다.
-사유가 두 갈래라 나눠 적는다.
 
-### 백서 카테고리가 확정된 13종 밖이다
-
-여덟이다. 백서에는 분명히 실려 있지만, 그 카테고리가 이 앱이 쓰는 13종에 없다.
-**13종을 늘리는 것은 ADR-019 개정 사안이므로 이 파일에서 임의로 늘리지 않는다.**
-`data.test.ts`의 `serviceCategories`가 표기까지 강제하고 있어, 새 이름을 여기 적으면
-검사와 어긋난 채로 남는다.
-
-| 서비스 | 백서 카테고리(13종 밖) |
-| --- | --- |
-| SageMaker AI | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Comprehend | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Rekognition | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Lex | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Transcribe | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Translate | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Textract | Machine Learning (ML) and Artificial Intelligence (AI) |
-| Amplify | Frontend web and mobile |
-
-앞의 일곱은 `ai-ml-services` 주제(step 20) 전체이고, `Amplify`는
-`api-gateway-step-functions`로 가는 개념 하나(step 20)다. 즉 **step 20이 만드는 개념에는
-카테고리 한 줄이 하나도 붙지 않는다.** ADR-019가 "182개 중 107개는 대상이 아니다"라고 한 것과
-같은 상태이지 결함이 아니다.
+**한때 여기 있다가 빠진 여덟이 있다.** `SageMaker AI`·`Comprehend`·`Rekognition`·`Lex`·
+`Transcribe`·`Translate`·`Textract`·`Amplify`는 백서 카테고리가 그때의 13종 밖이라
+처음에 이 절에 넣었는데, ADR-022가 13종을 15종으로 넓히면서 위 "phase 26에서 들어오는
+서비스" 표로 옮겼다. **지금은 카테고리 한 줄을 붙인다.**
 
 ### 백서에서도 보조 출처에서도 카테고리를 찾지 못했다
 

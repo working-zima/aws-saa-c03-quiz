@@ -7,7 +7,7 @@
 - `/CLAUDE.md` — 특히 "아키텍처 규칙"과 "원본 데이터" 절
 - `/docs/PRD.md` — "사용자"·"목표" 절. 개념을 다듬을 때의 기준이다.
 - `/docs/ARCHITECTURE.md` — "데이터 모델", "주제 간 이동", "테스트 경계"
-- `/docs/ADR.md` — ADR-019(카테고리 한 줄), ADR-021(덤프 해설의 지위), ADR-009(전사 금지)
+- `/docs/ADR.md` — ADR-019·ADR-022(카테고리 한 줄. 카테고리는 15종이다), ADR-021(덤프 해설의 지위), ADR-009(전사 금지)
 - `/docs/source/dump-gaps/topic-plan.md` — **step 0이 정한 주제 골격. 이 step의 설계도다.**
 - `/docs/source/service-categories.md` — 카테고리 한 줄의 유일한 근거. "phase 26에서 들어오는 서비스" 절을 봐라.
 - `/src/types/content.ts` — `Topic`·`Concept` 타입

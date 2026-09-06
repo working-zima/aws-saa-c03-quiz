@@ -1265,6 +1265,9 @@ describe('학습 데이터 무결성', () => {
     finance: '클라우드 재무 관리(Cloud Financial Management)',
     devTools: '개발자 도구(Developer Tools)',
     business: '비즈니스 애플리케이션(Business Applications)',
+    // ADR-022로 더한 둘. phase 26이 개념을 만들기 전까지는 아직 쓰이지 않는다.
+    machineLearning: '기계 학습(Machine Learning and Artificial Intelligence)',
+    frontend: '프런트엔드 웹 및 모바일(Front-end Web and Mobile)',
   } as const
 
   // 절약 플랜만 서술이 다르다. 백서가 서비스가 아니라 pricing model로 소개하기 때문이다.
@@ -1391,12 +1394,14 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 표기가 백서의 13종을 벗어나지 않는다', () => {
+  it('카테고리 표기가 백서의 15종을 벗어나지 않는다', () => {
     const declared = Object.values(categories)
     const used = new Set(serviceCategories.map(([, , key]) => categories[key]))
 
-    expect(declared).toHaveLength(13)
-    expect([...used].sort()).toEqual([...declared].sort())
+    // ADR-022. 선언한 15종 밖의 표기를 쓰지 않는지만 본다. 등식이 아닌 이유는
+    // 기계 학습·프런트엔드 웹 및 모바일이 아직 어느 개념에도 쓰이지 않아서다.
+    expect(declared).toHaveLength(15)
+    used.forEach((name) => expect(declared).toContain(name))
   })
 
   it('카테고리 문장이 문항 프롬프트나 해설로 새지 않는다', () => {
