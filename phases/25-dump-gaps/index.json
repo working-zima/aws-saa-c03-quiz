@@ -93,7 +93,9 @@
     {
       "step": 11,
       "name": "dump-gaps-501",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:16:40+0900",
+      "summary": "Q501–Q550에서 앱에 없는 개념 25개를 뽑아 docs/source/dump-gaps/Q501-Q550.md에 기록. 기존 182개념·앞 step 281개념과 중복 0, 인용 25/25가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: efs-one-zone·efs-throughput-modes·io2-block-express-iops-ceiling·rds-encrypt-existing-instance·dynamodb-export-requires-pitr·dynamodb-global-secondary-index·api-gateway-custom-domain-name·api-gateway-rest-vs-http-timeout·eks-fargate-pod-isolation·sqs-fifo-message-group-id·ses-inbound-email-receiving·iam-notaction-deny·cloudtrail-log-file-validation·comprehend. AD Connector를 ALB에 붙여 인증한다는 서술(Q517), 이벤트 버스가 구성 변경을 추적하지 못한다는 서술(Q507), 동기/비동기가 뒤바뀐 문장(Q548)은 싣지 않고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q506, EKS 파드 권한 분리)은 사실이 eks-irsa와 중복이고 RBAC 서술은 교차 확인이 안 돼 채택하지 않았다. _index.md에 25줄 등록됨."
     },
     {
       "step": 12,
