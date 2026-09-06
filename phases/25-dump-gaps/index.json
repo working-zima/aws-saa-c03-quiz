@@ -151,7 +151,8 @@
       "name": "dump-gaps-851",
       "status": "completed",
       "started_at": "2026-09-06T22:44:49+0900",
-      "summary": "Q851–Q880에서 앱에 없는 개념 9개를 뽑아 docs/source/dump-gaps/Q851-Q880.md에 기록. 기존 182개념·앞 step 435개념과 중복 0, 인용 9/9가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 항목: lambda-at-edge-origin-selection-by-viewer-location·gpu-instance-family·api-gateway-ip-restriction-by-resource-policy·ebs-fast-snapshot-restore·glue-etl-with-per-customer-kms-key·emr-node-instance-family-choice·elasticache-not-a-durable-store·inspector-scans-ecr-images·iam-user-is-account-scoped. Cost Explorer가 정기 보고서를 이메일로 예약 발송한다는 서술(Q866)은 같은 해설이 오답으로 민 AWS Budgets 쪽 기능이라 근거로 삼지 않고 '원본 수정 이력'에 남겼고, [AI 작성 해설] 1건(Q879, 선불 비중·절약 플랜 유형별 할인율)은 교차 확인이 안 돼 채택하지 않았다. 중복으로 풀린 문항 21개는 근거 개념과 함께 적었다. _index.md에 9줄 등록됨."
+      "summary": "Q851–Q880에서 앱에 없는 개념 9개를 뽑아 docs/source/dump-gaps/Q851-Q880.md에 기록. 기존 182개념·앞 step 435개념과 중복 0, 인용 9/9가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 항목: lambda-at-edge-origin-selection-by-viewer-location·gpu-instance-family·api-gateway-ip-restriction-by-resource-policy·ebs-fast-snapshot-restore·glue-etl-with-per-customer-kms-key·emr-node-instance-family-choice·elasticache-not-a-durable-store·inspector-scans-ecr-images·iam-user-is-account-scoped. Cost Explorer가 정기 보고서를 이메일로 예약 발송한다는 서술(Q866)은 같은 해설이 오답으로 민 AWS Budgets 쪽 기능이라 근거로 삼지 않고 '원본 수정 이력'에 남겼고, [AI 작성 해설] 1건(Q879, 선불 비중·절약 플랜 유형별 할인율)은 교차 확인이 안 돼 채택하지 않았다. 중복으로 풀린 문항 21개는 근거 개념과 함께 적었다. _index.md에 9줄 등록됨.",
+      "completed_at": "2026-09-06T22:56:53+0900"
     }
   ],
   "created_at": "2026-09-05T21:56:37+0900"
