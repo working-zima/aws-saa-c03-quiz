@@ -64,7 +64,7 @@
       "status": "completed",
       "started_at": "2026-09-06T20:32:07+0900",
       "summary": "Q301–Q350에서 앱에 없는 개념 23개를 뽑아 docs/source/dump-gaps/Q301-Q350.md에 기록. 기존 182개념·앞 step 194개념과 중복 0, 인용 23/23이 [Q번호 p쪽] 형식. 주요 항목: babelfish·dynamodb-capacity-modes·dynamodb-item-size-limit·permissions-boundary·emr-runtime-role·fargate-spot·eks-cluster-autoscaler·route53-alias-record·internal-load-balancer·cost-and-usage-report·imported-key-material-rotation·firehose-lambda-transformation. 가져온 키 자료의 자동 교체 서술(Q340)과 단일 EC2로 저지연 영상 서빙이 보장된다는 서술(Q327)을 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q338, Control Tower Account Factory)은 교차 확인이 안 돼 채택하지 않았다. _index.md에 23줄 등록됨.",
-      "completed_at": "2026-09-06T20:43:02+0900"
+      "completed_at": "2026-09-06T20:43:40+0900"
     },
     {
       "step": 8,
