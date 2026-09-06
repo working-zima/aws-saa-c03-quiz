@@ -2,5 +2,45 @@
 
 > step마다 새로 만든 개념을 한 줄씩 append한다. step이 18개로 나뉘어 있어
 > 앞 step이 무엇을 만들었는지 이 파일로만 알 수 있다 — step 간 중복 방지 장치다.
-> 형식: `- {topicId}.{conceptId} — 개념 이름 — [Q번호 p쪽]`
+> 형식: `- {concept-id} — {한 줄 제목} [Q{시작}-Q{끝}]`
+> topicId는 적지 않는다. 주제 배치는 phase 26에서 정한다.
 > 앱에 이미 있는 개념 182개는 `docs/source/concept-index.md`에서 확인한다.
+
+- s3-replication — S3 리전 간 복제 [Q001-Q050]
+- ebs-volume-type-names — EBS 볼륨 유형의 실제 이름 [Q001-Q050]
+- dms-sct — AWS DMS와 AWS SCT [Q001-Q050]
+- snowball-edge-compute — Snowball Edge는 데이터 전송 장비만이 아니다 [Q001-Q050]
+- rds-proxy-failover — RDS Proxy가 장애 조치에도 관여한다 [Q001-Q050]
+- aurora-endpoint-types — Aurora의 엔드포인트 종류 [Q001-Q050]
+- aurora-select-into-outfile-s3 — Aurora MySQL에서 S3로 바로 내보내기 [Q001-Q050]
+- dynamodb-global-tables — DynamoDB 글로벌 테이블 [Q001-Q050]
+- aurora-global-database-write-region — Aurora Global Database는 액티브-액티브가 아니다 [Q001-Q050]
+- elasticache-redis-vs-memcached — Redis와 Memcached의 갈림길 [Q001-Q050]
+- spot-allocation-strategy — 스팟 할당 전략 [Q001-Q050]
+- asg-instance-type-override — Auto Scaling 그룹의 인스턴스 유형 재정의 [Q001-Q050]
+- reserved-instance-types — 표준 예약 인스턴스와 전환 가능 예약 인스턴스 [Q001-Q050]
+- cloudfront-price-class — CloudFront 가격 등급 [Q001-Q050]
+- global-accelerator-static-ip — Global Accelerator의 고정 IP [Q001-Q050]
+- cloudfront-signed-url — CloudFront 서명된 URL [Q001-Q050]
+- lambda-provisioned-concurrency-autoscaling — 프로비저닝된 동시성은 고정값으로 두지 않는다 [Q001-Q050]
+- sns-fifo-topic — SNS FIFO 토픽 [Q001-Q050]
+- dead-letter-queue — 데드레터 큐(DLQ) [Q001-Q050]
+- sqs-batch-and-polling — SQS의 배치·가시성 타임아웃·롱 폴링 [Q001-Q050]
+- direct-connect-resiliency — Direct Connect 최대 복원력 구성 [Q001-Q050]
+- region-attached-edge-options — Local Zone·Outposts·Wavelength Zone은 리전 연결이 전제다 [Q001-Q050]
+- emr-node-types — EMR 클러스터의 세 가지 노드 [Q001-Q050]
+- emr-transient-cluster — 일시적 클러스터와 장기 실행 클러스터 [Q001-Q050]
+- lake-formation — AWS Lake Formation [Q001-Q050]
+- parquet-columnar-format — Apache Parquet [Q001-Q050]
+- kms-multi-region-key — KMS 다중 리전 키 [Q001-Q050]
+- abac — 속성 기반 액세스 제어(ABAC) [Q001-Q050]
+- iam-access-analyzer — IAM Access Analyzer [Q001-Q050]
+- network-access-analyzer — Network Access Analyzer [Q001-Q050]
+- scp-condition-exception — SCP에서 예외를 두는 방법 [Q001-Q050]
+- s3-presigned-url — S3 사전 서명된 URL [Q001-Q050]
+- s3-access-grants — S3 액세스 권한(Access Grants) [Q001-Q050]
+- cloudformation — AWS CloudFormation [Q001-Q050]
+- service-catalog — AWS Service Catalog [Q001-Q050]
+- control-tower-controls — Control Tower의 사전 예방적 제어와 탐지 제어 [Q001-Q050]
+- config-rule-remediation — AWS Config 규칙과 자동 수정 [Q001-Q050]
+- blob-offload-to-s3 — 큰 바이너리는 데이터베이스가 아니라 S3에 둔다 [Q001-Q050]
