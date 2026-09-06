@@ -48,7 +48,7 @@
       "status": "completed",
       "started_at": "2026-09-06T19:56:58+0900",
       "summary": "Q201–Q250에서 앱에 없는 개념 20개를 뽑아 docs/source/dump-gaps/Q201-Q250.md에 기록. 기존 182개념·앞 step 149개념과 중복 0, 인용 20/20이 [Q번호 p쪽] 형식. 주요 항목: lambda-function-url-iam-auth·cloudfront-functions·lambda-reserved-concurrency·sqs-visibility-timeout-vs-processing-time·aurora-storage-configurations·dax-encryption-at-rest·fsx-ontap-iscsi-block·efs-cross-account-mount·outposts-data-residency·emr-managed-scaling. Aurora I/O-Optimized의 과금 서술이 Aurora Standard 쪽과 뒤바뀐 것, Q238의 라우팅 테이블 공유 주장이 Q232와 어긋나는 것, Q245의 마지막 문장이 자기 정답과 어긋나는 것을 '원본 수정 이력'에 남겼다. [AI 작성 해설] 2건(Q220·Q237)은 교차 확인이 안 돼 채택하지 않았다. _index.md에 20줄 등록됨.",
-      "completed_at": "2026-09-06T20:07:00+0900"
+      "completed_at": "2026-09-06T20:07:09+0900"
     },
     {
       "step": 6,
