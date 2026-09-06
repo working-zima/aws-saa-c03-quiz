@@ -109,7 +109,10 @@
     {
       "step": 13,
       "name": "dump-gaps-601",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:41:56+0900",
+      "summary": "Q601–Q650에서 앱에 없는 개념 19개를 뽑아 docs/source/dump-gaps/Q601-Q650.md에 기록. 기존 182개념·앞 step 332개념과 중복 0, 인용 19/19가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: s3-secure-transport-condition·ebs-encryption-performance·gp3-iops-independent-of-size·efs-performance-modes·efs-mount-target-per-az·s3-multipart-upload·transfer-family-custom-hostname·rds-blue-green-deployment·rds-encryption-scope-and-in-transit·rds-pitr-transaction-log-interval·cache-requires-application-change·sqs-fifo-deduplication-id·alb-target-group-independent-scaling·security-hub·config-conformance-pack·access-analyzer-delegated-administrator. EFS를 Windows 인스턴스에 마운트할 수 있다는 서술(Q634)과 다중 AZ DB 클러스터가 RDS for MySQL에는 없다는 서술(Q646)은 싣지 않고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 19줄 등록됨.",
+      "completed_at": "2026-09-06T21:52:14+0900"
     },
     {
       "step": 14,
