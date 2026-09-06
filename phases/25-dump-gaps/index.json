@@ -72,7 +72,7 @@
       "status": "completed",
       "started_at": "2026-09-06T20:43:40+0900",
       "summary": "Q351–Q400에서 앱에 없는 개념 19개를 뽑아 docs/source/dump-gaps/Q351-Q400.md에 기록. 기존 182개념·앞 step 217개념과 중복 0, 인용 19/19가 [Q번호 p쪽] 형식. 주요 항목: elastic-beanstalk·elastic-fabric-adapter·cloudfront-field-level-encryption·cloudfront-geo-restriction·eks-secrets-kms-encryption·ecs-task-placement-strategy·backup-audit-manager·macie-automated-discovery·organizational-unit·root-user-multiple-mfa·ssm-managed-instance-core-policy·backup-and-restore-dr·s3-retrieval-fee-by-class. Transit Gateway가 본래 VPC 간 격리를 깬다는 서술(Q400)은 사실 오류라 싣지 않고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 19줄 등록됨.",
-      "completed_at": "2026-09-06T20:52:00+0900"
+      "completed_at": "2026-09-06T20:52:35+0900"
     },
     {
       "step": 9,
