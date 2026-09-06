@@ -15,9 +15,10 @@
   `storage-services.html`, `database.html`, `networking-services.html`,
   `application-integration.html`, `management-governance.html`, `security-services.html`,
   `migration-services.html`, `containers.html`, `aws-cost-management.html`,
-  `developer-tools.html`, `business-applications.html`
+  `developer-tools.html`, `business-applications.html`, `machine-learning.html`,
+  `mobile-services.html`
 
-백서의 카테고리별 **Topics 목록에 개별 항목이 없는** 서비스 셋은 보조 출처를 썼다.
+백서의 카테고리별 **Topics 목록에 개별 항목이 없는** 서비스는 보조 출처를 썼다.
 어느 것이 보조 출처인지는 아래 매핑 표에 표시했다.
 
 - `STS` — IAM 사용자 가이드 "Temporary security credentials in IAM".
@@ -27,8 +28,24 @@
   "Use AWS Billing and Cost Management for AWS". `Cost Explorer`·`Cost Anomaly Detection`·
   `Budgets`·`Savings Plans`를 모두 Billing and Cost Management의 기능으로 열거한다.
   <https://docs.aws.amazon.com/cost-management/latest/userguide/what-is-costmanagement.html>
+- `SCT` — AWS Database Migration Service 사용 설명서 "What is AWS Database Migration Service?".
+  DMS로 스키마를 변환하는 절차를 설명하면서 `AWS Schema Conversion Tool (AWS SCT)`을 내려받아
+  쓰는 길을 같은 흐름의 대안으로 적는다. 곧 SCT는 DMS 문서 안에서 DMS의 마이그레이션 절차로
+  다뤄진다. <https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html>
 
-확인 시점은 2026-09-04다.
+확인 시점은 2026-09-04다. **phase 26에서 더한 부분(아래 "phase 26에서 들어오는 서비스"와
+"카테고리 없음")의 확인 시점은 2026-09-07이다.**
+
+### 백서의 제목이 이 파일과 다른 셋
+
+2026-09-07에 다시 받아 보니 백서가 아래 셋을 다른 이름으로 적고 있었다. 링크와 앵커,
+본문이 같은 서비스를 가리키므로 그대로 근거로 쓰되, 다음에 대조할 때 헷갈리지 않도록 남긴다.
+
+| 이 파일의 이름 | 백서의 제목 | 확인한 근거 |
+| --- | --- | --- |
+| QuickSight | Quick | 앵커가 `#amazon-quicksight`이고 본문이 `QuickSight lets you create and publish interactive dashboards`로 이어진다 |
+| Application Migration Service | AWS Transform MGN | 링크가 `aws.amazon.com/application-migration-service`이고 약칭을 `AWS MGN`으로 적는다 |
+| Security Hub | AWS Security Hub CSPM | 링크가 `aws.amazon.com/security-hub`다 |
 
 ## 이 파일에서 가져와도 되는 것과 안 되는 것
 
@@ -73,6 +90,18 @@ ADR-010이 세운 기준("이 사실이 어떤 문항의 정답 근거가 될 �
 | `Parameter Store` | Secrets Manager와 같은 주제 | 관리 및 거버넌스 (Secrets Manager는 보안) |
 | `Trusted Advisor` | 비용 관리 | 관리 및 거버넌스 |
 | `Compute Optimizer` | 비용 관리 | 관리 및 거버넌스 |
+
+phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 개가 주제를 제목으로 적은 것과 달리
+아래는 **`topic-plan.md`가 정한 topicId**로 적는다 — phase 26이 주제를 재편하면서 제목이 바뀌기
+때문이다. 여기서도 주제를 옮기지 않는다.
+
+| 개념 | 이 앱의 주제 | 백서 카테고리 |
+| --- | --- | --- |
+| `Elastic Beanstalk` | `ecs-eks-fargate` | 컴퓨팅 (ECS·EKS·ECR은 컨테이너) |
+| `Managed Grafana` | `cloudwatch-xray` | 관리 및 거버넌스 (CloudWatch와 같은 자리) |
+| `Elastic Disaster Recovery` | `backup-disaster-recovery` | 스토리지 (AWS Backup과 같은 자리) |
+| `Resource Access Manager` | `governance-iac` | 보안·자격 증명·규정 준수 |
+| `Audit Manager` | `organizations-cloudtrail-config` | 보안·자격 증명·규정 준수 |
 
 ## 매핑 — 개념 75개
 
@@ -155,6 +184,114 @@ ADR-010이 세운 기준("이 사실이 어떤 문항의 정답 근거가 될 �
 | `cost-management.trusted-advisor` | Trusted Advisor | 관리 및 거버넌스 | |
 | `cost-management.compute-optimizer` | Compute Optimizer | 관리 및 거버넌스 | |
 | `cost-management.cost-anomaly-detection` | Cost Anomaly Detection | 클라우드 재무 관리 | 비용 관리 가이드 |
+
+## phase 26에서 들어오는 서비스
+
+`dump-gaps/`의 개념이 다루는 서비스 중 위 표에 없던 것들이다.
+개념 id는 step 2~20이 주제를 확정하면서 정해지므로 여기서는 **서비스 이름으로만** 적는다.
+각 step이 자기 개념에 한 줄을 붙일 때 이 표에서 주어와 카테고리를 가져간다.
+
+**표에 있다고 해서 그 개념에 문장을 붙이라는 뜻이 아니다.** 아래
+"카테고리 문장을 붙이지 않는 개념"의 세 기준은 그대로 적용된다 — 예를 들어
+`fargate-per-second-billing`처럼 사실·비교 개념이면 서비스가 이 표에 있어도 붙이지 않는다.
+한 서비스에 개념이 여럿 붙는 경우(`ssm-run-command`·`ssm-patch-manager` 등) 그중
+**그 서비스를 소개하는 개념 하나**에만 붙인다.
+
+`문장 주어`의 조사는 주어의 읽는 소리에 맞춰 여기서 확정했다. 뒤 step이 다시 정하지 마라.
+
+| 서비스 | 문장 주어 | 카테고리 | 보조 |
+| --- | --- | --- | --- |
+| Elastic Beanstalk | Elastic Beanstalk는 | 컴퓨팅 | |
+| EC2 Auto Scaling | EC2 Auto Scaling은 | 컴퓨팅 | |
+| EC2 Image Builder | EC2 Image Builder는 | 컴퓨팅 | |
+| Outposts | Outposts는 | 컴퓨팅 | |
+| Wavelength | Wavelength는 | 컴퓨팅 | |
+| Local Zones | Local Zones는 | 컴퓨팅 | 컴퓨팅 비교 표 |
+| ECR | ECR은 | 컨테이너 | |
+| App2Container | App2Container는 | 컨테이너 | |
+| Neptune | Neptune은 | 데이터베이스 | |
+| Timestream | Timestream은 | 데이터베이스 | |
+| Lake Formation | Lake Formation은 | 분석 | |
+| QuickSight | QuickSight는 | 분석 | |
+| Kinesis Video Streams | Kinesis Video Streams는 | 분석 | |
+| Amazon MQ | Amazon MQ는 | 애플리케이션 통합 | |
+| CloudFormation | CloudFormation은 | 관리 및 거버넌스 | |
+| Service Catalog | Service Catalog는 | 관리 및 거버넌스 | |
+| Control Tower | Control Tower는 | 관리 및 거버넌스 | |
+| Systems Manager | Systems Manager는 | 관리 및 거버넌스 | |
+| Managed Grafana | Managed Grafana는 | 관리 및 거버넌스 | |
+| Inspector | Inspector는 | 보안·자격 증명·규정 준수 | |
+| Security Hub | Security Hub는 | 보안·자격 증명·규정 준수 | |
+| Audit Manager | Audit Manager는 | 보안·자격 증명·규정 준수 | |
+| Firewall Manager | Firewall Manager는 | 보안·자격 증명·규정 준수 | |
+| Directory Service | Directory Service는 | 보안·자격 증명·규정 준수 | |
+| Resource Access Manager | Resource Access Manager는 | 보안·자격 증명·규정 준수 | |
+| DMS | DMS는 | 마이그레이션 및 전송 | |
+| SCT | SCT는 | 마이그레이션 및 전송 | DMS 가이드 |
+| Application Migration Service | Application Migration Service는 | 마이그레이션 및 전송 | |
+| Elastic Disaster Recovery | Elastic Disaster Recovery는 | 스토리지 | |
+| Cost and Usage Report | Cost and Usage Report는 | 클라우드 재무 관리 | |
+
+30개다. 카테고리별 분포는 컴퓨팅 6 · 보안·자격 증명·규정 준수 6 · 관리 및 거버넌스 5 ·
+마이그레이션 및 전송 3 · 분석 3 · 컨테이너 2 · 데이터베이스 2 · 애플리케이션 통합 1 ·
+스토리지 1 · 클라우드 재무 관리 1이다.
+
+`보조`란의 뜻은 위 표와 같다. 둘뿐이다.
+
+- `Local Zones` — 백서 컴퓨팅 페이지에 있지만 Topics 목록이 아니라 그 페이지의
+  "Compare AWS compute services" 표의 `Edge and hybrid` 줄에 있다. 같은 카테고리 페이지이므로
+  근거로 쓰되 자리가 다르다는 것을 표시한다.
+- `SCT` — 위 "출처"의 AWS DMS 사용 설명서다.
+
+`Auto Scaling`은 백서가 둘로 나눠 싣는다. **`Amazon EC2 Auto Scaling`은 컴퓨팅**,
+**`AWS Auto Scaling`은 관리 및 거버넌스**다. 이 앱의 개념(`asg-*`·`predictive-scaling`·
+`target-tracking-vs-simple-scaling`)은 전부 EC2 인스턴스를 늘리고 줄이는 이야기이므로
+컴퓨팅 쪽을 쓴다. 둘을 섞지 마라.
+
+## 카테고리 없음
+
+아래 서비스는 카테고리 한 줄을 **붙이지 않는다.** 뒤 step은 이 절을 보고 건너뛴다.
+사유가 두 갈래라 나눠 적는다.
+
+### 백서 카테고리가 확정된 13종 밖이다
+
+여덟이다. 백서에는 분명히 실려 있지만, 그 카테고리가 이 앱이 쓰는 13종에 없다.
+**13종을 늘리는 것은 ADR-019 개정 사안이므로 이 파일에서 임의로 늘리지 않는다.**
+`data.test.ts`의 `serviceCategories`가 표기까지 강제하고 있어, 새 이름을 여기 적으면
+검사와 어긋난 채로 남는다.
+
+| 서비스 | 백서 카테고리(13종 밖) |
+| --- | --- |
+| SageMaker AI | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Comprehend | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Rekognition | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Lex | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Transcribe | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Translate | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Textract | Machine Learning (ML) and Artificial Intelligence (AI) |
+| Amplify | Frontend web and mobile |
+
+앞의 일곱은 `ai-ml-services` 주제(step 20) 전체이고, `Amplify`는
+`api-gateway-step-functions`로 가는 개념 하나(step 20)다. 즉 **step 20이 만드는 개념에는
+카테고리 한 줄이 하나도 붙지 않는다.** ADR-019가 "182개 중 107개는 대상이 아니다"라고 한 것과
+같은 상태이지 결함이 아니다.
+
+### 백서에서도 보조 출처에서도 카테고리를 찾지 못했다
+
+다섯이다. 근거 없이 채우지 않는다.
+
+| 서비스 | 찾지 못한 근거 |
+| --- | --- |
+| Amazon QLDB | 백서 데이터베이스 Topics 목록에 없다. 개발자 안내서 URL(`docs.aws.amazon.com/qldb/latest/developerguide/what-is.html`)도 404다 |
+| AWS ParallelCluster | 백서 컴퓨팅 Topics 목록에 없다. 오픈소스 클러스터 관리 도구라 백서가 다루는 서비스 목록에 오르지 않는다 |
+| Workload Discovery on AWS | 백서 어느 카테고리 Topics 목록에도 없다. 이름대로 AWS Solutions 쪽 솔루션이지 백서가 세는 서비스가 아니다 |
+| AWS AppConfig | 백서 관리 및 거버넌스·개발자 도구 Topics 목록 어디에도 없다. Systems Manager 사용 설명서의 도구 목록에도 AppConfig가 없어 보조 출처로도 잇지 못했다 |
+| AWS Glue DataBrew | 백서 분석 Topics 목록에 `AWS Glue`는 있지만 `DataBrew`가 개별 항목으로 없다 |
+
+`Network Access Analyzer`·`IAM Access Analyzer`·`IAM Roles Anywhere`·`RDS Proxy`·
+`Data Lifecycle Manager`·`Redshift Spectrum`·`Glue Crawler`·`Backup Audit Manager`·
+`EC2 Instance Connect`·`Route 53 Resolver`처럼 **이미 표에 있는 서비스의 기능**은 이 절의
+대상이 아니다. 아래 "카테고리 문장을 붙이지 않는 개념"의 기준 2가 이미 덮는다.
 
 ## 문장 형태
 
