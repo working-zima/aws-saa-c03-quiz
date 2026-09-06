@@ -29,10 +29,10 @@
     {
       "step": 3,
       "name": "dump-gaps-101",
-      "status": "error",
+      "status": "completed",
       "started_at": "2026-09-06T11:22:15+0900",
-      "error_message": "[3회 시도 후 실패] Step did not update status",
-      "failed_at": "2026-09-06T11:34:59+0900"
+      "summary": "Q101–Q150에서 앱에 없는 개념 44개를 뽑아 docs/source/dump-gaps/Q101-Q150.md에 기록. 기존 182개념·앞 step 68개념과 중복 0, 인용 44/44가 [Q번호 p쪽] 형식. 주요 항목: fsx-for-lustre·fsx-windows-file-server·s3-object-lambda·redshift-spectrum·ssm-session-manager·identity-center-permission-set·direct-connect-vif-types·elastic-disaster-recovery. CloudWatch Network Monitor의 옛 이름 서술(Q144)과 S3 RTC 복제 비율(Q110)이 실제와 어긋나 본문에서 고치고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 44줄 등록됨.",
+      "completed_at": "2026-09-06T11:34:59+0900"
     },
     {
       "step": 4,
