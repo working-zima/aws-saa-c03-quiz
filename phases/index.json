@@ -128,6 +128,10 @@
       "dir": "25-dump-gaps",
       "status": "completed",
       "completed_at": "2026-09-06T22:56:53+0900"
+    },
+    {
+      "dir": "26-concept-merge",
+      "status": "pending"
     }
   ]
 }

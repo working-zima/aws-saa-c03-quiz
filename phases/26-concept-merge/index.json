@@ -1,0 +1,116 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "26-concept-merge",
+  "steps": [
+    {
+      "step": 0,
+      "name": "topic-plan",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "service-categories-extend",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "merge-core-s3",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "merge-s3-access",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "merge-block-file",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "merge-data-transfer",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "merge-rds",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "merge-aurora-dynamodb",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "merge-ec2-elb",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "merge-cloudfront-edge",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "merge-lambda",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "merge-containers-apigw",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "merge-messaging",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "merge-backup-dr",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "merge-vpc-hybrid",
+      "status": "pending"
+    },
+    {
+      "step": 15,
+      "name": "merge-analytics",
+      "status": "pending"
+    },
+    {
+      "step": 16,
+      "name": "merge-monitoring-dns",
+      "status": "pending"
+    },
+    {
+      "step": 17,
+      "name": "merge-identity",
+      "status": "pending"
+    },
+    {
+      "step": 18,
+      "name": "merge-security",
+      "status": "pending"
+    },
+    {
+      "step": 19,
+      "name": "merge-cost-governance",
+      "status": "pending"
+    },
+    {
+      "step": 20,
+      "name": "merge-ai-ml",
+      "status": "pending"
+    },
+    {
+      "step": 21,
+      "name": "docs-update",
+      "status": "pending"
+    }
+  ]
+}
