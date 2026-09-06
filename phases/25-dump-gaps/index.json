@@ -56,7 +56,7 @@
       "status": "completed",
       "started_at": "2026-09-06T20:20:26+0900",
       "summary": "Q251–Q300에서 앱에 없는 개념 25개를 뽑아 docs/source/dump-gaps/Q251-Q300.md에 기록. 기존 182개념·앞 step 169개념과 중복 0, 인용 25/25가 [Q번호 p쪽] 형식. 주요 항목: vpc-flow-logs·spread-placement-group·ebs-encryption-by-default·cloudfront-signed-cookie·cloudfront-multiple-origins·nlb-ip-targets·backup-cross-account-copy·organizations-backup-policy·backup-s3-continuous-backup·ec2-detailed-monitoring·s3-website-endpoint-no-https. ALB가 IP 대상을 지원하지 않는다는 서술(Q270), 상세 모니터링으로 메모리를 본다는 서술(Q276), 인터페이스 엔드포인트에 라우팅 경로가 필요하다는 서술(Q262), 프라이빗 서브넷이 공용 IP를 지원하지 않는다는 서술(Q255)을 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q275)은 사실이 모두 기존 개념과 중복이라 넘겼다. _index.md에 25줄 등록됨.",
-      "completed_at": "2026-09-06T20:32:00+0900"
+      "completed_at": "2026-09-06T20:32:06+0900"
     },
     {
       "step": 7,
