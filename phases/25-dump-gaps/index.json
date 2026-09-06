@@ -117,7 +117,9 @@
     {
       "step": 14,
       "name": "dump-gaps-651",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:52:59+0900",
+      "summary": "Q651–Q700에서 앱에 없는 개념 16개를 뽑아 docs/source/dump-gaps/Q651-Q700.md에 기록. 기존 182개념·앞 step 351개념과 중복 0, 인용 16/16이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: eks-compute-options·app2container·step-functions-map-state·ecr-image-scan-on-push·cloudfront-alb-origin-access-restriction·waf-rate-based-rule·shield-advanced-protection-group·secrets-manager-batch-get-secret-value·dynamodb-streams-retention-24h·aurora-continuous-backup-rpo·aurora-serverless-max-acu·fsx-ontap-multi-protocol-tiering·datasync-manifest. Q151-Q200이 [AI 작성 해설]이라 미뤄 둔 ECR 푸시 시 스캔이 Q691의 원본 해설로 교차 확인돼 개념으로 만들었다. VPC 피어링으로 다른 계정의 S3 버킷에 닿는다는 서술(Q651), CloudFront에 VPC 오리진이 없다는 서술(Q656), Step Functions에 TestState API가 없다는 서술(Q680)은 싣지 않고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 16줄 등록됨."
     },
     {
       "step": 15,
