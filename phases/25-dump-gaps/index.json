@@ -141,7 +141,10 @@
     {
       "step": 17,
       "name": "dump-gaps-801",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T22:28:25+0900",
+      "summary": "Q801–Q850에서 앱에 없는 개념 18개를 뽑아 docs/source/dump-gaps/Q801-Q850.md에 기록. 기존 182개념·앞 step 409개념과 중복 0, 인용 18/18이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: saml-federation-role-to-ad-group-mapping·config-custom-rule·waf-logging-to-firehose·waf-web-acl-region-must-match-rest-api·firewall-manager·memory-optimized-instance-family·lambda-at-edge-response-compression·nat-gateway-elastic-ip·s3-inventory-report·s3-batch-operations-lambda-invoke·data-lifecycle-manager·fsx-lustre-sub-millisecond-latency·transfer-family-service-managed-users·eventbridge-resource-change-rule·rds-custom-byol·aurora-cross-region-read-replica·s3-requester-pays·amazon-lex. 법적 보존이 덮어쓰기를 막지 못한다는 서술(Q839)은 객체 잠금이 객체 버전을 양쪽에서 보호하므로 싣지 않고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q802, Glacier 객체당 오버헤드 32KB·8KB와 최소 과금 128KB)은 교차 확인이 안 돼 채택하지 않았다. 중복으로 풀린 문항 32개는 '중복이라 새로 만들지 않은 것'에 근거 개념과 함께 적었다. _index.md에 18줄 등록됨.",
+      "completed_at": "2026-09-06T22:44:20+0900"
     },
     {
       "step": 18,
