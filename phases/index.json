@@ -126,7 +126,8 @@
     },
     {
       "dir": "25-dump-gaps",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-06T22:56:53+0900"
     }
   ]
 }

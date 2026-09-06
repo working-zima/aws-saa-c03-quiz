@@ -5,97 +5,156 @@
     {
       "step": 0,
       "name": "dump-extract",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-05T21:56:37+0900",
+      "summary": "extract-dump.py(pypdfium2)로 880문항 덤프를 50문항 단위 슬라이스 18개로 분할하고, concept-index.py로 기존 개념 182개 인덱스를 생성. ADR-021(네 번째 출처 인정)과 dump-gaps/ 뼈대(README·_index) 추가, 파생물 3종은 gitignore 처리.",
+      "completed_at": "2026-09-05T22:03:59+0900"
     },
     {
       "step": 1,
       "name": "dump-gaps-001",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-05T22:05:16+0900",
+      "failed_at": "2026-09-05T22:15:20+0900",
+      "summary": "Q001–Q050에서 앱에 없는 개념 38개를 뽑아 docs/source/dump-gaps/Q001-Q050.md에 기록. 기존 182개념과 중복 0, 인용 38/38이 [Q번호 p쪽] 형식. 주요 항목: dms-sct·lake-formation·cloudformation·service-catalog·control-tower-controls·s3-access-grants·abac·kms-multi-region-key. 채택하지 않은 해설은 '원본 수정 이력'에 있다. _index.md에 38줄 등록됨."
     },
     {
       "step": 2,
       "name": "dump-gaps-051",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T11:05:53+0900",
+      "summary": "Q051–Q100에서 앱에 없는 개념 30개를 뽑아 docs/source/dump-gaps/Q051-Q100.md에 기록. 기존 182개념·step 1의 38개념과 중복 0, 인용 30/30이 [Q번호 p쪽] 형식. 주요 항목: s3-express-one-zone·rds-custom·dynamodb-ttl·quicksight·sagemaker·opensearch-text-search·aws-directory-service·kinesis-partition-key-hot-shard. Glacier Flexible Retrieval 검색 시간이 앱 본문과 어긋나는 것을 항목에 표시했고, MemoryDB 오류 서술과 [AI 작성 해설] 2건(Q079·Q096)은 '원본 수정 이력'에 남겼다. _index.md에 30줄 등록됨.",
+      "completed_at": "2026-09-06T11:22:14+0900"
     },
     {
       "step": 3,
       "name": "dump-gaps-101",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T11:22:15+0900",
+      "summary": "Q101–Q150에서 앱에 없는 개념 44개를 뽑아 docs/source/dump-gaps/Q101-Q150.md에 기록. 기존 182개념·앞 step 68개념과 중복 0, 인용 44/44가 [Q번호 p쪽] 형식. 주요 항목: fsx-for-lustre·fsx-windows-file-server·s3-object-lambda·redshift-spectrum·ssm-session-manager·identity-center-permission-set·direct-connect-vif-types·elastic-disaster-recovery. CloudWatch Network Monitor의 옛 이름 서술(Q144)과 S3 RTC 복제 비율(Q110)이 실제와 어긋나 본문에서 고치고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 44줄 등록됨.",
+      "completed_at": "2026-09-06T11:34:59+0900"
     },
     {
       "step": 4,
       "name": "dump-gaps-151",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T19:37:36+0900",
+      "summary": "Q151–Q200에서 앱에 없는 개념 37개를 뽑아 docs/source/dump-gaps/Q151-Q200.md에 기록. 기존 182개념·앞 step 112개념과 중복 0, 인용 37/37이 [Q번호 p쪽] 형식. 주요 항목: neptune·neptune-streams·aurora-pgvector·lambda-snapstart·gateway-load-balancer·s3-access-point·s3-multi-region-access-point·eks-connector·amazon-mq·cloudtrail-data-events. Athena DynamoDB 커넥터가 읽기 용량을 쓰지 않는다는 서술(Q179)은 사실 오류라 싣지 않았고, SSE-KMS 정답과 문제문이 어긋나는 Q182는 가져온 사실만 밝혀 두었다. [AI 작성 해설] 4건(Q165·Q166·Q170·Q185)은 교차 확인이 안 돼 '원본 수정 이력'에 남겼다. _index.md에 37줄 등록됨.",
+      "completed_at": "2026-09-06T19:56:58+0900"
     },
     {
       "step": 5,
       "name": "dump-gaps-201",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T19:56:58+0900",
+      "summary": "Q201–Q250에서 앱에 없는 개념 20개를 뽑아 docs/source/dump-gaps/Q201-Q250.md에 기록. 기존 182개념·앞 step 149개념과 중복 0, 인용 20/20이 [Q번호 p쪽] 형식. 주요 항목: lambda-function-url-iam-auth·cloudfront-functions·lambda-reserved-concurrency·sqs-visibility-timeout-vs-processing-time·aurora-storage-configurations·dax-encryption-at-rest·fsx-ontap-iscsi-block·efs-cross-account-mount·outposts-data-residency·emr-managed-scaling. Aurora I/O-Optimized의 과금 서술이 Aurora Standard 쪽과 뒤바뀐 것, Q238의 라우팅 테이블 공유 주장이 Q232와 어긋나는 것, Q245의 마지막 문장이 자기 정답과 어긋나는 것을 '원본 수정 이력'에 남겼다. [AI 작성 해설] 2건(Q220·Q237)은 교차 확인이 안 돼 채택하지 않았다. _index.md에 20줄 등록됨.",
+      "completed_at": "2026-09-06T20:07:09+0900"
     },
     {
       "step": 6,
       "name": "dump-gaps-251",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T20:20:26+0900",
+      "summary": "Q251–Q300에서 앱에 없는 개념 25개를 뽑아 docs/source/dump-gaps/Q251-Q300.md에 기록. 기존 182개념·앞 step 169개념과 중복 0, 인용 25/25가 [Q번호 p쪽] 형식. 주요 항목: vpc-flow-logs·spread-placement-group·ebs-encryption-by-default·cloudfront-signed-cookie·cloudfront-multiple-origins·nlb-ip-targets·backup-cross-account-copy·organizations-backup-policy·backup-s3-continuous-backup·ec2-detailed-monitoring·s3-website-endpoint-no-https. ALB가 IP 대상을 지원하지 않는다는 서술(Q270), 상세 모니터링으로 메모리를 본다는 서술(Q276), 인터페이스 엔드포인트에 라우팅 경로가 필요하다는 서술(Q262), 프라이빗 서브넷이 공용 IP를 지원하지 않는다는 서술(Q255)을 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q275)은 사실이 모두 기존 개념과 중복이라 넘겼다. _index.md에 25줄 등록됨.",
+      "completed_at": "2026-09-06T20:32:06+0900"
     },
     {
       "step": 7,
       "name": "dump-gaps-301",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T20:32:07+0900",
+      "summary": "Q301–Q350에서 앱에 없는 개념 23개를 뽑아 docs/source/dump-gaps/Q301-Q350.md에 기록. 기존 182개념·앞 step 194개념과 중복 0, 인용 23/23이 [Q번호 p쪽] 형식. 주요 항목: babelfish·dynamodb-capacity-modes·dynamodb-item-size-limit·permissions-boundary·emr-runtime-role·fargate-spot·eks-cluster-autoscaler·route53-alias-record·internal-load-balancer·cost-and-usage-report·imported-key-material-rotation·firehose-lambda-transformation. 가져온 키 자료의 자동 교체 서술(Q340)과 단일 EC2로 저지연 영상 서빙이 보장된다는 서술(Q327)을 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q338, Control Tower Account Factory)은 교차 확인이 안 돼 채택하지 않았다. _index.md에 23줄 등록됨.",
+      "completed_at": "2026-09-06T20:43:40+0900"
     },
     {
       "step": 8,
       "name": "dump-gaps-351",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T20:43:40+0900",
+      "summary": "Q351–Q400에서 앱에 없는 개념 19개를 뽑아 docs/source/dump-gaps/Q351-Q400.md에 기록. 기존 182개념·앞 step 217개념과 중복 0, 인용 19/19가 [Q번호 p쪽] 형식. 주요 항목: elastic-beanstalk·elastic-fabric-adapter·cloudfront-field-level-encryption·cloudfront-geo-restriction·eks-secrets-kms-encryption·ecs-task-placement-strategy·backup-audit-manager·macie-automated-discovery·organizational-unit·root-user-multiple-mfa·ssm-managed-instance-core-policy·backup-and-restore-dr·s3-retrieval-fee-by-class. Transit Gateway가 본래 VPC 간 격리를 깬다는 서술(Q400)은 사실 오류라 싣지 않고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 19줄 등록됨.",
+      "completed_at": "2026-09-06T20:52:35+0900"
     },
     {
       "step": 9,
       "name": "dump-gaps-401",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T20:52:35+0900",
+      "summary": "Q401–Q450에서 앱에 없는 개념 23개를 뽑아 docs/source/dump-gaps/Q401-Q450.md에 기록. 기존 182개념·앞 step 236개념과 중복 0, 인용 23/23이 [Q번호 p쪽] 형식. 주요 항목: qldb·timestream·iam-roles-anywhere·eks-irsa·predictive-scaling·eventbridge-pipes·ebs-recycle-bin·ebs-snapshot-block-public-access·organizations-tag-policy·rds-iam-database-authentication·s3-same-region-replication·media-ai-service-lineup. 다른 계정의 S3 버킷에 VPC 피어링으로 닿는다는 서술(Q416)과 Glacier Flexible Retrieval의 객체를 Athena로 바로 조회한다는 구성(Q403)은 사실 오류라 싣지 않고 '원본 수정 이력'에 남겼다. ALB 뒤 구간의 인증서 경로(Q417)는 해설이 밝히지 않아 범위를 좁혀 실었다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 23줄 등록됨.",
+      "completed_at": "2026-09-06T21:04:55+0900"
     },
     {
       "step": 10,
       "name": "dump-gaps-451",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:04:55+0900",
+      "summary": "Q451–Q500에서 앱에 없는 개념 22개를 뽑아 docs/source/dump-gaps/Q451-Q500.md에 기록. 기존 182개념·앞 step 259개념과 중복 0, 인용 22/22가 [Q번호 p쪽] 형식. 주요 항목: appconfig·api-gateway-resource-policy·api-gateway-aws-service-integration·eks-aws-load-balancer-controller·rds-multi-az-db-cluster·route53-failover-routing·waf-body-inspection-size-limit·kms-cloudhsm-key-store·iam-explicit-deny-precedence·scp-attachment-targets·intelligent-tiering-monitoring-fee·cloudfront-s3-upload-with-oac. S3에 인터페이스 엔드포인트가 없고 DynamoDB에 게이트웨이 엔드포인트가 없다는 서술(Q452)은 같은 슬라이스 Q457과 어긋나 싣지 않았고, 관리 계정에 붙인 SCP가 그 계정에 적용된다는 서술(Q473)도 빼고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q462, SNS 구독 필터 정책)은 교차 확인이 안 돼 채택하지 않았다. _index.md에 22줄 등록됨.",
+      "completed_at": "2026-09-06T21:16:39+0900"
     },
     {
       "step": 11,
       "name": "dump-gaps-501",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:16:40+0900",
+      "summary": "Q501–Q550에서 앱에 없는 개념 25개를 뽑아 docs/source/dump-gaps/Q501-Q550.md에 기록. 기존 182개념·앞 step 281개념과 중복 0, 인용 25/25가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: efs-one-zone·efs-throughput-modes·io2-block-express-iops-ceiling·rds-encrypt-existing-instance·dynamodb-export-requires-pitr·dynamodb-global-secondary-index·api-gateway-custom-domain-name·api-gateway-rest-vs-http-timeout·eks-fargate-pod-isolation·sqs-fifo-message-group-id·ses-inbound-email-receiving·iam-notaction-deny·cloudtrail-log-file-validation·comprehend. AD Connector를 ALB에 붙여 인증한다는 서술(Q517), 이벤트 버스가 구성 변경을 추적하지 못한다는 서술(Q507), 동기/비동기가 뒤바뀐 문장(Q548)은 싣지 않고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q506, EKS 파드 권한 분리)은 사실이 eks-irsa와 중복이고 RBAC 서술은 교차 확인이 안 돼 채택하지 않았다. _index.md에 25줄 등록됨.",
+      "completed_at": "2026-09-06T21:30:00+0900"
     },
     {
       "step": 12,
       "name": "dump-gaps-551",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:30:00+0900",
+      "summary": "Q551–Q600에서 앱에 없는 개념 26개를 뽑아 docs/source/dump-gaps/Q551-Q600.md에 기록. 기존 182개념·앞 step 306개념과 중복 0, 인용 26/26이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: eventbridge-event-bus-types·global-accelerator-vs-dns-failover·api-gateway-websocket-api·kms-key-types-by-management·ssm-run-command·cloudwatch-alarm-state-change-event·dms-full-load-and-cdc-task·athena-federated-query·redshift-copy-from-s3·quicksight-ml-forecast·rekognition-content-moderation·dynamodb-export-no-read-capacity·lambda-memory-ceiling·asg-single-instance-self-healing. API Gateway가 gRPC API 유형을 지원한다는 서술(Q560)은 사실 오류라 싣지 않았고, 정답 표기와 해설의 결론이 어긋나는 Q551은 정답 문자를 쓰지 않고 개념만 실었다. [AI 작성 해설] 1건(Q585)은 사실이 모두 기존 개념과 중복이라 넘겼다. _index.md에 26줄 등록됨.",
+      "completed_at": "2026-09-06T21:41:56+0900"
     },
     {
       "step": 13,
       "name": "dump-gaps-601",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:41:56+0900",
+      "summary": "Q601–Q650에서 앱에 없는 개념 19개를 뽑아 docs/source/dump-gaps/Q601-Q650.md에 기록. 기존 182개념·앞 step 332개념과 중복 0, 인용 19/19가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: s3-secure-transport-condition·ebs-encryption-performance·gp3-iops-independent-of-size·efs-performance-modes·efs-mount-target-per-az·s3-multipart-upload·transfer-family-custom-hostname·rds-blue-green-deployment·rds-encryption-scope-and-in-transit·rds-pitr-transaction-log-interval·cache-requires-application-change·sqs-fifo-deduplication-id·alb-target-group-independent-scaling·security-hub·config-conformance-pack·access-analyzer-delegated-administrator. EFS를 Windows 인스턴스에 마운트할 수 있다는 서술(Q634)과 다중 AZ DB 클러스터가 RDS for MySQL에는 없다는 서술(Q646)은 싣지 않고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 19줄 등록됨.",
+      "completed_at": "2026-09-06T21:52:59+0900"
     },
     {
       "step": 14,
       "name": "dump-gaps-651",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T21:52:59+0900",
+      "summary": "Q651–Q700에서 앱에 없는 개념 16개를 뽑아 docs/source/dump-gaps/Q651-Q700.md에 기록. 기존 182개념·앞 step 351개념과 중복 0, 인용 16/16이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: eks-compute-options·app2container·step-functions-map-state·ecr-image-scan-on-push·cloudfront-alb-origin-access-restriction·waf-rate-based-rule·shield-advanced-protection-group·secrets-manager-batch-get-secret-value·dynamodb-streams-retention-24h·aurora-continuous-backup-rpo·aurora-serverless-max-acu·fsx-ontap-multi-protocol-tiering·datasync-manifest. Q151-Q200이 [AI 작성 해설]이라 미뤄 둔 ECR 푸시 시 스캔이 Q691의 원본 해설로 교차 확인돼 개념으로 만들었다. VPC 피어링으로 다른 계정의 S3 버킷에 닿는다는 서술(Q651), CloudFront에 VPC 오리진이 없다는 서술(Q656), Step Functions에 TestState API가 없다는 서술(Q680)은 싣지 않고 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 16줄 등록됨.",
+      "completed_at": "2026-09-06T22:03:49+0900"
     },
     {
       "step": 15,
       "name": "dump-gaps-701",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T22:03:49+0900",
+      "summary": "Q701–Q750에서 앱에 없는 개념 29개를 뽑아 docs/source/dump-gaps/Q701-Q750.md에 기록. 기존 182개념·앞 step 367개념과 중복 0, 인용 29/29가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: lambda-efs-mount·api-gateway-endpoint-types·api-gateway-rest-only-features·lambda-invocation-types·ecs-task-role-vs-task-execution-role·sns-sqs-fanout-per-consumer·sqs-content-based-deduplication·sqs-vpc-endpoint-and-queue-policy·kinesis-client-library·lake-formation-lf-tags·nlb-security-group·backup-restore-testing-plan·kms-key-per-tenant·glacier-flexible-retrieval-expedited·internet-gateway-is-not-per-az. Q723은 표기된 정답(버스팅 처리량)이 자기 해설(Elastic 처리량)과 어긋나고 보기 A·B가 같은 내용이라 정답 문자를 근거로 쓰지 않았고, Q701 해설 끝에 남은 작성 지시 문답은 근거가 아니라 넘겼다. 둘 다 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 29줄 등록됨.",
+      "completed_at": "2026-09-06T22:17:47+0900"
     },
     {
       "step": 16,
       "name": "dump-gaps-751",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T22:17:47+0900",
+      "summary": "Q751–Q800에서 앱에 없는 개념 13개를 뽑아 docs/source/dump-gaps/Q751-Q800.md에 기록. 기존 182개념·앞 step 396개념과 중복 0, 인용 13/13이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: iam-requested-region-condition·efs-posix-permissions·fsx-lustre-s3-data-repository-association·efs-replication-one-way·application-migration-service·transfer-deadline-vs-bandwidth·alb-listener-rule-fixed-response·cloudfront-reduces-data-transfer-cost·serverless-runtime-no-os-access·step-functions-express-workflow·emr-security-configuration·s3-account-level-public-access-block·block-public-access-allows-explicit-grants. NLB가 세션 어피니티를 지원하지 않는다는 서술(Q795)과 보기에 없는 스토리지 유형을 오답 설명에 쓴 Q763은 근거로 삼지 않고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q777, aws:MultiFactorAuthPresent)은 교차 확인이 안 돼 채택하지 않았다. 이 슬라이스는 중복 비율이 높아 27문항이 기존 개념으로 풀린다. _index.md에 13줄 등록됨.",
+      "completed_at": "2026-09-06T22:28:25+0900"
     },
     {
       "step": 17,
       "name": "dump-gaps-801",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T22:28:25+0900",
+      "summary": "Q801–Q850에서 앱에 없는 개념 18개를 뽑아 docs/source/dump-gaps/Q801-Q850.md에 기록. 기존 182개념·앞 step 409개념과 중복 0, 인용 18/18이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: saml-federation-role-to-ad-group-mapping·config-custom-rule·waf-logging-to-firehose·waf-web-acl-region-must-match-rest-api·firewall-manager·memory-optimized-instance-family·lambda-at-edge-response-compression·nat-gateway-elastic-ip·s3-inventory-report·s3-batch-operations-lambda-invoke·data-lifecycle-manager·fsx-lustre-sub-millisecond-latency·transfer-family-service-managed-users·eventbridge-resource-change-rule·rds-custom-byol·aurora-cross-region-read-replica·s3-requester-pays·amazon-lex. 법적 보존이 덮어쓰기를 막지 못한다는 서술(Q839)은 객체 잠금이 객체 버전을 양쪽에서 보호하므로 싣지 않고 '원본 수정 이력'에 남겼다. [AI 작성 해설] 1건(Q802, Glacier 객체당 오버헤드 32KB·8KB와 최소 과금 128KB)은 교차 확인이 안 돼 채택하지 않았다. 중복으로 풀린 문항 32개는 '중복이라 새로 만들지 않은 것'에 근거 개념과 함께 적었다. _index.md에 18줄 등록됨.",
+      "completed_at": "2026-09-06T22:44:49+0900"
     },
     {
       "step": 18,
       "name": "dump-gaps-851",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T22:44:49+0900",
+      "summary": "Q851–Q880에서 앱에 없는 개념 9개를 뽑아 docs/source/dump-gaps/Q851-Q880.md에 기록. 기존 182개념·앞 step 435개념과 중복 0, 인용 9/9가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 항목: lambda-at-edge-origin-selection-by-viewer-location·gpu-instance-family·api-gateway-ip-restriction-by-resource-policy·ebs-fast-snapshot-restore·glue-etl-with-per-customer-kms-key·emr-node-instance-family-choice·elasticache-not-a-durable-store·inspector-scans-ecr-images·iam-user-is-account-scoped. Cost Explorer가 정기 보고서를 이메일로 예약 발송한다는 서술(Q866)은 같은 해설이 오답으로 민 AWS Budgets 쪽 기능이라 근거로 삼지 않고 '원본 수정 이력'에 남겼고, [AI 작성 해설] 1건(Q879, 선불 비중·절약 플랜 유형별 할인율)은 교차 확인이 안 돼 채택하지 않았다. 중복으로 풀린 문항 21개는 근거 개념과 함께 적었다. _index.md에 9줄 등록됨.",
+      "completed_at": "2026-09-06T22:56:53+0900"
     }
-  ]
+  ],
+  "created_at": "2026-09-05T21:56:37+0900",
+  "completed_at": "2026-09-06T22:56:53+0900"
 }
