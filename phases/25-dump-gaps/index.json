@@ -128,7 +128,7 @@
       "status": "completed",
       "started_at": "2026-09-06T22:03:49+0900",
       "summary": "Q701–Q750에서 앱에 없는 개념 29개를 뽑아 docs/source/dump-gaps/Q701-Q750.md에 기록. 기존 182개념·앞 step 367개념과 중복 0, 인용 29/29가 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: lambda-efs-mount·api-gateway-endpoint-types·api-gateway-rest-only-features·lambda-invocation-types·ecs-task-role-vs-task-execution-role·sns-sqs-fanout-per-consumer·sqs-content-based-deduplication·sqs-vpc-endpoint-and-queue-policy·kinesis-client-library·lake-formation-lf-tags·nlb-security-group·backup-restore-testing-plan·kms-key-per-tenant·glacier-flexible-retrieval-expedited·internet-gateway-is-not-per-az. Q723은 표기된 정답(버스팅 처리량)이 자기 해설(Elastic 처리량)과 어긋나고 보기 A·B가 같은 내용이라 정답 문자를 근거로 쓰지 않았고, Q701 해설 끝에 남은 작성 지시 문답은 근거가 아니라 넘겼다. 둘 다 '원본 수정 이력'에 남겼다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 29줄 등록됨.",
-      "completed_at": "2026-09-06T22:17:14+0900"
+      "completed_at": "2026-09-06T22:17:47+0900"
     },
     {
       "step": 16,
