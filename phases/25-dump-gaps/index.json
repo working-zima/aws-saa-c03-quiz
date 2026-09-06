@@ -103,7 +103,8 @@
       "name": "dump-gaps-551",
       "status": "completed",
       "started_at": "2026-09-06T21:30:00+0900",
-      "summary": "Q551–Q600에서 앱에 없는 개념 26개를 뽑아 docs/source/dump-gaps/Q551-Q600.md에 기록. 기존 182개념·앞 step 306개념과 중복 0, 인용 26/26이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: eventbridge-event-bus-types·global-accelerator-vs-dns-failover·api-gateway-websocket-api·kms-key-types-by-management·ssm-run-command·cloudwatch-alarm-state-change-event·dms-full-load-and-cdc-task·athena-federated-query·redshift-copy-from-s3·quicksight-ml-forecast·rekognition-content-moderation·dynamodb-export-no-read-capacity·lambda-memory-ceiling·asg-single-instance-self-healing. API Gateway가 gRPC API 유형을 지원한다는 서술(Q560)은 사실 오류라 싣지 않았고, 정답 표기와 해설의 결론이 어긋나는 Q551은 정답 문자를 쓰지 않고 개념만 실었다. [AI 작성 해설] 1건(Q585)은 사실이 모두 기존 개념과 중복이라 넘겼다. _index.md에 26줄 등록됨."
+      "summary": "Q551–Q600에서 앱에 없는 개념 26개를 뽑아 docs/source/dump-gaps/Q551-Q600.md에 기록. 기존 182개념·앞 step 306개념과 중복 0, 인용 26/26이 [Q번호 p쪽] 형식이고 원문과 축자 일치. 주요 항목: eventbridge-event-bus-types·global-accelerator-vs-dns-failover·api-gateway-websocket-api·kms-key-types-by-management·ssm-run-command·cloudwatch-alarm-state-change-event·dms-full-load-and-cdc-task·athena-federated-query·redshift-copy-from-s3·quicksight-ml-forecast·rekognition-content-moderation·dynamodb-export-no-read-capacity·lambda-memory-ceiling·asg-single-instance-self-healing. API Gateway가 gRPC API 유형을 지원한다는 서술(Q560)은 사실 오류라 싣지 않았고, 정답 표기와 해설의 결론이 어긋나는 Q551은 정답 문자를 쓰지 않고 개념만 실었다. [AI 작성 해설] 1건(Q585)은 사실이 모두 기존 개념과 중복이라 넘겼다. _index.md에 26줄 등록됨.",
+      "completed_at": "2026-09-06T21:41:56+0900"
     },
     {
       "step": 13,
