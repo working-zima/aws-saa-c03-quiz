@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-09-07T08:29:28+0900",
       "summary": "docs/source/service-categories.md에 'phase 26에서 들어오는 서비스' 표(신규 30개)와 '카테고리 없음' 절(13개)을 더했다. 분포 — 컴퓨팅 6(Elastic Beanstalk·EC2 Auto Scaling·EC2 Image Builder·Outposts·Wavelength·Local Zones), 보안·자격 증명·규정 준수 6(Inspector·Security Hub·Audit Manager·Firewall Manager·Directory Service·Resource Access Manager), 관리 및 거버넌스 5(CloudFormation·Service Catalog·Control Tower·Systems Manager·Managed Grafana), 마이그레이션 및 전송 3(DMS·SCT·Application Migration Service), 분석 3(Lake Formation·QuickSight·Kinesis Video Streams), 컨테이너 2(ECR·App2Container), 데이터베이스 2(Neptune·Timestream), 애플리케이션 통합 1(Amazon MQ), 스토리지 1(Elastic Disaster Recovery), 클라우드 재무 관리 1(Cost and Usage Report). 카테고리 없음 — 13종 밖이라 붙이지 않는 8개(SageMaker AI·Comprehend·Rekognition·Lex·Transcribe·Translate·Textract는 Machine Learning, Amplify는 Frontend web and mobile: step 20의 개념 전부가 카테고리 한 줄 없이 간다), 출처에서 못 찾은 5개(QLDB·ParallelCluster·Workload Discovery on AWS·AppConfig·Glue DataBrew). 주제 배치와 어긋나는 자리에 5줄 추가(Elastic Beanstalk·Managed Grafana·Elastic Disaster Recovery·RAM·Audit Manager). 보조 출처로 AWS DMS 사용 설명서를 더했다(SCT). 기존 75개 매핑 표와 src/는 건드리지 않았다.",
-      "completed_at": "2026-09-07T08:39:40+0900"
+      "completed_at": "2026-09-07T08:40:41+0900"
     },
     {
       "step": 2,
