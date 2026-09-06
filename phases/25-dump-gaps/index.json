@@ -77,7 +77,10 @@
     {
       "step": 9,
       "name": "dump-gaps-401",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-06T20:52:35+0900",
+      "summary": "Q401–Q450에서 앱에 없는 개념 23개를 뽑아 docs/source/dump-gaps/Q401-Q450.md에 기록. 기존 182개념·앞 step 236개념과 중복 0, 인용 23/23이 [Q번호 p쪽] 형식. 주요 항목: qldb·timestream·iam-roles-anywhere·eks-irsa·predictive-scaling·eventbridge-pipes·ebs-recycle-bin·ebs-snapshot-block-public-access·organizations-tag-policy·rds-iam-database-authentication·s3-same-region-replication·media-ai-service-lineup. 다른 계정의 S3 버킷에 VPC 피어링으로 닿는다는 서술(Q416)과 Glacier Flexible Retrieval의 객체를 Athena로 바로 조회한다는 구성(Q403)은 사실 오류라 싣지 않고 '원본 수정 이력'에 남겼다. ALB 뒤 구간의 인증서 경로(Q417)는 해설이 밝히지 않아 범위를 좁혀 실었다. 이 슬라이스에는 [AI 작성 해설] 문항이 없다. _index.md에 23줄 등록됨.",
+      "completed_at": "2026-09-06T21:05:00+0900"
     },
     {
       "step": 10,
