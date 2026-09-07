@@ -77,18 +77,26 @@ describe('학습 데이터 무결성', () => {
       ],
       route53: ['private-hosted-zone', 'multivalue-answer-details'],
       // phase 26 step 15가 analytics-monitoring에서 분석·스트리밍 계열을 빼내며
-      // Glue Crawler를 emr-glue-athena로 옮겼다. 로그 분석 선택지는 CloudWatch 쪽이라
-      // 남아 step 16을 기다린다(topic-plan "주제 목록").
+      // Glue Crawler를 emr-glue-athena로 옮겼고, step 16이 남은 CloudWatch·X-Ray
+      // 계열을 cloudwatch-xray로 옮기며 analytics-monitoring을 없앴다
+      // (topic-plan "주제 목록").
       'emr-glue-athena': ['glue-crawler'],
-      'analytics-monitoring': ['log-analysis-options'],
+      'cloudwatch-xray': ['log-analysis-options'],
     }
 
     // phase 26 step 14가 두 네트워크 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
-    // 정렬했고 step 15가 emr-glue-athena를 같은 방식으로 세웠다. 그래서 이 개념들은
-    // 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래 「VPC 주제가 ...」·
-    // 「하이브리드 연결 주제가 ...」·「EMR·Glue·Athena 주제가 ...」가 개념 id
-    // 전부로 못박는다.
-    const reordered = new Set(['vpc-networking', 'hybrid-connectivity', 'emr-glue-athena'])
+    // 정렬했고 step 15가 emr-glue-athena를, step 16이 route53·cloudwatch-xray를 같은
+    // 방식으로 세웠다. 그래서 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체
+    // 순서는 아래 「VPC 주제가 ...」·「하이브리드 연결 주제가 ...」·
+    // 「EMR·Glue·Athena 주제가 ...」·「Route 53 주제가 ...」·
+    // 「CloudWatch·X-Ray 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'vpc-networking',
+      'hybrid-connectivity',
+      'emr-glue-athena',
+      'route53',
+      'cloudwatch-xray',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -304,7 +312,9 @@ describe('학습 데이터 무결성', () => {
       { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
       { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
       { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
-      { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
+      // step 16이 남은 CloudWatch·X-Ray 계열을 그 자리에서 cloudwatch-xray로 바꿨다.
+      // 지표 ↔ 로그 ↔ 경보가 한 벌이라 넷을 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
+      { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
       { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
@@ -316,10 +326,10 @@ describe('학습 데이터 무결성', () => {
     const expectedTopics = [
       ...Array(6).fill('route53'),
       // phase 26 step 15가 analytics-monitoring을 쪼개면서 이 여섯 문항이 세 주제로
-      // 갈라졌다. 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를
-      // 따른다 — CloudWatch를 근거로 쓰는 q126만 남는다.
+      // 갈라졌고, step 16이 CloudWatch를 근거로 쓰는 q126을 cloudwatch-xray로 옮겼다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
       ...Array(3).fill('emr-glue-athena'),
-      'analytics-monitoring',
+      'cloudwatch-xray',
       'emr-glue-athena',
       'kinesis-streaming',
       ...Array(9).fill('security-groups-nacl'),
@@ -557,10 +567,10 @@ describe('학습 데이터 무결성', () => {
       'hybrid-connectivity.onprem-connectivity-heuristic',
       'route53.private-hosted-zone',
       'route53.multivalue-answer-details',
-      // phase 26 step 15가 Glue Crawler를 emr-glue-athena로 옮겼다. 로그 분석 선택지는
-      // CloudWatch 쪽이라 analytics-monitoring에 남아 step 16을 기다린다.
+      // phase 26 step 15가 Glue Crawler를 emr-glue-athena로 옮겼고, step 16이 로그 분석
+      // 선택지를 CloudWatch 쪽 주제인 cloudwatch-xray로 옮겼다.
       'emr-glue-athena.glue-crawler',
-      'analytics-monitoring.log-analysis-options',
+      'cloudwatch-xray.log-analysis-options',
     ]
 
     expect(addedQuestions).toHaveLength(15)
@@ -572,7 +582,7 @@ describe('학습 데이터 무결성', () => {
       ...Array(6).fill('hybrid-connectivity'),
       ...Array(2).fill('route53'),
       'emr-glue-athena',
-      'analytics-monitoring',
+      'cloudwatch-xray',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -695,7 +705,7 @@ describe('학습 데이터 무결성', () => {
       { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
       { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
       { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
-      { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
+      { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
       { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
@@ -706,9 +716,10 @@ describe('학습 데이터 무결성', () => {
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     // security-groups-nacl의 5는 step 14가 네트워크 묶음으로 가져갔다.
     // analytics-monitoring의 14는 step 15가 원본 10개념을 세 주제로 갈라 신규 36을
-    // 더한 결과다(20·16·11). 남은 4는 CloudWatch·X-Ray 계열이고 step 16이 가져간다.
+    // 더한 결과다(20·16·11). step 16이 남은 4개념에 신규 7을 더해 cloudwatch-xray를
+    // 세우고, route53의 5에 신규 8을 더해 13으로 늘렸다.
     expect(topics.slice(24, 33).map((topic) => topic.concepts.length)).toEqual([
-      5, 20, 16, 11, 4, 9, 11, 12, 9,
+      13, 20, 16, 11, 11, 9, 11, 12, 9,
     ])
   })
 
@@ -2056,6 +2067,125 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('Route 53 주제가 서비스와 정책 소개 다음에 갈림길과 세부 동작을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'route53')
+
+    // 1단 Route 53과 라우팅 정책·Resolver·호스팅 영역이 각각 무엇이고 호스팅을 어떻게 옮기는가
+    // → 2단 정책들 사이의 갈림길(장애 조치·리전 장애·지연 시간 레코드)과 레코드가
+    //   무엇을 가리키는가
+    // → 3단 호스팅 영역과 Resolver의 경계·다중값 응답의 세부 동작·쿼리 로깅.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'route53.route53',
+      'route53.routing-policies',
+      'route53.resolver',
+      'route53.private-hosted-zone',
+      'route53.route53-zone-file-import',
+      'route53.route53-failover-routing',
+      'route53.multi-region-failover-for-region-outage',
+      'route53.latency-record-for-non-aws-endpoint',
+      'route53.route53-alias-record',
+      'route53.private-hosted-zone-vpc-only',
+      'route53.route53-resolver-forward-rule',
+      'route53.multivalue-answer-details',
+      'route53.route53-query-logging',
+    ])
+  })
+
+  it('CloudWatch·X-Ray 주제가 서비스 넷 다음에 관측의 경계와 지표 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'cloudwatch-xray')
+
+    // 1단 CloudWatch·X-Ray·Performance Insights·Managed Grafana가 각각 무엇이고
+    //   하이브리드 연결의 품질은 무엇이 재는가
+    // → 2단 관측이 어디까지인가, 로그를 어디서 분석하는가, 규모 조정의 근거는 무엇인가
+    // → 3단 기본 지표에 없는 값·상세 모니터링의 간격·경보가 흘러가는 자리.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'cloudwatch-xray.cloudwatch',
+      'cloudwatch-xray.x-ray',
+      'cloudwatch-xray.performance-insight',
+      'cloudwatch-xray.amazon-managed-grafana',
+      'cloudwatch-xray.cloudwatch-network-monitor',
+      'cloudwatch-xray.cloudwatch-container-insights',
+      'cloudwatch-xray.log-analysis-options',
+      'cloudwatch-xray.performance-insights-rightsizing',
+      'cloudwatch-xray.cloudwatch-agent-memory-metric',
+      'cloudwatch-xray.ec2-detailed-monitoring',
+      'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+    ])
+  })
+
+  it('Route 53 라우팅 정책들이 한 주제 안에 함께 있다', () => {
+    // 가중치·지연 시간·장애 조치·지리 위치·다중값 응답은 "언제 무엇을 고르는가"가
+    // 학습 내용이므로 흩어 두면 비교할 자리가 없어진다
+    // (topic-plan "헷갈리는 짝 배치", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const dns = ownerOf('route53.routing-policies')
+    expect(dns).toBe('route53')
+    ;[
+      'route53.route53-failover-routing',
+      'route53.latency-record-for-non-aws-endpoint',
+      'route53.multivalue-answer-details',
+      'route53.multi-region-failover-for-region-outage',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(dns))
+    // 정책 목록에는 없던 장애 조치가 따로 서고, 상태 검사를 어느 레코드에 거는지가 그 축이다.
+    expect(bodyOf('route53.routing-policies')).toContain('가중치 기반 라우팅')
+    expect(bodyOf('route53.route53-failover-routing')).toContain(
+      '**상태 검사는 주 레코드에 연결한다.**',
+    )
+    // 리전 장애는 가용 영역으로 막지 못하고, 단순 라우팅으로는 자동 전환이 되지 않는다.
+    expect(bodyOf('route53.multi-region-failover-for-region-outage')).toContain(
+      '데이터 센터 하나가 멈추는 것까지다',
+    )
+    expect(bodyOf('route53.multi-region-failover-for-region-outage')).toContain(
+      '단순 라우팅 레코드를 쓰면',
+    )
+    // 지연 시간 정책은 리전이 없는 엔드포인트까지 넓혀 읽는다.
+    expect(bodyOf('route53.latency-record-for-non-aws-endpoint')).toContain(
+      '가장 가까운 리전을 골라 레코드에 연결한다',
+    )
+  })
+
+  it('CloudWatch의 지표와 로그와 경보가 한 주제 안에서 한 벌로 읽힌다', () => {
+    // 지표 ↔ 로그 ↔ 경보는 CloudWatch를 이루는 세 축이다. 하나만 떼어 두면 무엇으로
+    // 무엇을 보는지가 서지 않는다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const monitoring = ownerOf('cloudwatch-xray.cloudwatch')
+    expect(monitoring).toBe('cloudwatch-xray')
+    ;[
+      // 지표
+      'cloudwatch-xray.cloudwatch-agent-memory-metric',
+      'cloudwatch-xray.ec2-detailed-monitoring',
+      // 로그
+      'cloudwatch-xray.log-analysis-options',
+      // 경보
+      'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(monitoring))
+    // 지표 쪽 두 축 — 기본으로 올라오지 않는 값과, 올라오는 간격.
+    expect(bodyOf('cloudwatch-xray.cloudwatch-agent-memory-metric')).toContain(
+      'CloudWatch 에이전트를 설치하면',
+    )
+    expect(bodyOf('cloudwatch-xray.ec2-detailed-monitoring')).toContain('5분 간격으로 올라온다')
+    expect(bodyOf('cloudwatch-xray.ec2-detailed-monitoring')).toContain('1분 간격이 되고')
+    // 로그는 어디서 분석하는가로 갈리고, 경보는 상태 변경이 이벤트로 나가 자동 대응이 붙는다.
+    expect(bodyOf('cloudwatch-xray.log-analysis-options')).toContain('CloudWatch Logs Insights는')
+    expect(bodyOf('cloudwatch-xray.cloudwatch-alarm-state-change-event')).toContain(
+      'EventBridge 규칙이 알람의 상태 변경 이벤트를 잡고',
+    )
+  })
+
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
     const storageClassQuestions = questions.filter(
       (question) => question.topicId === 's3-storage-classes',
@@ -2834,8 +2964,13 @@ describe('학습 데이터 무결성', () => {
     ['kinesis-streaming.msk', 'MSK는', 'analytics'],
     ['redshift-opensearch-quicksight.redshift', 'RedShift는', 'analytics'],
     ['redshift-opensearch-quicksight.quicksight', 'QuickSight는', 'analytics'],
-    ['analytics-monitoring.cloudwatch', 'CloudWatch는', 'management'],
-    ['analytics-monitoring.x-ray', 'X-Ray는', 'devTools'],
+    // step 16이 남은 CloudWatch·X-Ray 계열을 cloudwatch-xray로 옮기며
+    // analytics-monitoring을 없앴다. 신규 7개념 중 서비스를 소개하는 자리는
+    // Managed Grafana 하나뿐이다 — Network Monitor·Container Insights는 CloudWatch의
+    // 기능이라 그 파일의 기준 2가 덮고, 나머지는 지표의 한계·판단 근거다.
+    ['cloudwatch-xray.cloudwatch', 'CloudWatch는', 'management'],
+    ['cloudwatch-xray.x-ray', 'X-Ray는', 'devTools'],
+    ['cloudwatch-xray.amazon-managed-grafana', 'Managed Grafana는', 'management'],
     ['secrets-encryption.secrets-manager', 'Secrets Manager는', 'security'],
     ['secrets-encryption.parameter-store', 'Parameter Store는', 'management'],
     ['secrets-encryption.kms', 'KMS는', 'security'],
@@ -2862,12 +2997,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 89개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 90개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(89)
+    expect(serviceCategories).toHaveLength(90)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -2881,7 +3016,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 89개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 90개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
