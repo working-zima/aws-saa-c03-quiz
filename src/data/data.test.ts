@@ -745,6 +745,1795 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 1 — 문항이 하나도 없던 두 주제를 개념 커버리지 기준으로 덮는다(ADR-026).
+  // 담당 개념 24개에 문항이 일대일로 붙으므로 slice와 개념 목록이 같은 길이다.
+  const step1Concepts = [
+    's3-access-control.s3-cross-account-bucket-policy',
+    's3-access-control.s3-presigned-url',
+    's3-access-control.s3-access-grants',
+    's3-access-control.s3-access-point',
+    's3-access-control.s3-multi-region-access-point',
+    's3-access-control.s3-storage-lens',
+    's3-access-control.s3-cors-not-authorization',
+    's3-access-control.s3-requester-pays',
+    's3-access-control.s3-storage-lens-advanced-activity-metrics',
+    's3-access-control.s3-account-level-public-access-block',
+    's3-access-control.block-public-access-allows-explicit-grants',
+    's3-access-control.s3-bucket-policy-source-vpc-condition',
+    's3-access-control.s3-website-endpoint-no-https',
+    'redshift-opensearch-quicksight.redshift',
+    'redshift-opensearch-quicksight.redshift-spectrum',
+    'redshift-opensearch-quicksight.opensearch-text-search',
+    'redshift-opensearch-quicksight.quicksight',
+    'redshift-opensearch-quicksight.oltp-vs-olap',
+    'redshift-opensearch-quicksight.athena-vs-redshift-workload',
+    'redshift-opensearch-quicksight.redshift-hot-cold-split',
+    'redshift-opensearch-quicksight.quicksight-ml-forecast',
+    'redshift-opensearch-quicksight.redshift-concurrency-scaling',
+    'redshift-opensearch-quicksight.redshift-copy-from-s3',
+    'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
+  ]
+
+  it('S3 접근 제어·BI 문제 24개가 담당 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(246, 270)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 247}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(13).fill('s3-access-control'),
+      ...Array(11).fill('redshift-opensearch-quicksight'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...step1Concepts].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(24)
+  })
+
+  it('S3 접근 제어·BI 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(246, 270).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('S3 접근 제어·BI 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(246, 270)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('S3 접근 제어와 웨어하우스·검색·시각화 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['s3-access-control', 'redshift-opensearch-quicksight'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+      expect(questions.filter((question) => question.topicId === topicId).length).toBeGreaterThan(0)
+    })
+  })
+
+  // phase 27 step 3 — 커버리지가 절반도 안 되던 S3 수명 주기·암호화·블록 스토리지 세
+  // 주제의 빈 개념 24개를 덮는다(ADR-026). 담당 개념과 문항이 일대일이라 slice와
+  // 개념 목록이 같은 길이다.
+  const step3Concepts = [
+    's3-versioning-lifecycle.s3-replication',
+    's3-versioning-lifecycle.s3-same-region-replication',
+    's3-versioning-lifecycle.s3-replication-time-control',
+    's3-versioning-lifecycle.s3-replication-cross-account-kms',
+    's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
+    's3-encryption-batch.client-side-encryption',
+    's3-encryption-batch.s3-inventory-report',
+    's3-encryption-batch.s3-object-lambda',
+    's3-encryption-batch.sse-kms-audit-trail',
+    's3-encryption-batch.batch-copy-vs-replication',
+    's3-encryption-batch.s3-batch-operations-lambda-invoke',
+    's3-encryption-batch.sse-c-no-rotation-or-audit',
+    's3-encryption-batch.s3-secure-transport-condition',
+    'ebs-instance-store.elastic-fabric-adapter',
+    'ebs-instance-store.ebs-volume-type-names',
+    'ebs-instance-store.gp3-iops-independent-of-size',
+    'ebs-instance-store.spread-placement-group',
+    'ebs-instance-store.io2-block-express-iops-ceiling',
+    'ebs-instance-store.ebs-encryption-by-default',
+    'ebs-instance-store.ebs-encryption-performance',
+    'ebs-instance-store.ebs-recycle-bin',
+    'ebs-instance-store.ebs-snapshot-block-public-access',
+    'ebs-instance-store.data-lifecycle-manager',
+    'ebs-instance-store.ebs-fast-snapshot-restore',
+  ]
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제 24개가 담당 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(270, 294)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 271}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(5).fill('s3-versioning-lifecycle'),
+      ...Array(8).fill('s3-encryption-batch'),
+      ...Array(11).fill('ebs-instance-store'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...step3Concepts].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(24)
+  })
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(270, 294).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(270, 294)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('S3 수명 주기·암호화와 블록 스토리지 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['s3-versioning-lifecycle', 's3-encryption-batch', 'ebs-instance-store'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 2 — 문항이 하나도 없던 세 주제(governance-iac·systems-manager·
+  // ai-ml-services)와, 커버리지가 남아 있던 aws-core-services·s3-storage-classes의
+  // 빈 개념 30개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 헷갈리는 짝인
+  // EC2 Instance Connect 엔드포인트(서비스 선택 ↔ 여는 포트)와 AI 서비스 넷의 갈래
+  // (Transcribe ↔ Textract)만 두 방향으로 물어 문항이 32개다.
+  const step2Concepts = [
+    'governance-iac.cloudformation',
+    'governance-iac.service-catalog',
+    'governance-iac.control-tower-landing-zone',
+    'governance-iac.resource-access-manager',
+    'governance-iac.workload-discovery',
+    'governance-iac.control-tower-controls',
+    'governance-iac.cloudformation-drift-detection',
+    'systems-manager.ssm-run-command',
+    'systems-manager.appconfig',
+    'systems-manager.ssm-session-manager',
+    'systems-manager.ec2-instance-connect-endpoint',
+    'systems-manager.ssm-patch-manager',
+    'systems-manager.ssm-managed-instance-core-policy',
+    'systems-manager.ssm-inventory',
+    'ai-ml-services.sagemaker',
+    'ai-ml-services.media-ai-service-lineup',
+    'ai-ml-services.comprehend',
+    'ai-ml-services.amazon-lex',
+    'ai-ml-services.sagemaker-autopilot',
+    'ai-ml-services.rekognition-content-moderation',
+    'aws-core-services.exponential-backoff-retry',
+    'aws-core-services.blob-offload-to-s3',
+    's3-storage-classes.s3-express-one-zone',
+    's3-storage-classes.glacier-flexible-retrieval-standard-time',
+    's3-storage-classes.glacier-flexible-retrieval-expedited',
+    's3-storage-classes.s3-storage-class-cost-order',
+    's3-storage-classes.lifecycle-vs-intelligent-tiering',
+    's3-storage-classes.s3-storage-class-analysis',
+    's3-storage-classes.s3-retrieval-fee-by-class',
+    's3-storage-classes.intelligent-tiering-monitoring-fee',
+  ]
+
+  it('거버넌스·운영 관리·AI 문제 32개가 담당 개념 30개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(294, 326)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 295}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(7).fill('governance-iac'),
+      ...Array(8).fill('systems-manager'),
+      ...Array(7).fill('ai-ml-services'),
+      ...Array(2).fill('aws-core-services'),
+      ...Array(8).fill('s3-storage-classes'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step2Concepts].sort(),
+    )
+  })
+
+  it('거버넌스·운영 관리·AI 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(294, 326).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('거버넌스·운영 관리·AI 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(294, 326)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('거버넌스·운영 관리·AI와 핵심 서비스·스토리지 클래스 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;[
+      'governance-iac',
+      'systems-manager',
+      'ai-ml-services',
+      'aws-core-services',
+      's3-storage-classes',
+    ].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+      expect(questions.filter((question) => question.topicId === topicId).length).toBeGreaterThan(0)
+    })
+  })
+
+  // phase 27 step 4 — efs-fsx의 빈 개념 21개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 둘로 갈리는 개념 셋만 두 방향으로 물어 문항이 24개다 — 처리량
+  // 모드(버스팅 ↔ 프로비저닝), 성능 모드(최대 I/O ↔ 범용), IA 파일 크기 기준
+  // (128KB에 못 미쳐 절감이 작은 쪽 ↔ 1GB라서 실효를 내는 쪽).
+  const step4Concepts = [
+    'efs-fsx.fsx-windows-file-server',
+    'efs-fsx.fsx-for-lustre',
+    'efs-fsx.fsx-file-gateway',
+    'efs-fsx.efs-throughput-modes',
+    'efs-fsx.efs-elastic-throughput',
+    'efs-fsx.efs-performance-modes',
+    'efs-fsx.efs-one-zone',
+    'efs-fsx.efs-posix-permissions',
+    'efs-fsx.fsx-lustre-sub-millisecond-latency',
+    'efs-fsx.fsx-lustre-persistent-deployment',
+    'efs-fsx.fsx-ontap-multi-protocol-tiering',
+    'efs-fsx.fsx-ontap-iscsi-block',
+    'efs-fsx.fsx-ontap-snapmirror',
+    'efs-fsx.sql-server-always-on-shared-storage',
+    'efs-fsx.efs-ia-file-size-threshold',
+    'efs-fsx.efs-lifecycle-transition-to-primary',
+    'efs-fsx.efs-mount-target-per-az',
+    'efs-fsx.efs-cross-account-mount',
+    'efs-fsx.efs-replication-one-way',
+    'efs-fsx.fsx-windows-storage-auto-scaling',
+    'efs-fsx.fsx-lustre-s3-data-repository-association',
+  ]
+
+  it('공유 파일 스토리지 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(326, 350)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 327}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(24).fill('efs-fsx'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step4Concepts].sort(),
+    )
+  })
+
+  it('공유 파일 스토리지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(326, 350).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('공유 파일 스토리지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(326, 350)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('EFS·FSx 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'efs-fsx')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 5 — data-transfer-services의 빈 개념 16개와
+  // storage-gateway-migration의 빈 개념 6개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 문항이 24개다 —
+  // 지속 수집 ↔ 예약 전송(파일 게이트웨이 ↔ DataSync), 볼륨 모드(저장 볼륨 ↔ 캐시된 볼륨).
+  const step5Concepts = [
+    'data-transfer-services.snowball-edge-compute',
+    'data-transfer-services.transfer-family-workflow',
+    'data-transfer-services.s3-transfer-acceleration',
+    'data-transfer-services.transfer-deadline-vs-bandwidth',
+    'data-transfer-services.file-gateway-vs-datasync-continuous',
+    'data-transfer-services.transfer-family-custom-hostname',
+    'data-transfer-services.transfer-family-directory-service-identity-provider',
+    'data-transfer-services.transfer-family-service-managed-users',
+    'data-transfer-services.datasync-scope-limits',
+    'data-transfer-services.datasync-in-transit-encryption',
+    'data-transfer-services.datasync-manifest',
+    'data-transfer-services.datasync-transfer-mode',
+    'data-transfer-services.datasync-task-status-event',
+    'data-transfer-services.transfer-family-workflow-actions',
+    'data-transfer-services.transfer-family-structured-logging',
+    'data-transfer-services.s3-multipart-upload',
+    'storage-gateway-migration.dms-sct',
+    'storage-gateway-migration.application-migration-service',
+    'storage-gateway-migration.storage-gateway-gateway-types',
+    'storage-gateway-migration.storage-gateway-volume-modes',
+    'storage-gateway-migration.tape-gateway-archive-tiers',
+    'storage-gateway-migration.dms-full-load-and-cdc-task',
+  ]
+
+  it('데이터 전송·마이그레이션 문제 24개가 담당 개념 22개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(350, 374)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 351}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(17).fill('data-transfer-services'),
+      ...Array(7).fill('storage-gateway-migration'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step5Concepts].sort(),
+    )
+  })
+
+  it('데이터 전송·마이그레이션 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(350, 374).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('데이터 전송·마이그레이션 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(350, 374)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('데이터 전송과 Storage Gateway·마이그레이션 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['data-transfer-services', 'storage-gateway-migration'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 6 — rds-storage-features의 빈 개념 14개와 aurora의 빈 개념 15개를
+  // 덮는다(ADR-026). 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두
+  // 방향으로 물어 문항이 32개다 — 다중 AZ 배포의 두 형태(읽을 수 있는 대기 인스턴스 ↔
+  // 지연을 허용하는 분석 분리), 캐시가 듣는 조건(반복이 없을 때의 대안 ↔ 갈림길의 축),
+  // Aurora 백업의 복구 지점 목표(지속적 증분 백업 ↔ 정해진 간격의 스냅샷).
+  const step6Concepts = [
+    'rds-storage-features.rds-blue-green-deployment',
+    'rds-storage-features.rds-custom',
+    'rds-storage-features.rds-iam-database-authentication',
+    'rds-storage-features.rds-encryption-scope-and-in-transit',
+    'rds-storage-features.rds-multi-az-db-cluster',
+    'rds-storage-features.read-replica-vs-cache',
+    'rds-storage-features.rds-proxy-failover',
+    'rds-storage-features.rds-snapshot-cross-region-copy',
+    'rds-storage-features.rds-manual-snapshot-retention',
+    'rds-storage-features.rds-pitr-transaction-log-interval',
+    'rds-storage-features.rds-multi-az-failover-rto',
+    'rds-storage-features.rds-stop-instance-restart',
+    'rds-storage-features.rds-encrypt-existing-instance',
+    'rds-storage-features.rds-custom-byol',
+    'aurora.aurora-endpoint-types',
+    'aurora.aurora-replica-auto-scaling',
+    'aurora.babelfish',
+    'aurora.aurora-pgvector',
+    'aurora.aurora-select-into-outfile-s3',
+    'aurora.aurora-global-database-dr-targets',
+    'aurora.aurora-cross-region-read-replica',
+    'aurora.aurora-continuous-backup-rpo',
+    'aurora.aurora-clone',
+    'aurora.aurora-storage-configurations',
+    'aurora.sql-server-license-cost',
+    'aurora.aurora-zdr-and-activity-streams',
+    'aurora.aurora-global-database-write-region',
+    'aurora.aurora-serverless-max-acu',
+    'aurora.read-replica-no-schema-change',
+  ]
+
+  it('RDS·Aurora 문제 32개가 담당 개념 29개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(374, 406)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 375}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(16).fill('rds-storage-features'),
+      ...Array(16).fill('aurora'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step6Concepts].sort(),
+    )
+  })
+
+  it('RDS·Aurora 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(374, 406).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('RDS·Aurora 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(374, 406)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('RDS 스토리지 기능과 Aurora 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['rds-storage-features', 'aurora'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 7 — dynamodb의 빈 개념 16개와 elasticache-purpose-built-db의
+  // 빈 개념 11개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 갈림길 하나만 두
+  // 방향으로 물어 문항이 28개다 — ElastiCache 엔진 선택(지속성이 필요한 상태를
+  // 캐시에 둘 때 고르는 쪽 ↔ Memcached에 없는 것).
+  const step7Concepts = [
+    'dynamodb.dynamodb-single-digit-latency',
+    'dynamodb.dynamodb-streams',
+    'dynamodb.dynamodb-global-tables',
+    'dynamodb.dynamodb-ttl',
+    'dynamodb.dynamodb-global-secondary-index',
+    'dynamodb.dynamodb-capacity-modes',
+    'dynamodb.dynamodb-auto-scaling-target-utilization',
+    'dynamodb.dynamodb-read-consistency',
+    'dynamodb.dynamodb-s3-export-vs-streams',
+    'dynamodb.dynamodb-incremental-export',
+    'dynamodb.dynamodb-export-no-read-capacity',
+    'dynamodb.dynamodb-export-requires-pitr',
+    'dynamodb.dynamodb-item-size-limit',
+    'dynamodb.dynamodb-ttl-deletion-delay',
+    'dynamodb.dynamodb-streams-retention-24h',
+    'dynamodb.dynamodb-streams-batch-size',
+    'elasticache-purpose-built-db.neptune',
+    'elasticache-purpose-built-db.neptune-streams',
+    'elasticache-purpose-built-db.qldb',
+    'elasticache-purpose-built-db.timestream',
+    'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
+    'elasticache-purpose-built-db.elasticache-multi-az-failover',
+    'elasticache-purpose-built-db.elasticache-global-datastore',
+    'elasticache-purpose-built-db.documentdb-global-cluster',
+    'elasticache-purpose-built-db.cache-requires-application-change',
+    'elasticache-purpose-built-db.elasticache-not-a-durable-store',
+    'elasticache-purpose-built-db.dax-encryption-at-rest',
+  ]
+
+  it('DynamoDB·캐시 문제 28개가 담당 개념 27개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(406, 434)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 407}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(16).fill('dynamodb'),
+      ...Array(12).fill('elasticache-purpose-built-db'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step7Concepts].sort(),
+    )
+  })
+
+  it('DynamoDB·캐시 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(406, 434).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('DynamoDB·캐시 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(406, 434)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('DynamoDB와 목적별 데이터베이스 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['dynamodb', 'elasticache-purpose-built-db'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 8 — ec2-autoscaling의 빈 개념 15개와 elastic-load-balancing의
+  // 빈 개념 13개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 축이 양방향으로
+  // 갈리는 개념 넷만 두 방향으로 물어 문항이 32개다 — 예약 인스턴스의 두 갈래
+  // (유형을 고정해 할인을 크게 ↔ 유형을 바꿀 여지를 남기고 덜 싸게), 스팟 할당
+  // 전략(중단 최소화 ↔ 비용과 용량의 절충), 단순 조정과 대상 추적(짧은 급증에서
+  // 무엇으로 바꾸는가 ↔ 단순 조정의 동작 방식 자체), 종단 간 암호화(뒤 구간도
+  // TLS여야 한다 ↔ 인증서 수명 주기를 누가 지는가).
+  const step8Concepts = [
+    'ec2-autoscaling.ami-and-launch-template',
+    'ec2-autoscaling.ec2-image-builder',
+    'ec2-autoscaling.memory-optimized-instance-family',
+    'ec2-autoscaling.gpu-instance-family',
+    'ec2-autoscaling.reserved-instance-types',
+    'ec2-autoscaling.spot-workload-fit',
+    'ec2-autoscaling.target-tracking-vs-simple-scaling',
+    'ec2-autoscaling.predictive-scaling',
+    'ec2-autoscaling.spot-allocation-strategy',
+    'ec2-autoscaling.asg-instance-type-override',
+    'ec2-autoscaling.asg-on-demand-base-capacity',
+    'ec2-autoscaling.asg-single-instance-self-healing',
+    'ec2-autoscaling.elb-health-check-drives-asg-replacement',
+    'ec2-autoscaling.enhanced-networking',
+    'ec2-autoscaling.parallelcluster',
+    'elastic-load-balancing.gateway-load-balancer',
+    'elastic-load-balancing.alb-routing-conditions',
+    'elastic-load-balancing.nlb-tls-listener',
+    'elastic-load-balancing.nlb-udp-listener',
+    'elastic-load-balancing.nlb-ip-targets',
+    'elastic-load-balancing.alb-cookie-stickiness',
+    'elastic-load-balancing.internal-load-balancer',
+    'elastic-load-balancing.alb-least-outstanding-requests',
+    'elastic-load-balancing.alb-target-group-independent-scaling',
+    'elastic-load-balancing.alb-listener-rule-fixed-response',
+    'elastic-load-balancing.load-balancer-idle-timeout',
+    'elastic-load-balancing.end-to-end-encryption-behind-alb',
+    'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+  ]
+
+  it('EC2·로드 밸런서 문제 32개가 담당 개념 28개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(434, 466)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 435}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(18).fill('ec2-autoscaling'),
+      ...Array(14).fill('elastic-load-balancing'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step8Concepts].sort(),
+    )
+  })
+
+  it('EC2·로드 밸런서 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(434, 466).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('EC2·로드 밸런서 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(434, 466)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('EC2와 로드 밸런서 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['ec2-autoscaling', 'elastic-load-balancing'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 9 — cloudfront-global-accelerator의 빈 개념 19개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어
+  // 문항이 22개다 — 서명된 URL(만료되는 일회성 링크가 맞는 자리 ↔ 매일 들어오는
+  // 상시 접근에는 아닌 이유), 엣지 캐시의 비용 절감(지연과 전송 비용이 함께 조건일 때
+  // CloudFront가 답인 자리 ↔ 리전 복제안이 비용에서 밀리는 이유), Global Accelerator의
+  // 고정 IP(뒤쪽이 바뀌어도 변하지 않는 진입점 ↔ 캐시할 사본이 없는 TCP 연결의 가속).
+  const step9Concepts = [
+    'cloudfront-global-accelerator.cloudfront-alb-origin',
+    'cloudfront-global-accelerator.cloudfront-multiple-origins',
+    'cloudfront-global-accelerator.cloudfront-onprem-origin',
+    'cloudfront-global-accelerator.global-accelerator',
+    'cloudfront-global-accelerator.global-accelerator-static-ip',
+    'cloudfront-global-accelerator.global-accelerator-endpoints',
+    'cloudfront-global-accelerator.cloudfront-functions',
+    'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
+    'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
+    'cloudfront-global-accelerator.cloudfront-signed-url',
+    'cloudfront-global-accelerator.cloudfront-signed-cookie',
+    'cloudfront-global-accelerator.cloudfront-geo-restriction',
+    'cloudfront-global-accelerator.cloudfront-field-level-encryption',
+    'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+    'cloudfront-global-accelerator.lambda-at-edge-response-compression',
+    'cloudfront-global-accelerator.cloudfront-price-class',
+    'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
+    'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
+    'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+  ]
+
+  it('CloudFront·엣지 문제 22개가 담당 개념 19개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(466, 488)
+
+    expect(addedQuestions).toHaveLength(22)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 22 }, (_, index) => `q${index + 467}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(22).fill('cloudfront-global-accelerator'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step9Concepts].sort(),
+    )
+  })
+
+  it('CloudFront·엣지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(466, 488).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('CloudFront·엣지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(466, 488)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('CloudFront·Global Accelerator 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'cloudfront-global-accelerator')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+
+  // phase 27 step 10 — lambda의 빈 개념 15개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 양방향으로 갈리는 개념 다섯만 두 방향으로 물어 문항이 20개다 —
+  // 호출 유형(즉시 답을 주지 않아야 하는 작업은 이벤트 호출 ↔ 요청-응답으로 받으면
+  // 처리 시간이 그대로 대기 시간이 된다), 예약된 동시성(피크에 일정한 지연이 필요하면
+  // 프로비저닝된 쪽 ↔ 예약된 쪽은 콜드 스타트를 남긴다), SnapStart(게시된 버전에서만
+  // 켜진다 ↔ 스냅샷을 되살리므로 호출마다 달라야 하는 값은 핸들러 안으로),
+  // EFS 마운트(레이어 상한을 넘는 공유 종속성 ↔ 전송 중 암호화는 이미 자동),
+  // 운영 체제 접근(컴퓨팅은 EC2 ↔ 데이터베이스는 RDS Custom).
+  const step10Concepts = [
+    'lambda.lambda-function-url-iam-auth',
+    'lambda.lambda-container-image',
+    'lambda.lambda-invocation-types',
+    'lambda.lambda-memory-cpu-proportional',
+    'lambda.lambda-reserved-concurrency',
+    'lambda.lambda-provisioned-concurrency-autoscaling',
+    'lambda.lambda-concurrency-limit-throttling',
+    'lambda.lambda-kinesis-event-source',
+    'lambda.lambda-snapstart',
+    'lambda.lambda-memory-ceiling',
+    'lambda.lambda-layer-size-limit',
+    'lambda.lambda-efs-mount',
+    'lambda.lambda-version-alias-config-freeze',
+    'lambda.lambda-execution-role-logs',
+    'lambda.serverless-runtime-no-os-access',
+  ]
+
+  it('Lambda 문제 20개가 담당 개념 15개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(488, 508)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 489}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('lambda'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step10Concepts].sort(),
+    )
+  })
+
+  it('Lambda 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(488, 508).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('Lambda 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(488, 508)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('Lambda 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'lambda')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 11 — ecs-eks-fargate의 빈 개념 19개를 덮는다(ADR-026). 개념당 한
+  // 문항이 기본이고, EKS의 컴퓨팅 세 갈래만 두 방향으로 물어 문항이 20개다 —
+  // 기본 컴퓨팅 인프라를 직접 관리하지 않는 것이 목표면 Fargate 쪽이라는 갈림길과,
+  // 그 Fargate에서 어떤 파드를 돌릴지 고르는 장치가 Fargate 프로필이라는 설정 항목.
+  const step11Concepts = [
+    'ecs-eks-fargate.ecr-image-scan-on-push',
+    'ecs-eks-fargate.elastic-beanstalk',
+    'ecs-eks-fargate.app2container',
+    'ecs-eks-fargate.eks-compute-options',
+    'ecs-eks-fargate.fargate-spot',
+    'ecs-eks-fargate.batch-fargate-compute-environment',
+    'ecs-eks-fargate.eks-fargate-pod-isolation',
+    'ecs-eks-fargate.eks-cluster-autoscaler',
+    'ecs-eks-fargate.eks-aws-load-balancer-controller',
+    'ecs-eks-fargate.eks-connector',
+    'ecs-eks-fargate.eks-anywhere',
+    'ecs-eks-fargate.ecs-task-role',
+    'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+    'ecs-eks-fargate.eks-irsa',
+    'ecs-eks-fargate.ecs-awsvpc-mode',
+    'ecs-eks-fargate.ecs-task-placement-strategy',
+    'ecs-eks-fargate.fargate-per-second-billing',
+    'ecs-eks-fargate.fargate-efs-mount',
+    'ecs-eks-fargate.eks-secrets-kms-encryption',
+  ]
+
+  it('컨테이너 문제 20개가 담당 개념 19개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(508, 528)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 509}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('ecs-eks-fargate'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step11Concepts].sort(),
+    )
+  })
+
+  it('컨테이너 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(508, 528).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('컨테이너 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(508, 528)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('컨테이너 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'ecs-eks-fargate')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 12 — api-gateway-step-functions의 빈 개념 16개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어
+  // 문항이 20개다 — 통합 타임아웃(어느 유형을 고르는가 ↔ 싼 쪽을 고른 설계가 왜 끊기는가),
+  // 엔드포인트 유형(전 세계 지연을 줄이는 노출 방식 ↔ 같은 자리에 얹히는 캐싱이 하는 일),
+  // Lambda 프록시 통합(동기 호출이라는 성질 ↔ 인증을 맡는 사용자 지정 권한 부여자),
+  // 매핑 템플릿(형식이 달라지는 변환은 함수가 맡는다 ↔ 변환할 것이 없는 쪽은 그대로 흘린다).
+  const step12Concepts = [
+    'api-gateway-step-functions.amplify',
+    'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+    'api-gateway-step-functions.api-gateway-rest-only-features',
+    'api-gateway-step-functions.api-gateway-websocket-api',
+    'api-gateway-step-functions.api-gateway-api-key-not-auth',
+    'api-gateway-step-functions.api-gateway-resource-policy',
+    'api-gateway-step-functions.api-gateway-endpoint-types',
+    'api-gateway-step-functions.api-gateway-behind-cloudfront',
+    'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
+    'api-gateway-step-functions.api-gateway-aws-service-integration',
+    'api-gateway-step-functions.step-functions-long-running-workflow',
+    'api-gateway-step-functions.step-functions-express-workflow',
+    'api-gateway-step-functions.step-functions-map-state',
+    'api-gateway-step-functions.api-gateway-custom-domain-name',
+    'api-gateway-step-functions.api-gateway-mapping-template-limits',
+    'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+  ]
+
+  it('API Gateway·Step Functions 문제 20개가 담당 개념 16개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(528, 548)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 529}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(20).fill('api-gateway-step-functions'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step12Concepts].sort(),
+    )
+  })
+
+  it('API Gateway·Step Functions 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(528, 548).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('API Gateway·Step Functions 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(528, 548)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('API Gateway·Step Functions 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'api-gateway-step-functions')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 13 — sqs-sns-eventbridge의 빈 개념 26개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 28개다 — SNS는 큐가 아니다(버퍼가 필요한 자리는 큐다 ↔ 알림 한 통이면 되는
+  // 자리에 큐를 끼우는 것도 같은 어긋남이다), 가시성 타임아웃(중복 처리 증상을 무엇으로
+  // 고치는가 ↔ 전달 지연은 왜 그 증상에 손대지 못하는가).
+  const step13Concepts = [
+    'sqs-sns-eventbridge.amazon-mq',
+    'sqs-sns-eventbridge.dead-letter-queue',
+    'sqs-sns-eventbridge.sns-is-not-a-queue',
+    'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+    'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+    'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+    'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
+    'sqs-sns-eventbridge.eventbridge-event-bus-types',
+    'sqs-sns-eventbridge.eventbridge-pipes',
+    'sqs-sns-eventbridge.eventbridge-api-destination',
+    'sqs-sns-eventbridge.eventbridge-private-api-target',
+    'sqs-sns-eventbridge.eventbridge-resource-change-rule',
+    'sqs-sns-eventbridge.sns-fifo-topic',
+    'sqs-sns-eventbridge.ses-inbound-email-receiving',
+    'sqs-sns-eventbridge.sqs-batch-and-polling',
+    'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+    'sqs-sns-eventbridge.sqs-message-size-limit',
+    'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+    'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+    'sqs-sns-eventbridge.sqs-content-based-deduplication',
+    'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+    'sqs-sns-eventbridge.sqs-queue-policy',
+    'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+    'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+    'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
+    'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+  ]
+
+  it('메시징 문제 28개가 담당 개념 26개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(548, 576)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 549}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(28).fill('sqs-sns-eventbridge'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step13Concepts].sort(),
+    )
+  })
+
+  it('메시징 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(548, 576).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('메시징 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(548, 576)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('SQS·SNS·EventBridge 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'sqs-sns-eventbridge')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 14 — 백업·재해 복구와 네트워킹 네 주제의 빈 개념 30개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 32개다 — 상태 저장과 상태 비저장(응답 규칙이 왜 필요한가 ↔ 차단 규칙이
+  // 없다는 성질이 IP 하나 막기를 어디로 보내는가), Direct Connect의 가상 인터페이스
+  // (Transit Gateway로 가는 조합은 무엇인가 ↔ 세 종류의 목적지가 어떻게 갈리는가).
+  const step14Concepts = [
+    'backup-disaster-recovery.elastic-disaster-recovery',
+    'backup-disaster-recovery.backup-and-restore-dr',
+    'backup-disaster-recovery.warm-standby-for-low-rto',
+    'backup-disaster-recovery.backup-ec2-resource-assignment',
+    'backup-disaster-recovery.organizations-backup-policy',
+    'backup-disaster-recovery.backup-cross-account-copy',
+    'backup-disaster-recovery.backup-s3-continuous-backup',
+    'backup-disaster-recovery.backup-restore-testing-plan',
+    'backup-disaster-recovery.backup-audit-manager',
+    'vpc-networking.vpc-flow-logs',
+    'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+    'vpc-networking.privatelink-endpoint-service',
+    'vpc-networking.nat-gateway-per-az',
+    'vpc-networking.internet-gateway-is-not-per-az',
+    'vpc-networking.nat-gateway-count-by-environment',
+    'vpc-networking.nat-gateway-elastic-ip',
+    'vpc-networking.vpc-endpoint-policy',
+    'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+    'security-groups-nacl.nacl-deny-at-source-subnet',
+    'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
+    'security-groups-nacl.nlb-security-group',
+    'hybrid-connectivity.virtual-private-gateway',
+    'hybrid-connectivity.region-attached-edge-options',
+    'hybrid-connectivity.per-vpc-vpn-for-isolation',
+    'hybrid-connectivity.transit-gateway-cross-region-peering',
+    'hybrid-connectivity.onprem-access-via-interface-endpoint',
+    'hybrid-connectivity.outposts-data-residency',
+    'hybrid-connectivity.direct-connect-resiliency',
+    'hybrid-connectivity.direct-connect-vif-types',
+    'hybrid-connectivity.centralized-onprem-egress',
+  ]
+
+  it('백업·네트워킹 문제 32개가 담당 개념 30개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(576, 608)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 577}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set([
+        'backup-disaster-recovery',
+        'vpc-networking',
+        'security-groups-nacl',
+        'hybrid-connectivity',
+      ]),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step14Concepts].sort(),
+    )
+  })
+
+  it('백업·네트워킹 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(576, 608).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('백업·네트워킹 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(576, 608)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('백업·재해 복구와 네트워킹 세 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) =>
+        [
+          'backup-disaster-recovery',
+          'vpc-networking',
+          'security-groups-nacl',
+          'hybrid-connectivity',
+        ].includes(id),
+      )
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 15 — Route 53과 분석 두 주제의 빈 개념 23개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어
+  // 문항이 24개다 — EMR 노드의 세 역할(저장을 맡느냐가 코어와 태스크를 가른다 ↔
+  // 그 차이 때문에 스팟으로 돌려도 되는 노드가 어디인가).
+  const step15Concepts = [
+    'route53.route53-zone-file-import',
+    'route53.route53-failover-routing',
+    'route53.multi-region-failover-for-region-outage',
+    'route53.latency-record-for-non-aws-endpoint',
+    'route53.route53-alias-record',
+    'route53.private-hosted-zone-vpc-only',
+    'route53.route53-resolver-forward-rule',
+    'route53.route53-query-logging',
+    'emr-glue-athena.emr-node-types',
+    'emr-glue-athena.glue-databrew',
+    'emr-glue-athena.lake-formation',
+    'emr-glue-athena.emr-transient-cluster',
+    'emr-glue-athena.emr-managed-scaling',
+    'emr-glue-athena.glue-etl-with-per-customer-kms-key',
+    'emr-glue-athena.athena-encrypted-and-pay-per-query',
+    'emr-glue-athena.athena-federated-query',
+    'emr-glue-athena.log-storage-s3-athena',
+    'emr-glue-athena.lake-formation-blueprint-and-athena',
+    'emr-glue-athena.lake-formation-lf-tags',
+    'emr-glue-athena.emr-node-instance-family-choice',
+    'emr-glue-athena.emr-runtime-role',
+    'emr-glue-athena.emr-security-configuration',
+    'emr-glue-athena.parquet-columnar-format',
+  ]
+
+  it('Route 53·분석 문제 24개가 담당 개념 23개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(608, 632)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 609}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['route53', 'emr-glue-athena']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step15Concepts].sort(),
+    )
+  })
+
+  it('Route 53·분석 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(608, 632).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('Route 53·분석 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(608, 632)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('Route 53과 분석 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['route53', 'emr-glue-athena'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 16 — 스트리밍과 관측 두 주제의 빈 개념 23개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어
+  // 문항이 24개다 — Kinesis 용량 모드(두 모드가 무엇으로 갈리는가 ↔ 파티션 키 쏠림에는
+  // 온디맨드로 옮겨도 증상만 가려진다).
+  const step16Concepts = [
+    'kinesis-streaming.kinesis-data-streams',
+    'kinesis-streaming.data-firehose',
+    'kinesis-streaming.managed-service-apache-flink',
+    'kinesis-streaming.kinesis-video-streams',
+    'kinesis-streaming.flink-kinesis-source-sink',
+    'kinesis-streaming.firehose-lambda-transformation',
+    'kinesis-streaming.firehose-format-conversion',
+    'kinesis-streaming.kinesis-retention-and-fanout',
+    'kinesis-streaming.kinesis-client-library',
+    'kinesis-streaming.msk-kafka-connect',
+    'kinesis-streaming.kinesis-record-size-limit',
+    'kinesis-streaming.kinesis-partition-key-hot-shard',
+    'kinesis-streaming.kinesis-capacity-mode',
+    'kinesis-streaming.firehose-buffering',
+    'cloudwatch-xray.x-ray',
+    'cloudwatch-xray.performance-insight',
+    'cloudwatch-xray.amazon-managed-grafana',
+    'cloudwatch-xray.cloudwatch-network-monitor',
+    'cloudwatch-xray.cloudwatch-container-insights',
+    'cloudwatch-xray.performance-insights-rightsizing',
+    'cloudwatch-xray.cloudwatch-agent-memory-metric',
+    'cloudwatch-xray.ec2-detailed-monitoring',
+    'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+  ]
+
+  it('스트리밍·관측 문제 24개가 담당 개념 23개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(632, 656)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 633}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['kinesis-streaming', 'cloudwatch-xray']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step16Concepts].sort(),
+    )
+  })
+
+  it('스트리밍·관측 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(632, 656).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('스트리밍·관측 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(632, 656)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('스트리밍과 관측 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['kinesis-streaming', 'cloudwatch-xray'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 17 — 보안 서비스 세 주제의 빈 개념 26개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 28개다 — Shield Standard의 방어 범위(정상 요청 모양의 L7 공격은 WAF가 맡는다
+  // ↔ 기본 보호의 범위가 네트워크 계층까지라는 경계 자체)와 Inspector의 역할(취약점을
+  // 찾아 주는 서비스는 무엇인가 ↔ 유입을 막는 일은 발견이 아니라 조치라 자리가 다르다).
+  const step17Concepts = [
+    'secrets-encryption.kms-key-types-by-management',
+    'secrets-encryption.kms-multi-region-key',
+    'secrets-encryption.kms-imported-key-material',
+    'secrets-encryption.kms-cloudhsm-key-store',
+    'secrets-encryption.kms-key-per-tenant',
+    'secrets-encryption.acm-dns-validation',
+    'secrets-encryption.secrets-manager-batch-get-secret-value',
+    'secrets-encryption.kms-automatic-key-rotation',
+    'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
+    'secrets-encryption.imported-key-material-rotation',
+    'secrets-encryption.acm-expiration-event',
+    'waf-shield.firewall-manager',
+    'waf-shield.waf-managed-rule-groups',
+    'waf-shield.waf-rate-based-rule',
+    'waf-shield.shield-standard-network-layer',
+    'waf-shield.shield-advanced-protection-group',
+    'waf-shield.waf-body-inspection-size-limit',
+    'waf-shield.waf-web-acl-region-must-match-rest-api',
+    'waf-shield.waf-logging-to-firehose',
+    'guardduty-macie-inspector.amazon-inspector',
+    'guardduty-macie-inspector.security-hub',
+    'guardduty-macie-inspector.macie-automated-discovery',
+    'guardduty-macie-inspector.inspector-scans-ecr-images',
+    'guardduty-macie-inspector.macie-delegated-administrator',
+    'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+    'guardduty-macie-inspector.macie-finding-to-eventbridge',
+  ]
+
+  it('보안 서비스 문제 28개가 담당 개념 26개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(656, 684)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 657}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['secrets-encryption', 'waf-shield', 'guardduty-macie-inspector']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step17Concepts].sort(),
+    )
+  })
+
+  it('보안 서비스 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(656, 684).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('보안 서비스 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(656, 684)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('비밀·키와 WAF·Shield와 탐지 세 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) =>
+        ['secrets-encryption', 'waf-shield', 'guardduty-macie-inspector'].includes(id),
+      )
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 18 — 자격 증명 두 주제의 빈 개념 20개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어
+  // 문항이 24개다 — 권한 경계(주체별 상한이라는 정의 ↔ 부착을 SCP로 의무화하는 예방적
+  // 통제), 명시적 거부(평가 순서 자체 ↔ aws:SourceIp 조건에 걸린 403 진단),
+  // NotAction Deny(한 서비스만 남기는 구성 ↔ Deny 전체+Allow 하나가 죽는 이유),
+  // AD Connector(디렉터리 정보를 AWS에 두지 않는다 ↔ 인증은 온프레미스·권한은 권한 세트).
+  const step18Concepts = [
+    'iam-permissions.iam-group-policy-attachment',
+    'iam-permissions.iam-roles-anywhere',
+    'iam-permissions.iam-access-analyzer',
+    'iam-permissions.network-access-analyzer',
+    'iam-permissions.abac',
+    'iam-permissions.permissions-boundary',
+    'iam-permissions.cross-account-iam-role',
+    'iam-permissions.iam-user-is-account-scoped',
+    'iam-permissions.iam-explicit-deny-precedence',
+    'iam-permissions.iam-notaction-deny',
+    'iam-permissions.iam-requested-region-condition',
+    'iam-permissions.access-analyzer-delegated-administrator',
+    'iam-permissions.root-user-multiple-mfa',
+    'iam-permissions.root-user-cannot-be-disabled',
+    'identity-federation.aws-directory-service',
+    'identity-federation.identity-center-external-idp',
+    'identity-federation.cognito-social-idp-federation',
+    'identity-federation.custom-identity-broker-for-non-saml',
+    'identity-federation.identity-center-permission-set',
+    'identity-federation.saml-federation-role-to-ad-group-mapping',
+  ]
+
+  it('자격 증명 문제 24개가 담당 개념 20개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(684, 708)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 685}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['iam-permissions', 'identity-federation']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step18Concepts].sort(),
+    )
+  })
+
+  it('자격 증명 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(684, 708).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('자격 증명 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(684, 708)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('IAM 권한과 자격 증명 페더레이션 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['iam-permissions', 'identity-federation'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 19 — 거버넌스·비용 두 주제의 빈 개념 21개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어
+  // 문항이 24개다 — 태그 정책(표기를 통일하는 일 ↔ 막는 일은 SCP라 둘을 함께 붙인다),
+  // SCP를 붙일 수 있는 자리(넷 중 셋만 제한하는 방법 ↔ 루트에 붙여 전부 걸린 증상의 진단),
+  // 온디맨드 용량 예약(할인 수단이 아니라는 성격 ↔ 중단을 견디는 배치는 스팟이 가장 싸다).
+  const step19Concepts = [
+    'organizations-cloudtrail-config.cloudtrail-lake',
+    'organizations-cloudtrail-config.audit-manager',
+    'organizations-cloudtrail-config.organizational-unit',
+    'organizations-cloudtrail-config.organizations-tag-policy',
+    'organizations-cloudtrail-config.organizations-consolidated-billing',
+    'organizations-cloudtrail-config.cloudtrail-data-events',
+    'organizations-cloudtrail-config.config-configuration-recorder',
+    'organizations-cloudtrail-config.scp-attachment-targets',
+    'organizations-cloudtrail-config.scp-condition-exception',
+    'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+    'organizations-cloudtrail-config.config-conformance-pack',
+    'organizations-cloudtrail-config.config-custom-rule',
+    'organizations-cloudtrail-config.config-rule-remediation',
+    'cost-management.cost-and-usage-report',
+    'cost-management.savings-plan-baseline-vs-spike',
+    'cost-management.rds-reserved-instance',
+    'cost-management.on-demand-capacity-reservation',
+    'cost-management.cost-allocation-tag-activation-in-management-account',
+    'cost-management.budget-actions',
+    'cost-management.budget-forecasted-alert',
+    'cost-management.compute-optimizer-ebs-recommendations',
+  ]
+
+  it('거버넌스·비용 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(708, 732)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 709}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['organizations-cloudtrail-config', 'cost-management']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step19Concepts].sort(),
+    )
+  })
+
+  it('거버넌스·비용 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(708, 732).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('거버넌스·비용 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(708, 732)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('거버넌스와 비용 관리 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['organizations-cloudtrail-config', 'cost-management'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
@@ -2970,10 +4759,14 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
-    const storageClassQuestions = questions.filter(
-      (question) => question.topicId === 's3-storage-classes',
-    )
+  // 이 단언이 고정하는 것은 원본 은행 246문항 안의 스토리지 클래스 문항 9개가 클래스별
+  // 개념과 일대일이라는 사실이다. phase 27 step 2가 이 주제의 빈 개념 8개를 덮으며
+  // 문항을 더했으므로(ADR-026) 대상을 원본 은행으로 좁힌다 — 더한 문항은 위의 step 2
+  // 블록이 따로 본다.
+  it('원본 은행의 S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
+    const storageClassQuestions = questions
+      .slice(0, 246)
+      .filter((question) => question.topicId === 's3-storage-classes')
 
     expect(storageClassQuestions.map(({ id }) => id)).toEqual([
       'q016',
@@ -3074,6 +4867,54 @@ describe('학습 데이터 무결성', () => {
 
     questions.forEach((question) => {
       expect(conceptIds.has(question.conceptId)).toBe(true)
+    })
+  })
+
+  // ADR-026 — 이 앱의 주 학습 경로는 문제를 풀고 틀린 것만 개념으로 되짚는 순환이라,
+  // 문항이 가리키지 않는 개념은 그 경로에서 아예 배울 수 없는 사각지대다. phase 27이
+  // 618개를 전부 덮었고 이 단언이 그 상태가 되돌아가는 것을 막는다 — 개념을 더하는 사람은
+  // 문항도 함께 만들어야 한다.
+  // 예외 목록("이 개념들은 출제하지 않는다")을 만들어 통과시키지 마라. 그 목록이 생기는
+  // 순간 다음 사람이 거기에 개념을 추가해 사각지대가 되살아난다.
+  it('모든 개념이 문항 하나 이상을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  it('모든 문제의 topicId가 conceptId가 속한 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('문제 id가 q001부터 빈 번호 없이 이어진다', () => {
+    expect(questions.map(({ id }) => id)).toEqual(
+      questions.map((_, index) => `q${String(index + 1).padStart(3, '0')}`),
+    )
+  })
+
+  // step 1~19가 이어 쓴 구간이다. 앞쪽 246문항은 각 step의 slice 테스트가 이미 고정한다.
+  // 길이를 정확한 수가 아니라 하한으로 단언하는 이유: 이 구간은 문항을 더할 때마다 자라는데,
+  // 이 테스트가 지키는 것은 분량이 아니라 분포다. 하한은 빈 slice로 조용히 통과하는 것만 막는다.
+  it('phase 27이 더한 q247 이후 구간의 정답 위치가 고르게 퍼져 있다', () => {
+    const addedQuestions = questions.slice(246)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+
+    expect(addedQuestions.length).toBeGreaterThanOrEqual(486)
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
     })
   })
 

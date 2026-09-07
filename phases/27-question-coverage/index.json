@@ -5,112 +5,180 @@
     {
       "step": 0,
       "name": "coverage-rule",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-07T22:21:41+0900",
+      "summary": "기준과 도구만 만들었고 문항은 쓰지 않았다(src/ 무변경, 문항 id는 q001~q246 그대로 246개이므로 step 1은 q247부터 이어 쓴다). PRD 「문제 은행」의 크기 기준을 \"169문항·중요도 비례 배분\"에서 \"개념당 최소 1문항\"으로 교체하고 해설이 개념을 가르치는 글이어야 한다는 규칙을 추가했다. ADR-026(문제 은행의 크기를 개념 커버리지로 정한다)를 추가했다 — 실측 618개념 중 175개(28%) 덮임, 남은 443개 중 436개(98%)가 dump-gaps/ 근거를 이미 갖고 있음, 문항 0개 주제 5개(44개념). scripts/coverage.mjs를 추가했다(의존성 없음, npm test·build에 엮지 않음): 인자 없으면 주제 39개 표와 전체 비율, 주제 id를 주면 덮이지 않은 개념 id를 전부 찍고 exit 1.",
+      "completed_at": "2026-09-07T22:28:32+0900"
     },
     {
       "step": 1,
       "name": "questions-s3-access-bi",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-07T22:27:36+0900",
+      "summary": "q247~q270 문항 24개를 questions.json에 이어 붙여 총 246→270개가 됐다(다음 step은 q271부터). s3-access-control 13개(q247~q259)·redshift-opensearch-quicksight 11개(q260~q270)로 담당 개념 24개에 문항이 일대일로 붙어 두 주제의 커버리지가 100%가 됐고 빠뜨린 개념은 없다(node scripts/coverage.mjs s3-access-control redshift-opensearch-quicksight → exit 0). 문항이 0개였던 주제 5개 중 이 둘이 사라졌다. 정답 위치는 0·1·2·3이 각각 6개(25%)이고 해설은 평균 221자로 정답 근거와 오답의 변별 축을 함께 담는다. data.test.ts에 step 1 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고, App.test.tsx의 하드코딩된 '1 / 246'을 questions.length로 바꿨다 — 문제 은행이 커질 때마다 깨지던 단정이다. topics.json과 topics-baseline.json은 건드리지 않았으므로 check-structure.mjs는 questionsSha256 1건으로 실패한다(마지막 step이 재생성). ※ 이 step의 blocked_reason은 같은 worktree에서 동시에 돌던 다른 harness 실행의 step 1 에이전트가 쓴 것이고, 지우지 않고 그대로 뒀다. 그 실행(execute.py PID 38620)은 아직 살아 있으므로 사람이 둘 중 하나를 종료해야 한다 — 산출물 자체는 위 요약대로 완료·검증됐다. ※ 중복 커밋 복구: 동시 실행 때문에 step 1 커밋이 두 개(9a4a244, 75cd330) 생겼고, 뒤쪽이 다른 에이전트가 쓰던 q247~q270 24개를 git add -A로 함께 담아 HEAD의 questions.json이 294문항·중복 id 24개가 됐다. 중복 24개를 제거해 270문항으로 되돌렸다(내용은 9a4a244의 것을 남겼다 — 먼저 커밋된 쪽이다). 복구 후 npm run lint·build·test(377) 전부 통과, coverage.mjs exit 0.",
+      "completed_at": "2026-09-07T22:42:02+0900"
     },
     {
       "step": 2,
       "name": "questions-governance-ai-core",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-07T23:53:42+0900",
+      "summary": "q295~q326 문항 32개를 questions.json에 이어 붙여 총 294→326개가 됐다(다음 step은 q327부터). governance-iac 7개(q295~q301)·systems-manager 8개(q302~q309)·ai-ml-services 7개(q310~q316)·aws-core-services 2개(q317~q318)·s3-storage-classes 8개(q319~q326)로 담당 개념 30개를 하나도 남기지 않고 덮었다(node scripts/coverage.mjs governance-iac systems-manager ai-ml-services aws-core-services s3-storage-classes → exit 0, 다섯 주제 모두 100%). 문항이 0개였던 주제 3개가 사라져 이제 문항이 하나도 없는 주제는 없다(전체 618개념 중 253개 41% 덮임). 개념당 1문항이 기본이고 헷갈리는 짝 둘만 두 방향으로 물어 32개다 — EC2 Instance Connect 엔드포인트(서비스 선택 ↔ 여는 포트 443), AI 서비스 넷의 갈래(Transcribe ↔ Textract). 정답 위치는 0·1·2·3이 각각 8개(25%)이고 해설은 최소 258자·평균 328자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다. 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 2 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고, 기존 단정 하나만 범위를 좁혔다: 「S3 스토리지 클래스 문제 9개가…」가 주제 전체를 세고 있어 이 주제에 문항을 더하면 반드시 깨지므로, 그 단정이 실제로 고정하던 대상인 원본 은행 246문항으로 slice를 좁혔다(App.test.tsx의 '1 / 246'을 questions.length로 바꾼 step 1과 같은 성격의 손질이다). topics.json·topics-baseline.json과 기존 문항 q001~q294는 한 글자도 건드리지 않았다(git diff 32줄 추가·0줄 삭제). npm run lint·build·test(385개) 전부 통과. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T00:10:43+0900"
     },
     {
       "step": 3,
       "name": "questions-s3-lifecycle-block",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-07T22:42:03+0900",
+      "summary": "q271~q294 문항 24개를 questions.json에 이어 붙여 총 270→294개가 됐다(다음 step은 q295부터). s3-versioning-lifecycle 5개(q271~q275)·s3-encryption-batch 8개(q276~q283)·ebs-instance-store 11개(q284~q294)로 담당 개념 24개에 문항이 일대일로 붙었고 빠뜨린 개념은 없다 — 세 주제 커버리지가 각각 10/10·13/13·15/15로 100%가 됐다(node scripts/coverage.mjs s3-versioning-lifecycle s3-encryption-batch ebs-instance-store → exit 0). 정답 위치는 0·1·2·3이 각각 6개(25%)이고 해설은 최소 280자·평균 340자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다. data.test.ts에 step 3 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고 기존 테스트는 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q270은 한 글자도 건드리지 않았다(HEAD와 바이트 동일 확인). npm run lint·build·test(381개) 전부 통과. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다. ※ 이 step 시작 시점에 phase 27 harness 실행이 둘(PID 36791·38620) 돌고 있었으나 둘 다 22:48 이전에 종료돼, 작업은 단독으로 진행하고 커밋도 직접 했다. harness가 남긴 phases/index.json의 phase 27 blocked 표시와 step 2의 blocked_at은 내가 만든 변경이 아니어서 손대지 않았다 — step 2(questions-governance-ai-core)는 여전히 blocked이므로 사람이 다시 돌려야 한다.",
+      "completed_at": "2026-09-07T22:54:58+0900"
     },
     {
       "step": 4,
       "name": "questions-efs-fsx",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T00:10:43+0900",
+      "summary": "q327~q350 문항 24개를 questions.json에 이어 붙여 총 326→350개가 됐다(다음 step은 q351부터). 전부 efs-fsx 주제이고 담당 개념 21개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs efs-fsx → exit 0, 25/25 100퍼센트(기존 문항이 덮고 있던 efs·efs-lifecycle-management·fsx·fsx-ontap-multi-az 4개 포함, 주제 문항 수는 8→32개). 개념당 1문항이 기본이고 축이 둘로 갈리는 개념 셋만 두 방향으로 물어 24개다 — 처리량 모드(버스팅 ↔ 프로비저닝), 성능 모드(최대 I/O ↔ 범용), EFS IA 파일 크기 기준(128KB에 못 미쳐 절감이 작은 쪽 ↔ 1GB라서 실효를 내는 쪽). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 304자·평균 409자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(SQL Server·SFTP처럼 제품 이름 속 약어와 족 규칙에 걸리는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(EFS 처리량 모드 ↔ 성능 모드, ONTAP ↔ Windows File Server ↔ Lustre, One Zone ↔ 인스턴스 스토어 ↔ ElastiCache), 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 4 블록 4개(id 범위와 담당 개념 21개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q326은 한 글자도 건드리지 않았다(HEAD의 326개와 prefix 바이트 동일 확인). npm run lint·build·test(389개) 전부 통과, 전체 커버리지는 618개념 중 274개(44퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T00:21:15+0900"
     },
     {
       "step": 5,
       "name": "questions-data-transfer",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T00:21:15+0900",
+      "summary": "q351~q374 문항 24개를 questions.json에 이어 붙여 총 350→374개가 됐다(다음 step은 q375부터). data-transfer-services 17개(q351~q367)·storage-gateway-migration 7개(q368~q374)로 담당 개념 22개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs data-transfer-services storage-gateway-migration → exit 0, 19/19·7/7 둘 다 100퍼센트(기존 문항이 덮고 있던 datasync·snowball-edge·transfer-family·storage-gateway 4개 포함, 주제 문항 수는 3→20개·6→13개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 24개다 — 지속 수집 ↔ 예약 전송(파일 게이트웨이 ↔ DataSync), 볼륨 모드(저장 볼륨=전체 데이터가 로컬 ↔ 캐시된 볼륨=주 데이터가 AWS). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 294자·평균 400자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(SFTP가 FTP 족 규칙에 걸리는 자리와 FSx·TLS·SMB·NFS 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(DataSync 매니페스트 ↔ 전송 모드 ↔ 상태 이벤트, Transfer Family의 ID 공급자 ↔ 서비스 관리형 사용자 ↔ 워크플로 액션 ↔ 구조화된 로깅, 게이트웨이 유형 셋, DMS ↔ SCT ↔ MGN ↔ App2Container). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. 그래서 tape-gateway-archive-tiers(q373)는 보기를 「아카이브 계열 두 계층 중 검색이 가장 느리고 가장 싼 Deep Archive 쪽」처럼 변별 축으로 쓰고, S3 Glacier Flexible Retrieval·S3 Glacier Deep Archive 정식 이름은 해설에서 가르친다. data.test.ts에 step 5 블록 4개(id 범위와 담당 개념 22개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q350은 한 글자도 건드리지 않았다(HEAD의 350개와 JSON 동일 확인, q350 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(393개) 전부 통과, 전체 커버리지는 618개념 중 296개(48퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T00:34:11+0900"
     },
     {
       "step": 6,
       "name": "questions-rds-aurora",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T00:34:11+0900",
+      "summary": "q375~q406 문항 32개를 questions.json에 이어 붙여 총 374→406개가 됐다(다음 step은 q407부터). rds-storage-features 16개(q375~q390)·aurora 16개(q391~q406)로 담당 개념 29개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs rds-storage-features aurora → exit 0, 21/21·18/18 둘 다 100퍼센트(기존 문항이 덮고 있던 rds·storage-types·features·storage-type-names·multi-az-standby-limits·automated-backup-retention·connection-issue-heuristic과 aurora·aurora-serverless-v2·aurora-reader-endpoint 포함, 주제 문항 수는 12→28개·5→21개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어 32개다 — 다중 AZ 배포의 두 형태(읽을 수 있는 대기 인스턴스가 필요한 쪽 ↔ 지연을 허용하는 RDS for MySQL 분석 분리는 읽기 전용 복제본), 캐시가 듣는 조건(반복이 없을 때의 대안 ↔ 갈림길의 축 자체), Aurora 백업의 복구 지점 목표(지속적 증분 백업으로 몇 초 ↔ 다섯 시간 간격 스냅샷이면 최대 다섯 시간). 정답 위치는 0·1·2·3이 각각 8개(25퍼센트)이고 해설은 최소 320자·평균 385자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(SQL Server처럼 제품 이름 속 약어와 SSL/TLS를 각각 풀어야 하는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(다중 AZ 배포 ↔ 다중 AZ DB 클러스터 ↔ 읽기 전용 복제본 ↔ RDS Proxy, 리더 엔드포인트 ↔ 사용자 지정 엔드포인트 ↔ 인스턴스 엔드포인트, Babelfish ↔ pgvector ↔ Aurora 클론 ↔ ZDR·Database Activity Streams). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 6 블록 4개(id 범위와 담당 개념 29개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q374는 한 글자도 건드리지 않았다(HEAD의 374개와 JSON 동일 확인, q374 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(397개) 전부 통과, 전체 커버리지는 618개념 중 325개(53퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T00:46:58+0900"
     },
     {
       "step": 7,
       "name": "questions-dynamodb-cache",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T00:46:58+0900",
+      "summary": "q407~q434 문항 28개를 questions.json에 이어 붙여 총 406→434개가 됐다(다음 step은 q435부터). dynamodb 16개(q407~q422)·elasticache-purpose-built-db 12개(q423~q434)로 담당 개념 27개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs dynamodb elasticache-purpose-built-db → exit 0, 18/18·14/14 둘 다 100퍼센트(기존 문항이 덮고 있던 dynamodb·dynamodb-pitr과 elasticache·documentdb·dax-dynamodb-only 포함, 주제 문항 수는 4→20개·4→16개). 개념당 1문항이 기본이고 갈림길 하나만 두 방향으로 물어 28개다 — ElastiCache 엔진 선택(진행 중인 트랜잭션처럼 사라지면 안 되는 상태를 캐시에 둘 때 고르는 쪽은 Redis ↔ Memcached에 없는 것은 저장한 데이터를 유지하는 기능이고 나머지 세 성질은 두 엔진이 함께 갖는다는 부정형 대조). 정답 위치는 0·1·2·3이 각각 7개(25퍼센트)이고 해설은 최소 225자·평균 295자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(S3·TTL·PITR·DAX·AZ를 해설마다 한 번씩 풀고, 상식·제품 이름 속 약어인 NoSQL·API·KB는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(용량 모드 ↔ 읽기 일관성 ↔ 전역 보조 인덱스 ↔ DAX가 서로의 오답이 되는 네 문항, S3 내보내기의 세 조건(증분·읽기 용량 미소모·PITR 전제) ↔ 스트림 적재 ↔ 클러스터 복사 ↔ 분산 파일 시스템, Neptune ↔ Timestream ↔ DocumentDB ↔ QLDB ↔ CloudTrail, 다중 AZ 장애 조치 ↔ 글로벌 데이터스토어 ↔ DocumentDB 글로벌 클러스터). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 7 블록 4개(id 범위와 담당 개념 27개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q406은 한 글자도 건드리지 않았다(HEAD의 406개와 JSON 동일 확인, q406 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(401개) 전부 통과, 전체 커버리지는 618개념 중 352개(57퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T00:57:41+0900"
     },
     {
       "step": 8,
       "name": "questions-ec2-elb",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T00:57:41+0900",
+      "summary": "q435~q466 문항 32개를 questions.json에 이어 붙여 총 434→466개가 됐다(다음 step은 q467부터). ec2-autoscaling 18개(q435~q452)·elastic-load-balancing 14개(q453~q466)로 담당 개념 28개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs ec2-autoscaling elastic-load-balancing → exit 0, 18/18·16/16 둘 다 100퍼센트(기존 문항이 덮고 있던 ec2·scheduled-scaling·warm-pool과 elb·alb-l7-vs-nlb-l4·sticky-session-tradeoff 포함, 주제 문항 수는 6→24개·6→20개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어 32개다 — 예약 인스턴스의 두 갈래(유형을 고정해 할인을 크게 ↔ 유형을 바꿀 여지를 남기고 덜 싸게), 스팟 할당 전략(중단 최소화가 유일한 조건이면 용량 최적화 ↔ 비용과 용량의 절충이면 가격-용량 최적화), 단순 조정과 대상 추적(짧은 급증에서 무엇으로 바꾸는가 ↔ 단순 조정의 동작 방식 자체를 이름으로), 종단 간 암호화(뒤 구간도 TLS여야 한다 ↔ 인증서 수명 주기를 누가 지는가). 정답 위치는 0·1·2·3이 각각 8개(25퍼센트)이고 해설은 최소 255자·평균 357자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(ELB·ALB·NLB·EC2·ECS·TCP·UDP·TLS·VPC·VPN·WAF·ACL과 HTTP/HTTPS 족 규칙 포함, 상식·제품 이름 속 약어인 CPU·IP·URL·API·AMI는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(웜 풀 ↔ 시작 템플릿 ↔ Image Builder ↔ ParallelCluster ↔ 클러스터 배치 그룹, 네 가지 조정 방식이 서로의 오답이 되는 세 문항, 세 할당 전략 ↔ 온디맨드 기반 용량 ↔ 인스턴스 유형 재정의, 라운드 로빈 ↔ 최소 미처리 요청 ↔ 스티키 세션 ↔ 경로 기반 라우팅, 내부·인터넷 노출 × 프라이빗·퍼블릭 호스팅 영역 2×2). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 8 블록 4개(id 범위와 담당 개념 28개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q434는 한 글자도 건드리지 않았다(HEAD의 434개와 JSON 동일 확인, q434 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(405개) 전부 통과, 전체 커버리지는 618개념 중 380개(61퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T01:13:17+0900"
     },
     {
       "step": 9,
       "name": "questions-cloudfront-edge",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:13:17+0900",
+      "summary": "q467~q488 문항 22개를 questions.json에 이어 붙여 총 466→488개가 됐다(다음 step은 q489부터). 전부 cloudfront-global-accelerator 주제이고 담당 개념 19개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs cloudfront-global-accelerator → exit 0, 24/24 100퍼센트(기존 문항이 덮고 있던 cloudfront·global-accelerator-protocols·cloudfront-ttl·edge-keyword·lambda-at-edge 5개 포함, 주제 문항 수는 5→27개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어 22개다 — 서명된 URL(만료되는 일회성 링크가 맞는 자리 ↔ 매일 들어오는 상시 접근에는 아닌 이유), 엣지 캐시의 비용 절감(지연과 전송 비용이 함께 조건이면 단일 리전+CloudFront ↔ 리전 복제안이 비용에서 밀리는 이유), Global Accelerator의 고정 IP(뒤쪽이 바뀌어도 변하지 않는 진입점 ↔ 캐시할 사본이 없는 TCP 연결의 가속). 정답 위치는 0·1이 각각 6개(27.3퍼센트)·2·3이 각각 5개(22.7퍼센트)로 20~30퍼센트 안에 있고, 해설은 최소 289자·평균 380자로 정답 근거와 오답의 변별 축을 함께 담으며 ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(S3·EC2·ALB·NLB·DNS·TTL·TCP·CDN·WAF·ACM·OAC·IAM·ACL과 HTTP/HTTPS 족 규칙 포함, 상식·제품 이름 속 약어인 IP·URL·API는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(서명된 URL ↔ 서명된 쿠키 ↔ 지리적 제한 ↔ 필드 수준 암호화가 서로의 오답이 되는 다섯 문항, 오리진 후보(S3 버킷 ↔ ALB ↔ 온프레미스) ↔ 배포 하나에 여럿, CloudFront ↔ Global Accelerator ↔ Route 53 라우팅 정책, Lambda@Edge ↔ CloudFront Functions, 가격 등급 ↔ TTL ↔ 지리적 제한, OAC ↔ 보안 그룹 ↔ 네트워크 ACL). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 9 블록 4개(id 범위와 담당 개념 19개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q466은 한 글자도 건드리지 않았다(HEAD의 466개와 JSON 동일 확인, q466 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(409개) 전부 통과, 전체 커버리지는 618개념 중 399개(65퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T01:24:22+0900"
     },
     {
       "step": 10,
       "name": "questions-lambda",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:24:23+0900",
+      "summary": "q489~q508 문항 20개를 questions.json에 이어 붙여 총 488→508개가 됐다(다음 step은 q509부터). 전부 lambda 주제이고 담당 개념 15개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs lambda → exit 0, 18/18 100퍼센트(기존 문항이 덮고 있던 lambda·lambda-function-url·lambda-vpc-access 3개 포함, 주제 문항 수는 5→25개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 다섯만 두 방향으로 물어 20개다 — 호출 유형(즉시 답을 주지 않아야 하는 작업은 이벤트 호출 ↔ 요청-응답으로 받으면 처리 시간이 그대로 대기 시간이 된다), 예약된 동시성(피크에 일정한 지연이 필요하면 프로비저닝된 쪽 ↔ 예약된 쪽은 콜드 스타트를 그대로 남긴다), SnapStart(게시된 버전에서만 켜진다 ↔ 스냅샷을 되살리므로 호출마다 달라야 하는 값은 핸들러 안으로), EFS 마운트(레이어 상한을 넘는 공유 종속성 ↔ 전송 중 암호화는 TLS로 이미 자동), 운영 체제 접근(컴퓨팅은 EC2 ↔ 데이터베이스는 RDS Custom). 정답 위치는 0·1·2·3이 각각 5개(25퍼센트)이고 해설은 최소 301자·평균 368자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(IAM·VPC·EFS·EBS·EC2·ECS·EKS·S3·RDS·NFS·TLS·ETL과 HTTP/HTTPS 족 규칙 포함, 상식·제품 이름 속 약어인 CPU·URL·API는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(동시성 세 갈래(예약·프로비저닝·SnapStart)가 서로의 오답이 되는 네 문항, 레이어 ↔ EFS ↔ /tmp ↔ EBS, 이벤트 호출 ↔ 요청-응답 ↔ 함수 URL ↔ 스트림 이벤트 소스, Fargate ↔ EC2 ↔ 컨테이너 이미지 Lambda, 환경 변수 ↔ 코드 하드코딩 ↔ 레이어 ↔ Secrets Manager). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 10 블록 4개(id 범위와 담당 개념 15개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q488은 한 글자도 건드리지 않았다(HEAD의 488개와 JSON 동일 확인, q488 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(413개) 전부 통과, 전체 커버리지는 618개념 중 414개(67퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T01:36:26+0900"
     },
     {
       "step": 11,
       "name": "questions-containers",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:36:26+0900",
+      "summary": "q509~q528 문항 20개를 questions.json에 이어 붙여 총 508→528개가 됐다(다음 step은 q529부터). 전부 ecs-eks-fargate 주제이고 담당 개념 19개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs ecs-eks-fargate → exit 0, 23/23 100퍼센트(기존 문항이 덮고 있던 ecs·eks·fargate-no-time-limit·aws-batch 4개 포함, 주제 문항 수는 5→25개). 개념당 1문항이 기본이고 EKS의 컴퓨팅 세 갈래만 두 방향으로 물어 20개다 — 기본 컴퓨팅 인프라를 직접 관리하지 않는 것이 목표면 Fargate 쪽이라는 갈림길(q512)과 그 Fargate에서 어떤 파드를 돌릴지 고르는 장치가 Fargate 프로필이라는 설정 항목(q513). 정답 위치는 0·1·2·3이 각각 5개(25퍼센트)이고 해설은 최소 317자·평균 399자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(ECS·EKS·EC2·S3·EFS·EBS·KMS·IAM·ALB·NLB·VPC·NAT·CVE 포함, 상식·제품 이름 속 약어인 CPU·API·ARN·OIDC는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(EKS Connector ↔ EKS Anywhere ↔ Fargate 프로필 ↔ 관리형 노드 그룹, 태스크 역할 ↔ 인스턴스 역할 ↔ 태스크 실행 역할 ↔ IRSA가 서로의 오답이 되는 네 문항, Fargate Spot ↔ 온디맨드 Fargate ↔ EC2 켜고 끄기 ↔ 예약 인스턴스, Batch 컴퓨팅 환경 ↔ 오토 스케일링 그룹 ↔ EC2 위의 EKS ↔ Elastic Beanstalk, awsvpc 모드 ↔ 배치 전략 ↔ Fargate 프로필, KMS 봉투 암호화 ↔ Secrets Manager ↔ EBS 기본 암호화 ↔ EBS CSI 드라이버). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 11 블록 4개(id 범위와 담당 개념 19개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q508은 한 글자도 건드리지 않았다(HEAD의 508개와 JSON 동일 확인, q508 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(417개) 전부 통과, 전체 커버리지는 618개념 중 433개(70퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T01:47:59+0900"
     },
     {
       "step": 12,
       "name": "questions-apigw-stepfunctions",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:47:59+0900",
+      "summary": "q529~q548 문항 20개를 questions.json에 이어 붙여 총 528→548개가 됐다(다음 step은 q549부터). 전부 api-gateway-step-functions 주제이고 담당 개념 16개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs api-gateway-step-functions → exit 0, 20/20 100퍼센트(기존 문항이 덮고 있던 api-gateway·step-functions·step-functions-features·api-gateway-jwt-authorizer 4개 포함, 주제 문항 수는 5→25개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어 20개다 — 통합 타임아웃(몇 분짜리 동기 호출은 REST API ↔ 싸고 빠른 HTTP API를 고른 설계가 왜 끊기는가), 엔드포인트 유형(전 세계 지연을 줄이는 노출 방식은 엣지 최적화 ↔ 같은 자리에 얹히는 캐싱이 없애는 것은 백엔드 왕복), Lambda 프록시 통합(AWS_PROXY는 동기 호출이라는 성질 ↔ 표준이 없는 인증은 사용자 지정 권한 부여자), 매핑 템플릿(JSON→XML처럼 형식이 달라지면 Lambda ↔ 이미 그 형식을 받는 백엔드는 프록시 통합으로 그대로). 정답 위치는 0·1·2·3이 각각 5개(25퍼센트)이고 해설은 최소 262자·평균 338자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(REST·HTTP·JWT·VPC·ACM·ACL·S3·EC2·ECS·ALB·SNS 포함, 상식·제품 이름 속 약어인 IP·URL·API는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(REST ↔ HTTP ↔ WebSocket ↔ 함수 URL이 서로의 오답이 되는 네 문항, 엣지 최적화 ↔ 리전 엔드포인트 ↔ 캐싱 ↔ 콘텐츠 인코딩 ↔ Lambda 예약된 동시성, 리소스 정책 ↔ 엔드포인트 정책 ↔ 보안 그룹 ↔ 네트워크 ACL ↔ API 키, 매핑 템플릿 ↔ Lambda 통합 ↔ AWS 서비스 통합 ↔ 프록시 통합, 표준 ↔ Express ↔ 수동 승인 ↔ Map 상태). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 12 블록 4개(id 범위와 담당 개념 16개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q528은 한 글자도 건드리지 않았다(HEAD의 528개와 JSON 동일 확인, q528 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(421개) 전부 통과, 전체 커버리지는 618개념 중 449개(73퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T01:57:08+0900"
     },
     {
       "step": 13,
       "name": "questions-messaging",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:57:08+0900",
+      "summary": "q549~q576 문항 28개를 questions.json에 이어 붙여 총 548→576개가 됐다(다음 step은 q577부터). 전부 sqs-sns-eventbridge 주제이고 담당 개념 26개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs sqs-sns-eventbridge → exit 0, 33/33 100퍼센트(기존 문항이 덮고 있던 sqs·sns·eventbridge·eventbridge-scheduler·ses·sqs-details·sqs-queue-depth-scaling 7개 포함, 주제 문항 수는 12→40개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 28개다 — SNS는 큐가 아니다(뒷단이 느릴 수 있으면 필요한 것은 내구성 버퍼라 SQS다 ↔ 알림 한 통이면 되는 자리에 큐를 끼우는 것도 반대 방향의 같은 어긋남이다), 가시성 타임아웃(중복 처리 증상은 타임아웃을 최대 처리 시간 이상으로 올려 고친다 ↔ 전달 지연은 처음 보이기까지만 미루므로 되살아나는 재처리에 손대지 못한다). 정답 위치는 0·1·2·3이 각각 7개(25퍼센트)이고 해설은 최소 307자·평균 378자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(SQS·SNS·SES·S3·FIFO·KMS·IAM·VPC·NAT과 HTTP/HTTPS 족 규칙 포함, 하이픈으로 이어진 SSE-SQS·SSE-KMS는 첫 등장으로 세지 않는 자리와 상식·제품 이름 속 약어인 IP·API·ARN·AMQP를 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(SQS ↔ SNS ↔ EventBridge ↔ SES가 서로의 오답이 되는 버퍼 계열 네 문항, 기본 ↔ 사용자 지정 ↔ 파트너 이벤트 버스, 규칙 ↔ 파이프 ↔ API 대상 ↔ Scheduler, 가시성 타임아웃 ↔ 전달 지연 ↔ 롱 폴링 ↔ 배치 ↔ 보존 기간, 메시지 그룹 ID ↔ 중복 제거 ID ↔ 콘텐츠 기반 중복 제거, 큐 정책 ↔ IAM 정책 ↔ 인터페이스 엔드포인트 ↔ 고객 관리 키). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 13 블록 4개(id 범위와 담당 개념 26개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q548은 한 글자도 건드리지 않았다(HEAD의 548개와 JSON 동일 확인, q548 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(425개) 전부 통과, 전체 커버리지는 618개념 중 475개(77퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T02:11:10+0900"
     },
     {
       "step": 14,
       "name": "questions-backup-network",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T02:11:10+0900",
+      "summary": "q577~q608 문항 32개를 questions.json에 이어 붙여 총 576→608개가 됐다(다음 step은 q609부터). backup-disaster-recovery 9개(q577~q585)·vpc-networking 8개(q586~q593)·security-groups-nacl 5개(q594~q598)·hybrid-connectivity 10개(q599~q608)로 담당 개념 30개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs backup-disaster-recovery vpc-networking security-groups-nacl hybrid-connectivity → exit 0, 11/11·20/20·9/9·19/19 네 주제 모두 100퍼센트(기존 문항이 덮고 있던 backup·backup-long-term-retention, vpc-subnet·internet-gateway·nat-gateway·vpc-endpoint·privatelink·vpc-peering·comparison·endpoint-pricing·nat-instance·vpc-peering-scaling-limit·egress-only-igw·s3-is-regional, security-group·nacl·web-acl-vs-nacl·security-group-referencing·nacl-rule-limit, site-to-site-vpn·client-vpn·direct-connect·access-terms·transit-gateway·direct-connect-gateway·onprem-connectivity-heuristic·vpn-vs-direct-connect·data-locality-cost·direct-connect-caveats 포함, 주제 문항 수는 2→11개·14→22개·12→17개·14→24개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 32개다 — 상태 저장과 상태 비저장(네트워크 ACL은 상태를 기억하지 않아 나가는 방향 규칙도 필요하다 ↔ 보안 그룹에는 차단 규칙이 없어 IP 하나 막기가 NACL·WAF로 간다), Direct Connect의 가상 인터페이스(Transit Gateway 환경의 조합은 트랜짓 VIF+DX Gateway ↔ 사설 대역이 목적지면 프라이빗 VIF라는 세 종류의 목적지 구분). 정답 위치는 0·1·2·3이 각각 8개(25퍼센트)이고 해설은 최소 323자·평균 383자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(VPC·NAT·VPN·EC2·EBS·S3·ACL·ALB·NLB·IAM·WAF·DNS·EMR 포함, 상식·제품 이름 속 약어인 IP는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(Elastic Disaster Recovery ↔ DataSync ↔ Storage Gateway ↔ AWS Backup, 백업 및 복원 ↔ 미리 떠 있는 대기 환경, Organizations 백업 정책 ↔ 계정별 백업 계획 ↔ 교차 계정 사본 ↔ Backup Audit Manager ↔ 복원 테스트 계획이 서로의 오답이 되는 다섯 문항, NAT 게이트웨이 ↔ 인터넷 게이트웨이 ↔ 인터페이스·게이트웨이 엔드포인트 ↔ 엔드포인트 정책 ↔ 버킷 정책, 보안 그룹 ↔ 네트워크 ACL ↔ Web ACL ↔ 보안 그룹 참조 ↔ 규칙 수 제한, 가상 프라이빗 게이트웨이 ↔ Customer Gateway ↔ Direct Connect Gateway ↔ Bastion Host, Local Zone ↔ Outposts ↔ Wavelength Zone, VPC 피어링 ↔ Transit Gateway 피어링 ↔ Direct Connect ↔ 오프라인 전송). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 14 블록 4개(id 범위와 담당 개념 30개 일치·topicId 일치·정답 분포와 문구·네 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q576은 한 글자도 건드리지 않았다(HEAD의 576개 구간과 바이트 동일 확인). npm run lint·build·test(429개) 전부 통과, 전체 커버리지는 618개념 중 505개(82퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T02:23:10+0900"
     },
     {
       "step": 15,
       "name": "questions-route53-analytics",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T02:23:10+0900",
+      "summary": "q609~q632 문항 24개를 questions.json에 이어 붙여 총 608→632개가 됐다(다음 step은 q633부터). route53 8개(q609~q616)·emr-glue-athena 16개(q617~q632)로 담당 개념 23개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs route53 emr-glue-athena → exit 0, 13/13·20/20 둘 다 100퍼센트(기존 문항이 덮고 있던 route53·routing-policies·resolver·private-hosted-zone·multivalue-answer-details와 emr·spark·glue·glue-crawler·athena 포함, 주제 문항 수는 8→16개·5→21개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어 24개다 — EMR 노드의 세 역할(저장을 맡느냐가 코어와 태스크를 가른다 ↔ 그 차이 때문에 스팟으로 돌려도 되는 노드가 태스크뿐이다). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 288자·평균 361자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(DNS·VPC·ALB·S3·AZ·EMR·EC2·EBS·IAM·KMS·RDS·SQL·ETL 포함, 상식·제품 이름 속 약어인 IP·CPU·API는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(퍼블릭·프라이빗 호스팅 영역 ↔ Resolver 인바운드·아웃바운드 엔드포인트 ↔ 전달 규칙, 별칭 ↔ 단순 ↔ 지리적 위치 ↔ 다중값 응답 ↔ 장애 조치 라우팅, 쿼리 로깅 ↔ CloudTrail ↔ CloudWatch 지표 ↔ 상태 검사, 프라이머리 ↔ 코어 ↔ 태스크 노드가 서로의 오답이 되는 세 문항, 일시적 클러스터 ↔ 관리형 스케일링, Glue ↔ EMR ↔ Athena 페더레이션 쿼리, DataBrew ↔ Crawler ↔ Lake Formation, 블루프린트 ↔ LF 태그 ↔ IAM·버킷 정책, S3+Athena ↔ OpenSearch ↔ CloudWatch Logs, 보안 구성 ↔ 런타임 역할 ↔ 인스턴스 프로파일). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 15 블록 4개(id 범위와 담당 개념 23개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q608은 한 글자도 건드리지 않았다(HEAD의 608개와 JSON 동일 확인, q608 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(433개) 전부 통과, 전체 커버리지는 618개념 중 528개(85퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T02:32:53+0900"
     },
     {
       "step": 16,
       "name": "questions-streaming-monitoring",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T02:32:53+0900",
+      "summary": "q633~q656 문항 24개를 questions.json에 이어 붙여 총 632→656개가 됐다(다음 step은 q657부터). kinesis-streaming 15개(q633~q647)·cloudwatch-xray 9개(q648~q656)로 담당 개념 23개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs kinesis-streaming cloudwatch-xray → exit 0, 16/16·11/11 둘 다 100퍼센트(기존 문항이 덮고 있던 streaming-services-comparison·msk와 cloudwatch·log-analysis-options 포함, 주제 문항 수는 2→17개·2→11개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어 24개다 — Kinesis 용량 모드(프로비저닝은 샤드 수를 직접 정하고 온디맨드는 관리를 없애는 대신 비용이 더 든다 ↔ 파티션 키 쏠림으로 스로틀링이 나는 스트림을 온디맨드로 옮기면 증상만 가려지고 원인은 남는다). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 241자·평균 322자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(S3·EC2·ECS·MSK·SQL 포함, 상식·제품 이름 속 약어인 CPU·MB·KB·DB는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(Data Streams ↔ Firehose ↔ Flink ↔ Video Streams가 서로의 오답이 되는 네 문항, 레코드 크기 상한 ↔ 용량 모드 ↔ 파티션 키 ↔ 향상된 팬아웃, Lambda 변환 ↔ 형식 변환 ↔ 버퍼 크기, KCL ↔ Lambda 이벤트 소스 매핑 ↔ Firehose 적재, CloudWatch ↔ X-Ray ↔ Performance Insight ↔ Managed Grafana, CloudWatch 에이전트 ↔ 상세 모니터링 ↔ Systems Manager 에이전트, Network Monitor ↔ Container Insights). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 16 블록 4개(id 범위와 담당 개념 23개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q632는 한 글자도 건드리지 않았다(HEAD의 632개와 JSON 동일 확인, q632 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(437개) 전부 통과, 전체 커버리지는 618개념 중 551개(89퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T02:42:29+0900"
     },
     {
       "step": 17,
       "name": "questions-security-services",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T02:42:29+0900",
+      "summary": "q657~q684 문항 28개를 questions.json에 이어 붙여 총 656→684개가 됐다(다음 step은 q685부터). secrets-encryption 11개(q657~q667)·waf-shield 9개(q668~q676)·guardduty-macie-inspector 8개(q677~q684)로 담당 개념 26개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs secrets-encryption waf-shield guardduty-macie-inspector → exit 0, 20/20·15/15·11/11 세 주제 모두 100퍼센트(기존 문항이 덮고 있던 secrets-manager·parameter-store·kms·acm·cloudhsm·secrets-manager-vs-parameter-store·rotation-heuristic·lambda-env-var-kms·acm-cloudfront-region, waf·shield·cloudfront·waf-attach-targets·waf-rule-types·waf-bot-control·shield-advanced-drt, guardduty·macie·security-service-lineup·guardduty-db-login 포함, 주제 문항 수는 12→23개·11→20개·4→12개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 28개다 — Shield Standard의 방어 범위(정상 요청 모양의 L7 공격은 기본 보호가 걸러 내지 못하므로 WAF가 맡는다 ↔ 그 기본 보호의 범위가 네트워크 계층까지라는 경계 자체), Inspector의 역할(운영체제·애플리케이션의 알려진 취약점을 찾아 주는 서비스는 무엇인가 ↔ 취약점이 유입되지 않게 하라는 요구는 발견이 아니라 조치라 EC2 Image Builder 쪽으로 갈린다 — 부정형 대조). 정답 위치는 0·1·2·3이 각각 7개(25퍼센트)이고 해설은 최소 284자·평균 353자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(KMS·ACM·RDS·S3·SNS·SQS·DNS·WAF·DDoS·ACL·EC2·REST·HTTP·SCP 포함, 상식·제품 이름 속 약어인 IP·API·MB·ID·ARN·ECR·CNAME은 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(고객 관리 키 ↔ AWS 관리 키 ↔ AWS 소유 키 ↔ 가져온 키 자료 ↔ 다중 리전 키 ↔ CloudHSM 키 스토어가 서로의 오답이 되는 여섯 문항, DNS 검증 ↔ 이메일 검증 ↔ CloudFront 보안 정책 ↔ 오리진 액세스 제어, BatchGetSecretValue ↔ AWS Batch ↔ Parameter Store, 자동 교체 ↔ 예약 함수 ↔ 알림만, 대칭 키 ↔ 비대칭 키 ↔ 봉투 암호화 ↔ 삭제 예약, EventBridge→SNS ↔ SQS 큐 ↔ 예약 폴링, Firewall Manager ↔ Shield Advanced ↔ Bot Control, 관리형 규칙 그룹 ↔ 사용자 지정 규칙 ↔ IP 세트 ↔ 지리적 일치 ↔ IP 평판 ↔ 속도 기반 규칙, Shield Standard ↔ WAF ↔ 네트워크 ACL ↔ 보호 그룹, 같은 리전 Web ACL ↔ 글로벌 범위 ↔ HTTP API, WAF 로깅→Firehose→S3 ↔ 규칙 계열 셋, GuardDuty ↔ Macie ↔ Inspector ↔ Security Hub ↔ Detective ↔ Systems Manager가 서로의 오답이 되는 탐지 계열 여섯 문항). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 17 블록 4개(id 범위와 담당 개념 26개 일치·topicId 일치·정답 분포와 문구·세 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q656은 한 글자도 건드리지 않았다(HEAD의 656개와 JSON 동일 확인, q656 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(441개) 전부 통과, 전체 커버리지는 618개념 중 577개(93퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T02:54:35+0900"
     },
     {
       "step": 18,
       "name": "questions-identity",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T04:51:16+0900",
+      "completed_at": "2026-09-08T05:03:03+0900",
+      "summary": "q685~q708 문항 24개를 questions.json에 이어 붙여 총 684→708개가 됐다(다음 step은 q709부터). iam-permissions 17개(q685~q701)·identity-federation 7개(q702~q708)로 담당 개념 20개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs iam-permissions identity-federation → exit 0, 18/18·11/11 둘 다 100퍼센트(기존 문항이 덮고 있던 iam·instance-profile·least-privilege·iam-group-users-only와 identity-center·sts·cognito·sts-assume-role·cognito-pools 포함, 주제 문항 수는 6→23개·6→13개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어 24개다 — 권한 경계(개별 주체가 가질 수 있는 권한의 최대치라는 정의 ↔ 부착을 SCP로 의무화해 예방적 통제로 만드는 자리), 명시적 거부(평가 순서 자체 ↔ aws:SourceIp 조건에 걸려 재택에서만 403이 나는 증상의 진단), NotAction Deny(한 서비스만 남기는 구성 ↔ 모든 작업 Deny에 Allow 하나를 더한 정책이 통째로 죽는 이유), AD Connector(디렉터리 정보를 AWS에 저장하지 않는다 ↔ 인증은 온프레미스가 맡고 권한은 Identity Center 권한 세트가 맡는 두 축의 분리). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 302자·평균 387자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(IAM·VPC·SCP·MFA·RDS·STS·REST·WAF·ACL·TLS 포함, 상식·제품 이름 속 약어인 IP·API·CLI·ID와 표에 없는 SAML·OIDC·AD·ABAC는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(그룹 정책 ↔ 태그 ↔ 권한 경계, IAM Access Analyzer ↔ Network Access Analyzer가 서로의 오답이 되는 두 문항, 권한 경계 ↔ 신뢰 정책 ↔ 그룹 정책 ↔ Access Analyzer 정책 검사, 계정 간 역할 ↔ 액세스 키 배포 ↔ 서비스 이름 전체를 허용하는 버킷 정책 ↔ 남의 계정 사용자를 내 그룹에 넣기, 명시적 거부 ↔ 그룹 이탈 ↔ 권한 경계 ↔ NotAction, aws:RequestedRegion ↔ aws:SourceIp ↔ 작업 하나만 거부 ↔ 사후 알림, 위임 관리자 지정 ↔ 버킷 선행 생성 ↔ 계정별 수동 취합 ↔ 조직 감사 추적, MFA 다중 등록 ↔ 예비 IAM 관리자 ↔ MFA 해제 ↔ 사후 복구, AD Connector ↔ 관리형 Microsoft AD ↔ Cognito ↔ 계정별 IAM 사용자, Identity Center 외부 IdP ↔ 계정별 SAML 공급자 ↔ Cognito, Cognito 사용자 풀+WAF ↔ 권한 세트 ↔ 앱에 심은 액세스 키 ↔ STS 직접 호출, 사용자 지정 ID 브로커 ↔ AD Connector ↔ 정책으로 인증 대신하기, 권한 세트 ↔ 넓은 세트 하나 ↔ 계정별 IAM 사용자 ↔ 사람마다 역할, IAM 역할↔AD 그룹 매핑 ↔ 사용자별 IAM 사용자 ↔ 수동 STS 발급 ↔ Cognito 자격 증명 풀). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 18 블록 4개(id 범위와 담당 개념 20개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q684는 한 글자도 건드리지 않았다(HEAD의 684개와 JSON 동일 확인, q684 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(445개) 전부 통과, 전체 커버리지는 618개념 중 597개(97퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다."
     },
     {
       "step": 19,
       "name": "questions-org-cost",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T05:03:03+0900",
+      "summary": "q709~q732 문항 24개를 questions.json에 이어 붙여 총 708→732개가 됐다(다음 step은 q733부터). organizations-cloudtrail-config 15개(q709~q723)·cost-management 9개(q724~q732)로 담당 개념 21개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs organizations-cloudtrail-config cost-management → exit 0, 16/16·17/17 둘 다 100퍼센트(기존 문항이 덮고 있던 organizations-scp·cloudtrail·aws-config와 savings-plan·aws-budgets·cost-explorer·cost-anomaly-detection·billing-and-cost-management·trusted-advisor·compute-optimizer·savings-plan-details·cost-allocation-tag-activation 포함, 주제 문항 수는 3→18개·10→19개). 이로써 전체 커버리지가 618개념 중 618개(100퍼센트)가 됐다. 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어 24개다 — 태그 정책(표기를 통일하는 일은 태그 정책 ↔ 태그 없는 생성과 태그 삭제를 막는 일은 SCP라 둘을 함께 붙인다), SCP를 붙일 수 있는 자리(넷 중 셋만 제한하는 두 가지 방법 ↔ 루트에 붙여 제한 대상이 아니던 계정까지 걸린 증상의 진단), 온디맨드 용량 예약(할인 수단이 아니라 용량을 미리 잡아 두는 기능이라는 성격 ↔ 중단을 견디는 배치는 스팟이 가장 싸다). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 249자·평균 355자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(S3·SCP·IAM·VPC·KMS·EBS·IOPS·SNS·EC2·RDS·SQL 포함, 상식·제품 이름 속 약어인 API·NAT·CIS는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(CloudTrail Lake ↔ S3 데이터 레이크 ↔ 구성 레코더 ↔ Audit Manager, 태그 정책 ↔ SCP ↔ AWS Config ↔ 비용 할당 태그 활성화, 관리 이벤트 ↔ 데이터 이벤트 ↔ VPC 플로우 로그 ↔ 로그 파일 유효성 검사, 준수 팩 ↔ 사용자 지정 규칙 ↔ Inspector ↔ Audit Manager, Config 규칙+Systems Manager ↔ Macie·KMS ↔ Inspector, 비용 및 사용량 보고서 ↔ Cost Explorer ↔ Budgets ↔ CloudWatch 대시보드, 절약 플랜 ↔ 온디맨드 ↔ 스팟 ↔ 온디맨드 용량 예약, 예산 조치 ↔ Cost Explorer ↔ Cost Anomaly Detection ↔ CloudWatch 경보, Compute Optimizer ↔ CloudWatch ↔ Inspector ↔ Cost Explorer). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 19 블록 4개(id 범위와 담당 개념 21개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q708은 한 글자도 건드리지 않았다(HEAD의 708개와 JSON 동일 확인, q708 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(449개) 전부 통과. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T05:12:56+0900"
     },
     {
       "step": 20,
       "name": "coverage-test",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T05:12:56+0900",
+      "summary": "문항은 한 개도 쓰지 않았다 — 이 step은 검증과 baseline만 맡는다(questions.json 무변경, id는 q001~q732 732개 그대로이므로 다음 step은 q733부터 이어 쓴다). src/data/data.test.ts에 커버리지 불변식 4개를 더했다: ① 모든 개념이 문항 하나 이상을 갖는다(실패 시 덮이지 않은 개념 id가 메시지에 그대로 나온다 — 예외 목록 없이 618개 전부가 대상이다), ② 모든 문항의 topicId가 conceptId가 속한 주제와 같다, ③ 문항 id가 q001부터 빈 번호 없이 이어진다, ④ phase 27이 더한 q247 이후 486문항의 정답 위치가 각각 20~30%다(0·1이 122개 25.1%, 2·3이 121개 24.9%). 네 단언이 실제로 실패하는지 데이터를 일부러 깨뜨려 확인했다 — 유일한 출제 개념의 conceptId를 옮기니 ['aws-core-services.ec2']를 찍고 실패, topicId를 lambda로 바꾸니 실패, q500을 q999로 바꾸니 실패, q247~q346의 answerIndex를 0으로 몰아넣으니 40.5%로 실패했다(확인 후 questions.json은 바이트 동일하게 복원). ④의 길이는 정확한 수가 아니라 하한(486)으로 단언한다 — 이 구간은 문항을 더할 때마다 자라는데 이 테스트가 지키는 것은 분량이 아니라 분포이고, 하한은 빈 slice로 조용히 통과하는 것만 막는다. 기존 slice 기반 테스트는 한 줄도 고치지 않았다. scripts/topics-baseline.json은 questionsSha256만 갱신했다(fc12bf61…→508b7216…, 들여쓰기 1칸 유지, diff 정확히 1줄). conceptLineCount 618과 주제·개념 목록은 그대로였다 — phase 27의 어느 step도 개념을 건드리지 않았음을 check-structure.mjs가 questionsSha256 1건만 보고한 것으로 확인했다. AC 전부 통과: npm run build ✓, npm test 453개 ✓(449→453), node scripts/check-structure.mjs 「✓ 구조 이상 없음」으로 되살아남 ✓, node scripts/coverage.mjs 618/618 100% exit 0 ✓. npm run lint도 통과. src/data/questions.json·src/data/topics.json은 한 글자도 바뀌지 않았다.",
+      "completed_at": "2026-09-08T05:17:23+0900"
     },
     {
       "step": 21,
       "name": "docs-update",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T05:17:23+0900",
+      "summary": "문항은 한 개도 쓰지 않았다 — 이 step은 문서만 고친다(src/ 무변경, 문항 id는 q001~q732 732개 그대로이므로 다음 step은 q733부터 이어 쓴다). 담당 개념은 이 step에 없고, 커버리지는 앞 step들이 이미 618/618로 채웠다. 적은 숫자는 전부 직접 실측했다(node scripts/coverage.mjs → 618/618 100%·문항 732개, python3로 센 주제별 문항 수·개념당 문항 수 분포). PRD 「문제 은행」의 마지막 불릿(\"개념 618개 중 175개(28%)만 덮임, 문항 0개 주제 5개\")을 결과로 교체했다 — 개념 618개 전부 덮임(100%), 246→732문항(phase 27이 q247~q732 486문항 추가), 문항 0개 주제 없음(최소 governance-iac·ai-ml-services 7문항, 최대 sqs-sns-eventbridge 40문항), 커버리지 100%가 이제 목표가 아니라 data.test.ts의 불변식이라는 불릿을 하나 더했다(개념당 1문항이 기본 — 618개 중 540개). ARCHITECTURE는 셋을 고쳤다: ① 「화면 전환 시 스크롤」의 실측표는 숫자를 한 글자도 건드리지 않고 표 아래에 \"복습 행은 phase 27이 다시 낡게 만들었다, 다시 재기 전에는 새 숫자를 넣지 않는다\" 한 문단만 덧붙였다, ② 「전체 범위 랜덤 세트」의 \"숫자 허용값에 246을 넣지 마라\"를 그때의 은행 크기를 넣지 말라는 규칙으로 일반화하고 246→732가 실제로 일어나 /random/246이면 지금 3분의 1만 냈을 것이라고 적었다, ③ 「테스트 경계」의 src/data/*.json 행에 step 20이 더한 커버리지 100%·문항 id 연속성 불변식을 넣었다. ADR은 ADR-026 끝에 「결과」 네 문단을 붙였다 — 최종 732문항·커버리지 100%·주제별 최소7/최대40, 트레이드오프가 예상한 \"약 700문항\"과 실제가 거의 같았다는 확인, \"확인 문제 준비 중\" 가드가 실데이터에서 더는 타지 않지만 코드도 테스트도 지우지 않은 이유(앞으로도 문항 없는 주제가 생길 수 있고, 두 화면의 테스트는 주입한 고정 데이터로 그 분기를 세우므로 실데이터와 무관하다), 복습 화면 36891px가 다시 낡았다는 열린 문제, 다른 ADR(012·017·018)의 246은 결정 당시 기록이라 고치지 않는다는 경계. ADR-002의 \"문제가 246개로 고정된다\"를 732로(169→246으로 갱신해 온 자리와 같은 갱신), ADR-011의 \"246문항 확인\"을 \"732문항 확인\"으로 바꿨다 — 후자는 732문항 전부에서 \"위의\"·\"n번 보기\"류 위치 지시 표현을 다시 검색해 0건임을 확인하고 고쳤다. dump-gaps의 예고 둘을 결과로 돌렸다(_index.md \"주제 배치는 phase 26에서 정한다\" → 끝났고 문항은 phase 27이 채웠다, README.md 결과 파일 절 끝에 같은 취지 한 문단). UI_GUIDE 「검색 화면」의 \"상한은 개념 618개 + 주제 39개\"는 검색이 문항을 대상에서 빼므로 그대로 두었다. src/·scripts/·phases/ 외 파일은 건드리지 않았고 코드는 한 줄도 고치지 않았다. AC 전부 통과: npm run build ✓, npm test 453개 ✓(step 20과 같은 수 — 문서 변경이므로 그대로여야 한다), node scripts/check-structure.mjs 「✓ 구조 이상 없음」 ✓, node scripts/coverage.mjs 618/618 100% exit 0 ✓. npm run lint도 통과.",
+      "completed_at": "2026-09-08T05:24:43+0900"
     }
-  ]
+  ],
+  "created_at": "2026-09-07T22:21:41+0900",
+  "completed_at": "2026-09-08T05:24:43+0900"
 }

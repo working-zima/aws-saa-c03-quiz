@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { AppRoutes } from './App'
+import { questions } from './data'
 
 function CurrentPath() {
   return <output aria-label="현재 경로">{useLocation().pathname}</output>
@@ -59,7 +60,8 @@ describe('App routes', () => {
     renderAt('/random/all')
 
     expect(screen.getByRole('heading', { name: '랜덤 문제' })).toBeInTheDocument()
-    expect(screen.getByText('1 / 246')).toBeInTheDocument()
+    // 문항 수를 숫자로 박아 두면 문제 은행이 커질 때마다 이 단정이 깨진다.
+    expect(screen.getByText(`1 / ${questions.length}`)).toBeInTheDocument()
   })
 
   it('알 수 없는 경로를 /로 리다이렉트한다', () => {
