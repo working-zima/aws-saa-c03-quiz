@@ -3732,8 +3732,8 @@ describe('학습 데이터 무결성', () => {
     ['hybrid-connectivity.region-attached-edge-options', 'Local Zones·Outposts·Wavelength는', 'compute'],
     ['route53.route53', 'Route53은', 'networking'],
     // phase 26 step 15가 analytics-monitoring의 분석·스트리밍 계열을 세 주제로 갈랐다.
-    // 신규 36개념 중 Lake Formation·Kinesis Video Streams·QuickSight 셋만 서비스를
-    // 소개하는 자리이고, 나머지는 EMR·Glue·Athena·Kinesis·Redshift의 기능·설정·한계·
+    // 신규 36개념 중 Lake Formation·Kinesis Video Streams·QuickSight·OpenSearch 넷만
+    // 서비스를 소개하는 자리이고, 나머지는 EMR·Glue·Athena·Kinesis·Redshift의 기능·설정·한계·
     // 갈림길이라 카테고리 한 줄을 붙이지 않는다
     // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
     // Glue DataBrew는 그 파일의 "카테고리 없음"에 있어 붙일 근거가 없다.
@@ -3747,6 +3747,11 @@ describe('학습 데이터 무결성', () => {
     ['kinesis-streaming.kinesis-video-streams', 'Kinesis Video Streams는', 'analytics'],
     ['kinesis-streaming.msk', 'MSK는', 'analytics'],
     ['redshift-opensearch-quicksight.redshift', 'RedShift는', 'analytics'],
+    // step 15는 이 한 줄을 붙이지 않았다. service-categories.md가 OpenSearch를
+    // "붙이지 않는 예"로 적어 두었기 때문인데, 그 예는 phase 26 이전에 OpenSearch를 단
+    // 개념이 비교뿐이었을 때 쓴 것이다. step 15가 서비스를 소개하는 개념을 새로 들여왔으므로
+    // 그 파일의 매핑 표에 OpenSearch를 넣고 여기에도 붙인다(백서 분석, 2026-09-07 확인).
+    ['redshift-opensearch-quicksight.opensearch-text-search', 'OpenSearch는', 'analytics'],
     ['redshift-opensearch-quicksight.quicksight', 'QuickSight는', 'analytics'],
     // step 16이 남은 CloudWatch·X-Ray 계열을 cloudwatch-xray로 옮기며
     // analytics-monitoring을 없앴다. 신규 7개념 중 서비스를 소개하는 자리는
@@ -3816,12 +3821,12 @@ describe('학습 데이터 무결성', () => {
     ['ai-ml-services.amazon-lex', 'Lex는', 'machineLearning'],
   ]
 
-  it('서비스 개념 106개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 107개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(106)
+    expect(serviceCategories).toHaveLength(107)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -3835,7 +3840,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 106개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 107개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>

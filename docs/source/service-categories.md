@@ -34,7 +34,8 @@
   다뤄진다. <https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html>
 
 확인 시점은 2026-09-04다. **phase 26에서 더한 부분(아래 "phase 26에서 들어오는 서비스"와
-"카테고리 없음")의 확인 시점은 2026-09-07이다.**
+"카테고리 없음")의 확인 시점은 2026-09-07이다.** 매핑 표의 `OpenSearch` 한 행도 2026-09-07에
+백서 분석 페이지의 Topics 목록(앵커 `#amazon-opensearch-service`)에서 확인했다.
 
 ### 백서의 제목이 이 파일과 다른 셋
 
@@ -88,36 +89,36 @@ ADR-010이 세운 기준("이 사실이 어떤 문항의 정답 근거가 될 �
 
 ## 주제 배치와 어긋나는 자리
 
-이 앱의 주제는 원본 자료의 장 구성을 따르므로, 백서의 카테고리와 갈리는 곳이 있다.
-**갈리는 것 자체가 학습 내용이므로 주제를 옮기지 않고 카테고리만 밝힌다.**
+주제는 서비스 경계로 잘려 있고(ADR-023), 백서는 그와 다른 기준으로 서비스를 묶는다.
+그래서 **한 주제 안에서 어떤 개념의 카테고리가 이웃과 갈리는** 자리가 생긴다.
+**갈리는 것 자체가 학습 내용이므로 개념을 옮기지 않고 카테고리만 밝힌다.**
+
+`이 앱의 주제`는 `topicId`로 적는다. 주제 제목은 담는 서비스를 나열한 것이라 길다.
+표는 주제 배열 순서를 따른다.
 
 | 개념 | 이 앱의 주제 | 백서 카테고리 |
 | --- | --- | --- |
-| `CloudWatch` | 분석·모니터링 | 관리 및 거버넌스 |
-| `X-Ray` | 분석·모니터링 | 개발자 도구 |
-| `MSK` | 메시징·백업 | 분석 |
-| `AWS Backup` | 메시징·백업 | 스토리지 |
-| `SES` | 메시징·백업 | 비즈니스 애플리케이션 |
-| `API Gateway` | 서버리스·컨테이너 | 네트워킹 및 콘텐츠 전송 |
-| `Storage Gateway` | 데이터 전송 서비스 | 스토리지 |
-| `Parameter Store` | Secrets Manager와 같은 주제 | 관리 및 거버넌스 (Secrets Manager는 보안) |
-| `Trusted Advisor` | 비용 관리 | 관리 및 거버넌스 |
-| `Compute Optimizer` | 비용 관리 | 관리 및 거버넌스 |
-
-phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 개가 주제를 제목으로 적은 것과 달리
-아래는 **`topic-plan.md`가 정한 topicId**로 적는다 — phase 26이 주제를 재편하면서 제목이 바뀌기
-때문이다. 여기서도 주제를 옮기지 않는다.
-
-| 개념 | 이 앱의 주제 | 백서 카테고리 |
-| --- | --- | --- |
+| `Storage Gateway` | `storage-gateway-migration` | 스토리지 (DMS·Application Migration Service는 마이그레이션 및 전송) |
 | `Elastic Beanstalk` | `ecs-eks-fargate` | 컴퓨팅 (ECS·EKS·ECR은 컨테이너) |
-| `Managed Grafana` | `cloudwatch-xray` | 관리 및 거버넌스 (CloudWatch와 같은 자리) |
-| `Elastic Disaster Recovery` | `backup-disaster-recovery` | 스토리지 (AWS Backup과 같은 자리) |
-| `Resource Access Manager` | `governance-iac` | 보안·자격 증명·규정 준수 |
-| `Audit Manager` | `organizations-cloudtrail-config` | 보안·자격 증명·규정 준수 |
+| `API Gateway` | `api-gateway-step-functions` | 네트워킹 및 콘텐츠 전송 (Step Functions는 애플리케이션 통합) |
 | `Amplify` | `api-gateway-step-functions` | 프런트엔드 웹 및 모바일 |
+| `SES` | `sqs-sns-eventbridge` | 비즈니스 애플리케이션 (SQS·SNS·EventBridge·Amazon MQ는 애플리케이션 통합) |
+| `AWS Backup` | `backup-disaster-recovery` | 스토리지 |
+| `Elastic Disaster Recovery` | `backup-disaster-recovery` | 스토리지 (AWS Backup과 같은 자리) |
+| `CloudWatch` | `cloudwatch-xray` | 관리 및 거버넌스 |
+| `Managed Grafana` | `cloudwatch-xray` | 관리 및 거버넌스 (CloudWatch와 같은 자리) |
+| `X-Ray` | `cloudwatch-xray` | 개발자 도구 |
+| `Parameter Store` | `secrets-encryption` | 관리 및 거버넌스 (Secrets Manager는 보안) |
+| `Audit Manager` | `organizations-cloudtrail-config` | 보안·자격 증명·규정 준수 |
+| `Trusted Advisor` | `cost-management` | 관리 및 거버넌스 (절약 플랜·Budgets·Cost Explorer는 클라우드 재무 관리) |
+| `Compute Optimizer` | `cost-management` | 관리 및 거버넌스 (Trusted Advisor와 같은 자리) |
+| `Resource Access Manager` | `governance-iac` | 보안·자격 증명·규정 준수 |
 
-## 매핑 — 개념 106개
+`MSK`는 한때 이 표에 있었다 — 옛 `메시징·백업` 주제에 있으면서 백서 카테고리는 분석이었다.
+phase 26이 MSK를 `kinesis-streaming`으로 옮기면서 이웃(Kinesis 계열)과 카테고리가 같아졌으므로
+표에서 뺐다.
+
+## 매핑 — 개념 107개
 
 `보조`란에 표시가 있는 항목은 위 "출처"에 적은 보조 출처를 근거로 배치한 것이다.
 
@@ -185,6 +186,7 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
 | `kinesis-streaming.kinesis-video-streams` | Kinesis Video Streams | 분석 |  |
 | `kinesis-streaming.msk` | MSK | 분석 |  |
 | `redshift-opensearch-quicksight.redshift` | RedShift | 분석 |  |
+| `redshift-opensearch-quicksight.opensearch-text-search` | OpenSearch | 분석 |  |
 | `redshift-opensearch-quicksight.quicksight` | QuickSight | 분석 |  |
 | `cloudwatch-xray.cloudwatch` | CloudWatch | 관리 및 거버넌스 |  |
 | `cloudwatch-xray.x-ray` | X-Ray | 개발자 도구 |  |
@@ -346,7 +348,7 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
 
 ## 카테고리 문장을 붙이지 않는 개념
 
-182개 중 107개는 대상이 아니다. 기준은 세 가지다.
+618개 중 511개는 대상이 아니다. 기준은 세 가지다.
 
 1. **AWS 서비스가 아닌 것** — `DNS`, `리전`, `가용 영역`, `온프레미스`, `마이그레이션`,
    `Spark`(오픈소스 엔진), `가용성` 등. 카테고리라는 개념 자체가 성립하지 않는다.
@@ -358,6 +360,12 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
    `DAX는 DynamoDB 전용`, `계층으로 갈리는 ALB와 NLB`, `시험에서 자주 통하는 판단 기준` 등.
    서비스를 소개하는 자리가 아니다.
 
-`Fargate`·`DAX`·`OpenSearch`처럼 백서에 카테고리가 있는 서비스라도, 이 앱에서 그 이름을 단
+`Fargate`·`DAX`처럼 백서에 카테고리가 있는 서비스라도, 이 앱에서 그 이름을 단
 개념이 사실·비교 개념이면 문장을 붙이지 않는다. 소개 문장이 아닌 곳에 카테고리를 끼우면
 그 문단이 무엇을 말하려는지 흐려진다.
+
+`OpenSearch`도 한때 이 예에 있었다. 그때는 OpenSearch를 단 개념이 로그 분석 선택지를
+비교하는 자리뿐이었기 때문인데, phase 26이 서비스를 소개하는 개념
+(`redshift-opensearch-quicksight.opensearch-text-search`)을 들여왔으므로 지금은 위 매핑 표에
+있고 한 줄을 붙인다. **이 예는 서비스 이름이 아니라 개념의 성격으로 갈린다** — 서비스가
+이 목록에 올랐다는 것만 보고 뒤 작업이 한 줄을 빠뜨리지 않게, 개념이 새로 생기면 다시 본다.
