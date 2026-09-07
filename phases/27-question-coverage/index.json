@@ -93,7 +93,9 @@
     {
       "step": 11,
       "name": "questions-containers",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:36:26+0900",
+      "summary": "q509~q528 문항 20개를 questions.json에 이어 붙여 총 508→528개가 됐다(다음 step은 q529부터). 전부 ecs-eks-fargate 주제이고 담당 개념 19개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs ecs-eks-fargate → exit 0, 23/23 100퍼센트(기존 문항이 덮고 있던 ecs·eks·fargate-no-time-limit·aws-batch 4개 포함, 주제 문항 수는 5→25개). 개념당 1문항이 기본이고 EKS의 컴퓨팅 세 갈래만 두 방향으로 물어 20개다 — 기본 컴퓨팅 인프라를 직접 관리하지 않는 것이 목표면 Fargate 쪽이라는 갈림길(q512)과 그 Fargate에서 어떤 파드를 돌릴지 고르는 장치가 Fargate 프로필이라는 설정 항목(q513). 정답 위치는 0·1·2·3이 각각 5개(25퍼센트)이고 해설은 최소 317자·평균 399자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(ECS·EKS·EC2·S3·EFS·EBS·KMS·IAM·ALB·NLB·VPC·NAT·CVE 포함, 상식·제품 이름 속 약어인 CPU·API·ARN·OIDC는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(EKS Connector ↔ EKS Anywhere ↔ Fargate 프로필 ↔ 관리형 노드 그룹, 태스크 역할 ↔ 인스턴스 역할 ↔ 태스크 실행 역할 ↔ IRSA가 서로의 오답이 되는 네 문항, Fargate Spot ↔ 온디맨드 Fargate ↔ EC2 켜고 끄기 ↔ 예약 인스턴스, Batch 컴퓨팅 환경 ↔ 오토 스케일링 그룹 ↔ EC2 위의 EKS ↔ Elastic Beanstalk, awsvpc 모드 ↔ 배치 전략 ↔ Fargate 프로필, KMS 봉투 암호화 ↔ Secrets Manager ↔ EBS 기본 암호화 ↔ EBS CSI 드라이버). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 11 블록 4개(id 범위와 담당 개념 19개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q508은 한 글자도 건드리지 않았다(HEAD의 508개와 JSON 동일 확인, q508 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(417개) 전부 통과, 전체 커버리지는 618개념 중 433개(70퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다."
     },
     {
       "step": 12,

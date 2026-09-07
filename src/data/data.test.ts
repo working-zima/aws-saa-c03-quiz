@@ -1701,6 +1701,90 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 11 — ecs-eks-fargate의 빈 개념 19개를 덮는다(ADR-026). 개념당 한
+  // 문항이 기본이고, EKS의 컴퓨팅 세 갈래만 두 방향으로 물어 문항이 20개다 —
+  // 기본 컴퓨팅 인프라를 직접 관리하지 않는 것이 목표면 Fargate 쪽이라는 갈림길과,
+  // 그 Fargate에서 어떤 파드를 돌릴지 고르는 장치가 Fargate 프로필이라는 설정 항목.
+  const step11Concepts = [
+    'ecs-eks-fargate.ecr-image-scan-on-push',
+    'ecs-eks-fargate.elastic-beanstalk',
+    'ecs-eks-fargate.app2container',
+    'ecs-eks-fargate.eks-compute-options',
+    'ecs-eks-fargate.fargate-spot',
+    'ecs-eks-fargate.batch-fargate-compute-environment',
+    'ecs-eks-fargate.eks-fargate-pod-isolation',
+    'ecs-eks-fargate.eks-cluster-autoscaler',
+    'ecs-eks-fargate.eks-aws-load-balancer-controller',
+    'ecs-eks-fargate.eks-connector',
+    'ecs-eks-fargate.eks-anywhere',
+    'ecs-eks-fargate.ecs-task-role',
+    'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+    'ecs-eks-fargate.eks-irsa',
+    'ecs-eks-fargate.ecs-awsvpc-mode',
+    'ecs-eks-fargate.ecs-task-placement-strategy',
+    'ecs-eks-fargate.fargate-per-second-billing',
+    'ecs-eks-fargate.fargate-efs-mount',
+    'ecs-eks-fargate.eks-secrets-kms-encryption',
+  ]
+
+  it('컨테이너 문제 20개가 담당 개념 19개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(508, 528)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 509}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('ecs-eks-fargate'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step11Concepts].sort(),
+    )
+  })
+
+  it('컨테이너 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(508, 528).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('컨테이너 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(508, 528)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('컨테이너 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'ecs-eks-fargate')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
