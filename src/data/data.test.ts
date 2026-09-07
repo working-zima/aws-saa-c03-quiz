@@ -130,19 +130,22 @@ describe('학습 데이터 무결성', () => {
         'automated-backup-retention',
         'connection-issue-heuristic',
       ],
-      'aurora-dynamodb-cache': [
-        'aurora-serverless-v2',
-        'aurora-reader-endpoint',
-        'documentdb',
-        'dynamodb-pitr',
-        'dax-dynamodb-only',
-      ],
+      // phase 26 step 7이 aurora-dynamodb-cache를 세 주제로 갈랐다. 개념 본문은
+      // 그대로이고 접두사만 새 주제를 따른다.
+      aurora: ['aurora-serverless-v2', 'aurora-reader-endpoint'],
+      dynamodb: ['dynamodb-pitr'],
+      'elasticache-purpose-built-db': ['documentdb', 'dax-dynamodb-only'],
     }
 
-    // phase 26 step 6이 rds-storage-features를 3단으로 다시 정렬해, 이 넷은 더 이상
-    // 배열 끝이 아니다. 그 주제의 전체 순서는 아래 「RDS 주제가 ...」가 개념 id
-    // 전부로 못박는다.
-    const reordered = new Set(['rds-storage-features'])
+    // phase 26이 아래 주제들의 개념을 3단(기본 → 갈림길 → 한계)으로 다시 정렬해,
+    // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // 「RDS 주제가 ...」 같은 테스트가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'rds-storage-features',
+      'aurora',
+      'dynamodb',
+      'elasticache-purpose-built-db',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -191,7 +194,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 23개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 25개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -213,7 +216,12 @@ describe('학습 데이터 무결성', () => {
       { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·S3 전송', importance: 3, sourcePages: [16, 18] },
       { id: 'storage-gateway-migration', title: 'Storage Gateway·DMS·Application Migration Service', importance: 3, sourcePages: [16, 18] },
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
-      { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
+      // phase 26 step 7이 aurora-dynamodb-cache를 셋으로 갈랐다. Aurora는 RDS 바로
+      // 뒤에 두어 관리형 관계형 DB의 두 갈래가 맞붙게 하고, 캐시 갈림길
+      // (ElastiCache ↔ DAX)은 목적별 데이터베이스와 한 주제에 남는다.
+      { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
+      { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
+      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
       { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
@@ -323,11 +331,12 @@ describe('학습 데이터 무결성', () => {
       'rds-storage-features.multi-az-standby-limits',
       'rds-storage-features.automated-backup-retention',
       'rds-storage-features.connection-issue-heuristic',
-      'aurora-dynamodb-cache.aurora-serverless-v2',
-      'aurora-dynamodb-cache.aurora-reader-endpoint',
-      'aurora-dynamodb-cache.documentdb',
-      'aurora-dynamodb-cache.dynamodb-pitr',
-      'aurora-dynamodb-cache.dax-dynamodb-only',
+      // phase 26 step 7이 aurora-dynamodb-cache를 셋으로 갈라 접두사가 바뀌었다.
+      'aurora.aurora-serverless-v2',
+      'aurora.aurora-reader-endpoint',
+      'elasticache-purpose-built-db.documentdb',
+      'dynamodb.dynamodb-pitr',
+      'elasticache-purpose-built-db.dax-dynamodb-only',
     ]
 
     expect(addedQuestions).toHaveLength(9)
@@ -336,7 +345,11 @@ describe('학습 데이터 무결성', () => {
     )
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
       ...Array(4).fill('rds-storage-features'),
-      ...Array(5).fill('aurora-dynamodb-cache'),
+      'aurora',
+      'aurora',
+      'elasticache-purpose-built-db',
+      'dynamodb',
+      'elasticache-purpose-built-db',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -558,9 +571,10 @@ describe('학습 데이터 무결성', () => {
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
-  // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔다.
+  // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
+  // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(16, 23).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(18, 25).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -577,20 +591,22 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(16, 23).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(18, 25).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 16).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 18).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
       sourcePages,
     }))).toEqual([
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
-      { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
+      { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
+      { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
+      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
       { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
@@ -600,10 +616,11 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이다.
-    // 나머지 여섯은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
-    expect(topics.slice(9, 16).map((topic) => topic.concepts.length)).toEqual([
-      21, 8, 11, 11, 11, 12, 10,
+    // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이고,
+    // 이어지는 18·18·14는 step 7이 원본 8개념을 셋으로 갈라 신규 42를 더한 결과다.
+    // 나머지 다섯은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
+    expect(topics.slice(9, 18).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 11, 11, 11, 12, 10,
     ])
   })
 
@@ -912,6 +929,98 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('rds-storage-features.read-replica-vs-cache')).toContain('ElastiCache')
   })
 
+  it('Aurora 주제가 서비스와 기능 다음에 선택 기준과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'aurora')
+
+    // 1단 Aurora와 Serverless v2·엔드포인트·오토 스케일링·Babelfish·pgvector·S3 내보내기
+    // → 2단 글로벌 데이터베이스와 리전 간 복제본, 지속적 백업과 스냅샷 주기, 클론,
+    // 스토리지 구성, 어느 엔진으로 가는가 → 3단 쓰기 리전 하나·ACU 상한·복제본의 제약.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'aurora.aurora',
+      'aurora.aurora-serverless-v2',
+      'aurora.aurora-reader-endpoint',
+      'aurora.aurora-endpoint-types',
+      'aurora.aurora-replica-auto-scaling',
+      'aurora.babelfish',
+      'aurora.aurora-pgvector',
+      'aurora.aurora-select-into-outfile-s3',
+      'aurora.aurora-global-database-dr-targets',
+      'aurora.aurora-cross-region-read-replica',
+      'aurora.aurora-continuous-backup-rpo',
+      'aurora.aurora-clone',
+      'aurora.aurora-storage-configurations',
+      'aurora.sql-server-license-cost',
+      'aurora.aurora-zdr-and-activity-streams',
+      'aurora.aurora-global-database-write-region',
+      'aurora.aurora-serverless-max-acu',
+      'aurora.read-replica-no-schema-change',
+    ])
+  })
+
+  it('DynamoDB 주제가 서비스와 기능 다음에 선택 기준과 한계값을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'dynamodb')
+
+    // 1단 DynamoDB와 응답 시간·스트림·글로벌 테이블·TTL·GSI → 2단 용량 모드와 오토
+    // 스케일링, 읽기 일관성, 적재 경로 → 3단 보존 한계·전제 조건·크기 제한·설정 항목.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'dynamodb.dynamodb',
+      'dynamodb.dynamodb-single-digit-latency',
+      'dynamodb.dynamodb-streams',
+      'dynamodb.dynamodb-global-tables',
+      'dynamodb.dynamodb-ttl',
+      'dynamodb.dynamodb-global-secondary-index',
+      'dynamodb.dynamodb-capacity-modes',
+      'dynamodb.dynamodb-auto-scaling-target-utilization',
+      'dynamodb.dynamodb-read-consistency',
+      'dynamodb.dynamodb-s3-export-vs-streams',
+      'dynamodb.dynamodb-incremental-export',
+      'dynamodb.dynamodb-export-no-read-capacity',
+      'dynamodb.dynamodb-pitr',
+      'dynamodb.dynamodb-export-requires-pitr',
+      'dynamodb.dynamodb-item-size-limit',
+      'dynamodb.dynamodb-ttl-deletion-delay',
+      'dynamodb.dynamodb-streams-retention-24h',
+      'dynamodb.dynamodb-streams-batch-size',
+    ])
+  })
+
+  it('캐시·목적별 DB 주제가 서비스 여섯 다음에 갈림길 다섯과 한계 셋을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'elasticache-purpose-built-db')
+
+    // 1단 캐시와 목적별 데이터베이스 넷이 각각 무엇인가 → 2단 캐시 엔진과 리전 간
+    // 구성의 갈림길 → 3단 캐시로 풀리지 않는 것과 설정 시점의 제약.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'elasticache-purpose-built-db.elasticache',
+      'elasticache-purpose-built-db.documentdb',
+      'elasticache-purpose-built-db.neptune',
+      'elasticache-purpose-built-db.neptune-streams',
+      'elasticache-purpose-built-db.qldb',
+      'elasticache-purpose-built-db.timestream',
+      'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
+      'elasticache-purpose-built-db.dax-dynamodb-only',
+      'elasticache-purpose-built-db.elasticache-multi-az-failover',
+      'elasticache-purpose-built-db.elasticache-global-datastore',
+      'elasticache-purpose-built-db.documentdb-global-cluster',
+      'elasticache-purpose-built-db.cache-requires-application-change',
+      'elasticache-purpose-built-db.elasticache-not-a-durable-store',
+      'elasticache-purpose-built-db.dax-encryption-at-rest',
+    ])
+  })
+
+  it('캐시 갈림길이 한 주제 안에 함께 있다', () => {
+    // ElastiCache(Redis ↔ Memcached) ↔ DAX는 "언제 무엇을 쓰는가"가 그대로 문항이다.
+    // step 7이 aurora-dynamodb-cache를 셋으로 가를 때 이 셋을 떼어 놓으면 비교할
+    // 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+
+    const engines = ownerOf('elasticache-purpose-built-db.elasticache-redis-vs-memcached')
+    expect(engines).toBe('elasticache-purpose-built-db')
+    expect(ownerOf('elasticache-purpose-built-db.elasticache')).toBe(engines)
+    expect(ownerOf('elasticache-purpose-built-db.dax-dynamodb-only')).toBe(engines)
+    expect(ownerOf('elasticache-purpose-built-db.dax-encryption-at-rest')).toBe(engines)
+  })
+
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
     const storageClassQuestions = questions.filter(
       (question) => question.topicId === 's3-storage-classes',
@@ -1076,9 +1185,9 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 's3-versioning-lifecycle.object-lock-prerequisites', anchor: 'Multi-Factor Authentication' },
     { conceptId: 'efs-fsx.efs', anchor: 'Network File System' },
     { conceptId: 'data-transfer-services.transfer-family', anchor: 'File Transfer Protocol' },
-    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '키-값' },
-    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
-    { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
+    { conceptId: 'dynamodb.dynamodb', anchor: '키-값' },
+    { conceptId: 'dynamodb.dynamodb', anchor: '미리 담아 두었다가' },
+    { conceptId: 'aurora.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
     { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
     { conceptId: 'compute-delivery.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
     { conceptId: 'compute-delivery.cloudfront-ttl', anchor: 'Time-to-Live' },
@@ -1605,10 +1714,14 @@ describe('학습 데이터 무결성', () => {
     ['storage-gateway-migration.dms-sct', 'DMS와 SCT는', 'migration'],
     ['storage-gateway-migration.application-migration-service', 'Application Migration Service는', 'migration'],
     ['rds-storage-features.rds', 'RDS는', 'databases'],
-    ['aurora-dynamodb-cache.aurora', 'Aurora는', 'databases'],
-    ['aurora-dynamodb-cache.dynamodb', 'DynamoDB는', 'databases'],
-    ['aurora-dynamodb-cache.elasticache', 'ElastiCache는', 'databases'],
-    ['aurora-dynamodb-cache.documentdb', 'DocumentDB는', 'databases'],
+    ['aurora.aurora', 'Aurora는', 'databases'],
+    ['dynamodb.dynamodb', 'DynamoDB는', 'databases'],
+    ['elasticache-purpose-built-db.elasticache', 'ElastiCache는', 'databases'],
+    ['elasticache-purpose-built-db.documentdb', 'DocumentDB는', 'databases'],
+    // phase 26 step 7. QLDB는 백서에도 보조 출처에도 카테고리가 없어 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 없음").
+    ['elasticache-purpose-built-db.neptune', 'Neptune은', 'databases'],
+    ['elasticache-purpose-built-db.timestream', 'Timestream은', 'databases'],
     ['compute-delivery.ec2', 'EC2는', 'compute'],
     ['compute-delivery.elb', 'ELB는', 'networking'],
     ['compute-delivery.cloudfront', 'CloudFront는', 'networking'],
@@ -1667,12 +1780,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 77개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 79개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(77)
+    expect(serviceCategories).toHaveLength(79)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -1686,7 +1799,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 77개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 79개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
