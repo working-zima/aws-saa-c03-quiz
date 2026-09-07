@@ -8,6 +8,7 @@
 - `/docs/PRD.md` — **고칠 대상.** 전체를 읽어라.
 - `/docs/ARCHITECTURE.md` — **고칠 대상.** 전체를 읽어라.
 - `/docs/ADR.md` — 전체 목록과 형식. 특히 ADR-013·ADR-019·ADR-021의 서술 방식.
+  **ADR-009의 「검증」 문단도 읽어라** — 8번 작업의 근거다.
 - `/docs/source/dump-gaps/topic-plan.md` — step 0이 정한 주제 골격
 - `/docs/source/dump-gaps/README.md` — "주제 배치는 phase 26이 정한다"고 적힌 자리
 - `/src/data/topics.json` — 재편이 끝난 실제 데이터
@@ -15,6 +16,7 @@
 - `/docs/source/service-categories.md` — **고칠 대상.** 「매핑 — 개념 75개」 표가 옛 개념 id로 낡아 있다.
 - `/scripts/topics-baseline.json` — **고칠 대상.** `scripts/check-structure.mjs`의 기준 스냅샷이다.
 - `/scripts/check-structure.mjs` — 위 스냅샷을 어떻게 읽는지 확인하라.
+  **8번 작업에서 만들 스크립트가 따라야 할 스타일이기도 하다.**
 
 ## 배경
 
@@ -143,6 +145,49 @@ phase가 끝난 뒤에도 계속 죽어 있다.**
 - **카테고리를 새로 정하지 마라.** 이 step은 낡은 id를 맞추는 것이지 배치를 바꾸는
   것이 아니다. 배치를 바꿔야 할 자리를 찾으면 `summary`에 적어 알려라.
 
+### 8. `scripts/check-verbatim.mjs`를 실제로 만든다
+
+`docs/ADR.md`의 ADR-009는 「검증」 문단에서 "`scripts/check-verbatim.mjs`가 공백·문장부호를
+지운 뒤 원본과 32자 이상 연속 일치하는 구간을 잡아낸다"고 적고 있다.
+**그런데 그 파일이 저장소에 없다.** `scripts/`에는 `check-structure.mjs`뿐이다.
+
+전사 금지는 이 저장소를 공개할 수 있는지를 가르는 CRITICAL 규칙인데(CLAUDE.md "원본 데이터"),
+그 유일한 검증 장치가 문서상으로만 존재한다. **ADR 문장을 지워 현실에 맞추지 마라.
+스크립트를 만들어 문서를 사실로 만든다.** 이유: ADR-009는 개념 본문 182개를 다시 쓴 결정의
+근거 문서이고, 검증 문단을 지우면 그 결정이 무엇으로 확인됐는지가 기록에서 사라진다.
+
+인터페이스:
+
+- 파일은 `scripts/check-verbatim.mjs` 하나. `node scripts/check-verbatim.mjs`로 돈다.
+- **의존성을 추가하지 마라.** 이유: Node 18 표준 모듈로 되는 일이고, 스택은 ADR이 고정한다.
+  `package.json`이 diff에 잡히면 위반이다.
+- 비교 대상은 `src/data/topics.json`의 개념 본문(`name`·`summary`·`paragraphs`)이고,
+  원본은 `docs/source/concepts-raw.md`다.
+- 정규화와 임계값은 **ADR-009가 적은 그대로** 쓴다 — 공백·문장부호를 지운 뒤 32자 연속 일치.
+  **임계값을 바꾸지 마라.** 이유: 32는 exam-gaps 개념 77개가 전부 통과하는 실측 하한선이라고
+  ADR 본문에 근거가 적혀 있다. 코드에서 바꾸면 그 근거가 문서와 어긋난다.
+- 원본 경로를 **첫 인자로 받을 수 있게** 한다(기본값은 위 경로). 이유: 원본이 없는 환경의
+  동작을 AC에서 확인할 수 있어야 한다. 그 외의 옵션·설정은 만들지 마라.
+- 겹침을 찾으면 개념 id와 겹친 문자열을 출력하고 **exit code 1**로 끝난다.
+  못 찾으면 이상 없음을 출력하고 **0**으로 끝난다.
+
+**원본이 없는 것이 정상 경로다:**
+
+- `docs/source/concepts-raw.md`는 ADR-009에 따라 gitignore로 로컬에만 둔다.
+  clone한 환경에는 **없는 것이 정상**이다.
+- 그러므로 원본 파일이 없으면 **실패가 아니라 "건너뜀"으로 끝나야 한다.** 무엇이 없어서
+  건너뛰는지 경로와 함께 알리고 **exit code 0**이다. 이유: 죽게 만들면 그 파일을 가진
+  사람 말고는 아무도 못 돌리고, CI에도 걸 수 없다.
+- **`npm test`·`npm run build`에 엮지 마라.** 이유: vitest는 저장소에 있는 파일만으로 돌아야
+  한다. 이 검사는 원본을 가진 사람이 손으로 돌리는 것이며, **그 사실을 ADR-009의 「검증」
+  문단에 한 줄로 덧붙여 밝혀라.** 검사가 자동으로 돌지 않는다는 것도 기록의 일부다.
+
+**검사가 잡은 겹침을 이 step에서 고치지 마라.** 이유 둘이다. 첫째, 이 step은 `src/`를
+건드리지 않는다(아래 금지사항). 둘째, **검사를 통과시킬 목적으로 개념 문장을 깎으면
+학습자가 읽을 문장이 나빠진다.** 겹침을 없애는 올바른 방법은 사실을 유지하며 다시 쓰는
+것이고, 그것은 문장마다 판단이 필요해 문서 갱신 step의 몫이 아니다. 찾은 겹침은 개념 id
+목록으로 `summary`에 적어 남겨라.
+
 ## Acceptance Criteria
 
 ```bash
@@ -186,6 +231,19 @@ EOF
 
 # src/를 건드리지 않았다
 git diff --name-only | grep '^src/' && echo "위반" || echo "OK"
+
+# check-verbatim.mjs 가 생겼고, 원본이 없는 환경에서 죽지 않는다 (exit 0 + 건너뜀 안내)
+node scripts/check-verbatim.mjs docs/source/does-not-exist.md; echo "exit=$? (0이어야 한다)"
+
+# 원본이 있으면 실제로 검사한다 (없으면 위와 같이 건너뜀으로 끝난다)
+node scripts/check-verbatim.mjs; echo "exit=$?"
+
+# ADR-009 임계값 32가 코드에 있고, 의존성을 늘리지 않았다
+grep -n '32' scripts/check-verbatim.mjs
+git diff --name-only | grep -q '^package\(-lock\)\?.json$' && echo "위반: 의존성 변경" || echo OK
+
+# ADR-009 검증 문단이 "손으로 돌린다"는 사실을 밝혔다
+grep -n 'check-verbatim' docs/ADR.md
 ```
 
 ## 검증 절차
@@ -200,6 +258,10 @@ git diff --name-only | grep '^src/' && echo "위반" || echo "OK"
    - `node scripts/check-structure.mjs`가 이상 없음으로 끝나는가?
    - `topics-baseline.json`의 diff가 실제로 바뀐 값만 담고 있는가? (재직렬화로 부풀지 않았는가)
    - 매핑 표의 개념 id가 `data.test.ts`의 `serviceCategories`와 일치하는가?
+   - `scripts/check-verbatim.mjs`가 원본이 **없을 때 exit 0**으로 끝나는가?
+     (`concepts-raw.md`가 없는 clone 환경이 정상이다)
+   - 그 스크립트를 `npm test`·`npm run build`에 엮지 않았는가?
+   - ADR-009의 「검증」 문단이 이 검사가 수동이라는 사실을 밝히고 있는가?
 3. 결과에 따라 `phases/26-concept-merge/index.json`의 step 21을 업데이트한다:
    - 성공 → `"status": "completed"`, `"summary": "산출물 한 줄 요약"`
    - 수정 3회 시도 후에도 실패 → `"status": "error"`, `"error_message": "구체적 에러 내용"`
@@ -215,4 +277,8 @@ git diff --name-only | grep '^src/' && echo "위반" || echo "OK"
   실물을 보고 정할 일이다. 사실만 갱신하고 열린 문제로 남겨라.
 - **문항을 만들지 마라.** 이유: 다음 phase의 범위다.
 - **ADR을 지우거나 과거 결정을 다시 쓰지 마라.** 이유: ADR은 개정을 덧붙이는 기록이다.
+- **ADR-009의 「검증」 문단을 지우거나 약화시키지 마라.** 이유: 없는 스크립트를 문서에서
+  지우는 것은 규칙을 사실에 맞추는 것이 아니라 규칙을 버리는 것이다. 8번 작업은 반대 방향이다.
+- **전사 검사를 통과시키려고 개념 본문을 고치지 마라.** 이유: 검사 통과를 목적으로 문장을
+  깎으면 학습자가 읽을 문장이 나빠진다. 이 step은 찾은 것을 보고만 하고 고치지 않는다.
 - 기존 테스트를 깨뜨리지 마라.
