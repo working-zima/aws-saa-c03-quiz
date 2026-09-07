@@ -38,7 +38,10 @@
     {
       "step": 4,
       "name": "questions-efs-fsx",
-      "status": "pending"
+      "status": "error",
+      "started_at": "2026-09-07T22:54:59+0900",
+      "error_message": "[3회 시도 후 실패] Step did not update status",
+      "failed_at": "2026-09-07T22:59:58+0900"
     },
     {
       "step": 5,
