@@ -1227,6 +1227,107 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 6 — rds-storage-features의 빈 개념 14개와 aurora의 빈 개념 15개를
+  // 덮는다(ADR-026). 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두
+  // 방향으로 물어 문항이 32개다 — 다중 AZ 배포의 두 형태(읽을 수 있는 대기 인스턴스 ↔
+  // 지연을 허용하는 분석 분리), 캐시가 듣는 조건(반복이 없을 때의 대안 ↔ 갈림길의 축),
+  // Aurora 백업의 복구 지점 목표(지속적 증분 백업 ↔ 정해진 간격의 스냅샷).
+  const step6Concepts = [
+    'rds-storage-features.rds-blue-green-deployment',
+    'rds-storage-features.rds-custom',
+    'rds-storage-features.rds-iam-database-authentication',
+    'rds-storage-features.rds-encryption-scope-and-in-transit',
+    'rds-storage-features.rds-multi-az-db-cluster',
+    'rds-storage-features.read-replica-vs-cache',
+    'rds-storage-features.rds-proxy-failover',
+    'rds-storage-features.rds-snapshot-cross-region-copy',
+    'rds-storage-features.rds-manual-snapshot-retention',
+    'rds-storage-features.rds-pitr-transaction-log-interval',
+    'rds-storage-features.rds-multi-az-failover-rto',
+    'rds-storage-features.rds-stop-instance-restart',
+    'rds-storage-features.rds-encrypt-existing-instance',
+    'rds-storage-features.rds-custom-byol',
+    'aurora.aurora-endpoint-types',
+    'aurora.aurora-replica-auto-scaling',
+    'aurora.babelfish',
+    'aurora.aurora-pgvector',
+    'aurora.aurora-select-into-outfile-s3',
+    'aurora.aurora-global-database-dr-targets',
+    'aurora.aurora-cross-region-read-replica',
+    'aurora.aurora-continuous-backup-rpo',
+    'aurora.aurora-clone',
+    'aurora.aurora-storage-configurations',
+    'aurora.sql-server-license-cost',
+    'aurora.aurora-zdr-and-activity-streams',
+    'aurora.aurora-global-database-write-region',
+    'aurora.aurora-serverless-max-acu',
+    'aurora.read-replica-no-schema-change',
+  ]
+
+  it('RDS·Aurora 문제 32개가 담당 개념 29개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(374, 406)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 375}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(16).fill('rds-storage-features'),
+      ...Array(16).fill('aurora'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step6Concepts].sort(),
+    )
+  })
+
+  it('RDS·Aurora 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(374, 406).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('RDS·Aurora 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(374, 406)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('RDS 스토리지 기능과 Aurora 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['rds-storage-features', 'aurora'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
