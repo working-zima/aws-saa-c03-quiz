@@ -133,6 +133,10 @@
       "dir": "26-concept-merge",
       "status": "completed",
       "completed_at": "2026-09-07T20:32:37+0900"
+    },
+    {
+      "dir": "27-question-coverage",
+      "status": "pending"
     }
   ]
 }
