@@ -125,7 +125,9 @@
     {
       "step": 15,
       "name": "questions-route53-analytics",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T02:23:10+0900",
+      "summary": "q609~q632 문항 24개를 questions.json에 이어 붙여 총 608→632개가 됐다(다음 step은 q633부터). route53 8개(q609~q616)·emr-glue-athena 16개(q617~q632)로 담당 개념 23개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs route53 emr-glue-athena → exit 0, 13/13·20/20 둘 다 100퍼센트(기존 문항이 덮고 있던 route53·routing-policies·resolver·private-hosted-zone·multivalue-answer-details와 emr·spark·glue·glue-crawler·athena 포함, 주제 문항 수는 8→16개·5→21개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어 24개다 — EMR 노드의 세 역할(저장을 맡느냐가 코어와 태스크를 가른다 ↔ 그 차이 때문에 스팟으로 돌려도 되는 노드가 태스크뿐이다). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 288자·평균 361자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(DNS·VPC·ALB·S3·AZ·EMR·EC2·EBS·IAM·KMS·RDS·SQL·ETL 포함, 상식·제품 이름 속 약어인 IP·CPU·API는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(퍼블릭·프라이빗 호스팅 영역 ↔ Resolver 인바운드·아웃바운드 엔드포인트 ↔ 전달 규칙, 별칭 ↔ 단순 ↔ 지리적 위치 ↔ 다중값 응답 ↔ 장애 조치 라우팅, 쿼리 로깅 ↔ CloudTrail ↔ CloudWatch 지표 ↔ 상태 검사, 프라이머리 ↔ 코어 ↔ 태스크 노드가 서로의 오답이 되는 세 문항, 일시적 클러스터 ↔ 관리형 스케일링, Glue ↔ EMR ↔ Athena 페더레이션 쿼리, DataBrew ↔ Crawler ↔ Lake Formation, 블루프린트 ↔ LF 태그 ↔ IAM·버킷 정책, S3+Athena ↔ OpenSearch ↔ CloudWatch Logs, 보안 구성 ↔ 런타임 역할 ↔ 인스턴스 프로파일). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 15 블록 4개(id 범위와 담당 개념 23개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q608은 한 글자도 건드리지 않았다(HEAD의 608개와 JSON 동일 확인, q608 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(433개) 전부 통과, 전체 커버리지는 618개념 중 528개(85퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다."
     },
     {
       "step": 16,
