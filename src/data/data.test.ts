@@ -2257,6 +2257,103 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 17 — 보안 서비스 세 주제의 빈 개념 26개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 28개다 — Shield Standard의 방어 범위(정상 요청 모양의 L7 공격은 WAF가 맡는다
+  // ↔ 기본 보호의 범위가 네트워크 계층까지라는 경계 자체)와 Inspector의 역할(취약점을
+  // 찾아 주는 서비스는 무엇인가 ↔ 유입을 막는 일은 발견이 아니라 조치라 자리가 다르다).
+  const step17Concepts = [
+    'secrets-encryption.kms-key-types-by-management',
+    'secrets-encryption.kms-multi-region-key',
+    'secrets-encryption.kms-imported-key-material',
+    'secrets-encryption.kms-cloudhsm-key-store',
+    'secrets-encryption.kms-key-per-tenant',
+    'secrets-encryption.acm-dns-validation',
+    'secrets-encryption.secrets-manager-batch-get-secret-value',
+    'secrets-encryption.kms-automatic-key-rotation',
+    'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
+    'secrets-encryption.imported-key-material-rotation',
+    'secrets-encryption.acm-expiration-event',
+    'waf-shield.firewall-manager',
+    'waf-shield.waf-managed-rule-groups',
+    'waf-shield.waf-rate-based-rule',
+    'waf-shield.shield-standard-network-layer',
+    'waf-shield.shield-advanced-protection-group',
+    'waf-shield.waf-body-inspection-size-limit',
+    'waf-shield.waf-web-acl-region-must-match-rest-api',
+    'waf-shield.waf-logging-to-firehose',
+    'guardduty-macie-inspector.amazon-inspector',
+    'guardduty-macie-inspector.security-hub',
+    'guardduty-macie-inspector.macie-automated-discovery',
+    'guardduty-macie-inspector.inspector-scans-ecr-images',
+    'guardduty-macie-inspector.macie-delegated-administrator',
+    'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+    'guardduty-macie-inspector.macie-finding-to-eventbridge',
+  ]
+
+  it('보안 서비스 문제 28개가 담당 개념 26개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(656, 684)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 657}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['secrets-encryption', 'waf-shield', 'guardduty-macie-inspector']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step17Concepts].sort(),
+    )
+  })
+
+  it('보안 서비스 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(656, 684).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('보안 서비스 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(656, 684)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('비밀·키와 WAF·Shield와 탐지 세 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) =>
+        ['secrets-encryption', 'waf-shield', 'guardduty-macie-inspector'].includes(id),
+      )
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
