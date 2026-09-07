@@ -139,13 +139,21 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
+    // phase 26 step 6이 rds-storage-features를 3단으로 다시 정렬해, 이 넷은 더 이상
+    // 배열 끝이 아니다. 그 주제의 전체 순서는 아래 「RDS 주제가 ...」가 개념 id
+    // 전부로 못박는다.
+    const reordered = new Set(['rds-storage-features'])
+
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -592,8 +600,10 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
+    // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이다.
+    // 나머지 여섯은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
     expect(topics.slice(9, 16).map((topic) => topic.concepts.length)).toEqual([
-      7, 8, 11, 11, 11, 12, 10,
+      21, 8, 11, 11, 11, 12, 10,
     ])
   })
 
@@ -832,6 +842,74 @@ describe('학습 데이터 무결성', () => {
     )
     expect(bodyOf('storage-gateway-migration.storage-gateway')).toContain('DataSync·Snowball Edge와 달리')
     expect(bodyOf('storage-gateway-migration.dms-full-load-and-cdc-task')).toContain('DataSync')
+  })
+
+  it('RDS 주제가 서비스와 기능 다음에 선택 기준과 한계값을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'rds-storage-features')
+
+    // 1단 RDS와 스토리지 유형·기능(블루/그린·Custom·IAM 인증·암호화 범위) → 2단 볼륨
+    // 유형의 갈림길, 다중 AZ ↔ 읽기 전용 복제본 ↔ 다중 AZ DB 클러스터, 캐시가 듣지
+    // 않는 조건, 연결 문제와 프록시, 리전 간 스냅샷 복사 → 3단 백업 보존 한계·수동
+    // 스냅샷·특정 시점 복구의 정밀도·장애 조치 시간·7일 자동 재시작·나중에 켤 수 없는
+    // 암호화·보유 라이선스.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'rds-storage-features.rds',
+      'rds-storage-features.storage-types',
+      'rds-storage-features.features',
+      'rds-storage-features.rds-blue-green-deployment',
+      'rds-storage-features.rds-custom',
+      'rds-storage-features.rds-iam-database-authentication',
+      'rds-storage-features.rds-encryption-scope-and-in-transit',
+      'rds-storage-features.storage-type-names',
+      'rds-storage-features.multi-az-standby-limits',
+      'rds-storage-features.rds-multi-az-db-cluster',
+      'rds-storage-features.read-replica-vs-cache',
+      'rds-storage-features.connection-issue-heuristic',
+      'rds-storage-features.rds-proxy-failover',
+      'rds-storage-features.rds-snapshot-cross-region-copy',
+      'rds-storage-features.automated-backup-retention',
+      'rds-storage-features.rds-manual-snapshot-retention',
+      'rds-storage-features.rds-pitr-transaction-log-interval',
+      'rds-storage-features.rds-multi-az-failover-rto',
+      'rds-storage-features.rds-stop-instance-restart',
+      'rds-storage-features.rds-encrypt-existing-instance',
+      'rds-storage-features.rds-custom-byol',
+    ])
+  })
+
+  it('RDS와 Aurora가 배열에서 맞붙어 있다', () => {
+    // 관리형 관계형 데이터베이스의 두 갈래다. 다른 주제로 떼어 놓으면 "언제 무엇을
+    // 쓰는가"를 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    // Aurora를 담은 주제의 id는 step 7이 바꾸므로 개념 이름으로 찾는다.
+    const rdsIndex = topics.findIndex(({ id }) => id === 'rds-storage-features')
+    const auroraIndex = topics.findIndex((topic) =>
+      topic.concepts.some(({ name }) => name === 'Aurora'),
+    )
+
+    expect(rdsIndex).toBeGreaterThanOrEqual(0)
+    expect(auroraIndex).toBe(rdsIndex + 1)
+  })
+
+  it('다중 AZ 배포의 두 형태가 대기 인스턴스의 역할로 갈린다', () => {
+    // 기존 multi-az-standby-limits는 대기 인스턴스가 아무 트래픽도 처리하지 않는다고
+    // 못박는다. step 6이 들여온 rds-multi-az-db-cluster는 그 서술이 DB 인스턴스 배포에
+    // 대한 것이고 DB 클러스터 배포는 다르다는 것을 같은 주제 안에서 잇는다.
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('rds-storage-features.multi-az-standby-limits')).toContain(
+      '아무 트래픽도 처리하지 않으므로',
+    )
+    expect(bodyOf('rds-storage-features.rds-multi-az-db-cluster')).toContain(
+      '다중 AZ DB 인스턴스 배포',
+    )
+    expect(bodyOf('rds-storage-features.rds-multi-az-db-cluster')).toContain(
+      'DB 클러스터 배포까지 부정하지는 않는다',
+    )
+    expect(bodyOf('rds-storage-features.read-replica-vs-cache')).toContain('ElastiCache')
   })
 
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
