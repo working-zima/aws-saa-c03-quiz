@@ -11,6 +11,11 @@
  * 근거가 ADR-009 본문에 적혀 있고, 코드에서 바꾸면 문서와 어긋난다.
  * 이 검사는 하한선이지 완료 증명이 아니다. 본문이 짧으면 전사여도 통과한다.
  *
+ * 대상은 `summary`와 `paragraphs`다. `name`은 보지 않고, 겹친 구간에 한글이 한 글자도
+ * 없으면 넘긴다. 둘 다 ADR-025의 결정이고 이유는 그 ADR에 있다. 요약하면 `name`은
+ * ADR-009가 재작성 대상에서 제외한 필드이고(대신 check-structure.mjs가 baseline으로
+ * 고정한다), 한글 없는 겹침은 베낀 문장이 아니라 서비스 이름 나열이다.
+ *
  * 원본은 ADR-009에 따라 gitignore로 로컬에만 둔다. clone한 환경에는 없는 것이 정상이라,
  * 원본이 없으면 실패가 아니라 건너뜀(exit 0)으로 끝난다. 그래서 이 검사는
  * npm test·npm run build에 엮지 않고 원본을 가진 사람이 손으로 돌린다.
@@ -24,6 +29,9 @@ import { dirname, join, relative } from 'node:path'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const MIN_RUN = 32 // ADR-009가 정한 임계값. 바꾸지 마라.
+
+/** 한글이 한 글자도 없는 겹침은 서비스 이름 나열이다. 근거는 ADR-025. */
+const hasHangul = (text) => /[ㄱ-ㆎ가-힣]/u.test(text)
 
 const sourcePath = process.argv[2]
   ? join(process.cwd(), process.argv[2])
@@ -51,11 +59,13 @@ for (let i = 0; i + MIN_RUN <= source.length; i += 1) {
 
 const topics = JSON.parse(readFileSync(join(ROOT, 'src/data/topics.json'), 'utf8'))
 const hits = []
+const skipped = []
 
 for (const topic of topics) {
   for (const concept of topic.concepts) {
+    // `name`은 대상이 아니다. ADR-009가 재작성 대상에서 뺀 필드라, 여기서 잡아도
+    // "문장을 다시 써서 해소하라"를 따를 수 없다. 근거는 ADR-025.
     const units = [
-      ['name', concept.name],
       ['summary', concept.summary],
       ...concept.paragraphs.map((p, i) => [`paragraphs[${i}]`, p]),
     ]
@@ -70,11 +80,22 @@ for (const topic of topics) {
         // 걸렸으면 더 이어지는 데까지 늘려서 보고한다. 겹치는 창을 여러 번 세지 않는다.
         let end = i + MIN_RUN
         while (end < unit.length && source.includes(unit.slice(i, end + 1))) end += 1
-        hits.push({ id: concept.id, field, run: unit.slice(i, end) })
+        const run = unit.slice(i, end)
+        // 한글이 없으면 고유명사 나열이다. 조용히 버리지 않고 몇 건을 넘겼는지 알린다.
+        if (hasHangul(run)) hits.push({ id: concept.id, field, run })
+        else skipped.push({ id: concept.id, field, run })
         i = end - MIN_RUN + 1
       }
     }
   }
+}
+
+if (skipped.length) {
+  console.log(`- 넘긴 겹침 ${skipped.length}건 — 한글이 없어 서비스 이름 나열로 본다 (ADR-025)`)
+  for (const { id, field, run } of skipped) {
+    console.log(`    ${id} ${field} (${run.length}자) ${run}`)
+  }
+  console.log('')
 }
 
 if (hits.length) {
