@@ -936,6 +936,118 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 2 — 문항이 하나도 없던 세 주제(governance-iac·systems-manager·
+  // ai-ml-services)와, 커버리지가 남아 있던 aws-core-services·s3-storage-classes의
+  // 빈 개념 30개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 헷갈리는 짝인
+  // EC2 Instance Connect 엔드포인트(서비스 선택 ↔ 여는 포트)와 AI 서비스 넷의 갈래
+  // (Transcribe ↔ Textract)만 두 방향으로 물어 문항이 32개다.
+  const step2Concepts = [
+    'governance-iac.cloudformation',
+    'governance-iac.service-catalog',
+    'governance-iac.control-tower-landing-zone',
+    'governance-iac.resource-access-manager',
+    'governance-iac.workload-discovery',
+    'governance-iac.control-tower-controls',
+    'governance-iac.cloudformation-drift-detection',
+    'systems-manager.ssm-run-command',
+    'systems-manager.appconfig',
+    'systems-manager.ssm-session-manager',
+    'systems-manager.ec2-instance-connect-endpoint',
+    'systems-manager.ssm-patch-manager',
+    'systems-manager.ssm-managed-instance-core-policy',
+    'systems-manager.ssm-inventory',
+    'ai-ml-services.sagemaker',
+    'ai-ml-services.media-ai-service-lineup',
+    'ai-ml-services.comprehend',
+    'ai-ml-services.amazon-lex',
+    'ai-ml-services.sagemaker-autopilot',
+    'ai-ml-services.rekognition-content-moderation',
+    'aws-core-services.exponential-backoff-retry',
+    'aws-core-services.blob-offload-to-s3',
+    's3-storage-classes.s3-express-one-zone',
+    's3-storage-classes.glacier-flexible-retrieval-standard-time',
+    's3-storage-classes.glacier-flexible-retrieval-expedited',
+    's3-storage-classes.s3-storage-class-cost-order',
+    's3-storage-classes.lifecycle-vs-intelligent-tiering',
+    's3-storage-classes.s3-storage-class-analysis',
+    's3-storage-classes.s3-retrieval-fee-by-class',
+    's3-storage-classes.intelligent-tiering-monitoring-fee',
+  ]
+
+  it('거버넌스·운영 관리·AI 문제 32개가 담당 개념 30개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(294, 326)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 295}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(7).fill('governance-iac'),
+      ...Array(8).fill('systems-manager'),
+      ...Array(7).fill('ai-ml-services'),
+      ...Array(2).fill('aws-core-services'),
+      ...Array(8).fill('s3-storage-classes'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step2Concepts].sort(),
+    )
+  })
+
+  it('거버넌스·운영 관리·AI 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(294, 326).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('거버넌스·운영 관리·AI 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(294, 326)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('거버넌스·운영 관리·AI와 핵심 서비스·스토리지 클래스 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;[
+      'governance-iac',
+      'systems-manager',
+      'ai-ml-services',
+      'aws-core-services',
+      's3-storage-classes',
+    ].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+      expect(questions.filter((question) => question.topicId === topicId).length).toBeGreaterThan(0)
+    })
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
@@ -3161,10 +3273,14 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
-    const storageClassQuestions = questions.filter(
-      (question) => question.topicId === 's3-storage-classes',
-    )
+  // 이 단언이 고정하는 것은 원본 은행 246문항 안의 스토리지 클래스 문항 9개가 클래스별
+  // 개념과 일대일이라는 사실이다. phase 27 step 2가 이 주제의 빈 개념 8개를 덮으며
+  // 문항을 더했으므로(ADR-026) 대상을 원본 은행으로 좁힌다 — 더한 문항은 위의 step 2
+  // 블록이 따로 본다.
+  it('원본 은행의 S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
+    const storageClassQuestions = questions
+      .slice(0, 246)
+      .filter((question) => question.topicId === 's3-storage-classes')
 
     expect(storageClassQuestions.map(({ id }) => id)).toEqual([
       'q016',

@@ -15,17 +15,16 @@
       "name": "questions-s3-access-bi",
       "status": "completed",
       "started_at": "2026-09-07T22:27:36+0900",
-      "blocked_reason": "같은 worktree(/Volumes/zimablue_ssd/dev/etc/aws-saa-c03-quiz-p27)에서 phase 27 harness 실행이 두 개 동시에 돌고 있다. scripts/execute.py PID 36791(22:21:41 시작)과 PID 38620(22:25:12 시작)이 각각 step 1 에이전트(claude -p PID 39886 / PID 40627)를 띄웠고, 그중 하나가 22:31:41에 src/data/data.test.ts에 step 1 테스트 블록 95줄을 이미 썼다. 두 에이전트가 같은 파일(questions.json·data.test.ts·index.json)에 같은 id 범위(q247~q270)를 쓰게 되므로 나중에 쓰는 쪽이 앞의 것을 덮고, execute.py의 _commit_step이 git add -A를 쓰기 때문에 상대가 편집 중인 파일까지 자기 커밋에 들어간다(CLAUDE.md 「에이전트를 여러 개 동시에 돌릴 때」가 경고한 상황 그대로다). CLAUDE.md 「커밋 전에 지킬 것」의 \"내가 만들지 않은 변경이 워킹 트리에 있으면 커밋하지 말고 멈춰서 사용자에게 알려라\"에 따라 아무것도 쓰지 않고 중단했다. 사람이 두 실행 중 하나를 종료하고(다른 하나는 worktree를 새로 파고) 남길 쪽을 정해야 한다. 상대 에이전트가 쓴 data.test.ts 변경은 그대로 두었다 — 되돌리지 않았다.",
       "summary": "q247~q270 문항 24개를 questions.json에 이어 붙여 총 246→270개가 됐다(다음 step은 q271부터). s3-access-control 13개(q247~q259)·redshift-opensearch-quicksight 11개(q260~q270)로 담당 개념 24개에 문항이 일대일로 붙어 두 주제의 커버리지가 100%가 됐고 빠뜨린 개념은 없다(node scripts/coverage.mjs s3-access-control redshift-opensearch-quicksight → exit 0). 문항이 0개였던 주제 5개 중 이 둘이 사라졌다. 정답 위치는 0·1·2·3이 각각 6개(25%)이고 해설은 평균 221자로 정답 근거와 오답의 변별 축을 함께 담는다. data.test.ts에 step 1 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고, App.test.tsx의 하드코딩된 '1 / 246'을 questions.length로 바꿨다 — 문제 은행이 커질 때마다 깨지던 단정이다. topics.json과 topics-baseline.json은 건드리지 않았으므로 check-structure.mjs는 questionsSha256 1건으로 실패한다(마지막 step이 재생성). ※ 이 step의 blocked_reason은 같은 worktree에서 동시에 돌던 다른 harness 실행의 step 1 에이전트가 쓴 것이고, 지우지 않고 그대로 뒀다. 그 실행(execute.py PID 38620)은 아직 살아 있으므로 사람이 둘 중 하나를 종료해야 한다 — 산출물 자체는 위 요약대로 완료·검증됐다. ※ 중복 커밋 복구: 동시 실행 때문에 step 1 커밋이 두 개(9a4a244, 75cd330) 생겼고, 뒤쪽이 다른 에이전트가 쓰던 q247~q270 24개를 git add -A로 함께 담아 HEAD의 questions.json이 294문항·중복 id 24개가 됐다. 중복 24개를 제거해 270문항으로 되돌렸다(내용은 9a4a244의 것을 남겼다 — 먼저 커밋된 쪽이다). 복구 후 npm run lint·build·test(377) 전부 통과, coverage.mjs exit 0.",
       "completed_at": "2026-09-07T22:42:02+0900"
     },
     {
       "step": 2,
       "name": "questions-governance-ai-core",
-      "status": "blocked",
-      "started_at": "2026-09-07T22:39:34+0900",
-      "blocked_reason": "이 worktree(/Volumes/zimablue_ssd/dev/etc/aws-saa-c03-quiz-p27)에서 phase 27 harness 실행이 아직 둘 살아 있다. scripts/execute.py PID 36791(22:21:41 시작 — 이 step 2 에이전트 claude -p PID 42385를 22:39:34에 띄웠다)과 PID 38620(22:25:12 시작 — step 1 에이전트 claude -p PID 40627을 22:28:32에 띄웠고 아직 돌고 있다). step 1의 blocked_reason이 경고한 충돌이 이미 커밋에 남았다: 9a4a244와 75cd330이 각각 q247~q270 24문항을 따로 붙여 HEAD의 src/data/questions.json은 항목 294개에 유일 id가 270개다(q247~q270이 두 번씩). 그리고 지금 워킹 트리에는 내가 만들지 않은 수정이 있다 — questions.json이 -24줄로 유일 270개 상태로 되돌려져 있고(mtime 22:40:09), 22:39에 읽었을 때 294개였던 파일이 내가 보는 동안 바뀌었다. PID 40627이 진행 중인 복구다. 이 상태에서 q271부터 문항 30개를 쓰면 (a) 같은 파일을 두 프로세스가 동시에 다시 쓰므로 한쪽 쓰기가 사라지거나 step 1과 똑같은 중복 블록이 또 생기고, (b) execute.py의 _commit_step이 git add -A를 쓰므로 상대의 복구 diff가 내 커밋에 섞인다. CLAUDE.md 「커밋 전에 지킬 것」의 \"내가 만들지 않은 변경이 워킹 트리에 있으면 커밋하지 말고 멈춰서 사용자에게 알려라\"에 따라 src/에 아무것도 쓰지 않고 중단했다(상대의 변경도 되돌리지 않았다). 사람이 할 일: ① 두 실행 중 하나를 종료한다(나중에 뜬 PID 38620 쪽을 남기면 step 1을 다시 돌게 되므로 권장은 PID 38620 종료). ② HEAD의 중복 24문항을 정리한다 — 워킹 트리에 이미 그 수정(-24줄)이 있으므로 그것을 커밋할지 9a4a244·75cd330 중 하나를 되돌릴지 정해야 한다. ③ 남긴 실행에서 step 2를 다시 돌린다. 그 뒤에는 CLAUDE.md 「에이전트를 여러 개 동시에 돌릴 때」대로 실행마다 worktree를 하나씩 두면 재발하지 않는다. ※ 이 사유를 적는 동안 상대 에이전트(PID 40627)가 step 1의 summary에 복구 완료를 적었다 — 중복 24개를 지워 270문항으로 되돌렸고 9a4a244의 내용을 남겼으며 lint·build·test(377)와 coverage.mjs를 통과했다고 한다. 즉 위 ②는 \"워킹 트리의 -24줄을 커밋하면 된다\"로 좁혀졌다. 그러나 ①이 남아 있으므로 차단은 그대로다: PID 38620의 execute.py가 곧 자기 step 2 에이전트를 같은 파일에 띄운다.",
-      "blocked_at": "2026-09-07T22:42:53+0900"
+      "status": "completed",
+      "started_at": "2026-09-07T23:53:42+0900",
+      "summary": "q295~q326 문항 32개를 questions.json에 이어 붙여 총 294→326개가 됐다(다음 step은 q327부터). governance-iac 7개(q295~q301)·systems-manager 8개(q302~q309)·ai-ml-services 7개(q310~q316)·aws-core-services 2개(q317~q318)·s3-storage-classes 8개(q319~q326)로 담당 개념 30개를 하나도 남기지 않고 덮었다(node scripts/coverage.mjs governance-iac systems-manager ai-ml-services aws-core-services s3-storage-classes → exit 0, 다섯 주제 모두 100%). 문항이 0개였던 주제 3개가 사라져 이제 문항이 하나도 없는 주제는 없다(전체 618개념 중 253개 41% 덮임). 개념당 1문항이 기본이고 헷갈리는 짝 둘만 두 방향으로 물어 32개다 — EC2 Instance Connect 엔드포인트(서비스 선택 ↔ 여는 포트 443), AI 서비스 넷의 갈래(Transcribe ↔ Textract). 정답 위치는 0·1·2·3이 각각 8개(25%)이고 해설은 최소 258자·평균 328자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다. 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 2 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고, 기존 단정 하나만 범위를 좁혔다: 「S3 스토리지 클래스 문제 9개가…」가 주제 전체를 세고 있어 이 주제에 문항을 더하면 반드시 깨지므로, 그 단정이 실제로 고정하던 대상인 원본 은행 246문항으로 slice를 좁혔다(App.test.tsx의 '1 / 246'을 questions.length로 바꾼 step 1과 같은 성격의 손질이다). topics.json·topics-baseline.json과 기존 문항 q001~q294는 한 글자도 건드리지 않았다(git diff 32줄 추가·0줄 삭제). npm run lint·build·test(385개) 전부 통과. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
+      "completed_at": "2026-09-08T00:12:00+0900"
     },
     {
       "step": 3,
@@ -38,10 +37,7 @@
     {
       "step": 4,
       "name": "questions-efs-fsx",
-      "status": "error",
-      "started_at": "2026-09-07T22:54:59+0900",
-      "error_message": "[3회 시도 후 실패] Step did not update status",
-      "failed_at": "2026-09-07T22:59:58+0900"
+      "status": "pending"
     },
     {
       "step": 5,
