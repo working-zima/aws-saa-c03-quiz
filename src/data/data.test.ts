@@ -1785,6 +1785,91 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 12 — api-gateway-step-functions의 빈 개념 16개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어
+  // 문항이 20개다 — 통합 타임아웃(어느 유형을 고르는가 ↔ 싼 쪽을 고른 설계가 왜 끊기는가),
+  // 엔드포인트 유형(전 세계 지연을 줄이는 노출 방식 ↔ 같은 자리에 얹히는 캐싱이 하는 일),
+  // Lambda 프록시 통합(동기 호출이라는 성질 ↔ 인증을 맡는 사용자 지정 권한 부여자),
+  // 매핑 템플릿(형식이 달라지는 변환은 함수가 맡는다 ↔ 변환할 것이 없는 쪽은 그대로 흘린다).
+  const step12Concepts = [
+    'api-gateway-step-functions.amplify',
+    'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+    'api-gateway-step-functions.api-gateway-rest-only-features',
+    'api-gateway-step-functions.api-gateway-websocket-api',
+    'api-gateway-step-functions.api-gateway-api-key-not-auth',
+    'api-gateway-step-functions.api-gateway-resource-policy',
+    'api-gateway-step-functions.api-gateway-endpoint-types',
+    'api-gateway-step-functions.api-gateway-behind-cloudfront',
+    'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
+    'api-gateway-step-functions.api-gateway-aws-service-integration',
+    'api-gateway-step-functions.step-functions-long-running-workflow',
+    'api-gateway-step-functions.step-functions-express-workflow',
+    'api-gateway-step-functions.step-functions-map-state',
+    'api-gateway-step-functions.api-gateway-custom-domain-name',
+    'api-gateway-step-functions.api-gateway-mapping-template-limits',
+    'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+  ]
+
+  it('API Gateway·Step Functions 문제 20개가 담당 개념 16개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(528, 548)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 529}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(20).fill('api-gateway-step-functions'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step12Concepts].sort(),
+    )
+  })
+
+  it('API Gateway·Step Functions 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(528, 548).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('API Gateway·Step Functions 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(528, 548)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('API Gateway·Step Functions 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'api-gateway-step-functions')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,

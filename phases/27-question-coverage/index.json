@@ -101,7 +101,9 @@
     {
       "step": 12,
       "name": "questions-apigw-stepfunctions",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T01:47:59+0900",
+      "summary": "q529~q548 문항 20개를 questions.json에 이어 붙여 총 528→548개가 됐다(다음 step은 q549부터). 전부 api-gateway-step-functions 주제이고 담당 개념 16개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs api-gateway-step-functions → exit 0, 20/20 100퍼센트(기존 문항이 덮고 있던 api-gateway·step-functions·step-functions-features·api-gateway-jwt-authorizer 4개 포함, 주제 문항 수는 5→25개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어 20개다 — 통합 타임아웃(몇 분짜리 동기 호출은 REST API ↔ 싸고 빠른 HTTP API를 고른 설계가 왜 끊기는가), 엔드포인트 유형(전 세계 지연을 줄이는 노출 방식은 엣지 최적화 ↔ 같은 자리에 얹히는 캐싱이 없애는 것은 백엔드 왕복), Lambda 프록시 통합(AWS_PROXY는 동기 호출이라는 성질 ↔ 표준이 없는 인증은 사용자 지정 권한 부여자), 매핑 템플릿(JSON→XML처럼 형식이 달라지면 Lambda ↔ 이미 그 형식을 받는 백엔드는 프록시 통합으로 그대로). 정답 위치는 0·1·2·3이 각각 5개(25퍼센트)이고 해설은 최소 262자·평균 338자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(REST·HTTP·JWT·VPC·ACM·ACL·S3·EC2·ECS·ALB·SNS 포함, 상식·제품 이름 속 약어인 IP·URL·API는 풀지 않는 자리 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(REST ↔ HTTP ↔ WebSocket ↔ 함수 URL이 서로의 오답이 되는 네 문항, 엣지 최적화 ↔ 리전 엔드포인트 ↔ 캐싱 ↔ 콘텐츠 인코딩 ↔ Lambda 예약된 동시성, 리소스 정책 ↔ 엔드포인트 정책 ↔ 보안 그룹 ↔ 네트워크 ACL ↔ API 키, 매핑 템플릿 ↔ Lambda 통합 ↔ AWS 서비스 통합 ↔ 프록시 통합, 표준 ↔ Express ↔ 수동 승인 ↔ Map 상태). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 12 블록 4개(id 범위와 담당 개념 16개 일치·topicId 일치·정답 분포와 문구·주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q528은 한 글자도 건드리지 않았다(HEAD의 528개와 JSON 동일 확인, q528 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(421개) 전부 통과, 전체 커버리지는 618개념 중 449개(73퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다."
     },
     {
       "step": 13,
