@@ -251,9 +251,12 @@ describe('학습 데이터 무결성', () => {
     }
 
     // phase 26이 아래 주제들의 개념을 3단(기본 → 갈림길 → 한계)으로 다시 정렬해,
-    // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
-    // 「S3 버전 관리 주제가 ...」 같은 테스트가 개념 id 전부로 못박는다.
+    // 이 개념들은 더 이상 배열 끝이 아니다. aws-core-services는 정렬이 아니라
+    // step 20이 (주제 미정)의 설계 원칙 둘을 3단 뒤에 붙여서 끝이 아니게 됐다.
+    // 각 주제의 전체 순서는 아래 「기초 주제가 ...」·「S3 버전 관리 주제가 ...」 같은
+    // 테스트가 개념 id 전부로 못박는다.
     const reordered = new Set([
+      'aws-core-services',
       's3-versioning-lifecycle',
       's3-encryption-batch',
       'ebs-instance-store',
@@ -273,7 +276,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 38개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 39개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -359,6 +362,11 @@ describe('학습 데이터 무결성', () => {
       { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
       { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
       { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
+      // phase 26 step 20이 배열 맨 뒤에 신설했다. 음성·이미지·번역·문서를 나눠 맡는
+      // AI 서비스들은 "무엇을 하는 서비스인가"가 그대로 문항이라 한 주제에 둔다
+      // (topic-plan "범위를 벗어난 주제"). 근거가 dump-gaps에만 있어
+      // concepts-raw.md 페이지가 없다.
+      { id: 'ai-ml-services', title: 'SageMaker·Comprehend·Rekognition·Lex·Transcribe·Translate·Textract', importance: 2, sourcePages: [0, 0] },
     ])
   })
 
@@ -748,8 +756,9 @@ describe('학습 데이터 무결성', () => {
     // analytics-monitoring을 쪼갠 세 주제가 더해져 아홉이 됐다.
     // step 17이 identity-access를 셋으로 갈라 열하나가 됐고,
     // step 18이 threat-protection을 둘로 갈라 열둘이 됐다.
-    // step 19가 governance-iac·systems-manager를 배열 끝에 신설해 열넷이 됐다.
-    expect(topics.slice(24, 38).map(({ id, title, importance, sourcePages }) => ({
+    // step 19가 governance-iac·systems-manager를 배열 끝에 신설해 열넷이 됐고,
+    // step 20이 ai-ml-services를 그 뒤에 신설해 열다섯이 됐다.
+    expect(topics.slice(24, 39).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -769,6 +778,7 @@ describe('학습 데이터 무결성', () => {
       { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
       { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
       { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
+      { id: 'ai-ml-services', title: 'SageMaker·Comprehend·Rekognition·Lex·Transcribe·Translate·Textract', importance: 2, sourcePages: [0, 0] },
     ])
   })
 
@@ -787,8 +797,10 @@ describe('학습 데이터 무결성', () => {
     // step 18이 secrets-encryption의 9에 신규 11을 더해 20으로 늘리고,
     // threat-protection의 11개념을 둘로 나눠(7·4) 신규 15(WAF·Shield 8 · 탐지 7)를
     // 더해 15·11로 세웠다.
-    expect(topics.slice(24, 38).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 16, 17, 6, 7,
+    // step 20이 (주제 미정)의 workload-discovery를 governance-iac 1단에 넣어 7로
+    // 늘리고, AI·ML 신규 6으로 ai-ml-services를 배열 끝에 세웠다.
+    expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
+      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 16, 17, 7, 7, 6,
     ])
   })
 
@@ -839,8 +851,39 @@ describe('학습 데이터 무결성', () => {
     // 가져가며 그 주제를 없앴다.
     // 마지막 셋 20·9·19는 step 14가 세 주제에 dump-gaps의 신규 21(VPC 8 · 보안 그룹 4 ·
     // 하이브리드 연결 9)을 더한 값이다.
+    // step 20이 (주제 미정)의 parallelcluster를 ec2-autoscaling 3단 끝에,
+    // amplify를 api-gateway-step-functions 1단에 넣어 17·19가 18·20이 됐다.
     expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 11, 20, 9, 19,
+      21, 18, 18, 14, 18, 16, 24, 18, 23, 20, 33, 11, 20, 9, 19,
+    ])
+  })
+
+  it('기초 주제가 서비스와 용어 다음에 판단 기준과 설계 원칙을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'aws-core-services')
+
+    // 1단 서비스 일곱과 DNS·리전·가용 영역이 각각 무엇인가
+    // → 2단 다중 AZ와 단일 AZ, 온프레미스와 마이그레이션
+    // → 3단 선택지를 지우는 판단 기준과, 주제 하나에 매이지 않는 설계 원칙 둘.
+    // 마지막 둘은 step 20이 (주제 미정)에서 가져왔다(topic-plan "3단 구분").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'aws-core-services.ec2',
+      'aws-core-services.rds',
+      'aws-core-services.s3',
+      'aws-core-services.route-53',
+      'aws-core-services.dns',
+      'aws-core-services.elb',
+      'aws-core-services.cloudfront',
+      'aws-core-services.lambda',
+      'aws-core-services.region',
+      'aws-core-services.availability',
+      'aws-core-services.availability-zone',
+      'aws-core-services.multi-az',
+      'aws-core-services.single-az',
+      'aws-core-services.on-premise',
+      'aws-core-services.migration',
+      'aws-core-services.exam-heuristics',
+      'aws-core-services.exponential-backoff-retry',
+      'aws-core-services.blob-offload-to-s3',
     ])
   })
 
@@ -1245,7 +1288,8 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
 
     // 1단 EC2와 Auto Scaling, 인스턴스를 띄우는 재료 → 2단 어느 제품군·어느 구매
-    // 옵션·어느 조정 방식인가 → 3단 설정 항목과 주의점.
+    // 옵션·어느 조정 방식인가 → 3단 설정 항목과 주의점, 이름이 닮았지만 대상이
+    // 정해져 있는 도구.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ec2-autoscaling.ec2',
       'ec2-autoscaling.ami-and-launch-template',
@@ -1264,6 +1308,7 @@ describe('학습 데이터 무결성', () => {
       'ec2-autoscaling.asg-single-instance-self-healing',
       'ec2-autoscaling.elb-health-check-drives-asg-replacement',
       'ec2-autoscaling.enhanced-networking',
+      'ec2-autoscaling.parallelcluster',
     ])
   })
 
@@ -1475,13 +1520,14 @@ describe('학습 데이터 무결성', () => {
   it('API Gateway·Step Functions 주제가 두 서비스 다음에 갈림길과 한계를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'api-gateway-step-functions')
 
-    // 1단 API Gateway와 Step Functions가 무엇이고 무엇을 주는가
+    // 1단 API Gateway와 Step Functions가 무엇이고 무엇을 주는가, Amplify가 무엇인가
     // → 2단 API 유형 셋, API 키의 한계, 접근 통제, 노출 위치, 통합 방식, 워크플로 두 유형
     // → 3단 인증서 리전·매핑 템플릿의 한계·보안 그룹을 붙일 수 없다는 것.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'api-gateway-step-functions.api-gateway',
       'api-gateway-step-functions.step-functions',
       'api-gateway-step-functions.step-functions-features',
+      'api-gateway-step-functions.amplify',
       'api-gateway-step-functions.api-gateway-jwt-authorizer',
       'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
       'api-gateway-step-functions.api-gateway-rest-only-features',
@@ -2719,7 +2765,8 @@ describe('학습 데이터 무결성', () => {
   it('거버넌스·IaC 주제가 서비스 넷 다음에 제어의 시점과 감지 범위를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'governance-iac')
 
-    // 1단 CloudFormation·Service Catalog·Control Tower·RAM이 각각 무엇인가
+    // 1단 CloudFormation·Service Catalog·Control Tower·RAM·Workload Discovery가
+    //   각각 무엇인가
     // → 2단 제어가 배포 시점에 막는가 만들어진 뒤에 찾는가
     // → 3단 드리프트 감지가 보는 범위.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
@@ -2727,6 +2774,7 @@ describe('학습 데이터 무결성', () => {
       'governance-iac.service-catalog',
       'governance-iac.control-tower-landing-zone',
       'governance-iac.resource-access-manager',
+      'governance-iac.workload-discovery',
       'governance-iac.control-tower-controls',
       'governance-iac.cloudformation-drift-detection',
     ])
@@ -2747,6 +2795,60 @@ describe('학습 데이터 무결성', () => {
       'systems-manager.ssm-managed-instance-core-policy',
       'systems-manager.ssm-inventory',
     ])
+  })
+
+  it('AI·ML 주제가 서비스 소개 다음에 훈련이 필요한가와 검토의 쓰임을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ai-ml-services')
+
+    // 1단 SageMaker AI와 API로 부르는 AI 서비스들이 각각 무엇인가
+    // → 2단 모델을 직접 만드는 자리와 이미 만들어진 기능을 부르는 자리가 갈린다
+    // → 3단 콘텐츠 검토가 어디에 쓰이는가.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ai-ml-services.sagemaker',
+      'ai-ml-services.media-ai-service-lineup',
+      'ai-ml-services.comprehend',
+      'ai-ml-services.amazon-lex',
+      'ai-ml-services.sagemaker-autopilot',
+      'ai-ml-services.rekognition-content-moderation',
+    ])
+  })
+
+  it('입력을 나눠 맡는 AI 서비스들이 한 주제 안에서 무엇을 다루는지로 갈린다', () => {
+    // 음성·이미지·번역·문서·텍스트·대화를 나눠 맡는 서비스들은 "무엇을 하는
+    // 서비스인가"가 그대로 문항이다. 떼어 놓으면 비교할 자리가 없어진다
+    // (step20 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join('\n') ?? ''
+
+    const lineup = 'ai-ml-services.media-ai-service-lineup'
+
+    expect(ownerOf('ai-ml-services.sagemaker')).toBe('ai-ml-services')
+    expect(ownerOf(lineup)).toBe('ai-ml-services')
+    expect(ownerOf('ai-ml-services.comprehend')).toBe('ai-ml-services')
+    expect(ownerOf('ai-ml-services.amazon-lex')).toBe('ai-ml-services')
+
+    // 넷이 어느 입력을 다루는지가 한 개념 안에서 갈린다.
+    const lineupBody = bodyOf(lineup)
+    expect(lineupBody).toContain('Transcribe는 음성을 글로 옮긴다')
+    expect(lineupBody).toContain('Rekognition은 이미지와 영상을 분석하는 서비스라')
+    expect(lineupBody).toContain('Translate는 언어를 다른 언어로 옮기는 서비스이며')
+    expect(lineupBody).toContain('Textract는 문서 이미지에서 글자와 표를 뽑아내는 서비스다')
+
+    // 글의 의미를 다루는 자리와 대화를 주고받는 자리가 그 넷과 갈린다.
+    expect(bodyOf('ai-ml-services.comprehend')).toContain('글의 의미를 다루는 자리')
+    expect(bodyOf('ai-ml-services.amazon-lex')).toContain('대화형 인터페이스')
+
+    // 모델을 직접 만드는 자리와 이미 만들어진 기능을 부르는 자리가 갈린다.
+    expect(lineupBody).toContain('이미 만들어진 기능을 API로 부르는 서비스들이다')
+    expect(bodyOf('ai-ml-services.sagemaker-autopilot')).toContain('훈련이 필요한가')
+    expect(bodyOf('ai-ml-services.rekognition-content-moderation')).toContain(
+      '모델 훈련을 포함하지 않아야 한다는 조건',
+    )
   })
 
   it('Cost Explorer와 Budgets와 Cost Anomaly Detection이 한 주제 안에서 갈린다', () => {
@@ -3532,7 +3634,7 @@ describe('학습 데이터 무결성', () => {
     finance: '클라우드 재무 관리(Cloud Financial Management)',
     devTools: '개발자 도구(Developer Tools)',
     business: '비즈니스 애플리케이션(Business Applications)',
-    // ADR-022로 더한 둘. phase 26이 개념을 만들기 전까지는 아직 쓰이지 않는다.
+    // ADR-022로 더한 둘. phase 26 step 20이 ai-ml-services와 Amplify를 만들며 썼다.
     machineLearning: '기계 학습(Machine Learning and Artificial Intelligence)',
     frontend: '프런트엔드 웹 및 모바일(Front-end Web and Mobile)',
   } as const
@@ -3699,14 +3801,27 @@ describe('학습 데이터 무결성', () => {
     // 카테고리는 보안이다.
     ['governance-iac.resource-access-manager', 'Resource Access Manager는', 'security'],
     ['systems-manager.ssm-run-command', 'Systems Manager는', 'management'],
+    // phase 26 step 20. ADR-022가 넓힌 두 종이 여기서 처음 쓰인다.
+    // service-categories.md "주제 배치와 어긋나는 자리" — Amplify의 주제는 API 쪽이고
+    // 카테고리는 프런트엔드다.
+    ['api-gateway-step-functions.amplify', 'Amplify는', 'frontend'],
+    ['ai-ml-services.sagemaker', 'SageMaker AI는', 'machineLearning'],
+    // 한 개념이 서비스 넷을 함께 소개하므로 주어도 함께 적는다.
+    [
+      'ai-ml-services.media-ai-service-lineup',
+      'Transcribe·Rekognition·Translate·Textract는',
+      'machineLearning',
+    ],
+    ['ai-ml-services.comprehend', 'Comprehend는', 'machineLearning'],
+    ['ai-ml-services.amazon-lex', 'Lex는', 'machineLearning'],
   ]
 
-  it('서비스 개념 101개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 106개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(101)
+    expect(serviceCategories).toHaveLength(106)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -3720,7 +3835,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 101개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 106개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
@@ -3747,7 +3862,7 @@ describe('학습 데이터 무결성', () => {
     const used = new Set(serviceCategories.map(([, , key]) => categories[key]))
 
     // ADR-022. 선언한 15종 밖의 표기를 쓰지 않는지만 본다. 등식이 아닌 이유는
-    // 기계 학습·프런트엔드 웹 및 모바일이 아직 어느 개념에도 쓰이지 않아서다.
+    // 선언만 해 두고 아직 안 쓰는 상태를 허용하기 위해서다.
     expect(declared).toHaveLength(15)
     used.forEach((name) => expect(declared).toContain(name))
   })

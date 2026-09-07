@@ -165,7 +165,9 @@
     {
       "step": 20,
       "name": "merge-ai-ml",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-07T20:13:50+0900",
+      "summary": "ai-ml-services 6개념(전부 신규, 배열 39번에 신설, importance 2, sourcePages [0,0]) · aws-core-services 18개념(기존 16 + 신규 2) · ec2-autoscaling 18개념(기존 17 + 신규 1) · api-gateway-step-functions 20개념(기존 19 + 신규 1) · governance-iac 7개념(기존 6 + 신규 1). 없앤 기존 주제 0개. 주제 38 → 39, 개념 607 → 618로 topic-plan의 목표값과 일치한다. 갱신한 문항 0개이며 questions.json은 diff가 없다. (주제 미정) 41개를 이 step이 남김없이 비웠다 — 가져간 slug 11개는 sagemaker · media-ai-service-lineup · comprehend · amazon-lex · sagemaker-autopilot · rekognition-content-moderation(AI·ML 6) / parallelcluster(ec2-autoscaling) · amplify(api-gateway-step-functions) · workload-discovery(governance-iac) · exponential-backoff-retry · blob-offload-to-s3(aws-core-services)다. 신규 436개가 전부 topics.json에 들어갔다. 카테고리 한 줄을 붙인 신규 개념 5개 — amplify(프런트엔드 웹 및 모바일) · sagemaker · media-ai-service-lineup(Transcribe·Rekognition·Translate·Textract 넷을 한 주어로) · comprehend · amazon-lex(기계 학습). ADR-022가 넓힌 두 종이 여기서 처음 쓰였다. serviceCategories 101 → 106, 350 tests pass."
     },
     {
       "step": 21,
