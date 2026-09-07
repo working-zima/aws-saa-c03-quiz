@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "merge-s3-access",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-07T09:05:10+0900",
+      "summary": "s3-encryption-batch 13개념(기존 5 + 신규 8, 제목을 \"S3 암호화(SSE)·Batch Operations·인벤토리\"로 바꿈) · s3-access-control 13개념(전부 신규, 배열 4번 자리에 신설. importance 3, sourcePages [0,0] — 근거가 dump-gaps에만 있어 concepts-raw.md 페이지가 없다). 없앤 기존 주제 없음. 주제 20 → 21, 개념 195 → 216. 갱신한 문항 0개이며 questions.json은 diff가 없다 — s3-encryption-batch의 topicId와 기존 개념 5개의 id가 그대로라 q034~q039·q173·q174가 손댈 것이 없었다. (주제 미정) 41개 중 이 step이 가져간 slug 13개 — s3-cross-account-bucket-policy · s3-presigned-url · s3-access-grants · s3-access-point · s3-multi-region-access-point · s3-storage-lens · s3-cors-not-authorization · s3-requester-pays · s3-storage-lens-advanced-activity-metrics · s3-account-level-public-access-block · block-public-access-allows-explicit-grants · s3-bucket-policy-source-vpc-condition · s3-website-endpoint-no-https. 뒤 step이 쓸 것은 28개가 남았다(blob-offload-to-s3 포함). 카테고리 한 줄을 붙인 신규 개념은 0개다 — 21개 전부 S3의 기능·설정·사실·비교라 ADR-019 기준 2·3에 걸리고, service-categories.md의 'phase 26에서 들어오는 서비스' 표에도 없다. data.test.ts — 「보충 개념 9개」의 reordered에 s3-encryption-batch를 더하고, 주제 메타데이터 단언을 21개로 늘렸으며(s3-access-control을 4번에 삽입), s3-access-control 삽입으로 밀린 slice 오프셋 둘을 6→7·13→14로 옮겼고, 두 주제의 3단 순서를 개념 id 전부로 못박는 테스트를 새로 넣었다(280 tests pass). 남긴 것 — scripts/topics-baseline.json은 step 2와 같은 이유로 갱신하지 않았다(phase 26이 구조를 계속 바꾸므로 step 21에서 한 번에 다시 만든다).",
+      "completed_at": "2026-09-07T09:21:00+0900"
     },
     {
       "step": 4,

@@ -162,10 +162,11 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
-    // phase 26이 s3-versioning-lifecycle의 개념을 3단(기본 → 갈림길 → 한계)으로 다시
-    // 정렬해, 이 두 개념은 더 이상 배열 끝이 아니다. 그 주제의 전체 순서는 아래
-    // 「S3 버전 관리 주제가 ...」 테스트가 개념 id 전부로 못박는다.
-    const reordered = new Set(['s3-versioning-lifecycle'])
+    // phase 26이 s3-versioning-lifecycle·s3-encryption-batch의 개념을 3단(기본 →
+    // 갈림길 → 한계)으로 다시 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 두 주제의
+    // 전체 순서는 아래 「S3 버전 관리 주제가 ...」·「S3 암호화 주제가 ...」 테스트가
+    // 개념 id 전부로 못박는다.
+    const reordered = new Set(['s3-versioning-lifecycle', 's3-encryption-batch'])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -180,7 +181,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 20개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 21개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -190,7 +191,9 @@ describe('학습 데이터 무결성', () => {
       { id: 'aws-core-services', title: 'AWS 핵심 서비스·리전·가용 영역·온프레미스', importance: 0, sourcePages: [1, 7] },
       { id: 's3-storage-classes', title: 'S3 스토리지 클래스 유형', importance: 3, sourcePages: [8, 9] },
       { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기·복제', importance: 3, sourcePages: [10, 12] },
-      { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·S3 Batch Operations', importance: 2, sourcePages: [13, 13] },
+      { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·Batch Operations·인벤토리', importance: 2, sourcePages: [13, 13] },
+      // phase 26 step 3이 신설했다. 근거가 dump-gaps에만 있어 concepts-raw.md 페이지가 없다.
+      { id: 's3-access-control', title: 'S3 접근 제어·액세스 포인트·Storage Lens', importance: 3, sourcePages: [0, 0] },
       { id: 'block-file-storage', title: 'EBS·EFS·FSx·인스턴스 스토어', importance: 3, sourcePages: [14, 15] },
       { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·Storage Gateway', importance: 3, sourcePages: [16, 18] },
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
@@ -536,8 +539,10 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
+  // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(13, 20).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(14, 21).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -554,13 +559,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(13, 20).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(14, 21).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(6, 13).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(7, 14).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -577,7 +582,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(6, 13).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(7, 14).map((topic) => topic.concepts.length)).toEqual([
       7, 8, 11, 11, 11, 12, 10,
     ])
   })
@@ -645,6 +650,52 @@ describe('학습 데이터 무결성', () => {
       's3-versioning-lifecycle.s3-replication-cross-account-kms',
       's3-versioning-lifecycle.object-lock-prerequisites',
       's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
+    ])
+  })
+
+  it('S3 암호화 주제가 암호화·배치·인벤토리 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
+
+    // 1단 SSE와 배치·인벤토리·Object Lambda가 각각 무엇인가 → 2단 어느 SSE를 고르는가와
+    // 일회성 복사 대 지속 복제 → 3단 비용 구조·SSE-C에 없는 것·전송 구간 강제.
+    // SSE-S3 ↔ SSE-KMS ↔ SSE-C가 한 주제 안에 있어야 한다(PRD "사용자").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-encryption-batch.sse',
+      's3-encryption-batch.sse-types',
+      's3-encryption-batch.client-side-encryption',
+      's3-encryption-batch.batch-operations',
+      's3-encryption-batch.s3-inventory-report',
+      's3-encryption-batch.s3-object-lambda',
+      's3-encryption-batch.envelope-encryption',
+      's3-encryption-batch.sse-kms-audit-trail',
+      's3-encryption-batch.batch-copy-vs-replication',
+      's3-encryption-batch.s3-batch-operations-lambda-invoke',
+      's3-encryption-batch.sse-kms-cost',
+      's3-encryption-batch.sse-c-no-rotation-or-audit',
+      's3-encryption-batch.s3-secure-transport-condition',
+    ])
+  })
+
+  it('S3 접근 제어 주제가 접근 경로 여섯 다음에 갈림길 둘과 한계 다섯을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-access-control')
+
+    // 1단 버킷 정책·사전 서명된 URL·액세스 권한·액세스 포인트·Storage Lens가 각각
+    // 무엇인가 → 2단 CORS와 요청자 부담이 무엇을 맡는가 → 3단 설정 항목과 제약.
+    // 버킷 정책 ↔ 액세스 포인트 ↔ 퍼블릭 액세스 차단은 서로 갈림길이라 흩지 않는다.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-access-control.s3-cross-account-bucket-policy',
+      's3-access-control.s3-presigned-url',
+      's3-access-control.s3-access-grants',
+      's3-access-control.s3-access-point',
+      's3-access-control.s3-multi-region-access-point',
+      's3-access-control.s3-storage-lens',
+      's3-access-control.s3-cors-not-authorization',
+      's3-access-control.s3-requester-pays',
+      's3-access-control.s3-storage-lens-advanced-activity-metrics',
+      's3-access-control.s3-account-level-public-access-block',
+      's3-access-control.block-public-access-allows-explicit-grants',
+      's3-access-control.s3-bucket-policy-source-vpc-condition',
+      's3-access-control.s3-website-endpoint-no-https',
     ])
   })
 
