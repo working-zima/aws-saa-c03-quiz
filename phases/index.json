@@ -136,7 +136,8 @@
     },
     {
       "dir": "27-question-coverage",
-      "status": "pending"
+      "status": "blocked",
+      "blocked_at": "2026-09-07T22:42:53+0900"
     }
   ]
 }
