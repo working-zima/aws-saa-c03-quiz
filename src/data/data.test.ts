@@ -154,19 +154,21 @@ describe('학습 데이터 무결성', () => {
       'aws-core-services': ['exam-heuristics'],
       's3-versioning-lifecycle': ['object-lock-prerequisites', 'event-notification'],
       's3-encryption-batch': ['envelope-encryption', 'sse-kms-cost'],
-      'block-file-storage': [
-        'cluster-placement-group',
-        'ebs-elastic-volumes',
-        'efs-lifecycle-management',
-        'fsx-ontap-multi-az',
-      ],
+      // phase 26 step 4가 block-file-storage를 두 주제로 갈랐다. 개념 본문은 그대로이고
+      // 접두사만 새 주제를 따른다.
+      'ebs-instance-store': ['cluster-placement-group', 'ebs-elastic-volumes'],
+      'efs-fsx': ['efs-lifecycle-management', 'fsx-ontap-multi-az'],
     }
 
-    // phase 26이 s3-versioning-lifecycle·s3-encryption-batch의 개념을 3단(기본 →
-    // 갈림길 → 한계)으로 다시 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 두 주제의
-    // 전체 순서는 아래 「S3 버전 관리 주제가 ...」·「S3 암호화 주제가 ...」 테스트가
-    // 개념 id 전부로 못박는다.
-    const reordered = new Set(['s3-versioning-lifecycle', 's3-encryption-batch'])
+    // phase 26이 아래 주제들의 개념을 3단(기본 → 갈림길 → 한계)으로 다시 정렬해,
+    // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // 「S3 버전 관리 주제가 ...」 같은 테스트가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      's3-versioning-lifecycle',
+      's3-encryption-batch',
+      'ebs-instance-store',
+      'efs-fsx',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -181,7 +183,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 21개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 22개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -194,7 +196,10 @@ describe('학습 데이터 무결성', () => {
       { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·Batch Operations·인벤토리', importance: 2, sourcePages: [13, 13] },
       // phase 26 step 3이 신설했다. 근거가 dump-gaps에만 있어 concepts-raw.md 페이지가 없다.
       { id: 's3-access-control', title: 'S3 접근 제어·액세스 포인트·Storage Lens', importance: 3, sourcePages: [0, 0] },
-      { id: 'block-file-storage', title: 'EBS·EFS·FSx·인스턴스 스토어', importance: 3, sourcePages: [14, 15] },
+      // phase 26 step 4가 block-file-storage를 둘로 갈랐다. EFS ↔ FSx는 공유 파일
+      // 스토리지 선택이라 한 주제에 둔다(PRD "사용자").
+      { id: 'ebs-instance-store', title: 'EBS·인스턴스 스토어·스냅샷·배치 그룹', importance: 3, sourcePages: [14, 15] },
+      { id: 'efs-fsx', title: 'EFS·FSx(Windows·Lustre·ONTAP)', importance: 3, sourcePages: [14, 15] },
       { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·Storage Gateway', importance: 3, sourcePages: [16, 18] },
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
       { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
@@ -256,10 +261,10 @@ describe('학습 데이터 무결성', () => {
       's3-versioning-lifecycle.event-notification',
       's3-encryption-batch.envelope-encryption',
       's3-encryption-batch.sse-kms-cost',
-      'block-file-storage.cluster-placement-group',
-      'block-file-storage.ebs-elastic-volumes',
-      'block-file-storage.efs-lifecycle-management',
-      'block-file-storage.fsx-ontap-multi-az',
+      'ebs-instance-store.cluster-placement-group',
+      'ebs-instance-store.ebs-elastic-volumes',
+      'efs-fsx.efs-lifecycle-management',
+      'efs-fsx.fsx-ontap-multi-az',
     ]
 
     expect(addedQuestions).toHaveLength(9)
@@ -272,10 +277,10 @@ describe('학습 데이터 무결성', () => {
       's3-versioning-lifecycle',
       's3-encryption-batch',
       's3-encryption-batch',
-      'block-file-storage',
-      'block-file-storage',
-      'block-file-storage',
-      'block-file-storage',
+      'ebs-instance-store',
+      'ebs-instance-store',
+      'efs-fsx',
+      'efs-fsx',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId)).toEqual(expectedConceptIds)
     expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(9)
@@ -540,9 +545,10 @@ describe('학습 데이터 무결성', () => {
   })
 
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
-  // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔다.
+  // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
+  // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(14, 21).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -559,13 +565,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(14, 21).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(15, 22).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(7, 14).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(8, 15).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -582,7 +588,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(7, 14).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(8, 15).map((topic) => topic.concepts.length)).toEqual([
       7, 8, 11, 11, 11, 12, 10,
     ])
   })
@@ -696,6 +702,66 @@ describe('학습 데이터 무결성', () => {
       's3-access-control.block-public-access-allows-explicit-grants',
       's3-access-control.s3-bucket-policy-source-vpc-condition',
       's3-access-control.s3-website-endpoint-no-https',
+    ])
+  })
+
+  it('EBS 주제가 기본 다섯 다음에 볼륨 유형의 갈림길과 스냅샷 운영을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ebs-instance-store')
+
+    // 1단 EBS·인스턴스 스토어·배치 그룹이 무엇인가 → 2단 볼륨 유형끼리의 갈림길과
+    // 클러스터 ↔ 분산 배치 그룹 → 3단 IOPS 상한·계정 속성인 기본 암호화·스냅샷 운영.
+    // gp2 ↔ gp3 ↔ io1 ↔ io2는 서로 갈림길이라 한 주제 안에 둔다(PRD "사용자").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ebs-instance-store.ebs',
+      'ebs-instance-store.ebs-elastic-volumes',
+      'ebs-instance-store.instance-store',
+      'ebs-instance-store.cluster-placement-group',
+      'ebs-instance-store.elastic-fabric-adapter',
+      'ebs-instance-store.ebs-volume-type-names',
+      'ebs-instance-store.gp3-iops-independent-of-size',
+      'ebs-instance-store.spread-placement-group',
+      'ebs-instance-store.io2-block-express-iops-ceiling',
+      'ebs-instance-store.ebs-encryption-by-default',
+      'ebs-instance-store.ebs-encryption-performance',
+      'ebs-instance-store.ebs-recycle-bin',
+      'ebs-instance-store.ebs-snapshot-block-public-access',
+      'ebs-instance-store.data-lifecycle-manager',
+      'ebs-instance-store.ebs-fast-snapshot-restore',
+    ])
+  })
+
+  it('EFS·FSx 주제가 파일 시스템 여섯 다음에 선택 기준과 구성 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'efs-fsx')
+
+    // 1단 EFS와 FSx 네 갈래가 각각 무엇인가 → 2단 어느 프로토콜·어느 지연 시간에
+    // 무엇을 고르는가 → 3단 IA 전환 조건·마운트 대상·복제가 한 방향이라는 것.
+    // EFS ↔ FSx(Windows·Lustre·ONTAP)는 공유 파일 스토리지 선택 그 자체라 흩지 않는다.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'efs-fsx.efs',
+      'efs-fsx.efs-lifecycle-management',
+      'efs-fsx.fsx',
+      'efs-fsx.fsx-windows-file-server',
+      'efs-fsx.fsx-for-lustre',
+      'efs-fsx.fsx-file-gateway',
+      'efs-fsx.efs-throughput-modes',
+      'efs-fsx.efs-elastic-throughput',
+      'efs-fsx.efs-performance-modes',
+      'efs-fsx.efs-one-zone',
+      'efs-fsx.efs-posix-permissions',
+      'efs-fsx.fsx-lustre-sub-millisecond-latency',
+      'efs-fsx.fsx-lustre-persistent-deployment',
+      'efs-fsx.fsx-ontap-multi-az',
+      'efs-fsx.fsx-ontap-multi-protocol-tiering',
+      'efs-fsx.fsx-ontap-iscsi-block',
+      'efs-fsx.fsx-ontap-snapmirror',
+      'efs-fsx.sql-server-always-on-shared-storage',
+      'efs-fsx.efs-ia-file-size-threshold',
+      'efs-fsx.efs-lifecycle-transition-to-primary',
+      'efs-fsx.efs-mount-target-per-az',
+      'efs-fsx.efs-cross-account-mount',
+      'efs-fsx.efs-replication-one-way',
+      'efs-fsx.fsx-windows-storage-auto-scaling',
+      'efs-fsx.fsx-lustre-s3-data-repository-association',
     ])
   })
 
@@ -861,7 +927,7 @@ describe('학습 데이터 무결성', () => {
 
   const termGlosses: Array<{ conceptId: string; anchor: string }> = [
     { conceptId: 's3-versioning-lifecycle.object-lock-prerequisites', anchor: 'Multi-Factor Authentication' },
-    { conceptId: 'block-file-storage.efs', anchor: 'Network File System' },
+    { conceptId: 'efs-fsx.efs', anchor: 'Network File System' },
     { conceptId: 'data-transfer-services.transfer-family', anchor: 'File Transfer Protocol' },
     { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '키-값' },
     { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
@@ -1381,9 +1447,9 @@ describe('학습 데이터 무결성', () => {
     ['aws-core-services.elb', 'ELB는', 'networking'],
     ['aws-core-services.cloudfront', 'CloudFront는', 'networking'],
     ['aws-core-services.lambda', 'Lambda는', 'compute'],
-    ['block-file-storage.ebs', 'EBS는', 'storage'],
-    ['block-file-storage.efs', 'EFS는', 'storage'],
-    ['block-file-storage.fsx', 'FSx는', 'storage'],
+    ['ebs-instance-store.ebs', 'EBS는', 'storage'],
+    ['efs-fsx.efs', 'EFS는', 'storage'],
+    ['efs-fsx.fsx', 'FSx는', 'storage'],
     ['data-transfer-services.datasync', 'DataSync는', 'migration'],
     ['data-transfer-services.snowball-edge', 'Snowball Edge는', 'migration'],
     ['data-transfer-services.transfer-family', 'Transfer Family는', 'migration'],
