@@ -33,7 +33,7 @@
       "status": "completed",
       "started_at": "2026-09-07T22:42:03+0900",
       "summary": "q271~q294 문항 24개를 questions.json에 이어 붙여 총 270→294개가 됐다(다음 step은 q295부터). s3-versioning-lifecycle 5개(q271~q275)·s3-encryption-batch 8개(q276~q283)·ebs-instance-store 11개(q284~q294)로 담당 개념 24개에 문항이 일대일로 붙었고 빠뜨린 개념은 없다 — 세 주제 커버리지가 각각 10/10·13/13·15/15로 100%가 됐다(node scripts/coverage.mjs s3-versioning-lifecycle s3-encryption-batch ebs-instance-store → exit 0). 정답 위치는 0·1·2·3이 각각 6개(25%)이고 해설은 최소 280자·평균 340자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다. data.test.ts에 step 3 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고 기존 테스트는 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q270은 한 글자도 건드리지 않았다(HEAD와 바이트 동일 확인). npm run lint·build·test(381개) 전부 통과. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다. ※ 이 step 시작 시점에 phase 27 harness 실행이 둘(PID 36791·38620) 돌고 있었으나 둘 다 22:48 이전에 종료돼, 작업은 단독으로 진행하고 커밋도 직접 했다. harness가 남긴 phases/index.json의 phase 27 blocked 표시와 step 2의 blocked_at은 내가 만든 변경이 아니어서 손대지 않았다 — step 2(questions-governance-ai-core)는 여전히 blocked이므로 사람이 다시 돌려야 한다.",
-      "completed_at": "2026-09-07T22:55:00+0900"
+      "completed_at": "2026-09-07T22:54:58+0900"
     },
     {
       "step": 4,
