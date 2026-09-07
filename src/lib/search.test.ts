@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest'
 import { topics as realTopics } from '../data'
 import type { Topic } from '../types/content'
-import { searchContent, stripEmphasis } from './search'
+import { searchContent, splitBodyOnly, stripEmphasis } from './search'
 
 const topics: Topic[] = [
   {
@@ -118,6 +118,58 @@ describe('searchContent', () => {
 
   it('실데이터에서 aurora를 찾으면 결과가 비어 있지 않다', () => {
     expect(searchContent(realTopics, 'aurora').length).toBeGreaterThan(0)
+  })
+})
+
+describe('splitBodyOnly', () => {
+  // 개념이 618개로 늘어난 뒤 한 단어 질의의 절반 이상이 본문에만 걸린 히트다.
+  // 전부 한 목록에 그리면 찾으려던 것이 그 안에 묻힌다.
+  const ids = (hits: ReturnType<typeof searchContent>) =>
+    hits.map((hit) => (hit.kind === 'concept' ? hit.concept.id : hit.topic.id))
+
+  it('본문에만 걸린 개념 히트를 갈라낸다', () => {
+    const { primary, bodyOnly } = splitBodyOnly(searchContent(topics, 'aurora'), 'aurora')
+
+    expect(ids(primary)).toEqual(['database.aurora', 'database'])
+    expect(ids(bodyOnly)).toEqual(['database.dynamodb'])
+  })
+
+  it('이름에 걸린 개념은 본문에도 그 말이 있어도 본문 쪽으로 가지 않는다', () => {
+    // `database.aurora`의 본문에도 'Aurora'가 있다.
+    const { bodyOnly } = splitBodyOnly(searchContent(topics, 'aurora'), 'aurora')
+
+    expect(ids(bodyOnly)).not.toContain('database.aurora')
+  })
+
+  it('요약에 걸린 개념은 본문 쪽으로 가지 않는다', () => {
+    const { primary, bodyOnly } = splitBodyOnly(searchContent(topics, '보관'), '보관')
+
+    expect(ids(primary)).toEqual(['storage.deep-archive'])
+    expect(bodyOnly).toEqual([])
+  })
+
+  it('주제 히트는 본문 쪽으로 가지 않는다', () => {
+    const { primary, bodyOnly } = splitBodyOnly(
+      searchContent(topics, '스토리지 클래스'),
+      '스토리지 클래스',
+    )
+
+    expect(ids(primary)).toEqual(['storage'])
+    expect(bodyOnly).toEqual([])
+  })
+
+  it('히트가 없으면 두 쪽 모두 빈 배열이다', () => {
+    const { primary, bodyOnly } = splitBodyOnly(searchContent(topics, '없는말'), '없는말')
+
+    expect(primary).toEqual([])
+    expect(bodyOnly).toEqual([])
+  })
+
+  it('본문에만 걸린 히트끼리는 원래 순서를 지킨다', () => {
+    const hits = searchContent(realTopics, '복제')
+    const { bodyOnly } = splitBodyOnly(hits, '복제')
+
+    expect(ids(bodyOnly)).toEqual(ids(hits.filter((hit) => bodyOnly.includes(hit))))
   })
 })
 

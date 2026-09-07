@@ -1,0 +1,116 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "27-question-coverage",
+  "steps": [
+    {
+      "step": 0,
+      "name": "coverage-rule",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "questions-s3-access-bi",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "questions-governance-ai-core",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "questions-s3-lifecycle-block",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "questions-efs-fsx",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "questions-data-transfer",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "questions-rds-aurora",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "questions-dynamodb-cache",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "questions-ec2-elb",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "questions-cloudfront-edge",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "questions-lambda",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "questions-containers",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "questions-apigw-stepfunctions",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "questions-messaging",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "questions-backup-network",
+      "status": "pending"
+    },
+    {
+      "step": 15,
+      "name": "questions-route53-analytics",
+      "status": "pending"
+    },
+    {
+      "step": 16,
+      "name": "questions-streaming-monitoring",
+      "status": "pending"
+    },
+    {
+      "step": 17,
+      "name": "questions-security-services",
+      "status": "pending"
+    },
+    {
+      "step": 18,
+      "name": "questions-identity",
+      "status": "pending"
+    },
+    {
+      "step": 19,
+      "name": "questions-org-cost",
+      "status": "pending"
+    },
+    {
+      "step": 20,
+      "name": "coverage-test",
+      "status": "pending"
+    },
+    {
+      "step": 21,
+      "name": "docs-update",
+      "status": "pending"
+    }
+  ]
+}

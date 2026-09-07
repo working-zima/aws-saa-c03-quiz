@@ -8,10 +8,15 @@
 - `/docs/PRD.md` — **고칠 대상.** 전체를 읽어라.
 - `/docs/ARCHITECTURE.md` — **고칠 대상.** 전체를 읽어라.
 - `/docs/ADR.md` — 전체 목록과 형식. 특히 ADR-013·ADR-019·ADR-021의 서술 방식.
+  **ADR-009의 「검증」 문단도 읽어라** — 8번 작업의 근거다.
 - `/docs/source/dump-gaps/topic-plan.md` — step 0이 정한 주제 골격
 - `/docs/source/dump-gaps/README.md` — "주제 배치는 phase 26이 정한다"고 적힌 자리
 - `/src/data/topics.json` — 재편이 끝난 실제 데이터
 - `/src/data/data.test.ts` — 최종 단언들
+- `/docs/source/service-categories.md` — **고칠 대상.** 「매핑 — 개념 75개」 표가 옛 개념 id로 낡아 있다.
+- `/scripts/topics-baseline.json` — **고칠 대상.** `scripts/check-structure.mjs`의 기준 스냅샷이다.
+- `/scripts/check-structure.mjs` — 위 스냅샷을 어떻게 읽는지 확인하라.
+  **8번 작업에서 만들 스크립트가 따라야 할 스타일이기도 하다.**
 
 ## 배경
 
@@ -65,7 +70,10 @@ EOF
   3단(한계) 순서라는 규칙**을 적는다. 이것이 이 phase가 만든 새 규칙이고,
   타입에 필드가 없으므로 문서가 유일한 근거다.
 
-### 4. `docs/ADR.md`에 ADR-022를 더한다
+### 4. `docs/ADR.md`에 ADR-023를 더한다
+
+**번호는 023이다. 022가 아니다.** phase 26 도중에 ADR-022(카테고리를 13종에서 15종으로
+넓힌다)가 이미 들어갔다. `docs/ADR.md`를 열어 마지막 번호를 직접 확인한 뒤 그다음을 써라.
 
 제목: **주제를 서비스 경계로 재편하고 개념 순서를 기본→갈림길→한계로 잡는다
 (PRD "20개 주제"·ADR-021 개정)**
@@ -95,7 +103,7 @@ EOF
   그리고 개념은 618개인데 문항은 246개 그대로여서 **문항이 없는 주제가 생겼다.**
   둘 다 다음 phase의 몫이다.
 
-**ADR-021을 지우거나 고치지 마라.** ADR-022가 그 위에 얹히는 것이고,
+**ADR-021을 지우거나 고치지 마라.** ADR-023가 그 위에 얹히는 것이고,
 기존 ADR들이 서로를 "개정"으로 참조하는 방식을 따른다.
 
 ### 5. `docs/source/dump-gaps/README.md`의 예고를 정리한다
@@ -103,6 +111,82 @@ EOF
 맨 끝에 "주제 배치는 phase 26이 정한다"는 문장이 있다. 그 일이 끝났으므로
 **결과를 가리키도록 한 줄로 고친다** — 배치는 `topic-plan.md`에 있고 실제 데이터는
 `src/data/topics.json`에 있다는 뜻으로. 문서 전체를 다시 쓰지 마라.
+
+### 6. `scripts/topics-baseline.json`을 다시 만든다
+
+**step 2~20이 이 파일을 미뤄 두었다.** 구조가 매 step 바뀌므로 마지막에 한 번 맞추는
+것이 맞다는 판단이었다. 지금 `node scripts/check-structure.mjs`를 돌리면 주제 개수·개념
+개수·개념 id가 전부 어긋났다고 200줄 넘게 쏟아진다. **이 step이 맞추지 않으면 그 검사는
+phase가 끝난 뒤에도 계속 죽어 있다.**
+
+`check-structure.mjs`를 읽고 baseline이 어떤 필드를 쓰는지 확인한 뒤,
+현재 `src/data/topics.json`·`src/data/questions.json`에서 값을 다시 뽑아 채운다
+(`conceptLineCount`, `topics`의 주제별 메타데이터와 개념 id·name, `questionsSha256`).
+
+- **들여쓰기를 바꾸지 마라.** 이 파일은 1칸 들여쓰기로 커밋돼 있다.
+  `JSON.stringify(b, null, 2)`로 통째로 다시 쓰면 값이 같아도 950줄이 diff에 잡혀
+  무엇이 실제로 바뀌었는지 읽을 수 없게 된다.
+- **검사를 통과시키려고 `check-structure.mjs`를 고치지 마라.** 고칠 것은 기준값이지
+  검사기가 아니다.
+
+### 7. `docs/source/service-categories.md`의 매핑 표를 맞춘다
+
+**step 2~20이 이 파일도 미뤄 두었다.** 「매핑 — 개념 75개」 표는 개념 id로 키를 잡는데,
+이 phase가 주제를 재편하면서 `block-file-storage.ebs`처럼 **없어진 id가 남아 있다.**
+
+- 표의 개념 id를 `src/data/topics.json`의 현재 id로 맞춘다.
+- 이 phase에서 카테고리 한 줄을 새로 붙인 개념(step 5의 `dms-sct`·
+  `application-migration-service` 등)을 표에 더한다. **어느 개념에 붙었는지는
+  `src/data/data.test.ts`의 `serviceCategories` 배열이 사실상의 정답지다** —
+  그 배열과 이 표가 일치하는지 대조하라.
+- 개수가 75개가 아니게 되므로 **절 제목의 숫자도 실제 수로 고친다.**
+- `카테고리 15종` 표와 `phase 26에서 들어오는 서비스` 표는 **손대지 마라.**
+  전자는 ADR-022가 정한 것이고 후자는 step 1의 산출물이다.
+- **카테고리를 새로 정하지 마라.** 이 step은 낡은 id를 맞추는 것이지 배치를 바꾸는
+  것이 아니다. 배치를 바꿔야 할 자리를 찾으면 `summary`에 적어 알려라.
+
+### 8. `scripts/check-verbatim.mjs`를 실제로 만든다
+
+`docs/ADR.md`의 ADR-009는 「검증」 문단에서 "`scripts/check-verbatim.mjs`가 공백·문장부호를
+지운 뒤 원본과 32자 이상 연속 일치하는 구간을 잡아낸다"고 적고 있다.
+**그런데 그 파일이 저장소에 없다.** `scripts/`에는 `check-structure.mjs`뿐이다.
+
+전사 금지는 이 저장소를 공개할 수 있는지를 가르는 CRITICAL 규칙인데(CLAUDE.md "원본 데이터"),
+그 유일한 검증 장치가 문서상으로만 존재한다. **ADR 문장을 지워 현실에 맞추지 마라.
+스크립트를 만들어 문서를 사실로 만든다.** 이유: ADR-009는 개념 본문 182개를 다시 쓴 결정의
+근거 문서이고, 검증 문단을 지우면 그 결정이 무엇으로 확인됐는지가 기록에서 사라진다.
+
+인터페이스:
+
+- 파일은 `scripts/check-verbatim.mjs` 하나. `node scripts/check-verbatim.mjs`로 돈다.
+- **의존성을 추가하지 마라.** 이유: Node 18 표준 모듈로 되는 일이고, 스택은 ADR이 고정한다.
+  `package.json`이 diff에 잡히면 위반이다.
+- 비교 대상은 `src/data/topics.json`의 개념 본문(`name`·`summary`·`paragraphs`)이고,
+  원본은 `docs/source/concepts-raw.md`다.
+- 정규화와 임계값은 **ADR-009가 적은 그대로** 쓴다 — 공백·문장부호를 지운 뒤 32자 연속 일치.
+  **임계값을 바꾸지 마라.** 이유: 32는 exam-gaps 개념 77개가 전부 통과하는 실측 하한선이라고
+  ADR 본문에 근거가 적혀 있다. 코드에서 바꾸면 그 근거가 문서와 어긋난다.
+- 원본 경로를 **첫 인자로 받을 수 있게** 한다(기본값은 위 경로). 이유: 원본이 없는 환경의
+  동작을 AC에서 확인할 수 있어야 한다. 그 외의 옵션·설정은 만들지 마라.
+- 겹침을 찾으면 개념 id와 겹친 문자열을 출력하고 **exit code 1**로 끝난다.
+  못 찾으면 이상 없음을 출력하고 **0**으로 끝난다.
+
+**원본이 없는 것이 정상 경로다:**
+
+- `docs/source/concepts-raw.md`는 ADR-009에 따라 gitignore로 로컬에만 둔다.
+  clone한 환경에는 **없는 것이 정상**이다.
+- 그러므로 원본 파일이 없으면 **실패가 아니라 "건너뜀"으로 끝나야 한다.** 무엇이 없어서
+  건너뛰는지 경로와 함께 알리고 **exit code 0**이다. 이유: 죽게 만들면 그 파일을 가진
+  사람 말고는 아무도 못 돌리고, CI에도 걸 수 없다.
+- **`npm test`·`npm run build`에 엮지 마라.** 이유: vitest는 저장소에 있는 파일만으로 돌아야
+  한다. 이 검사는 원본을 가진 사람이 손으로 돌리는 것이며, **그 사실을 ADR-009의 「검증」
+  문단에 한 줄로 덧붙여 밝혀라.** 검사가 자동으로 돌지 않는다는 것도 기록의 일부다.
+
+**검사가 잡은 겹침을 이 step에서 고치지 마라.** 이유 둘이다. 첫째, 이 step은 `src/`를
+건드리지 않는다(아래 금지사항). 둘째, **검사를 통과시킬 목적으로 개념 문장을 깎으면
+학습자가 읽을 문장이 나빠진다.** 겹침을 없애는 올바른 방법은 사실을 유지하며 다시 쓰는
+것이고, 그것은 문장마다 판단이 필요해 문서 갱신 step의 몫이 아니다. 찾은 겹침은 개념 id
+목록으로 `summary`에 적어 남겨라.
 
 ## Acceptance Criteria
 
@@ -124,12 +208,42 @@ for p in ('docs/PRD.md', 'docs/ARCHITECTURE.md'):
           '| 개념 수 언급:', ('개념 %d' % n_c) in src or ('%d개' % n_c) in src)
 EOF
 
-# ADR-022가 형식을 지켜 들어갔다
-grep -n '^### ADR-022' docs/ADR.md
-grep -A3 '^### ADR-022' docs/ADR.md | grep -q '\*\*결정\*\*' && echo OK
+# ADR-023가 형식을 지켜 들어갔다
+grep -n '^### ADR-023' docs/ADR.md
+grep -A3 '^### ADR-023' docs/ADR.md | grep -q '\*\*결정\*\*' && echo OK
+
+# 구조 검사가 되살아났다 (기준 스냅샷을 다시 만들었으므로 이상 없음이어야 한다)
+node scripts/check-structure.mjs
+
+# baseline을 통째로 재직렬화하지 않았다 (들여쓰기가 1칸 그대로다)
+head -3 scripts/topics-baseline.json
+
+# 매핑 표에 없어진 개념 id가 남아 있지 않다
+python - <<'EOF'
+import json, re
+ts = json.load(open('src/data/topics.json', encoding='utf-8'))
+live = {c['id'] for t in ts for c in t['concepts']}
+src = open('docs/source/service-categories.md', encoding='utf-8').read()
+head, _, tail = src.partition('## 매핑')
+ids = re.findall(r'^\| `([a-z0-9-]+\.[a-z0-9-]+)` \|', tail, re.M)
+print('표의 개념 id:', len(ids), '| 없어진 id:', sorted(set(ids) - live) or '없음')
+EOF
 
 # src/를 건드리지 않았다
 git diff --name-only | grep '^src/' && echo "위반" || echo "OK"
+
+# check-verbatim.mjs 가 생겼고, 원본이 없는 환경에서 죽지 않는다 (exit 0 + 건너뜀 안내)
+node scripts/check-verbatim.mjs docs/source/does-not-exist.md; echo "exit=$? (0이어야 한다)"
+
+# 원본이 있으면 실제로 검사한다 (없으면 위와 같이 건너뜀으로 끝난다)
+node scripts/check-verbatim.mjs; echo "exit=$?"
+
+# ADR-009 임계값 32가 코드에 있고, 의존성을 늘리지 않았다
+grep -n '32' scripts/check-verbatim.mjs
+git diff --name-only | grep -q '^package\(-lock\)\?.json$' && echo "위반: 의존성 변경" || echo OK
+
+# ADR-009 검증 문단이 "손으로 돌린다"는 사실을 밝혔다
+grep -n 'check-verbatim' docs/ADR.md
 ```
 
 ## 검증 절차
@@ -138,9 +252,16 @@ git diff --name-only | grep '^src/' && echo "위반" || echo "OK"
 2. 체크리스트를 확인한다:
    - 문서에 적은 숫자가 전부 **데이터에서 센 값**인가? 추측한 숫자가 없는가?
    - ARCHITECTURE의 스크롤 실측표에 **새로 재지 않은 값**을 넣지 않았는가?
-   - ADR-022가 기존 ADR의 서술 방식(**결정**/**이유**/**트레이드오프**)을 따르는가?
+   - ADR-023가 기존 ADR의 서술 방식(**결정**/**이유**/**트레이드오프**)을 따르는가?
    - 열린 문제(주제 목록 길이, 문항 없는 주제)를 **결론 내지 않고 남겨** 두었는가?
    - `Concept`의 3단 순서 규칙이 ARCHITECTURE에 적혔는가?
+   - `node scripts/check-structure.mjs`가 이상 없음으로 끝나는가?
+   - `topics-baseline.json`의 diff가 실제로 바뀐 값만 담고 있는가? (재직렬화로 부풀지 않았는가)
+   - 매핑 표의 개념 id가 `data.test.ts`의 `serviceCategories`와 일치하는가?
+   - `scripts/check-verbatim.mjs`가 원본이 **없을 때 exit 0**으로 끝나는가?
+     (`concepts-raw.md`가 없는 clone 환경이 정상이다)
+   - 그 스크립트를 `npm test`·`npm run build`에 엮지 않았는가?
+   - ADR-009의 「검증」 문단이 이 검사가 수동이라는 사실을 밝히고 있는가?
 3. 결과에 따라 `phases/26-concept-merge/index.json`의 step 21을 업데이트한다:
    - 성공 → `"status": "completed"`, `"summary": "산출물 한 줄 요약"`
    - 수정 3회 시도 후에도 실패 → `"status": "error"`, `"error_message": "구체적 에러 내용"`
@@ -156,4 +277,8 @@ git diff --name-only | grep '^src/' && echo "위반" || echo "OK"
   실물을 보고 정할 일이다. 사실만 갱신하고 열린 문제로 남겨라.
 - **문항을 만들지 마라.** 이유: 다음 phase의 범위다.
 - **ADR을 지우거나 과거 결정을 다시 쓰지 마라.** 이유: ADR은 개정을 덧붙이는 기록이다.
+- **ADR-009의 「검증」 문단을 지우거나 약화시키지 마라.** 이유: 없는 스크립트를 문서에서
+  지우는 것은 규칙을 사실에 맞추는 것이 아니라 규칙을 버리는 것이다. 8번 작업은 반대 방향이다.
+- **전사 검사를 통과시키려고 개념 본문을 고치지 마라.** 이유: 검사 통과를 목적으로 문장을
+  깎으면 학습자가 읽을 문장이 나빠진다. 이 step은 찾은 것을 보고만 하고 고치지 않는다.
 - 기존 테스트를 깨뜨리지 마라.

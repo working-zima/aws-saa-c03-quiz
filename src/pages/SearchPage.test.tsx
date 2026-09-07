@@ -39,10 +39,40 @@ const testTopics: Topic[] = [
 // 'aurora'는 개념 이름과 주제 제목 양쪽에 걸린다. 개념 카드만 집어내는 이름은 한 줄 요약이다.
 const AURORA_CONCEPT_LINK = { name: /MySQL·PostgreSQL과 호환되는 관계형 데이터베이스다$/ }
 
-function renderPage(path = '/search') {
+// 본문만 걸린 히트를 접는 동작을 보려면 한 질의가 이름과 본문 양쪽에 걸려야 한다.
+const foldTestTopics: Topic[] = [
+  {
+    id: 'database',
+    title: '데이터베이스',
+    importance: 3,
+    sourcePages: [1, 2],
+    concepts: [
+      {
+        id: 'database.aurora',
+        name: 'Aurora',
+        summary: '관계형 데이터베이스다',
+        paragraphs: ['읽기 전용 복제본을 최대 15개까지 둔다.'],
+      },
+      {
+        id: 'database.dynamodb',
+        name: 'DynamoDB',
+        summary: 'NoSQL 저장소다',
+        paragraphs: ['Aurora와 달리 스키마를 미리 정하지 않는다.'],
+      },
+      {
+        id: 'database.rds-proxy',
+        name: 'RDS Proxy',
+        summary: '연결을 모아 준다',
+        paragraphs: ['Aurora 앞에 두어 연결 수를 줄인다.'],
+      },
+    ],
+  },
+]
+
+function renderPage(path = '/search', pageTopics = testTopics) {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <SearchPage topics={testTopics} />
+      <SearchPage topics={pageTopics} />
     </MemoryRouter>,
   )
 }
@@ -118,6 +148,73 @@ describe('SearchPage', () => {
 
     expect(screen.getAllByRole('link')).toHaveLength(2)
     expect(screen.getByText('결과 2개')).toBeInTheDocument()
+  })
+
+  // 개념이 618개로 늘어난 뒤 한 단어 질의의 절반 이상이 본문에만 걸린 히트다.
+  // 전부 한 목록에 그리면 찾으려던 것이 그 안에 묻힌다(ADR-024).
+  describe('본문에만 걸린 히트', () => {
+    it('처음에는 카드로 그리지 않는다', () => {
+      renderPage('/search?q=aurora', foldTestTopics)
+
+      expect(screen.getByRole('link', { name: /Aurora/ })).toBeInTheDocument()
+      expect(screen.queryByRole('link', { name: /DynamoDB/ })).toBeNull()
+      expect(screen.queryByRole('link', { name: /RDS Proxy/ })).toBeNull()
+    })
+
+    it('몇 개를 더 찾았는지 접힌 채로 알린다', () => {
+      renderPage('/search?q=aurora', foldTestTopics)
+
+      const toggle = screen.getByRole('button', { name: /본문에서 2개 더 찾음/ })
+      expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      expect(toggle).toHaveClass('min-h-[44px]')
+    })
+
+    it('펼치면 본문 히트가 나타난다', async () => {
+      const user = userEvent.setup()
+      renderPage('/search?q=aurora', foldTestTopics)
+
+      await user.click(screen.getByRole('button', { name: /본문에서 2개 더 찾음/ }))
+
+      expect(screen.getByRole('link', { name: /DynamoDB/ })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: /RDS Proxy/ })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /본문에서 2개 더 찾음/ })).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      )
+    })
+
+    it('결과 개수는 접힌 것까지 센다', () => {
+      renderPage('/search?q=aurora', foldTestTopics)
+
+      expect(screen.getByText('결과 3개')).toBeInTheDocument()
+    })
+
+    // 질의가 바뀌면 앞 질의에서 펼친 상태가 남지 않는다. 확인 문제의 개념 펼치기가
+    // 문항을 옮길 때 닫히는 것과 같은 규칙이다(UI_GUIDE "개념 펼치기").
+    it('질의가 바뀌면 다시 접힌다', async () => {
+      const user = userEvent.setup()
+      renderPage('/search?q=aurora', foldTestTopics)
+      await user.click(screen.getByRole('button', { name: /본문에서 2개 더 찾음/ }))
+
+      await user.type(screen.getByLabelText('개념·주제 검색'), ' ')
+
+      expect(screen.queryByRole('link', { name: /DynamoDB/ })).toBeNull()
+    })
+
+    it('본문에만 걸린 히트가 없으면 펼치기를 두지 않는다', () => {
+      renderPage('/search?q=s3')
+
+      expect(screen.queryByRole('button', { name: /본문에서/ })).toBeNull()
+    })
+
+    // 접는 목적은 이름·요약 히트를 본문 히트 위에 남기는 것이다. 남길 것이 없으면
+    // 빈 목록과 펼치기만 남아 결과가 없는 것처럼 보인다.
+    it('이름·요약에 걸린 것이 없으면 접지 않고 그대로 그린다', () => {
+      renderPage('/search?q=복제본')
+
+      expect(screen.getByRole('link', { name: /Aurora/ })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /본문에서/ })).toBeNull()
+    })
   })
 
   it('한 줄 요약의 강조 마커를 화면에 그대로 내보내지 않는다', () => {
