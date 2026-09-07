@@ -131,7 +131,8 @@
     },
     {
       "dir": "26-concept-merge",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-07T20:32:37+0900"
     }
   ]
 }
