@@ -4870,6 +4870,54 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // ADR-026 — 이 앱의 주 학습 경로는 문제를 풀고 틀린 것만 개념으로 되짚는 순환이라,
+  // 문항이 가리키지 않는 개념은 그 경로에서 아예 배울 수 없는 사각지대다. phase 27이
+  // 618개를 전부 덮었고 이 단언이 그 상태가 되돌아가는 것을 막는다 — 개념을 더하는 사람은
+  // 문항도 함께 만들어야 한다.
+  // 예외 목록("이 개념들은 출제하지 않는다")을 만들어 통과시키지 마라. 그 목록이 생기는
+  // 순간 다음 사람이 거기에 개념을 추가해 사각지대가 되살아난다.
+  it('모든 개념이 문항 하나 이상을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  it('모든 문제의 topicId가 conceptId가 속한 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('문제 id가 q001부터 빈 번호 없이 이어진다', () => {
+    expect(questions.map(({ id }) => id)).toEqual(
+      questions.map((_, index) => `q${String(index + 1).padStart(3, '0')}`),
+    )
+  })
+
+  // step 1~19가 이어 쓴 구간이다. 앞쪽 246문항은 각 step의 slice 테스트가 이미 고정한다.
+  // 길이를 정확한 수가 아니라 하한으로 단언하는 이유: 이 구간은 문항을 더할 때마다 자라는데,
+  // 이 테스트가 지키는 것은 분량이 아니라 분포다. 하한은 빈 slice로 조용히 통과하는 것만 막는다.
+  it('phase 27이 더한 q247 이후 구간의 정답 위치가 고르게 퍼져 있다', () => {
+    const addedQuestions = questions.slice(246)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+
+    expect(addedQuestions.length).toBeGreaterThanOrEqual(486)
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+  })
+
   it('모든 문제는 서로 다른 보기 4개를 가진다', () => {
     questions.forEach((question) => {
       expect(question.choices).toHaveLength(4)
