@@ -840,6 +840,102 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 3 — 커버리지가 절반도 안 되던 S3 수명 주기·암호화·블록 스토리지 세
+  // 주제의 빈 개념 24개를 덮는다(ADR-026). 담당 개념과 문항이 일대일이라 slice와
+  // 개념 목록이 같은 길이다.
+  const step3Concepts = [
+    's3-versioning-lifecycle.s3-replication',
+    's3-versioning-lifecycle.s3-same-region-replication',
+    's3-versioning-lifecycle.s3-replication-time-control',
+    's3-versioning-lifecycle.s3-replication-cross-account-kms',
+    's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
+    's3-encryption-batch.client-side-encryption',
+    's3-encryption-batch.s3-inventory-report',
+    's3-encryption-batch.s3-object-lambda',
+    's3-encryption-batch.sse-kms-audit-trail',
+    's3-encryption-batch.batch-copy-vs-replication',
+    's3-encryption-batch.s3-batch-operations-lambda-invoke',
+    's3-encryption-batch.sse-c-no-rotation-or-audit',
+    's3-encryption-batch.s3-secure-transport-condition',
+    'ebs-instance-store.elastic-fabric-adapter',
+    'ebs-instance-store.ebs-volume-type-names',
+    'ebs-instance-store.gp3-iops-independent-of-size',
+    'ebs-instance-store.spread-placement-group',
+    'ebs-instance-store.io2-block-express-iops-ceiling',
+    'ebs-instance-store.ebs-encryption-by-default',
+    'ebs-instance-store.ebs-encryption-performance',
+    'ebs-instance-store.ebs-recycle-bin',
+    'ebs-instance-store.ebs-snapshot-block-public-access',
+    'ebs-instance-store.data-lifecycle-manager',
+    'ebs-instance-store.ebs-fast-snapshot-restore',
+  ]
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제 24개가 담당 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(270, 294)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 271}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(5).fill('s3-versioning-lifecycle'),
+      ...Array(8).fill('s3-encryption-batch'),
+      ...Array(11).fill('ebs-instance-store'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...step3Concepts].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(24)
+  })
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(270, 294).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(270, 294)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('S3 수명 주기·암호화와 블록 스토리지 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['s3-versioning-lifecycle', 's3-encryption-batch', 'ebs-instance-store'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
