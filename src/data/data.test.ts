@@ -10,17 +10,22 @@ describe('학습 데이터 무결성', () => {
         'nacl-rule-limit',
         'web-acl-vs-nacl',
       ],
+      // step 18이 dump-gaps의 신규 11개념을 더하며 이 주제도 3단으로 정렬했다.
       'secrets-encryption': [
         'acm-cloudfront-region',
         'lambda-env-var-kms',
         'cloudhsm',
         'rotation-heuristic',
       ],
-      'threat-protection': [
+      // phase 26 step 18이 threat-protection을 WAF·Shield 쪽과 탐지 서비스 쪽으로
+      // 갈랐다. 여섯 개념이 두 주제로 흩어졌고 둘 다 3단으로 정렬돼 배열 끝이 아니다.
+      'waf-shield': [
         'waf-attach-targets',
         'waf-bot-control',
         'waf-rule-types',
         'shield-advanced-drt',
+      ],
+      'guardduty-macie-inspector': [
         'guardduty-db-login',
         'security-service-lineup',
       ],
@@ -51,6 +56,9 @@ describe('학습 데이터 무결성', () => {
     // 「보안 그룹·NACL 주제가 ...」가 개념 id 전부로 못박는다.
     const reordered = new Set([
       'security-groups-nacl',
+      'secrets-encryption',
+      'waf-shield',
+      'guardduty-macie-inspector',
       'iam-permissions',
       'identity-federation',
       'organizations-cloudtrail-config',
@@ -262,7 +270,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 33개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 36개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -326,8 +334,13 @@ describe('학습 데이터 무결성', () => {
       // step 16이 남은 CloudWatch·X-Ray 계열을 그 자리에서 cloudwatch-xray로 바꿨다.
       // 지표 ↔ 로그 ↔ 경보가 한 벌이라 넷을 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
       { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
-      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
-      { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
+      // phase 26 step 18이 secrets-encryption에 CloudHSM을 제목으로 올리고,
+      // threat-protection을 그 자리에서 둘로 갈랐다. WAF ↔ Shield ↔ Shield Advanced는
+      // 계층과 대상이 갈리는 한 벌이라, GuardDuty ↔ Macie ↔ Inspector ↔ Security Hub는
+      // 탐지 서비스 갈림길이라 각각 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 3, sourcePages: [44, 44] },
+      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 3, sourcePages: [45, 47] },
+      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 3, sourcePages: [45, 47] },
       // phase 26 step 17이 identity-access를 셋으로 갈라 그 자리에 놓았다. IAM 역할 ↔
       // 사용자 ↔ 정책 ↔ 권한 경계를 한 주제에, Identity Center ↔ SAML ↔ Cognito를 다른
       // 한 주제에 둔다(topic-plan "헷갈리는 짝 배치"). 감사 쪽인 CloudTrail·Config는
@@ -351,7 +364,11 @@ describe('학습 데이터 무결성', () => {
       'kinesis-streaming',
       ...Array(9).fill('security-groups-nacl'),
       ...Array(8).fill('secrets-encryption'),
-      ...Array(9).fill('threat-protection'),
+      // step 18이 threat-protection을 둘로 갈라 이 아홉 문항도 두 주제로 흩어졌다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(4).fill('waf-shield'),
+      ...Array(2).fill('guardduty-macie-inspector'),
+      ...Array(3).fill('waf-shield'),
       // step 17이 identity-access를 셋으로 갈라 이 아홉 문항도 세 주제로 흩어졌다.
       // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
       ...Array(3).fill('iam-permissions'),
@@ -640,12 +657,12 @@ describe('학습 데이터 무결성', () => {
       'secrets-encryption.lambda-env-var-kms',
       'secrets-encryption.cloudhsm',
       'secrets-encryption.rotation-heuristic',
-      'threat-protection.waf-attach-targets',
-      'threat-protection.waf-bot-control',
-      'threat-protection.waf-rule-types',
-      'threat-protection.shield-advanced-drt',
-      'threat-protection.guardduty-db-login',
-      'threat-protection.security-service-lineup',
+      'waf-shield.waf-attach-targets',
+      'waf-shield.waf-bot-control',
+      'waf-shield.waf-rule-types',
+      'waf-shield.shield-advanced-drt',
+      'guardduty-macie-inspector.guardduty-db-login',
+      'guardduty-macie-inspector.security-service-lineup',
       'iam-permissions.least-privilege',
       'iam-permissions.instance-profile',
       'iam-permissions.iam-group-users-only',
@@ -665,7 +682,8 @@ describe('학습 데이터 무결성', () => {
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
       ...Array(3).fill('security-groups-nacl'),
       ...Array(4).fill('secrets-encryption'),
-      ...Array(6).fill('threat-protection'),
+      ...Array(4).fill('waf-shield'),
+      ...Array(2).fill('guardduty-macie-inspector'),
       ...Array(3).fill('iam-permissions'),
       ...Array(2).fill('identity-federation'),
       'organizations-cloudtrail-config',
@@ -718,8 +736,9 @@ describe('학습 데이터 무결성', () => {
     // step 14가 security-groups-nacl을 네트워크 쪽으로 옮겨 이 묶음은 여섯이 됐고,
     // step 15가 messaging-backup을 없애 시작 위치가 한 칸 올라오면서
     // analytics-monitoring을 쪼갠 세 주제가 더해져 아홉이 됐다.
-    // step 17이 identity-access를 셋으로 갈라 열하나가 됐다.
-    expect(topics.slice(24, 35).map(({ id, title, importance, sourcePages }) => ({
+    // step 17이 identity-access를 셋으로 갈라 열하나가 됐고,
+    // step 18이 threat-protection을 둘로 갈라 열둘이 됐다.
+    expect(topics.slice(24, 36).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -730,8 +749,9 @@ describe('학습 데이터 무결성', () => {
       { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
       { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
       { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
-      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
-      { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 3, sourcePages: [44, 44] },
+      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 3, sourcePages: [45, 47] },
+      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 3, sourcePages: [45, 47] },
       { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
       { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
       { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
@@ -748,8 +768,11 @@ describe('학습 데이터 무결성', () => {
     // dump-gaps의 신규 32(IAM 14 · 페더레이션 6 · 조직·감사 12)를 더한 값이다.
     // organizations-cloudtrail-config의 계획값은 16이고, 남는 하나는 step 19가
     // (주제 미정)의 config-rule-remediation을 옮겨 오며 채운다.
-    expect(topics.slice(24, 35).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 9, 11, 18, 11, 15, 9,
+    // step 18이 secrets-encryption의 9에 신규 11을 더해 20으로 늘리고,
+    // threat-protection의 11개념을 둘로 나눠(7·4) 신규 15(WAF·Shield 8 · 탐지 7)를
+    // 더해 15·11로 세웠다.
+    expect(topics.slice(24, 36).map((topic) => topic.concepts.length)).toEqual([
+      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 15, 9,
     ])
   })
 
@@ -2435,6 +2458,218 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('비밀·키 주제가 서비스 다섯 다음에 무엇을 어디에 두는가와 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'secrets-encryption')
+
+    // 1단 Secrets Manager·Parameter Store·KMS·ACM·CloudHSM이 각각 무엇인가
+    // → 2단 비밀값을 어디에 두는가, 키를 누가 관리하는가, 리전을 넘는 키와 밖에서
+    //   가져온 키, 전용 하드웨어와 KMS를 함께 쓰는 자리, 도메인 검증 방식
+    // → 3단 한 번에 여러 비밀값을 읽는 API, 자동 교체의 주기와 키 유형 제약,
+    //   가져온 키 자료의 교체, 환경 변수 암호화, CloudFront 인증서의 리전과 만료 이벤트.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'secrets-encryption.secrets-manager',
+      'secrets-encryption.parameter-store',
+      'secrets-encryption.kms',
+      'secrets-encryption.acm',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.secrets-manager-vs-parameter-store',
+      'secrets-encryption.rotation-heuristic',
+      'secrets-encryption.kms-key-types-by-management',
+      'secrets-encryption.kms-multi-region-key',
+      'secrets-encryption.kms-imported-key-material',
+      'secrets-encryption.kms-cloudhsm-key-store',
+      'secrets-encryption.kms-key-per-tenant',
+      'secrets-encryption.acm-dns-validation',
+      'secrets-encryption.secrets-manager-batch-get-secret-value',
+      'secrets-encryption.kms-automatic-key-rotation',
+      'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
+      'secrets-encryption.imported-key-material-rotation',
+      'secrets-encryption.lambda-env-var-kms',
+      'secrets-encryption.acm-cloudfront-region',
+      'secrets-encryption.acm-expiration-event',
+    ])
+  })
+
+  it('WAF·Shield 주제가 서비스 넷 다음에 규칙의 축과 검사의 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'waf-shield')
+
+    // 1단 WAF·Shield·CloudFront·Firewall Manager가 각각 무엇인가
+    // → 2단 WAF를 어디에 붙이는가, 규칙을 무엇으로 거르고 누가 쓰는가, 빈도로 거르는
+    //   규칙과 봇, Shield Standard의 범위와 Shield Advanced
+    // → 3단 보호 그룹, 본문 검사 크기 한도, Web ACL의 리전 조건, 로그가 가는 길.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'waf-shield.waf',
+      'waf-shield.shield',
+      'waf-shield.cloudfront',
+      'waf-shield.firewall-manager',
+      'waf-shield.waf-attach-targets',
+      'waf-shield.waf-rule-types',
+      'waf-shield.waf-managed-rule-groups',
+      'waf-shield.waf-rate-based-rule',
+      'waf-shield.waf-bot-control',
+      'waf-shield.shield-standard-network-layer',
+      'waf-shield.shield-advanced-drt',
+      'waf-shield.shield-advanced-protection-group',
+      'waf-shield.waf-body-inspection-size-limit',
+      'waf-shield.waf-web-acl-region-must-match-rest-api',
+      'waf-shield.waf-logging-to-firehose',
+    ])
+  })
+
+  it('탐지 주제가 서비스 넷 다음에 각각 무엇을 찾는가와 조직 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'guardduty-macie-inspector')
+
+    // 1단 GuardDuty·Macie·Inspector·Security Hub가 각각 무엇인가
+    // → 2단 헷갈리는 넷이 각각 무엇을 찾는가, DB 로그인 이상은 어디가 잡는가,
+    //   검색 작업과 자동 탐지, 컨테이너 이미지의 취약점 스캔은 어디인가
+    // → 3단 위임 관리자 계정에서 조직 전체를 보는 방법, 탐지 결과를 이벤트로 이어
+    //   자동 대응과 알림을 붙이는 방법.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'guardduty-macie-inspector.guardduty',
+      'guardduty-macie-inspector.macie',
+      'guardduty-macie-inspector.amazon-inspector',
+      'guardduty-macie-inspector.security-hub',
+      'guardduty-macie-inspector.security-service-lineup',
+      'guardduty-macie-inspector.guardduty-db-login',
+      'guardduty-macie-inspector.macie-automated-discovery',
+      'guardduty-macie-inspector.inspector-scans-ecr-images',
+      'guardduty-macie-inspector.macie-delegated-administrator',
+      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+      'guardduty-macie-inspector.macie-finding-to-eventbridge',
+    ])
+  })
+
+  it('KMS와 Secrets Manager와 Parameter Store가 한 주제 안에서 갈린다', () => {
+    // 무엇을 어디에 두는가가 이 주제의 학습 내용이다. 셋을 가르면 키와 비밀값과
+    // 설정값의 자리를 비교할 데가 없어진다(step18 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const secrets = ownerOf('secrets-encryption.secrets-manager')
+    expect(secrets).toBe('secrets-encryption')
+    ;[
+      'secrets-encryption.parameter-store',
+      'secrets-encryption.kms',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.secrets-manager-vs-parameter-store',
+      'secrets-encryption.rotation-heuristic',
+      'secrets-encryption.kms-key-types-by-management',
+      'secrets-encryption.kms-cloudhsm-key-store',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(secrets))
+    // 축 하나 — 자동 순환이 되는 쪽과 되지 않는 쪽.
+    expect(bodyOf('secrets-encryption.secrets-manager-vs-parameter-store')).toContain(
+      '자동 교체하는 순환 기능을 제공하지만 Parameter Store에는 이 기능이 없다',
+    )
+    // 축 둘 — KMS가 관리하는 것은 키이지 비밀값이 아니다.
+    expect(bodyOf('secrets-encryption.kms')).toContain(
+      '애플리케이션 설정값이나 비밀값을 저장하는 서비스는 아니다',
+    )
+    // 축 셋 — 그 키를 누가 관리하고 어디에 두는가.
+    expect(bodyOf('secrets-encryption.kms-key-types-by-management')).toContain(
+      '고객 관리 키는 내가 만들어 키 정책과 수명 주기를 직접 정하고',
+    )
+    expect(bodyOf('secrets-encryption.kms-cloudhsm-key-store')).toContain(
+      '**CloudHSM이 뒷받침하는 KMS 키**',
+    )
+  })
+
+  it('WAF와 Shield와 Shield Advanced가 한 주제 안에서 계층과 대상으로 갈린다', () => {
+    // 계층과 대상이 갈리는 한 벌이다. Shield 쪽을 떼면 L7과 네트워크 계층의 경계를
+    // 비교할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const waf = ownerOf('waf-shield.waf')
+    expect(waf).toBe('waf-shield')
+    ;[
+      'waf-shield.shield',
+      'waf-shield.shield-standard-network-layer',
+      'waf-shield.shield-advanced-drt',
+      'waf-shield.shield-advanced-protection-group',
+      'waf-shield.waf-rule-types',
+      'waf-shield.waf-managed-rule-groups',
+      'waf-shield.waf-rate-based-rule',
+      'waf-shield.firewall-manager',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(waf))
+    // 축 하나 — 어느 계층을 보는가.
+    expect(bodyOf('waf-shield.waf')).toContain('**L7 애플리케이션 계층**')
+    expect(bodyOf('waf-shield.shield-standard-network-layer')).toContain(
+      '애플리케이션 계층의 요청을 검사해 막는 것은 WAF의 몫이고',
+    )
+    // 축 둘 — Shield와 Shield Advanced는 전담 대응 팀 지원으로 갈린다.
+    expect(bodyOf('waf-shield.shield-advanced-drt')).toContain(
+      'WAF는 애플리케이션 계층 공격 방어에는 유효하지만 DRT 지원은 제공하지 않는다',
+    )
+    // 축 셋 — 규칙이 요청의 내용을 보는가 빈도를 보는가.
+    expect(bodyOf('waf-shield.waf-rate-based-rule')).toContain('**한 IP에서 오는 빈도**')
+    // 계정이 여러 개면 규칙을 거는 자리가 달라진다.
+    expect(bodyOf('waf-shield.firewall-manager')).toContain(
+      '여러 계정의 WAF 규칙을 중앙에서 정의하고 배포해',
+    )
+  })
+
+  it('탐지 서비스 넷이 한 주제 안에서 무엇을 찾는지로 갈린다', () => {
+    // GuardDuty ↔ Macie ↔ Inspector ↔ Security Hub의 갈림길이다. 넷을 가르면
+    // 무엇을 찾는 서비스인지 비교할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const detection = ownerOf('guardduty-macie-inspector.guardduty')
+    expect(detection).toBe('guardduty-macie-inspector')
+    ;[
+      'guardduty-macie-inspector.macie',
+      'guardduty-macie-inspector.amazon-inspector',
+      'guardduty-macie-inspector.security-hub',
+      'guardduty-macie-inspector.security-service-lineup',
+      'guardduty-macie-inspector.inspector-scans-ecr-images',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(detection))
+    // 넷이 각각 무엇을 보는가 — 계정을 겨냥한 활동, 저장된 데이터의 내용, 취약점,
+    // 그리고 그 결과가 모이는 자리.
+    expect(bodyOf('guardduty-macie-inspector.guardduty')).toContain(
+      '탐지 결과를 제공할 뿐 공격에 직접 대응하지는 않는다',
+    )
+    expect(bodyOf('guardduty-macie-inspector.macie')).toContain(
+      'S3에 보관된 데이터에서 개인정보처럼 보호해야 할 내용을 찾아낸다',
+    )
+    expect(bodyOf('guardduty-macie-inspector.amazon-inspector')).toContain(
+      '**패치를 적용하는 서비스가 아니라는 점이 다른 선택지와의 갈림길이 된다.**',
+    )
+    expect(bodyOf('guardduty-macie-inspector.security-hub')).toContain(
+      '**탐지 결과가 모이는 자리**',
+    )
+    // 조사·분석을 맡는 Detective도 같은 보기 줄에 오르므로 한 주제 안에서 갈린다.
+    expect(bodyOf('guardduty-macie-inspector.security-service-lineup')).toContain(
+      '**Amazon Detective**',
+    )
+    // 취약점 스캔의 대상에 컨테이너 이미지가 들어간다.
+    expect(bodyOf('guardduty-macie-inspector.inspector-scans-ecr-images')).toContain(
+      'ECR의 컨테이너 이미지가 들어간다',
+    )
+    // 탐지하는 서비스는 결과를 이벤트로 내보내고 대응은 받는 쪽이 맡는다.
+    ;[
+      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+      'guardduty-macie-inspector.macie-finding-to-eventbridge',
+    ].forEach((conceptId) => {
+      expect(ownerOf(conceptId)).toBe(detection)
+      expect(bodyOf(conceptId)).toContain('EventBridge')
+    })
+  })
+
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
     const storageClassQuestions = questions.filter(
       (question) => question.topicId === 's3-storage-classes',
@@ -2606,10 +2841,10 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'elastic-load-balancing.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
     { conceptId: 'cloudfront-global-accelerator.cloudfront-ttl', anchor: 'Time-to-Live' },
     { conceptId: 'api-gateway-step-functions.api-gateway', anchor: 'JSON Web Token' },
-    { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
-    { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
-    { conceptId: 'threat-protection.waf', anchor: 'Cross-Site Scripting' },
-    { conceptId: 'threat-protection.security-service-lineup', anchor: 'Common Vulnerabilities' },
+    { conceptId: 'waf-shield.shield', anchor: 'Distributed Denial of Service' },
+    { conceptId: 'waf-shield.shield-advanced-drt', anchor: 'DDoS Response Team' },
+    { conceptId: 'waf-shield.waf', anchor: 'Cross-Site Scripting' },
+    { conceptId: 'guardduty-macie-inspector.security-service-lineup', anchor: 'Common Vulnerabilities' },
     { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
   ]
 
@@ -3225,11 +3460,18 @@ describe('학습 데이터 무결성', () => {
     ['secrets-encryption.kms', 'KMS는', 'security'],
     ['secrets-encryption.acm', 'ACM은', 'security'],
     ['secrets-encryption.cloudhsm', 'CloudHSM은', 'security'],
-    ['threat-protection.waf', 'WAF는', 'security'],
-    ['threat-protection.shield', 'Shield는', 'security'],
-    ['threat-protection.guardduty', 'GuardDuty는', 'security'],
-    ['threat-protection.macie', 'Macie는', 'security'],
-    ['threat-protection.cloudfront', 'CloudFront는', 'networking'],
+    // phase 26 step 18이 threat-protection을 둘로 갈랐다. 신규 15개념 중 서비스를
+    // 소개하는 자리는 셋뿐이다 — 나머지는 WAF 규칙·Shield 계층·Macie 설정 같은
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['waf-shield.waf', 'WAF는', 'security'],
+    ['waf-shield.shield', 'Shield는', 'security'],
+    ['waf-shield.cloudfront', 'CloudFront는', 'networking'],
+    ['waf-shield.firewall-manager', 'Firewall Manager는', 'security'],
+    ['guardduty-macie-inspector.guardduty', 'GuardDuty는', 'security'],
+    ['guardduty-macie-inspector.macie', 'Macie는', 'security'],
+    ['guardduty-macie-inspector.amazon-inspector', 'Inspector는', 'security'],
+    ['guardduty-macie-inspector.security-hub', 'Security Hub는', 'security'],
     ['iam-permissions.iam', 'IAM은', 'security'],
     ['identity-federation.identity-center', 'Identity Center는', 'security'],
     ['identity-federation.sts', 'STS는', 'security'],
@@ -3251,12 +3493,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 92개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 95개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(92)
+    expect(serviceCategories).toHaveLength(95)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -3270,7 +3512,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 92개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 95개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
