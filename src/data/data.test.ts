@@ -40,13 +40,21 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
+    // phase 26 step 14가 security-groups-nacl의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // 정렬해, 이 세 개념은 더 이상 배열 끝이 아니다. 주제의 전체 순서는 아래
+    // 「보안 그룹·NACL 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set(['security-groups-nacl'])
+
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -71,13 +79,21 @@ describe('학습 데이터 무결성', () => {
       'analytics-monitoring': ['glue-crawler', 'log-analysis-options'],
     }
 
+    // phase 26 step 14가 두 네트워크 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // 「VPC 주제가 ...」·「하이브리드 연결 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set(['vpc-networking', 'hybrid-connectivity'])
+
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -267,11 +283,14 @@ describe('학습 데이터 무결성', () => {
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
       { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
+      // phase 26 step 14가 security-groups-nacl을 vpc-networking 바로 뒤로 옮겼다.
+      // VPC를 읽은 자리에서 트래픽을 거르는 두 장치를 이어 읽고, step 14가 맡은
+      // 세 주제가 배열에서 한 덩어리가 된다(topic-plan "배열 위치 근거").
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
+      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
       { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
       { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
-      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
       { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
@@ -640,7 +659,8 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(24, 31).map(({ id, title, importance, sourcePages }) => ({
+    // step 14가 security-groups-nacl을 네트워크 쪽으로 옮겨 이 묶음은 여섯이 됐다.
+    expect(topics.slice(25, 31).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -648,7 +668,6 @@ describe('학습 데이터 무결성', () => {
     }))).toEqual([
       { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
       { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
-      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
       { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
@@ -657,13 +676,16 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(24, 31).map((topic) => topic.concepts.length)).toEqual([
-      5, 14, 5, 9, 11, 12, 9,
+    // security-groups-nacl의 5는 step 14가 네트워크 묶음으로 가져갔다.
+    expect(topics.slice(25, 31).map((topic) => topic.concepts.length)).toEqual([
+      5, 14, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 24).map(({ id, title, importance, sourcePages }) => ({
+    // step 14가 security-groups-nacl을 vpc-networking과 hybrid-connectivity 사이로
+    // 옮겨 이 묶음이 하나 늘었다.
+    expect(topics.slice(9, 25).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -687,6 +709,7 @@ describe('학습 데이터 무결성', () => {
       { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
+      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
     ])
   })
@@ -703,9 +726,10 @@ describe('학습 데이터 무결성', () => {
     // messaging-backup은 11에서 10으로 줄었다. 33은 step 12가 그중 메시징 계열 7개념을
     // 빼낸 값이고, 11은 step 13이 남은 AWS Backup 계열 둘에 dump-gaps의 신규 9(백업 6 +
     // 재해 복구 3)를 더한 값이다. 그러고 남은 1은 MSK 하나이며 step 15가 가져간다.
-    // 나머지 둘은 아직 자기 step을 기다리고 있다.
-    expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 11, 1, 12, 10,
+    // 마지막 셋 20·9·19는 step 14가 세 주제에 dump-gaps의 신규 21(VPC 8 · 보안 그룹 4 ·
+    // 하이브리드 연결 9)을 더한 값이다.
+    expect(topics.slice(9, 25).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 11, 1, 20, 9, 19,
     ])
   })
 
@@ -1616,6 +1640,177 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('VPC 주제가 구성 요소 여덟 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'vpc-networking')
+
+    // 1단 VPC 구성 요소가 각각 무엇인가
+    // → 2단 NAT Gateway ↔ VPC Endpoint ↔ PrivateLink ↔ 피어링 중 언제 무엇을 고르는가
+    // → 3단 가용 영역마다 두는 것과 그렇지 않은 것, 엘라스틱 IP, 엔드포인트 정책, 확장 한계.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'vpc-networking.vpc-subnet',
+      'vpc-networking.internet-gateway',
+      'vpc-networking.egress-only-igw',
+      'vpc-networking.nat-gateway',
+      'vpc-networking.vpc-endpoint',
+      'vpc-networking.privatelink',
+      'vpc-networking.vpc-peering',
+      'vpc-networking.vpc-flow-logs',
+      'vpc-networking.comparison',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+      'vpc-networking.endpoint-pricing',
+      'vpc-networking.privatelink-endpoint-service',
+      'vpc-networking.nat-instance',
+      'vpc-networking.nat-gateway-per-az',
+      'vpc-networking.internet-gateway-is-not-per-az',
+      'vpc-networking.nat-gateway-count-by-environment',
+      'vpc-networking.nat-gateway-elastic-ip',
+      'vpc-networking.vpc-endpoint-policy',
+      'vpc-networking.vpc-peering-scaling-limit',
+      'vpc-networking.s3-is-regional',
+    ])
+  })
+
+  it('보안 그룹·NACL 주제가 둘의 소개 다음에 상태 저장 갈림길과 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'security-groups-nacl')
+
+    // 1단 보안 그룹과 NACL이 각각 무엇인가 → 2단 상태 저장과 상태 비저장, Web ACL과
+    // 네트워크 ACL은 다른 것 → 3단 규칙 수 제한, 거부 규칙을 어느 서브넷에 거는가,
+    // 로드 밸런서 보안 그룹의 아웃바운드.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'security-groups-nacl.security-group',
+      'security-groups-nacl.nacl',
+      'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+      'security-groups-nacl.web-acl-vs-nacl',
+      'security-groups-nacl.security-group-referencing',
+      'security-groups-nacl.nacl-rule-limit',
+      'security-groups-nacl.nacl-deny-at-source-subnet',
+      'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
+      'security-groups-nacl.nlb-security-group',
+    ])
+  })
+
+  it('하이브리드 연결 주제가 연결 수단 여덟 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'hybrid-connectivity')
+
+    // 1단 연결 수단들이 각각 무엇인가 → 2단 VPN과 Direct Connect의 갈림길, VPC마다
+    // 따로 걸 것인가 Transit Gateway로 모을 것인가, 데이터 지역성으로 비용 줄이기
+    // → 3단 Direct Connect의 함정과 복원력 구성, VIF 유형, 온프레미스로 되돌리는 아웃바운드.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'hybrid-connectivity.site-to-site-vpn',
+      'hybrid-connectivity.client-vpn',
+      'hybrid-connectivity.direct-connect',
+      'hybrid-connectivity.virtual-private-gateway',
+      'hybrid-connectivity.access-terms',
+      'hybrid-connectivity.transit-gateway',
+      'hybrid-connectivity.direct-connect-gateway',
+      'hybrid-connectivity.region-attached-edge-options',
+      'hybrid-connectivity.onprem-connectivity-heuristic',
+      'hybrid-connectivity.vpn-vs-direct-connect',
+      'hybrid-connectivity.per-vpc-vpn-for-isolation',
+      'hybrid-connectivity.transit-gateway-cross-region-peering',
+      'hybrid-connectivity.onprem-access-via-interface-endpoint',
+      'hybrid-connectivity.data-locality-cost',
+      'hybrid-connectivity.outposts-data-residency',
+      'hybrid-connectivity.direct-connect-caveats',
+      'hybrid-connectivity.direct-connect-resiliency',
+      'hybrid-connectivity.direct-connect-vif-types',
+      'hybrid-connectivity.centralized-onprem-egress',
+    ])
+  })
+
+  it('보안 그룹과 NACL이 한 주제 안에서 상태 저장 여부로 갈린다', () => {
+    // 대표 혼동 짝이다. 둘을 다른 주제로 떼면 "응답 트래픽에 규칙이 필요한가"를
+    // 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('security-groups-nacl.security-group-stateful-vs-nacl-stateless')
+    expect(fork).toBe('security-groups-nacl')
+    ;[
+      'security-groups-nacl.security-group',
+      'security-groups-nacl.nacl',
+      'security-groups-nacl.nacl-deny-at-source-subnet',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 보안 그룹은 응답을 규칙 없이 돌려보내고, NACL은 방향마다 규칙이 있어야 한다.
+    const stateful = bodyOf('security-groups-nacl.security-group-stateful-vs-nacl-stateless')
+    expect(stateful).toContain('아웃바운드 규칙이 없어도 나가고')
+    expect(stateful).toContain('각각 규칙이 있어야 통신이 성립한다')
+    // 차단이 필요하면 자리는 NACL이고, 남는 판단은 서브넷과 방향이다.
+    expect(bodyOf('security-groups-nacl.nacl-deny-at-source-subnet')).toContain(
+      '보내는 쪽 서브넷의 아웃바운드',
+    )
+  })
+
+  it('온프레미스를 잇는 세 수단이 한 주제 안에 함께 있다', () => {
+    // Site-to-Site VPN ↔ Direct Connect ↔ Transit Gateway는 한 벌이다. 흩으면
+    // "언제 무엇을 쓰는가"를 비교할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('hybrid-connectivity.vpn-vs-direct-connect')
+    expect(fork).toBe('hybrid-connectivity')
+    ;[
+      'hybrid-connectivity.site-to-site-vpn',
+      'hybrid-connectivity.direct-connect',
+      'hybrid-connectivity.transit-gateway',
+      'hybrid-connectivity.per-vpc-vpn-for-isolation',
+      'hybrid-connectivity.transit-gateway-cross-region-peering',
+      'hybrid-connectivity.virtual-private-gateway',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // VPC마다 따로 걸면 VPC 사이에 경로가 생기지 않고, Transit Gateway로 모으면
+    // 리전을 넘어서까지 경로가 이어진다. 가상 프라이빗 게이트웨이가 그 사이의 한계다.
+    expect(bodyOf('hybrid-connectivity.per-vpc-vpn-for-isolation')).toContain(
+      'VPC 사이에는 어느 쪽 라우팅 테이블에도 경로가 없다',
+    )
+    expect(bodyOf('hybrid-connectivity.transit-gateway-cross-region-peering')).toContain(
+      '리전 수만큼만 늘어난다',
+    )
+    expect(bodyOf('hybrid-connectivity.virtual-private-gateway')).toContain(
+      'VPC마다 하나씩 붙는 장치',
+    )
+  })
+
+  it('엔드포인트 두 유형과 PrivateLink의 갈림길이 한 주제 안에서 읽힌다', () => {
+    // 게이트웨이 엔드포인트 ↔ 인터페이스 엔드포인트 ↔ PrivateLink ↔ 피어링.
+    // 넷이 같은 보기 줄에 오르므로 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('vpc-networking.comparison')
+    expect(fork).toBe('vpc-networking')
+    ;[
+      'vpc-networking.vpc-endpoint',
+      'vpc-networking.endpoint-pricing',
+      'vpc-networking.privatelink',
+      'vpc-networking.privatelink-endpoint-service',
+      'vpc-networking.vpc-peering',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // NAT를 거치면 목적지가 공용 엔드포인트라 사설 경로 요구를 채우지 못하고,
+    // 엔드포인트 서비스는 라우팅 테이블을 건드리지 않는 쪽으로 피어링과 갈린다.
+    expect(bodyOf('vpc-networking.nat-gateway-traffic-uses-public-endpoints')).toContain(
+      '그 서비스의 공용 엔드포인트다',
+    )
+    expect(bodyOf('vpc-networking.privatelink-endpoint-service')).toContain(
+      '라우팅 테이블을 건드리지 않는다',
+    )
+  })
+
   it('동시성 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
     // 예약된 동시성 ↔ 프로비저닝된 동시성 ↔ 계정의 동시 실행 한도. 이름이 닮아
     // 보기 줄에 나란히 오르므로 떼어 놓으면 무엇이 무엇의 대안인지 알 수 없게 된다
@@ -2410,12 +2605,19 @@ describe('학습 데이터 무결성', () => {
     // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
     // "주제 배치와 어긋나는 자리").
     ['backup-disaster-recovery.elastic-disaster-recovery', 'Elastic Disaster Recovery는', 'storage'],
+    // phase 26 step 14가 세 네트워크 주제에 신규 21개념을 더했다. 그중 하나만
+    // 서비스를 소개하는 자리이고, 나머지는 NAT 게이트웨이·VPC 엔드포인트·보안 그룹·
+    // NACL·Direct Connect 같은 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
     ['vpc-networking.vpc-subnet', 'VPC는', 'networking'],
     ['vpc-networking.privatelink', 'PrivateLink는', 'networking'],
     ['hybrid-connectivity.site-to-site-vpn', 'Site-to-Site VPN은', 'networking'],
     ['hybrid-connectivity.direct-connect', 'Direct Connect는', 'networking'],
     ['hybrid-connectivity.transit-gateway', 'Transit Gateway는', 'networking'],
     ['hybrid-connectivity.client-vpn', 'Client VPN은', 'networking'],
+    // Local Zones·Outposts·Wavelength를 소개하는 자리가 이 개념 하나뿐이라 셋의 주어를
+    // 함께 적는다. storage-gateway-migration.dms-sct와 같은 방식이다.
+    ['hybrid-connectivity.region-attached-edge-options', 'Local Zones·Outposts·Wavelength는', 'compute'],
     ['route53.route53', 'Route53은', 'networking'],
     ['analytics-monitoring.emr', 'EMR은', 'analytics'],
     ['analytics-monitoring.redshift', 'RedShift는', 'analytics'],
@@ -2452,12 +2654,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 85개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 86개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(85)
+    expect(serviceCategories).toHaveLength(86)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -2471,7 +2673,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 85개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 86개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
