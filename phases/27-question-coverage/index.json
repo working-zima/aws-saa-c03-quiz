@@ -48,7 +48,7 @@
       "status": "completed",
       "started_at": "2026-09-08T00:21:15+0900",
       "summary": "q351~q374 문항 24개를 questions.json에 이어 붙여 총 350→374개가 됐다(다음 step은 q375부터). data-transfer-services 17개(q351~q367)·storage-gateway-migration 7개(q368~q374)로 담당 개념 22개를 하나도 남기지 않고 덮었다 — node scripts/coverage.mjs data-transfer-services storage-gateway-migration → exit 0, 19/19·7/7 둘 다 100퍼센트(기존 문항이 덮고 있던 datasync·snowball-edge·transfer-family·storage-gateway 4개 포함, 주제 문항 수는 3→20개·6→13개). 개념당 1문항이 기본이고 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 24개다 — 지속 수집 ↔ 예약 전송(파일 게이트웨이 ↔ DataSync), 볼륨 모드(저장 볼륨=전체 데이터가 로컬 ↔ 캐시된 볼륨=주 데이터가 AWS). 정답 위치는 0·1·2·3이 각각 6개(25퍼센트)이고 해설은 최소 294자·평균 400자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다(SFTP가 FTP 족 규칙에 걸리는 자리와 FSx·TLS·SMB·NFS 포함). 오답은 전부 같은 주제의 이웃 개념에서 골랐고(DataSync 매니페스트 ↔ 전송 모드 ↔ 상태 이벤트, Transfer Family의 ID 공급자 ↔ 서비스 관리형 사용자 ↔ 워크플로 액션 ↔ 구조화된 로깅, 게이트웨이 유형 셋, DMS ↔ SCT ↔ MGN ↔ App2Container). 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. 그래서 tape-gateway-archive-tiers(q373)는 보기를 「아카이브 계열 두 계층 중 검색이 가장 느리고 가장 싼 Deep Archive 쪽」처럼 변별 축으로 쓰고, S3 Glacier Flexible Retrieval·S3 Glacier Deep Archive 정식 이름은 해설에서 가르친다. data.test.ts에 step 5 블록 4개(id 범위와 담당 개념 22개 일치·topicId 일치·정답 분포와 문구·두 주제 커버리지)를 더했고 기존 테스트는 한 줄도 고치지 않았다. topics.json·topics-baseline.json과 기존 문항 q001~q350은 한 글자도 건드리지 않았다(HEAD의 350개와 JSON 동일 확인, q350 줄은 배열 구분 쉼표 하나만 붙었다). npm run lint·build·test(393개) 전부 통과, 전체 커버리지는 618개념 중 296개(48퍼센트)가 됐다. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
-      "completed_at": "2026-09-08T00:33:30+0900"
+      "completed_at": "2026-09-08T00:34:11+0900"
     },
     {
       "step": 6,
