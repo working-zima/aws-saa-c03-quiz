@@ -83,12 +83,12 @@ describe('학습 데이터 무결성', () => {
 
   it('컴퓨팅·메시징 보충 개념 21개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
     const expectedSlugs: Record<string, string[]> = {
-      // phase 26 step 8이 compute-delivery에서 EC2·ASG·ELB를 두 주제로 빼냈다.
-      // 개념 본문은 그대로이고 접두사만 새 주제를 따른다. CloudFront·Global
-      // Accelerator 쪽 셋은 아직 compute-delivery에 남아 있다(step 9 몫).
+      // phase 26 step 8이 compute-delivery에서 EC2·ASG·ELB를 두 주제로 빼냈고,
+      // step 9가 남은 CloudFront·Global Accelerator를 cloudfront-global-accelerator로
+      // 옮기며 compute-delivery를 없앴다. 개념 본문은 그대로이고 접두사만 새 주제를 따른다.
       'ec2-autoscaling': ['warm-pool', 'scheduled-scaling'],
       'elastic-load-balancing': ['alb-l7-vs-nlb-l4', 'sticky-session-tradeoff'],
-      'compute-delivery': [
+      'cloudfront-global-accelerator': [
         'global-accelerator-protocols',
         'cloudfront-ttl',
         'edge-keyword',
@@ -113,10 +113,15 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
-    // phase 26 step 8이 아래 두 주제의 개념을 3단(기본 → 갈림길 → 한계)으로 정렬해,
+    // phase 26 step 8·9가 아래 세 주제의 개념을 3단(기본 → 갈림길 → 한계)으로 정렬해,
     // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
-    // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」가 개념 id 전부로 못박는다.
-    const reordered = new Set(['ec2-autoscaling', 'elastic-load-balancing'])
+    // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
+    // Accelerator 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'ec2-autoscaling',
+      'elastic-load-balancing',
+      'cloudfront-global-accelerator',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -232,12 +237,11 @@ describe('학습 데이터 무결성', () => {
       { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
       { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
       // phase 26 step 8이 compute-delivery에서 EC2·ASG와 로드 밸런서를 빼내 앞에
-      // 놓았다. 남은 compute-delivery는 CloudFront·Global Accelerator뿐이고
-      // step 9가 cloudfront-global-accelerator로 바꾸며 없앤다 — 그래서 제목은 아직
-      // 옛 이름 그대로다.
+      // 놓았고, step 9가 남은 CloudFront·Global Accelerator를 옮기며 그 주제를
+      // 없앴다. 셋은 같은 조각이라 배열에서 연속으로 놓인다.
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
-      { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
+      { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
@@ -400,9 +404,9 @@ describe('학습 데이터 무결성', () => {
       'ec2-autoscaling.scheduled-scaling',
       'elastic-load-balancing.alb-l7-vs-nlb-l4',
       'elastic-load-balancing.sticky-session-tradeoff',
-      'compute-delivery.global-accelerator-protocols',
-      'compute-delivery.cloudfront-ttl',
-      'compute-delivery.edge-keyword',
+      'cloudfront-global-accelerator.global-accelerator-protocols',
+      'cloudfront-global-accelerator.cloudfront-ttl',
+      'cloudfront-global-accelerator.edge-keyword',
       'serverless-containers.eks',
       'serverless-containers.fargate-no-time-limit',
       'serverless-containers.lambda-function-url',
@@ -426,7 +430,7 @@ describe('학습 데이터 무결성', () => {
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
       ...Array(2).fill('ec2-autoscaling'),
       ...Array(2).fill('elastic-load-balancing'),
-      ...Array(3).fill('compute-delivery'),
+      ...Array(3).fill('cloudfront-global-accelerator'),
       ...Array(7).fill('serverless-containers'),
       ...Array(7).fill('messaging-backup'),
     ])
@@ -628,7 +632,7 @@ describe('학습 데이터 무결성', () => {
       { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
-      { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
+      { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
@@ -639,11 +643,11 @@ describe('학습 데이터 무결성', () => {
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이고,
     // 이어지는 18·18·14는 step 7이 원본 8개념을 셋으로 갈라 신규 42를 더한 결과다.
-    // 17·16·5는 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
-    // 빼내 신규 27을 더한 결과이고, 남은 5는 step 9가 가져간다.
+    // 17·16·21은 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
+    // 빼내 신규 27을 더하고, step 9가 남은 5개념을 옮겨 신규 16을 더한 결과다.
     // 나머지 넷은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
     expect(topics.slice(9, 20).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 5, 11, 11, 12, 10,
+      21, 18, 18, 14, 17, 16, 21, 11, 11, 12, 10,
     ])
   })
 
@@ -1095,6 +1099,70 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
+  it('CloudFront·Global Accelerator 주제가 두 서비스와 오리진 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'cloudfront-global-accelerator')
+
+    // 1단 CloudFront와 그 오리진, Global Accelerator와 그 진입점, 'Edge'의 뜻
+    // → 2단 캐싱할 사본이 있느냐·비용·DNS 캐시·접근 통제 장치 넷의 갈림길
+    // → 3단 가격 등급, 무효화와 TTL, 오리진 접근 제한, 엣지 함수의 한계.
+    // step 10이 lambda-at-edge·cloudfront-functions를 이 주제로 옮겨 온다.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'cloudfront-global-accelerator.cloudfront',
+      'cloudfront-global-accelerator.cloudfront-alb-origin',
+      'cloudfront-global-accelerator.cloudfront-multiple-origins',
+      'cloudfront-global-accelerator.cloudfront-onprem-origin',
+      'cloudfront-global-accelerator.global-accelerator',
+      'cloudfront-global-accelerator.global-accelerator-static-ip',
+      'cloudfront-global-accelerator.global-accelerator-endpoints',
+      'cloudfront-global-accelerator.edge-keyword',
+      'cloudfront-global-accelerator.global-accelerator-protocols',
+      'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
+      'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
+      'cloudfront-global-accelerator.cloudfront-signed-url',
+      'cloudfront-global-accelerator.cloudfront-signed-cookie',
+      'cloudfront-global-accelerator.cloudfront-geo-restriction',
+      'cloudfront-global-accelerator.cloudfront-field-level-encryption',
+      'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+      'cloudfront-global-accelerator.cloudfront-price-class',
+      'cloudfront-global-accelerator.cloudfront-ttl',
+      'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
+      'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
+      'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+    ])
+  })
+
+  it('CloudFront와 Global Accelerator가 한 주제 안에 함께 있다', () => {
+    // SAA-C03 대표 혼동 짝이다. step 9가 compute-delivery를 비울 때 둘을 다른 주제로
+    // 떼어 놓으면 "언제 무엇을 쓰는가"를 비교할 자리가 없어진다
+    // (PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+
+    const fork = ownerOf('cloudfront-global-accelerator.global-accelerator-protocols')
+    expect(fork).toBe('cloudfront-global-accelerator')
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront')).toBe(fork)
+    expect(ownerOf('cloudfront-global-accelerator.global-accelerator')).toBe(fork)
+    // 갈림길을 세우는 축이 셋이다 — 사본이 있느냐, 비용, DNS 캐시.
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost')).toBe(fork)
+    expect(ownerOf('cloudfront-global-accelerator.global-accelerator-vs-dns-failover')).toBe(fork)
+  })
+
+  it('CloudFront의 접근 통제 장치 넷이 서로 무엇으로 갈리는지 한 주제 안에서 읽힌다', () => {
+    // 서명된 URL ↔ 서명된 쿠키 ↔ 지리적 제한 ↔ 필드 수준 암호화. 기준이 각각
+    // 개별 사용자·URL의 동일성·국가·값 자체라서, 떼어 놓으면 무엇이 무엇의 대안인지
+    // 알 수 없게 된다.
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-signed-url')).toContain('유효 기간 동안만')
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-signed-cookie')).toContain('파일마다 URL이 달라진다')
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-geo-restriction')).toContain('국가를 기준으로 삼지 않는다')
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-field-level-encryption')).toContain('전달되는 값 자체를 가리는')
+  })
+
   it('로드 밸런서 셋의 선택 기준이 한 주제 안에 함께 있다', () => {
     // ALB ↔ NLB ↔ Gateway Load Balancer는 "언제 무엇을 쓰는가"가 그대로 문항이다.
     // step 8이 compute-delivery를 가를 때 셋을 떼어 놓으면 비교할 자리가 없어진다
@@ -1311,7 +1379,7 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'aurora.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
     { conceptId: 'elastic-load-balancing.elb', anchor: '실어 나를지 정하는' },
     { conceptId: 'elastic-load-balancing.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
-    { conceptId: 'compute-delivery.cloudfront-ttl', anchor: 'Time-to-Live' },
+    { conceptId: 'cloudfront-global-accelerator.cloudfront-ttl', anchor: 'Time-to-Live' },
     { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
     { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
     { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
@@ -1628,7 +1696,7 @@ describe('학습 데이터 무결성', () => {
   it('CloudFront와 Global Accelerator의 갈림길이 추상적인 대비 대신 구체적인 기준으로 쓰인다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'compute-delivery.global-accelerator-protocols')
+      .find(({ id }) => id === 'cloudfront-global-accelerator.global-accelerator-protocols')
 
     // "캐싱할 콘텐츠인가, 가속할 연결인가"는 두 말을 이미 아는 사람에게만 읽힌다.
     expect(concept?.paragraphs[1]).not.toContain('가속할 연결인가')
@@ -1643,9 +1711,9 @@ describe('학습 데이터 무결성', () => {
     // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
     expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(3)
     expect(byId['elastic-load-balancing.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
-    expect(byId['compute-delivery.global-accelerator-protocols'].paragraphs).toHaveLength(2)
-    expect(byId['compute-delivery.cloudfront-ttl'].paragraphs).toHaveLength(2)
-    expect(byId['compute-delivery.cloudfront-ttl'].summary).toBe(
+    expect(byId['cloudfront-global-accelerator.global-accelerator-protocols'].paragraphs).toHaveLength(2)
+    expect(byId['cloudfront-global-accelerator.cloudfront-ttl'].paragraphs).toHaveLength(2)
+    expect(byId['cloudfront-global-accelerator.cloudfront-ttl'].summary).toBe(
       'TTL이 만료되기 전에는 원본이 바뀌어도 엣지가 옛 파일을 계속 내보낸다.',
     )
   })
@@ -1849,8 +1917,8 @@ describe('학습 데이터 무결성', () => {
     // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
     ['ec2-autoscaling.ec2-image-builder', 'EC2 Image Builder는', 'compute'],
     ['elastic-load-balancing.elb', 'ELB는', 'networking'],
-    ['compute-delivery.cloudfront', 'CloudFront는', 'networking'],
-    ['compute-delivery.global-accelerator', 'Global Accelerator는', 'networking'],
+    ['cloudfront-global-accelerator.cloudfront', 'CloudFront는', 'networking'],
+    ['cloudfront-global-accelerator.global-accelerator', 'Global Accelerator는', 'networking'],
     ['serverless-containers.ecs', 'ECS는', 'containers'],
     ['serverless-containers.lambda', 'Lambda는', 'compute'],
     ['serverless-containers.step-functions', 'Step Functions는', 'appIntegration'],
