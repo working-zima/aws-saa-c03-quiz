@@ -24,7 +24,7 @@
       "status": "completed",
       "started_at": "2026-09-07T23:53:42+0900",
       "summary": "q295~q326 문항 32개를 questions.json에 이어 붙여 총 294→326개가 됐다(다음 step은 q327부터). governance-iac 7개(q295~q301)·systems-manager 8개(q302~q309)·ai-ml-services 7개(q310~q316)·aws-core-services 2개(q317~q318)·s3-storage-classes 8개(q319~q326)로 담당 개념 30개를 하나도 남기지 않고 덮었다(node scripts/coverage.mjs governance-iac systems-manager ai-ml-services aws-core-services s3-storage-classes → exit 0, 다섯 주제 모두 100%). 문항이 0개였던 주제 3개가 사라져 이제 문항이 하나도 없는 주제는 없다(전체 618개념 중 253개 41% 덮임). 개념당 1문항이 기본이고 헷갈리는 짝 둘만 두 방향으로 물어 32개다 — EC2 Instance Connect 엔드포인트(서비스 선택 ↔ 여는 포트 443), AI 서비스 넷의 갈래(Transcribe ↔ Textract). 정답 위치는 0·1·2·3이 각각 8개(25%)이고 해설은 최소 258자·평균 328자로 정답 근거와 오답의 변별 축을 함께 담으며, ADR-015 약어 풀네임 규칙도 첫 등장 자리 기준으로 통과한다. 정답 보기에 Glacier가 들어가는 문항은 만들지 않았다 — 「정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다」가 q020~q024로 id 목록을 고정하고 있어서다. data.test.ts에 step 2 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고, 기존 단정 하나만 범위를 좁혔다: 「S3 스토리지 클래스 문제 9개가…」가 주제 전체를 세고 있어 이 주제에 문항을 더하면 반드시 깨지므로, 그 단정이 실제로 고정하던 대상인 원본 은행 246문항으로 slice를 좁혔다(App.test.tsx의 '1 / 246'을 questions.length로 바꾼 step 1과 같은 성격의 손질이다). topics.json·topics-baseline.json과 기존 문항 q001~q294는 한 글자도 건드리지 않았다(git diff 32줄 추가·0줄 삭제). npm run lint·build·test(385개) 전부 통과. check-structure.mjs는 questionsSha256 1건으로 실패하는데 이는 정상이며 마지막 step이 재생성한다.",
-      "completed_at": "2026-09-08T00:12:00+0900"
+      "completed_at": "2026-09-08T00:10:43+0900"
     },
     {
       "step": 3,
