@@ -3,7 +3,8 @@
 > step마다 새로 만든 개념을 한 줄씩 append한다. step이 18개로 나뉘어 있어
 > 앞 step이 무엇을 만들었는지 이 파일로만 알 수 있다 — step 간 중복 방지 장치다.
 > 형식: `- {concept-id} — {한 줄 제목} [Q{시작}-Q{끝}]`
-> topicId는 적지 않는다. 주제 배치는 phase 26에서 정한다.
+> topicId는 적지 않는다. 주제 배치는 phase 26이 끝냈고 결과는 `src/data/topics.json`에 있다.
+> 여기서 온 개념의 문항은 phase 27이 채웠다 — 개념 618개 전부가 문항 하나 이상을 갖는다(ADR-026).
 > 앱에 이미 있는 개념 182개는 `docs/source/concept-index.md`에서 확인한다.
 
 - s3-replication — S3 리전 간 복제 [Q001-Q050]
