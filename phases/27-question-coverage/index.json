@@ -13,8 +13,11 @@
     {
       "step": 1,
       "name": "questions-s3-access-bi",
-      "status": "pending",
-      "started_at": "2026-09-07T22:27:36+0900"
+      "status": "completed",
+      "started_at": "2026-09-07T22:27:36+0900",
+      "blocked_reason": "같은 worktree(/Volumes/zimablue_ssd/dev/etc/aws-saa-c03-quiz-p27)에서 phase 27 harness 실행이 두 개 동시에 돌고 있다. scripts/execute.py PID 36791(22:21:41 시작)과 PID 38620(22:25:12 시작)이 각각 step 1 에이전트(claude -p PID 39886 / PID 40627)를 띄웠고, 그중 하나가 22:31:41에 src/data/data.test.ts에 step 1 테스트 블록 95줄을 이미 썼다. 두 에이전트가 같은 파일(questions.json·data.test.ts·index.json)에 같은 id 범위(q247~q270)를 쓰게 되므로 나중에 쓰는 쪽이 앞의 것을 덮고, execute.py의 _commit_step이 git add -A를 쓰기 때문에 상대가 편집 중인 파일까지 자기 커밋에 들어간다(CLAUDE.md 「에이전트를 여러 개 동시에 돌릴 때」가 경고한 상황 그대로다). CLAUDE.md 「커밋 전에 지킬 것」의 \"내가 만들지 않은 변경이 워킹 트리에 있으면 커밋하지 말고 멈춰서 사용자에게 알려라\"에 따라 아무것도 쓰지 않고 중단했다. 사람이 두 실행 중 하나를 종료하고(다른 하나는 worktree를 새로 파고) 남길 쪽을 정해야 한다. 상대 에이전트가 쓴 data.test.ts 변경은 그대로 두었다 — 되돌리지 않았다.",
+      "summary": "q247~q270 문항 24개를 questions.json에 이어 붙여 총 246→270개가 됐다(다음 step은 q271부터). s3-access-control 13개(q247~q259)·redshift-opensearch-quicksight 11개(q260~q270)로 담당 개념 24개에 문항이 일대일로 붙어 두 주제의 커버리지가 100%가 됐고 빠뜨린 개념은 없다(node scripts/coverage.mjs s3-access-control redshift-opensearch-quicksight → exit 0). 문항이 0개였던 주제 5개 중 이 둘이 사라졌다. 정답 위치는 0·1·2·3이 각각 6개(25%)이고 해설은 평균 221자로 정답 근거와 오답의 변별 축을 함께 담는다. data.test.ts에 step 1 블록 4개(id 범위·topicId 일치·정답 분포와 문구·담당 주제 커버리지)를 더했고, App.test.tsx의 하드코딩된 '1 / 246'을 questions.length로 바꿨다 — 문제 은행이 커질 때마다 깨지던 단정이다. topics.json과 topics-baseline.json은 건드리지 않았으므로 check-structure.mjs는 questionsSha256 1건으로 실패한다(마지막 step이 재생성). ※ 이 step의 blocked_reason은 같은 worktree에서 동시에 돌던 다른 harness 실행의 step 1 에이전트가 쓴 것이고, 지우지 않고 그대로 뒀다. 그 실행(execute.py PID 38620)은 아직 살아 있으므로 사람이 둘 중 하나를 종료해야 한다 — 산출물 자체는 위 요약대로 완료·검증됐다.",
+      "completed_at": "2026-09-07T22:39:34+0900"
     },
     {
       "step": 2,
