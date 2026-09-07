@@ -104,21 +104,23 @@ describe('학습 데이터 무결성', () => {
       // (topic-plan "step 경계를 넘는 개념").
       'ecs-eks-fargate': ['eks', 'fargate-no-time-limit', 'aws-batch'],
       'api-gateway-step-functions': ['api-gateway-jwt-authorizer', 'step-functions-features'],
-      'messaging-backup': [
-        'msk',
+      // step 12가 messaging-backup에서 메시징 계열을 sqs-sns-eventbridge로 빼냈다.
+      // AWS Backup 계열과 MSK는 남아 각각 step 13·15를 기다린다.
+      'sqs-sns-eventbridge': [
         'sqs-details',
         'sqs-queue-depth-scaling',
         'eventbridge-scheduler',
         'ses',
-        'backup-long-term-retention',
       ],
+      'messaging-backup': ['msk', 'backup-long-term-retention'],
     }
 
-    // phase 26 step 8·9·10·11이 아래 여섯 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // phase 26 step 8·9·10·11·12가 아래 일곱 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
     // 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
     // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
     // Accelerator 주제가 ...」·「Lambda 주제가 ...」·「컨테이너 주제가 ...」·
-    // 「API Gateway·Step Functions 주제가 ...」가 개념 id 전부로 못박는다.
+    // 「API Gateway·Step Functions 주제가 ...」·「메시징 주제가 ...」가
+    // 개념 id 전부로 못박는다.
     const reordered = new Set([
       'ec2-autoscaling',
       'elastic-load-balancing',
@@ -126,6 +128,7 @@ describe('학습 데이터 무결성', () => {
       'lambda',
       'ecs-eks-fargate',
       'api-gateway-step-functions',
+      'sqs-sns-eventbridge',
     ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
@@ -213,7 +216,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 29개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 30개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -253,6 +256,10 @@ describe('학습 데이터 무결성', () => {
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
       { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
       { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
+      // phase 26 step 12가 messaging-backup의 메시징 계열을 빼내 그 자리에 놓았다.
+      // SQS ↔ SNS ↔ EventBridge는 메시징 세 갈래의 선택이라 한 주제에 둔다(PRD "사용자").
+      // 남은 messaging-backup은 AWS Backup 계열과 MSK만 들고 step 13·15를 기다린다.
+      { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -427,13 +434,15 @@ describe('학습 데이터 무결성', () => {
       'lambda.lambda-vpc-access',
       'api-gateway-step-functions.api-gateway-jwt-authorizer',
       'ecs-eks-fargate.aws-batch',
+      // phase 26 step 12가 메시징 계열을 sqs-sns-eventbridge로 옮겼다. MSK는 step 15가,
+      // AWS Backup 계열은 step 13이 맡으므로 messaging-backup에 남는다.
       'messaging-backup.msk',
-      'messaging-backup.sqs-details',
-      'messaging-backup.sqs-queue-depth-scaling',
-      'messaging-backup.eventbridge-scheduler',
+      'sqs-sns-eventbridge.sqs-details',
+      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
+      'sqs-sns-eventbridge.eventbridge-scheduler',
       // step 11이 messaging-backup에서 함께 가져왔다.
       'api-gateway-step-functions.step-functions-features',
-      'messaging-backup.ses',
+      'sqs-sns-eventbridge.ses',
       'messaging-backup.backup-long-term-retention',
     ]
 
@@ -446,17 +455,19 @@ describe('학습 데이터 무결성', () => {
       ...Array(2).fill('elastic-load-balancing'),
       ...Array(3).fill('cloudfront-global-accelerator'),
       // step 10이 Lambda 계열을 옮기고 step 11이 serverless-containers를 둘로 가르면서
-      // 이 구간이 다섯 주제로 갈라졌다. 문항의 id 순서는 그대로이고 topicId만
-      // 자기 conceptId를 담은 주제를 따른다.
+      // 이 구간이 다섯 주제로 갈라졌고, step 12가 메시징 계열을 빼내며 여섯이 됐다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
       ...Array(2).fill('ecs-eks-fargate'),
       'lambda',
       'cloudfront-global-accelerator',
       'lambda',
       'api-gateway-step-functions',
       'ecs-eks-fargate',
-      ...Array(4).fill('messaging-backup'),
+      'messaging-backup',
+      ...Array(3).fill('sqs-sns-eventbridge'),
       'api-gateway-step-functions',
-      ...Array(2).fill('messaging-backup'),
+      'sqs-sns-eventbridge',
+      'messaging-backup',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -621,7 +632,7 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(22, 29).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(23, 30).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -638,13 +649,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(22, 29).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(23, 30).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 22).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 23).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -662,6 +673,8 @@ describe('학습 데이터 무결성', () => {
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
       { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
       { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
+      // phase 26 step 12가 messaging-backup에서 메시징 계열을 빼내 그 자리에 놓았다.
+      { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -677,9 +690,11 @@ describe('학습 데이터 무결성', () => {
     // 18은 step 10이 serverless-containers의 11개념에서 Lambda 계열 4개를 빼내 신규 15를
     // 더한 결과이고, 23·19는 step 11이 남은 7개념을 둘로 가르며 messaging-backup의
     // step-functions-features를 함께 가져와 신규 34를 더한 결과다. 그 바람에
-    // messaging-backup은 11에서 10으로 줄었다. 나머지 둘은 아직 자기 step을 기다리고 있다.
-    expect(topics.slice(9, 22).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 10, 12, 10,
+    // messaging-backup은 11에서 10으로 줄었다. 33은 step 12가 그중 메시징 계열 7개념을
+    // 빼내 신규 26을 더한 값이고, 남은 3은 AWS Backup 계열 둘과 MSK다 —
+    // 각각 step 13·15가 가져간다. 나머지 둘은 아직 자기 step을 기다리고 있다.
+    expect(topics.slice(9, 23).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 3, 12, 10,
     ])
   })
 
@@ -1411,6 +1426,125 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('메시징 주제가 서비스 다섯과 데드레터 큐 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'sqs-sns-eventbridge')
+
+    // 1단 SQS·SNS·EventBridge·Amazon MQ·SES가 무엇이고 큐에 실패한 메시지가 어디로 가는가
+    // → 2단 세 갈래 중 언제 무엇을 고르는가(버퍼·팬아웃·라우팅·순서·이벤트 통로·수신)
+    // → 3단 배치와 가시성 타임아웃, 크기·중복 제거 창 같은 한계값, 큐·토픽에 필요한 권한.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'sqs-sns-eventbridge.sqs',
+      'sqs-sns-eventbridge.sns',
+      'sqs-sns-eventbridge.eventbridge',
+      'sqs-sns-eventbridge.eventbridge-scheduler',
+      'sqs-sns-eventbridge.amazon-mq',
+      'sqs-sns-eventbridge.ses',
+      'sqs-sns-eventbridge.dead-letter-queue',
+      'sqs-sns-eventbridge.sns-is-not-a-queue',
+      'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+      'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+      'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+      'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
+      'sqs-sns-eventbridge.eventbridge-event-bus-types',
+      'sqs-sns-eventbridge.eventbridge-pipes',
+      'sqs-sns-eventbridge.eventbridge-api-destination',
+      'sqs-sns-eventbridge.eventbridge-private-api-target',
+      'sqs-sns-eventbridge.eventbridge-resource-change-rule',
+      'sqs-sns-eventbridge.sqs-details',
+      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.ses-inbound-email-receiving',
+      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
+      'sqs-sns-eventbridge.sqs-batch-and-polling',
+      'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+      'sqs-sns-eventbridge.sqs-message-size-limit',
+      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+      'sqs-sns-eventbridge.sqs-content-based-deduplication',
+      'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+      'sqs-sns-eventbridge.sqs-queue-policy',
+      'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+      'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+      'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
+      'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+    ])
+  })
+
+  it('메시징 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
+    // SQS ↔ SNS ↔ EventBridge. 셋 중 무엇을 고르는가가 그대로 문항이고, Amazon MQ와
+    // SES도 같은 보기 줄에 오르므로 함께 둔다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('sqs-sns-eventbridge.sqs')
+    expect(fork).toBe('sqs-sns-eventbridge')
+    ;[
+      'sqs-sns-eventbridge.sns',
+      'sqs-sns-eventbridge.eventbridge',
+      'sqs-sns-eventbridge.amazon-mq',
+      'sqs-sns-eventbridge.ses',
+      'sqs-sns-eventbridge.sns-is-not-a-queue',
+      'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+      'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+      'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // SQS ↔ SNS는 쌓아 두는 버퍼인가로 갈리고, 팬아웃은 그 둘을 겹쳐 쓴다.
+    // EventBridge는 라우팅까지가 몫이라 단계 추적도 순서·장기 보존도 맡지 않는다.
+    expect(bodyOf('sqs-sns-eventbridge.sns-is-not-a-queue')).toContain('내구성 있는 버퍼다')
+    expect(bodyOf('sqs-sns-eventbridge.sns-sqs-fanout-per-consumer')).toContain(
+      '모든 소비자가 모든 이벤트를 받는다',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.eventbridge-vs-step-functions')).toContain(
+      '이벤트 라우팅 서비스라',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.eventbridge-ordering-and-retention')).toContain(
+      '24시간 넘게 들고 있지 않는다',
+    )
+  })
+
+  it('표준 큐와 FIFO 큐의 갈림길이 한 주제 안에서 이어진다', () => {
+    // 표준 ↔ FIFO. 순서와 중복 제거가 필요한지로 갈리는 한 벌이라 떼어 놓으면
+    // 어느 쪽을 고르는지 판단할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('sqs-sns-eventbridge.sqs-details')
+    expect(fork).toBe('sqs-sns-eventbridge')
+    ;[
+      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+      'sqs-sns-eventbridge.sqs-content-based-deduplication',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 두 유형을 소개하는 것은 기존 sqs 개념의 문단이고, 표준 큐의 약점이 그 뒤를 잇는다.
+    expect(bodyOf('sqs-sns-eventbridge.sqs')).toContain('**표준 대기열**')
+    expect(bodyOf('sqs-sns-eventbridge.sqs')).toContain('**선입선출 대기열**')
+    expect(bodyOf('sqs-sns-eventbridge.sqs-details')).toContain('순서가 바뀔 수 있다')
+    // FIFO가 무엇을 어느 단위로 보장하는지, 그리고 표준 큐로는 왜 안 되는지가 이어진다.
+    expect(bodyOf('sqs-sns-eventbridge.sqs-fifo-message-group-id')).toContain(
+      '메시지 그룹 단위로 적용된다',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.sqs-fifo-deduplication-id')).toContain(
+      '걸러내는 범위가 5분이다',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.sqs-content-based-deduplication')).toContain(
+      '**표준 큐로는 이 요구를 만족할 수 없다.**',
+    )
+    // SNS 쪽에도 같은 두 유형이 있고, 지점 간 큐와 갈리는 지점이 여기다.
+    expect(bodyOf('sqs-sns-eventbridge.sns-fifo-topic')).toContain(
+      '여러 구독자에게 동시에 뿌리지 못한다',
+    )
+  })
+
   it('동시성 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
     // 예약된 동시성 ↔ 프로비저닝된 동시성 ↔ 계정의 동시 실행 한도. 이름이 닮아
     // 보기 줄에 나란히 오르므로 떼어 놓으면 무엇이 무엇의 대안인지 알 수 없게 된다
@@ -1924,7 +2058,7 @@ describe('학습 데이터 무결성', () => {
   it('SQS 개념의 잘못된 표기가 바로잡혀 있다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'messaging-backup.sqs-details')
+      .find(({ id }) => id === 'sqs-sns-eventbridge.sqs-details')
 
     expect(concept?.summary).toContain('중복과 순서 뒤바뀜이 생길 수 있다')
     expect(concept?.paragraphs[1]).toContain('순서가 바뀔 수 있다')
@@ -2184,12 +2318,19 @@ describe('학습 데이터 무결성', () => {
     ['ecs-eks-fargate.app2container', 'App2Container는', 'containers'],
     ['api-gateway-step-functions.api-gateway', 'API Gateway는', 'networking'],
     ['api-gateway-step-functions.step-functions', 'Step Functions는', 'appIntegration'],
-    ['messaging-backup.sqs', 'SQS는', 'appIntegration'],
-    ['messaging-backup.sns', 'SNS는', 'appIntegration'],
-    ['messaging-backup.eventbridge', 'EventBridge는', 'appIntegration'],
+    // phase 26 step 12가 messaging-backup의 메시징 계열을 빼냈다. 신규 26개념 중
+    // Amazon MQ만 서비스를 소개하는 자리이고, 나머지는 SQS·SNS·EventBridge·SES의
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['sqs-sns-eventbridge.sqs', 'SQS는', 'appIntegration'],
+    ['sqs-sns-eventbridge.sns', 'SNS는', 'appIntegration'],
+    ['sqs-sns-eventbridge.eventbridge', 'EventBridge는', 'appIntegration'],
+    ['sqs-sns-eventbridge.amazon-mq', 'Amazon MQ는', 'appIntegration'],
+    // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
+    // "주제 배치와 어긋나는 자리").
+    ['sqs-sns-eventbridge.ses', 'SES는', 'business'],
     ['messaging-backup.backup', 'AWS Backup은', 'storage'],
     ['messaging-backup.msk', 'MSK는', 'analytics'],
-    ['messaging-backup.ses', 'SES는', 'business'],
     ['vpc-networking.vpc-subnet', 'VPC는', 'networking'],
     ['vpc-networking.privatelink', 'PrivateLink는', 'networking'],
     ['hybrid-connectivity.site-to-site-vpn', 'Site-to-Site VPN은', 'networking'],
@@ -2232,12 +2373,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 83개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 84개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(83)
+    expect(serviceCategories).toHaveLength(84)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -2251,7 +2392,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 83개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 84개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
