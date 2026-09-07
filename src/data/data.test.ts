@@ -1048,6 +1048,92 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 4 — efs-fsx의 빈 개념 21개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 둘로 갈리는 개념 셋만 두 방향으로 물어 문항이 24개다 — 처리량
+  // 모드(버스팅 ↔ 프로비저닝), 성능 모드(최대 I/O ↔ 범용), IA 파일 크기 기준
+  // (128KB에 못 미쳐 절감이 작은 쪽 ↔ 1GB라서 실효를 내는 쪽).
+  const step4Concepts = [
+    'efs-fsx.fsx-windows-file-server',
+    'efs-fsx.fsx-for-lustre',
+    'efs-fsx.fsx-file-gateway',
+    'efs-fsx.efs-throughput-modes',
+    'efs-fsx.efs-elastic-throughput',
+    'efs-fsx.efs-performance-modes',
+    'efs-fsx.efs-one-zone',
+    'efs-fsx.efs-posix-permissions',
+    'efs-fsx.fsx-lustre-sub-millisecond-latency',
+    'efs-fsx.fsx-lustre-persistent-deployment',
+    'efs-fsx.fsx-ontap-multi-protocol-tiering',
+    'efs-fsx.fsx-ontap-iscsi-block',
+    'efs-fsx.fsx-ontap-snapmirror',
+    'efs-fsx.sql-server-always-on-shared-storage',
+    'efs-fsx.efs-ia-file-size-threshold',
+    'efs-fsx.efs-lifecycle-transition-to-primary',
+    'efs-fsx.efs-mount-target-per-az',
+    'efs-fsx.efs-cross-account-mount',
+    'efs-fsx.efs-replication-one-way',
+    'efs-fsx.fsx-windows-storage-auto-scaling',
+    'efs-fsx.fsx-lustre-s3-data-repository-association',
+  ]
+
+  it('공유 파일 스토리지 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(326, 350)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 327}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(24).fill('efs-fsx'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step4Concepts].sort(),
+    )
+  })
+
+  it('공유 파일 스토리지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(326, 350).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('공유 파일 스토리지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(326, 350)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('EFS·FSx 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'efs-fsx')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
