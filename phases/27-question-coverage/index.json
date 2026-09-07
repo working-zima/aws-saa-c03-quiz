@@ -29,7 +29,8 @@
     {
       "step": 3,
       "name": "questions-s3-lifecycle-block",
-      "status": "pending"
+      "status": "pending",
+      "started_at": "2026-09-07T22:42:03+0900"
     },
     {
       "step": 4,
