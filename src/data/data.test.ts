@@ -149,7 +149,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 9개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
+  it('보충 개념 9개가 지정된 주제에 그대로 남아 있다', () => {
     const expectedSlugs: Record<string, string[]> = {
       'aws-core-services': ['exam-heuristics'],
       's3-versioning-lifecycle': ['object-lock-prerequisites', 'event-notification'],
@@ -162,13 +162,21 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
+    // phase 26이 s3-versioning-lifecycle의 개념을 3단(기본 → 갈림길 → 한계)으로 다시
+    // 정렬해, 이 두 개념은 더 이상 배열 끝이 아니다. 그 주제의 전체 순서는 아래
+    // 「S3 버전 관리 주제가 ...」 테스트가 개념 id 전부로 못박는다.
+    const reordered = new Set(['s3-versioning-lifecycle'])
+
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -181,7 +189,7 @@ describe('학습 데이터 무결성', () => {
     }))).toEqual([
       { id: 'aws-core-services', title: 'AWS 핵심 서비스·리전·가용 영역·온프레미스', importance: 0, sourcePages: [1, 7] },
       { id: 's3-storage-classes', title: 'S3 스토리지 클래스 유형', importance: 3, sourcePages: [8, 9] },
-      { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기 정책', importance: 3, sourcePages: [10, 12] },
+      { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기·복제', importance: 3, sourcePages: [10, 12] },
       { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·S3 Batch Operations', importance: 2, sourcePages: [13, 13] },
       { id: 'block-file-storage', title: 'EBS·EFS·FSx·인스턴스 스토어', importance: 3, sourcePages: [14, 15] },
       { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·Storage Gateway', importance: 3, sourcePages: [16, 18] },
@@ -574,9 +582,12 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('S3 스토리지 클래스 주제가 클래스별 개념 7개와 정리 개념 2개로 나뉜다', () => {
+  it('S3 스토리지 클래스 주제가 클래스 8개 다음에 갈림길 7개와 비용 개념 2개를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-storage-classes')
 
+    // 1단 클래스 여덟 → 2단 어느 클래스를 고르는가 → 3단 클래스별 비용 항목.
+    // Glacier 3종을 포함한 클래스 전부가 한 주제 안에 있어야 한다 — 헷갈리는 짝을 가르면
+    // "언제 무엇을 쓰는가"를 비교할 자리가 없어진다(PRD "사용자").
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       's3-storage-classes.standard',
       's3-storage-classes.intelligent-tiering',
@@ -585,10 +596,18 @@ describe('학습 데이터 무결성', () => {
       's3-storage-classes.glacier-instant-retrieval',
       's3-storage-classes.glacier-flexible-retrieval',
       's3-storage-classes.glacier-deep-archive',
+      's3-storage-classes.s3-express-one-zone',
       's3-storage-classes.retrieval-time',
       's3-storage-classes.glacier-or-standard-ia',
+      's3-storage-classes.glacier-flexible-retrieval-standard-time',
+      's3-storage-classes.glacier-flexible-retrieval-expedited',
+      's3-storage-classes.s3-storage-class-cost-order',
+      's3-storage-classes.lifecycle-vs-intelligent-tiering',
+      's3-storage-classes.s3-storage-class-analysis',
+      's3-storage-classes.s3-retrieval-fee-by-class',
+      's3-storage-classes.intelligent-tiering-monitoring-fee',
     ])
-    expect(topic?.concepts.map((concept) => concept.name)).toEqual([
+    expect(topic?.concepts.slice(0, 8).map((concept) => concept.name)).toEqual([
       'S3 Standard',
       'S3 Intelligent-Tiering',
       'S3 Standard-IA (Infrequent Access)',
@@ -596,8 +615,36 @@ describe('학습 데이터 무결성', () => {
       'S3 Glacier Instant Retrieval',
       'S3 Glacier Flexible Retrieval',
       'S3 Glacier Deep Archive',
+      'S3 Express One Zone',
+    ])
+    expect(topic?.concepts.slice(8).map((concept) => concept.name)).toEqual([
       '즉시 조회와 대기 조회',
       'Glacier와 Standard-IA 중 고르기',
+      'Glacier Flexible Retrieval의 표준 검색 시간',
+      'Glacier Flexible Retrieval의 신속 검색',
+      '아카이브 계열의 비용 순서',
+      '수명 주기 규칙과 자동 계층화의 갈림길',
+      'S3 스토리지 클래스 분석',
+      '스토리지 클래스마다 갈리는 검색 요금',
+      'Intelligent-Tiering의 객체별 감시 요금',
+    ])
+  })
+
+  it('S3 버전 관리 주제가 기능 다섯 다음에 복제의 갈래와 구성 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-versioning-lifecycle')
+
+    // 1단 각각 무엇인가 → 2단 리전을 넘는 복제와 같은 리전 복제 → 3단 전제 조건과 구성 한계.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-versioning-lifecycle.versioning',
+      's3-versioning-lifecycle.object-lock',
+      's3-versioning-lifecycle.lifecycle-policy',
+      's3-versioning-lifecycle.event-notification',
+      's3-versioning-lifecycle.s3-replication',
+      's3-versioning-lifecycle.s3-same-region-replication',
+      's3-versioning-lifecycle.s3-replication-time-control',
+      's3-versioning-lifecycle.s3-replication-cross-account-kms',
+      's3-versioning-lifecycle.object-lock-prerequisites',
+      's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
     ])
   })
 
