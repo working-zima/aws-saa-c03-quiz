@@ -302,7 +302,14 @@ const [selections, setSelections] = useState<(number | null)[]>(...)   // 길이
 | 제외 | **`questions.json`** — 문제문·해설이 결과에 뜨면 확인 문제가 무의미해진다 |
 | 매칭 | 질의를 공백으로 쪼갠 **모든** 토큰이 들어 있어야 한다. 대소문자 무시, `**강조**` 마커 제거 후 비교 |
 | 순위 | 개념 이름 → 주제 제목 → 한 줄 요약 → 개념 본문. 같은 항목은 가장 앞선 필드 하나로만 센다 |
+| 표시 | 이름·요약·주제 제목에 걸린 히트를 먼저 그리고 **본문에만 걸린 히트는 접는다** (ADR-024). 자르지 않는다 |
 | 목적지 | 개념 히트는 `/topic/:topicId#:conceptId`, 주제 히트는 `/topic/:topicId` (ADR-020) |
+
+**본문 히트를 가르는 것도 `search.ts`가 한다.** `splitBodyOnly(hits, query)`가
+`{ primary, bodyOnly }`를 돌려주고, 화면은 어느 쪽을 접을지가 아니라 **펼쳤는지만** 판단한다.
+`primary`가 비면 접지 않는다 — 남길 것이 없는데 접으면 결과가 없는 것처럼 보인다.
+펼친 상태는 **질의 문자열로 들고 있어서**(`openedFor === query`) 질의가 바뀌면 저절로 닫힌다.
+`useEffect`로 닫지 마라.
 
 **개념 히트는 그 개념 위치로 보낸다(ADR-020).** 링크에 `#:conceptId`를 붙이고,
 `ConceptReadPage`가 해시를 읽어 `scrollIntoView`로 옮긴다. 위 "화면 전환 시 스크롤"의

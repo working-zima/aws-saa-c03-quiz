@@ -75,3 +75,28 @@ export function searchContent(topics: Topic[], query: string): SearchHit[] {
   // sort는 안정 정렬이므로 순위가 같으면 topics·concepts 배열 순서가 그대로 남는다.
   return ranked.sort((a, b) => a.rank - b.rank).map((entry) => entry.hit)
 }
+
+// 본문에만 걸린 개념 히트를 갈라낸다. 순서는 받은 그대로 지킨다.
+// 이유: 개념이 618개로 늘어난 뒤 한 단어 질의의 절반 이상이 본문에만 걸린 히트다
+// (`s3` 154개 중 81개, `비용` 93개 중 66개). 전부 한 목록에 그리면 찾으려던 것이
+// 그 안에 묻힌다. 근거는 ADR-024.
+export function splitBodyOnly(
+  hits: SearchHit[],
+  query: string,
+): { primary: SearchHit[]; bodyOnly: SearchHit[] } {
+  const tokens = tokenize(query)
+  const primary: SearchHit[] = []
+  const bodyOnly: SearchHit[] = []
+
+  for (const hit of hits) {
+    const isBodyOnly =
+      hit.kind === 'concept' && conceptRank(hit.concept, tokens) === RANK_CONCEPT_BODY
+    if (isBodyOnly) {
+      bodyOnly.push(hit)
+    } else {
+      primary.push(hit)
+    }
+  }
+
+  return { primary, bodyOnly }
+}
