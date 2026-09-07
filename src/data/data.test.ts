@@ -98,32 +98,34 @@ describe('학습 데이터 무결성', () => {
         'lambda-at-edge',
       ],
       lambda: ['lambda-function-url', 'lambda-vpc-access'],
-      'serverless-containers': [
-        'eks',
-        'fargate-no-time-limit',
-        'api-gateway-jwt-authorizer',
-        'aws-batch',
-      ],
+      // step 11이 serverless-containers의 남은 껍데기를 둘로 갈랐다. 컨테이너 계열은
+      // ecs-eks-fargate로, API Gateway·Step Functions 계열은 api-gateway-step-functions로
+      // 가고, messaging-backup에 있던 step-functions-features도 후자로 옮겨 온다
+      // (topic-plan "step 경계를 넘는 개념").
+      'ecs-eks-fargate': ['eks', 'fargate-no-time-limit', 'aws-batch'],
+      'api-gateway-step-functions': ['api-gateway-jwt-authorizer', 'step-functions-features'],
       'messaging-backup': [
         'msk',
         'sqs-details',
         'sqs-queue-depth-scaling',
         'eventbridge-scheduler',
-        'step-functions-features',
         'ses',
         'backup-long-term-retention',
       ],
     }
 
-    // phase 26 step 8·9·10이 아래 네 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // phase 26 step 8·9·10·11이 아래 여섯 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
     // 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
     // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
-    // Accelerator 주제가 ...」·「Lambda 주제가 ...」가 개념 id 전부로 못박는다.
+    // Accelerator 주제가 ...」·「Lambda 주제가 ...」·「컨테이너 주제가 ...」·
+    // 「API Gateway·Step Functions 주제가 ...」가 개념 id 전부로 못박는다.
     const reordered = new Set([
       'ec2-autoscaling',
       'elastic-load-balancing',
       'cloudfront-global-accelerator',
       'lambda',
+      'ecs-eks-fargate',
+      'api-gateway-step-functions',
     ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
@@ -211,7 +213,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 28개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 29개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -245,10 +247,12 @@ describe('학습 데이터 무결성', () => {
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
-      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠다.
-      // 남은 껍데기(ECS·EKS·Batch·Step Functions·API Gateway)는 step 11이 비운다.
+      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠고,
+      // step 11이 남은 껍데기를 둘로 갈라 그 자리에 놓으며 주제를 없앴다. 셋은 같은
+      // 조각이라 배열에서 연속으로 놓인다.
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
-      { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
+      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
+      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -413,20 +417,22 @@ describe('학습 데이터 무결성', () => {
       'cloudfront-global-accelerator.global-accelerator-protocols',
       'cloudfront-global-accelerator.cloudfront-ttl',
       'cloudfront-global-accelerator.edge-keyword',
-      'serverless-containers.eks',
-      'serverless-containers.fargate-no-time-limit',
+      // phase 26 step 11이 serverless-containers를 둘로 갈랐다.
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.fargate-no-time-limit',
       // phase 26 step 10이 Lambda 계열 셋을 옮겼다. 함수 URL과 VPC 연결은 lambda로,
       // 엣지에서 도는 Lambda@Edge는 CloudFront 쪽으로 간다.
       'lambda.lambda-function-url',
       'cloudfront-global-accelerator.lambda-at-edge',
       'lambda.lambda-vpc-access',
-      'serverless-containers.api-gateway-jwt-authorizer',
-      'serverless-containers.aws-batch',
+      'api-gateway-step-functions.api-gateway-jwt-authorizer',
+      'ecs-eks-fargate.aws-batch',
       'messaging-backup.msk',
       'messaging-backup.sqs-details',
       'messaging-backup.sqs-queue-depth-scaling',
       'messaging-backup.eventbridge-scheduler',
-      'messaging-backup.step-functions-features',
+      // step 11이 messaging-backup에서 함께 가져왔다.
+      'api-gateway-step-functions.step-functions-features',
       'messaging-backup.ses',
       'messaging-backup.backup-long-term-retention',
     ]
@@ -439,14 +445,18 @@ describe('학습 데이터 무결성', () => {
       ...Array(2).fill('ec2-autoscaling'),
       ...Array(2).fill('elastic-load-balancing'),
       ...Array(3).fill('cloudfront-global-accelerator'),
-      // step 10이 Lambda 계열을 옮기면서 이 구간이 세 주제로 갈라졌다. 문항의
-      // id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
-      ...Array(2).fill('serverless-containers'),
+      // step 10이 Lambda 계열을 옮기고 step 11이 serverless-containers를 둘로 가르면서
+      // 이 구간이 다섯 주제로 갈라졌다. 문항의 id 순서는 그대로이고 topicId만
+      // 자기 conceptId를 담은 주제를 따른다.
+      ...Array(2).fill('ecs-eks-fargate'),
       'lambda',
       'cloudfront-global-accelerator',
       'lambda',
-      ...Array(2).fill('serverless-containers'),
-      ...Array(7).fill('messaging-backup'),
+      'api-gateway-step-functions',
+      'ecs-eks-fargate',
+      ...Array(4).fill('messaging-backup'),
+      'api-gateway-step-functions',
+      ...Array(2).fill('messaging-backup'),
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -611,7 +621,7 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(21, 28).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(22, 29).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -628,13 +638,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(21, 28).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(22, 29).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 21).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 22).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -647,9 +657,11 @@ describe('학습 데이터 무결성', () => {
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
-      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠다.
+      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠고,
+      // step 11이 남은 껍데기를 ECS 계열과 API Gateway 계열로 갈랐다.
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
-      { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
+      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
+      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -662,10 +674,12 @@ describe('학습 데이터 무결성', () => {
     // 17·16은 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
     // 빼내 신규 27을 더한 결과이고, 24는 step 9가 남은 5개념을 옮겨 신규 16을 더한 데에
     // step 10이 엣지 함수 셋(기존 lambda-at-edge + 신규 2)을 보태 나온 값이다.
-    // 18·7은 step 10이 serverless-containers의 11개념에서 Lambda 계열 4개를 빼내
-    // 신규 15를 더한 결과다. 나머지 셋은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
-    expect(topics.slice(9, 21).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 24, 18, 7, 11, 12, 10,
+    // 18은 step 10이 serverless-containers의 11개념에서 Lambda 계열 4개를 빼내 신규 15를
+    // 더한 결과이고, 23·19는 step 11이 남은 7개념을 둘로 가르며 messaging-backup의
+    // step-functions-features를 함께 가져와 신규 34를 더한 결과다. 그 바람에
+    // messaging-backup은 11에서 10으로 줄었다. 나머지 둘은 아직 자기 step을 기다리고 있다.
+    expect(topics.slice(9, 22).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 10, 12, 10,
     ])
   })
 
@@ -1262,6 +1276,141 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
+  it('컨테이너 주제가 서비스 소개 다음에 실행 방식 갈림길과 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')
+
+    // 1단 컨테이너를 돌리고 담고 옮기는 서비스 여섯이 각각 무엇인가
+    // → 2단 세 실행 방식의 관리 책임, 파드와 노드, 클러스터 가시성, 권한을 어디에 붙이나
+    // → 3단 네트워크 모드·배치 전략·과금 단위·저장소·시크릿 암호화.
+    // ECS가 무엇인지 모르는 사람에게 ecs-task-placement-strategy는 아무것도 주지 않는다
+    // (topic-plan "주제 안의 개념 순서").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ecs-eks-fargate.ecs',
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.ecr-image-scan-on-push',
+      'ecs-eks-fargate.aws-batch',
+      'ecs-eks-fargate.elastic-beanstalk',
+      'ecs-eks-fargate.app2container',
+      'ecs-eks-fargate.eks-compute-options',
+      'ecs-eks-fargate.fargate-no-time-limit',
+      'ecs-eks-fargate.fargate-spot',
+      'ecs-eks-fargate.batch-fargate-compute-environment',
+      'ecs-eks-fargate.eks-fargate-pod-isolation',
+      'ecs-eks-fargate.eks-cluster-autoscaler',
+      'ecs-eks-fargate.eks-aws-load-balancer-controller',
+      'ecs-eks-fargate.eks-connector',
+      'ecs-eks-fargate.eks-anywhere',
+      'ecs-eks-fargate.ecs-task-role',
+      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'ecs-eks-fargate.eks-irsa',
+      'ecs-eks-fargate.ecs-awsvpc-mode',
+      'ecs-eks-fargate.ecs-task-placement-strategy',
+      'ecs-eks-fargate.fargate-per-second-billing',
+      'ecs-eks-fargate.fargate-efs-mount',
+      'ecs-eks-fargate.eks-secrets-kms-encryption',
+    ])
+  })
+
+  it('API Gateway·Step Functions 주제가 두 서비스 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'api-gateway-step-functions')
+
+    // 1단 API Gateway와 Step Functions가 무엇이고 무엇을 주는가
+    // → 2단 API 유형 셋, API 키의 한계, 접근 통제, 노출 위치, 통합 방식, 워크플로 두 유형
+    // → 3단 인증서 리전·매핑 템플릿의 한계·보안 그룹을 붙일 수 없다는 것.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'api-gateway-step-functions.api-gateway',
+      'api-gateway-step-functions.step-functions',
+      'api-gateway-step-functions.step-functions-features',
+      'api-gateway-step-functions.api-gateway-jwt-authorizer',
+      'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+      'api-gateway-step-functions.api-gateway-rest-only-features',
+      'api-gateway-step-functions.api-gateway-websocket-api',
+      'api-gateway-step-functions.api-gateway-api-key-not-auth',
+      'api-gateway-step-functions.api-gateway-resource-policy',
+      'api-gateway-step-functions.api-gateway-endpoint-types',
+      'api-gateway-step-functions.api-gateway-behind-cloudfront',
+      'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
+      'api-gateway-step-functions.api-gateway-aws-service-integration',
+      'api-gateway-step-functions.step-functions-long-running-workflow',
+      'api-gateway-step-functions.step-functions-express-workflow',
+      'api-gateway-step-functions.step-functions-map-state',
+      'api-gateway-step-functions.api-gateway-custom-domain-name',
+      'api-gateway-step-functions.api-gateway-mapping-template-limits',
+      'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+    ])
+  })
+
+  it('컨테이너 실행 방식 셋의 갈림길이 한 주제 안에서 관리 책임으로 갈린다', () => {
+    // ECS ↔ EKS ↔ Fargate. 컨테이너를 어디서 돌리는가가 그대로 문항이므로 떼어 놓으면
+    // 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('ecs-eks-fargate.ecs')
+    expect(fork).toBe('ecs-eks-fargate')
+    ;[
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.eks-compute-options',
+      'ecs-eks-fargate.fargate-no-time-limit',
+      'ecs-eks-fargate.fargate-spot',
+      'ecs-eks-fargate.fargate-per-second-billing',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // ECS ↔ EKS는 원래 쿠버네티스였는지로 갈리고, 세 실행 방식은 인프라 관리 책임이
+    // 어디까지 남는지로 갈린다. Lambda ↔ Fargate는 실행 시간과 최소 과금 단위다.
+    expect(bodyOf('ecs-eks-fargate.eks')).toContain('원래 쿠버네티스였는가')
+    expect(bodyOf('ecs-eks-fargate.eks-compute-options')).toContain(
+      'EC2 인스턴스의 패치와 관리 책임은 여전히 사용자에게 남는다',
+    )
+    expect(bodyOf('ecs-eks-fargate.fargate-per-second-billing')).toContain('최소 1분을 매긴다')
+  })
+
+  it('API 유형 셋과 워크플로 두 유형이 한 주제 안에서 갈린다', () => {
+    // API Gateway REST ↔ HTTP ↔ WebSocket, Step Functions 표준 ↔ Express.
+    // 엔드포인트 유형과 지원 기능이 갈리는 자리이므로 함께 둔다
+    // (topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('api-gateway-step-functions.api-gateway')
+    expect(fork).toBe('api-gateway-step-functions')
+    ;[
+      'api-gateway-step-functions.api-gateway-jwt-authorizer',
+      'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+      'api-gateway-step-functions.api-gateway-rest-only-features',
+      'api-gateway-step-functions.api-gateway-websocket-api',
+      'api-gateway-step-functions.step-functions-long-running-workflow',
+      'api-gateway-step-functions.step-functions-express-workflow',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 두 API 유형은 기능·비용·지연 말고 기다려 주는 시간과 기능 목록으로도 갈리고,
+    // WebSocket API는 요청·응답 모델 자체가 다르다.
+    expect(bodyOf('api-gateway-step-functions.api-gateway-rest-vs-http-timeout')).toContain(
+      '그 시간이 REST API 쪽이 더 길기 때문에',
+    )
+    expect(bodyOf('api-gateway-step-functions.api-gateway-rest-only-features')).toContain(
+      'HTTP API는 이 고급 기능들을 완전히 지원하지 않는다',
+    )
+    expect(bodyOf('api-gateway-step-functions.api-gateway-websocket-api')).toContain(
+      '연결을 오래 유지한 채',
+    )
+    // 워크플로는 실행 시간 상한과 처리량이 반대편을 맡는다.
+    expect(bodyOf('api-gateway-step-functions.step-functions-long-running-workflow')).toContain(
+      '최대 1년까지',
+    )
+    expect(bodyOf('api-gateway-step-functions.step-functions-express-workflow')).toContain(
+      '높은 처리량, 짧은 실행 시간, 낮은 비용',
+    )
+  })
+
   it('동시성 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
     // 예약된 동시성 ↔ 프로비저닝된 동시성 ↔ 계정의 동시 실행 한도. 이름이 닮아
     // 보기 줄에 나란히 오르므로 떼어 놓으면 무엇이 무엇의 대안인지 알 수 없게 된다
@@ -1478,7 +1627,7 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'elastic-load-balancing.elb', anchor: '실어 나를지 정하는' },
     { conceptId: 'elastic-load-balancing.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
     { conceptId: 'cloudfront-global-accelerator.cloudfront-ttl', anchor: 'Time-to-Live' },
-    { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
+    { conceptId: 'api-gateway-step-functions.api-gateway', anchor: 'JSON Web Token' },
     { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
     { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
     { conceptId: 'threat-protection.waf', anchor: 'Cross-Site Scripting' },
@@ -2021,11 +2170,20 @@ describe('학습 데이터 무결성', () => {
     // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
     // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
     ['lambda.lambda', 'Lambda는', 'compute'],
-    ['serverless-containers.ecs', 'ECS는', 'containers'],
-    ['serverless-containers.step-functions', 'Step Functions는', 'appIntegration'],
-    ['serverless-containers.api-gateway', 'API Gateway는', 'networking'],
-    ['serverless-containers.eks', 'EKS는', 'containers'],
-    ['serverless-containers.aws-batch', 'AWS Batch는', 'compute'],
+    // phase 26 step 11이 serverless-containers를 둘로 갈랐다. 신규 34개념 중 셋만
+    // 서비스를 소개하는 자리이고, 나머지는 ECS·EKS·Fargate·API Gateway·Step Functions의
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['ecs-eks-fargate.ecs', 'ECS는', 'containers'],
+    ['ecs-eks-fargate.eks', 'EKS는', 'containers'],
+    ['ecs-eks-fargate.ecr-image-scan-on-push', 'ECR은', 'containers'],
+    ['ecs-eks-fargate.aws-batch', 'AWS Batch는', 'compute'],
+    // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다. 주제는 옮기지 않고
+    // 카테고리만 밝힌다(service-categories.md "주제 배치와 어긋나는 자리").
+    ['ecs-eks-fargate.elastic-beanstalk', 'Elastic Beanstalk는', 'compute'],
+    ['ecs-eks-fargate.app2container', 'App2Container는', 'containers'],
+    ['api-gateway-step-functions.api-gateway', 'API Gateway는', 'networking'],
+    ['api-gateway-step-functions.step-functions', 'Step Functions는', 'appIntegration'],
     ['messaging-backup.sqs', 'SQS는', 'appIntegration'],
     ['messaging-backup.sns', 'SNS는', 'appIntegration'],
     ['messaging-backup.eventbridge', 'EventBridge는', 'appIntegration'],
@@ -2074,12 +2232,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 80개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 83개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(80)
+    expect(serviceCategories).toHaveLength(83)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -2093,7 +2251,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 80개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 83개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
