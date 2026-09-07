@@ -1426,6 +1426,108 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 8 — ec2-autoscaling의 빈 개념 15개와 elastic-load-balancing의
+  // 빈 개념 13개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 축이 양방향으로
+  // 갈리는 개념 넷만 두 방향으로 물어 문항이 32개다 — 예약 인스턴스의 두 갈래
+  // (유형을 고정해 할인을 크게 ↔ 유형을 바꿀 여지를 남기고 덜 싸게), 스팟 할당
+  // 전략(중단 최소화 ↔ 비용과 용량의 절충), 단순 조정과 대상 추적(짧은 급증에서
+  // 무엇으로 바꾸는가 ↔ 단순 조정의 동작 방식 자체), 종단 간 암호화(뒤 구간도
+  // TLS여야 한다 ↔ 인증서 수명 주기를 누가 지는가).
+  const step8Concepts = [
+    'ec2-autoscaling.ami-and-launch-template',
+    'ec2-autoscaling.ec2-image-builder',
+    'ec2-autoscaling.memory-optimized-instance-family',
+    'ec2-autoscaling.gpu-instance-family',
+    'ec2-autoscaling.reserved-instance-types',
+    'ec2-autoscaling.spot-workload-fit',
+    'ec2-autoscaling.target-tracking-vs-simple-scaling',
+    'ec2-autoscaling.predictive-scaling',
+    'ec2-autoscaling.spot-allocation-strategy',
+    'ec2-autoscaling.asg-instance-type-override',
+    'ec2-autoscaling.asg-on-demand-base-capacity',
+    'ec2-autoscaling.asg-single-instance-self-healing',
+    'ec2-autoscaling.elb-health-check-drives-asg-replacement',
+    'ec2-autoscaling.enhanced-networking',
+    'ec2-autoscaling.parallelcluster',
+    'elastic-load-balancing.gateway-load-balancer',
+    'elastic-load-balancing.alb-routing-conditions',
+    'elastic-load-balancing.nlb-tls-listener',
+    'elastic-load-balancing.nlb-udp-listener',
+    'elastic-load-balancing.nlb-ip-targets',
+    'elastic-load-balancing.alb-cookie-stickiness',
+    'elastic-load-balancing.internal-load-balancer',
+    'elastic-load-balancing.alb-least-outstanding-requests',
+    'elastic-load-balancing.alb-target-group-independent-scaling',
+    'elastic-load-balancing.alb-listener-rule-fixed-response',
+    'elastic-load-balancing.load-balancer-idle-timeout',
+    'elastic-load-balancing.end-to-end-encryption-behind-alb',
+    'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+  ]
+
+  it('EC2·로드 밸런서 문제 32개가 담당 개념 28개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(434, 466)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 435}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(18).fill('ec2-autoscaling'),
+      ...Array(14).fill('elastic-load-balancing'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step8Concepts].sort(),
+    )
+  })
+
+  it('EC2·로드 밸런서 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(434, 466).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('EC2·로드 밸런서 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(434, 466)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('EC2와 로드 밸런서 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['ec2-autoscaling', 'elastic-load-balancing'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
