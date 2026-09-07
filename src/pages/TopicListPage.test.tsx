@@ -99,6 +99,35 @@ describe('TopicListPage', () => {
     expect(screen.getByText('정답 1/2')).toBeInTheDocument()
   })
 
+  // 개념은 들어왔지만 확인 문제가 아직 없는 주제가 있다. 목록에서 미리 알려 주지 않으면
+  // 학습자가 개념을 다 읽고 나서야 확인 문제가 없다는 것을 발견한다.
+  describe('확인 문제가 없는 주제', () => {
+    it('확인 문제가 준비 중이라고 표시한다', () => {
+      renderPage(emptyProgress, testTopics, testQuestions)
+
+      const basicCard = screen.getByRole('link', { name: /기초 주제/ })
+      expect(within(basicCard).getByText('확인 문제 준비 중')).toBeInTheDocument()
+    })
+
+    it('읽은 주제라면 읽음 표시와 함께 보여준다', () => {
+      renderPage(
+        { version: 2, read: { 'basic-topic': true }, answers: {}, wrong: {} },
+        testTopics,
+        testQuestions,
+      )
+
+      const basicCard = screen.getByRole('link', { name: /기초 주제/ })
+      expect(within(basicCard).getByText('읽음 · 확인 문제 준비 중')).toBeInTheDocument()
+    })
+
+    it('문항이 있는 주제에는 표시하지 않는다', () => {
+      renderPage(emptyProgress, testTopics, testQuestions)
+
+      const highCard = screen.getByRole('link', { name: /중요 주제/ })
+      expect(within(highCard).queryByText(/확인 문제 준비 중/)).toBeNull()
+    })
+  })
+
   it('카드 링크가 MemoryRouter의 주제 경로를 가리킨다', () => {
     renderPage()
 

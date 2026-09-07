@@ -10,26 +10,37 @@ describe('학습 데이터 무결성', () => {
         'nacl-rule-limit',
         'web-acl-vs-nacl',
       ],
+      // step 18이 dump-gaps의 신규 11개념을 더하며 이 주제도 3단으로 정렬했다.
       'secrets-encryption': [
         'acm-cloudfront-region',
         'lambda-env-var-kms',
         'cloudhsm',
         'rotation-heuristic',
       ],
-      'threat-protection': [
+      // phase 26 step 18이 threat-protection을 WAF·Shield 쪽과 탐지 서비스 쪽으로
+      // 갈랐다. 여섯 개념이 두 주제로 흩어졌고 둘 다 3단으로 정렬돼 배열 끝이 아니다.
+      'waf-shield': [
         'waf-attach-targets',
         'waf-bot-control',
         'waf-rule-types',
         'shield-advanced-drt',
+      ],
+      'guardduty-macie-inspector': [
         'guardduty-db-login',
         'security-service-lineup',
       ],
-      'identity-access': [
+      // phase 26 step 17이 identity-access를 IAM 권한 · 페더레이션 · 조직·감사 셋으로
+      // 갈랐다. 여섯 개념이 세 주제로 흩어졌고 셋 다 3단으로 정렬돼 배열 끝이 아니다.
+      'iam-permissions': [
         'least-privilege',
         'instance-profile',
         'iam-group-users-only',
+      ],
+      'identity-federation': [
         'sts-assume-role',
         'cognito-pools',
+      ],
+      'organizations-cloudtrail-config': [
         'organizations-scp',
       ],
       'cost-management': [
@@ -40,13 +51,32 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
+    // phase 26 step 14가 security-groups-nacl의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // 정렬해, 이 세 개념은 더 이상 배열 끝이 아니다. 주제의 전체 순서는 아래
+    // 「보안 그룹·NACL 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'security-groups-nacl',
+      'secrets-encryption',
+      'waf-shield',
+      'guardduty-macie-inspector',
+      'iam-permissions',
+      'identity-federation',
+      'organizations-cloudtrail-config',
+      // step 19가 cost-management에 dump-gaps의 신규 8개념을 더하며 3단으로 정렬해,
+      // 이 넷도 더 이상 배열 끝이 아니다.
+      'cost-management',
+    ])
+
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -68,57 +98,106 @@ describe('학습 데이터 무결성', () => {
         'onprem-connectivity-heuristic',
       ],
       route53: ['private-hosted-zone', 'multivalue-answer-details'],
-      'analytics-monitoring': ['glue-crawler', 'log-analysis-options'],
+      // phase 26 step 15가 analytics-monitoring에서 분석·스트리밍 계열을 빼내며
+      // Glue Crawler를 emr-glue-athena로 옮겼고, step 16이 남은 CloudWatch·X-Ray
+      // 계열을 cloudwatch-xray로 옮기며 analytics-monitoring을 없앴다
+      // (topic-plan "주제 목록").
+      'emr-glue-athena': ['glue-crawler'],
+      'cloudwatch-xray': ['log-analysis-options'],
     }
+
+    // phase 26 step 14가 두 네트워크 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // 정렬했고 step 15가 emr-glue-athena를, step 16이 route53·cloudwatch-xray를 같은
+    // 방식으로 세웠다. 그래서 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체
+    // 순서는 아래 「VPC 주제가 ...」·「하이브리드 연결 주제가 ...」·
+    // 「EMR·Glue·Athena 주제가 ...」·「Route 53 주제가 ...」·
+    // 「CloudWatch·X-Ray 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'vpc-networking',
+      'hybrid-connectivity',
+      'emr-glue-athena',
+      'route53',
+      'cloudwatch-xray',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
   it('컴퓨팅·메시징 보충 개념 21개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
     const expectedSlugs: Record<string, string[]> = {
-      'compute-delivery': [
-        'warm-pool',
-        'scheduled-scaling',
-        'alb-l7-vs-nlb-l4',
-        'sticky-session-tradeoff',
+      // phase 26 step 8이 compute-delivery에서 EC2·ASG·ELB를 두 주제로 빼냈고,
+      // step 9가 남은 CloudFront·Global Accelerator를 cloudfront-global-accelerator로
+      // 옮기며 compute-delivery를 없앴다. 개념 본문은 그대로이고 접두사만 새 주제를 따른다.
+      'ec2-autoscaling': ['warm-pool', 'scheduled-scaling'],
+      'elastic-load-balancing': ['alb-l7-vs-nlb-l4', 'sticky-session-tradeoff'],
+      // step 10이 serverless-containers에서 Lambda 계열을 lambda 주제로 빼내고,
+      // 엣지에서 도는 lambda-at-edge는 CloudFront 쪽으로 보냈다
+      // (topic-plan "step 경계를 넘는 개념").
+      'cloudfront-global-accelerator': [
         'global-accelerator-protocols',
         'cloudfront-ttl',
         'edge-keyword',
-      ],
-      'serverless-containers': [
-        'eks',
-        'fargate-no-time-limit',
-        'lambda-function-url',
         'lambda-at-edge',
-        'lambda-vpc-access',
-        'api-gateway-jwt-authorizer',
-        'aws-batch',
       ],
-      'messaging-backup': [
-        'msk',
+      lambda: ['lambda-function-url', 'lambda-vpc-access'],
+      // step 11이 serverless-containers의 남은 껍데기를 둘로 갈랐다. 컨테이너 계열은
+      // ecs-eks-fargate로, API Gateway·Step Functions 계열은 api-gateway-step-functions로
+      // 가고, messaging-backup에 있던 step-functions-features도 후자로 옮겨 온다
+      // (topic-plan "step 경계를 넘는 개념").
+      'ecs-eks-fargate': ['eks', 'fargate-no-time-limit', 'aws-batch'],
+      'api-gateway-step-functions': ['api-gateway-jwt-authorizer', 'step-functions-features'],
+      // step 12가 messaging-backup에서 메시징 계열을 sqs-sns-eventbridge로 빼냈고,
+      // step 13이 AWS Backup 계열을 backup-disaster-recovery로 빼냈다. 마지막으로 남은
+      // MSK는 step 15가 kinesis-streaming으로 가져가며 그 주제를 없앴다
+      // (topic-plan "step 경계를 넘는 개념").
+      'sqs-sns-eventbridge': [
         'sqs-details',
         'sqs-queue-depth-scaling',
         'eventbridge-scheduler',
-        'step-functions-features',
         'ses',
-        'backup-long-term-retention',
       ],
+      'backup-disaster-recovery': ['backup-long-term-retention'],
+      'kinesis-streaming': ['msk'],
     }
+
+    // phase 26 step 8·9·10·11·12·13·15가 아래 아홉 주제의 개념을 3단(기본 → 갈림길 →
+    // 한계)으로 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
+    // Accelerator 주제가 ...」·「Lambda 주제가 ...」·「컨테이너 주제가 ...」·
+    // 「API Gateway·Step Functions 주제가 ...」·「메시징 주제가 ...」·
+    // 「백업·재해 복구 주제가 ...」·「스트리밍 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'ec2-autoscaling',
+      'elastic-load-balancing',
+      'cloudfront-global-accelerator',
+      'lambda',
+      'ecs-eks-fargate',
+      'api-gateway-step-functions',
+      'sqs-sns-eventbridge',
+      'backup-disaster-recovery',
+      'kinesis-streaming',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -130,49 +209,74 @@ describe('학습 데이터 무결성', () => {
         'automated-backup-retention',
         'connection-issue-heuristic',
       ],
-      'aurora-dynamodb-cache': [
-        'aurora-serverless-v2',
-        'aurora-reader-endpoint',
-        'documentdb',
-        'dynamodb-pitr',
-        'dax-dynamodb-only',
-      ],
+      // phase 26 step 7이 aurora-dynamodb-cache를 세 주제로 갈랐다. 개념 본문은
+      // 그대로이고 접두사만 새 주제를 따른다.
+      aurora: ['aurora-serverless-v2', 'aurora-reader-endpoint'],
+      dynamodb: ['dynamodb-pitr'],
+      'elasticache-purpose-built-db': ['documentdb', 'dax-dynamodb-only'],
     }
+
+    // phase 26이 아래 주제들의 개념을 3단(기본 → 갈림길 → 한계)으로 다시 정렬해,
+    // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // 「RDS 주제가 ...」 같은 테스트가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'rds-storage-features',
+      'aurora',
+      'dynamodb',
+      'elasticache-purpose-built-db',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
-  it('보충 개념 9개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
+  it('보충 개념 9개가 지정된 주제에 그대로 남아 있다', () => {
     const expectedSlugs: Record<string, string[]> = {
       'aws-core-services': ['exam-heuristics'],
       's3-versioning-lifecycle': ['object-lock-prerequisites', 'event-notification'],
       's3-encryption-batch': ['envelope-encryption', 'sse-kms-cost'],
-      'block-file-storage': [
-        'cluster-placement-group',
-        'ebs-elastic-volumes',
-        'efs-lifecycle-management',
-        'fsx-ontap-multi-az',
-      ],
+      // phase 26 step 4가 block-file-storage를 두 주제로 갈랐다. 개념 본문은 그대로이고
+      // 접두사만 새 주제를 따른다.
+      'ebs-instance-store': ['cluster-placement-group', 'ebs-elastic-volumes'],
+      'efs-fsx': ['efs-lifecycle-management', 'fsx-ontap-multi-az'],
     }
+
+    // phase 26이 아래 주제들의 개념을 3단(기본 → 갈림길 → 한계)으로 다시 정렬해,
+    // 이 개념들은 더 이상 배열 끝이 아니다. aws-core-services는 정렬이 아니라
+    // step 20이 (주제 미정)의 설계 원칙 둘을 3단 뒤에 붙여서 끝이 아니게 됐다.
+    // 각 주제의 전체 순서는 아래 「기초 주제가 ...」·「S3 버전 관리 주제가 ...」 같은
+    // 테스트가 개념 id 전부로 못박는다.
+    const reordered = new Set([
+      'aws-core-services',
+      's3-versioning-lifecycle',
+      's3-encryption-batch',
+      'ebs-instance-store',
+      'efs-fsx',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
-  it('보충 개념 추가 후에도 20개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 39개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -181,35 +285,113 @@ describe('학습 데이터 무결성', () => {
     }))).toEqual([
       { id: 'aws-core-services', title: 'AWS 핵심 서비스·리전·가용 영역·온프레미스', importance: 0, sourcePages: [1, 7] },
       { id: 's3-storage-classes', title: 'S3 스토리지 클래스 유형', importance: 3, sourcePages: [8, 9] },
-      { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기 정책', importance: 3, sourcePages: [10, 12] },
-      { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·S3 Batch Operations', importance: 2, sourcePages: [13, 13] },
-      { id: 'block-file-storage', title: 'EBS·EFS·FSx·인스턴스 스토어', importance: 3, sourcePages: [14, 15] },
-      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·Storage Gateway', importance: 3, sourcePages: [16, 18] },
+      { id: 's3-versioning-lifecycle', title: 'S3 버전 관리·객체 잠금·수명 주기·복제', importance: 3, sourcePages: [10, 12] },
+      { id: 's3-encryption-batch', title: 'S3 암호화(SSE)·Batch Operations·인벤토리', importance: 2, sourcePages: [13, 13] },
+      // phase 26 step 3이 신설했다. 근거가 dump-gaps에만 있어 concepts-raw.md 페이지가 없다.
+      { id: 's3-access-control', title: 'S3 접근 제어·액세스 포인트·Storage Lens', importance: 3, sourcePages: [0, 0] },
+      // phase 26 step 4가 block-file-storage를 둘로 갈랐다. EFS ↔ FSx는 공유 파일
+      // 스토리지 선택이라 한 주제에 둔다(PRD "사용자").
+      { id: 'ebs-instance-store', title: 'EBS·인스턴스 스토어·스냅샷·배치 그룹', importance: 3, sourcePages: [14, 15] },
+      { id: 'efs-fsx', title: 'EFS·FSx(Windows·Lustre·ONTAP)', importance: 3, sourcePages: [14, 15] },
+      // phase 26 step 5가 data-transfer-services를 둘로 갈랐다. "이미 있는 것을 옮긴다"는
+      // Storage Gateway·DMS·MGN이 뒤쪽 주제로 나가고, 앞쪽은 전송 도구만 남는다.
+      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·S3 전송', importance: 3, sourcePages: [16, 18] },
+      { id: 'storage-gateway-migration', title: 'Storage Gateway·DMS·Application Migration Service', importance: 3, sourcePages: [16, 18] },
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
-      { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
-      { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
-      { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
-      { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
+      // phase 26 step 7이 aurora-dynamodb-cache를 셋으로 갈랐다. Aurora는 RDS 바로
+      // 뒤에 두어 관리형 관계형 DB의 두 갈래가 맞붙게 하고, 캐시 갈림길
+      // (ElastiCache ↔ DAX)은 목적별 데이터베이스와 한 주제에 남는다.
+      { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
+      { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
+      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
+      // phase 26 step 8이 compute-delivery에서 EC2·ASG와 로드 밸런서를 빼내 앞에
+      // 놓았고, step 9가 남은 CloudFront·Global Accelerator를 옮기며 그 주제를
+      // 없앴다. 셋은 같은 조각이라 배열에서 연속으로 놓인다.
+      { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
+      { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
+      { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
+      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠고,
+      // step 11이 남은 껍데기를 둘로 갈라 그 자리에 놓으며 주제를 없앴다. 셋은 같은
+      // 조각이라 배열에서 연속으로 놓인다.
+      { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
+      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
+      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
+      // phase 26 step 12가 messaging-backup의 메시징 계열을 빼내 그 자리에 놓았고,
+      // step 13이 AWS Backup 계열과 dump-gaps의 재해 복구 계열을 그 뒤에 세웠다.
+      // SQS ↔ SNS ↔ EventBridge는 메시징 세 갈래의 선택이라, DR 전략 둘은 RTO·RPO로
+      // 갈리는 한 벌이라 각각 한 주제에 둔다(PRD "사용자").
+      // 남아 있던 messaging-backup은 step 15가 MSK를 kinesis-streaming으로 가져가며 없앴다.
+      { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
+      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
+      // phase 26 step 14가 security-groups-nacl을 vpc-networking 바로 뒤로 옮겼다.
+      // VPC를 읽은 자리에서 트래픽을 거르는 두 장치를 이어 읽고, step 14가 맡은
+      // 세 주제가 배열에서 한 덩어리가 된다(topic-plan "배열 위치 근거").
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
+      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
       { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
-      { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
-      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
-      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
-      { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
-      { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
-      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      // phase 26 step 15가 analytics-monitoring에서 분석·스트리밍 계열을 세 주제로
+      // 빼냈다. Kinesis 4종은 한 주제에, Athena ↔ Redshift ↔ Spectrum의 갈림길은
+      // 웨어하우스 쪽에 둔다(topic-plan "헷갈리는 짝 배치"). 남은 CloudWatch·X-Ray는
+      // step 16이 마저 옮긴다.
+      { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
+      { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
+      { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
+      // step 16이 남은 CloudWatch·X-Ray 계열을 그 자리에서 cloudwatch-xray로 바꿨다.
+      // 지표 ↔ 로그 ↔ 경보가 한 벌이라 넷을 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
+      { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
+      // phase 26 step 18이 secrets-encryption에 CloudHSM을 제목으로 올리고,
+      // threat-protection을 그 자리에서 둘로 갈랐다. WAF ↔ Shield ↔ Shield Advanced는
+      // 계층과 대상이 갈리는 한 벌이라, GuardDuty ↔ Macie ↔ Inspector ↔ Security Hub는
+      // 탐지 서비스 갈림길이라 각각 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 3, sourcePages: [44, 44] },
+      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 3, sourcePages: [45, 47] },
+      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 3, sourcePages: [45, 47] },
+      // phase 26 step 17이 identity-access를 셋으로 갈라 그 자리에 놓았다. IAM 역할 ↔
+      // 사용자 ↔ 정책 ↔ 권한 경계를 한 주제에, Identity Center ↔ SAML ↔ Cognito를 다른
+      // 한 주제에 둔다(topic-plan "헷갈리는 짝 배치"). 감사 쪽인 CloudTrail·Config는
+      // Organizations와 함께 셋째로 갈리되 배열에서 바로 뒤에 붙는다.
+      { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
+      { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
+      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
+      // phase 26 step 19가 cost-management 뒤에 관리·거버넌스 계열 둘을 신설했다.
+      // CloudFormation ↔ Service Catalog ↔ Control Tower는 거버넌스 갈림길이라,
+      // Systems Manager의 기능들은 한 서비스의 하위 기능이라 각각 한 주제에 둔다
+      // (topic-plan "범위를 벗어난 주제"). 근거가 dump-gaps에만 있어
+      // concepts-raw.md 페이지가 없다.
+      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
+      { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
+      // phase 26 step 20이 배열 맨 뒤에 신설했다. 음성·이미지·번역·문서를 나눠 맡는
+      // AI 서비스들은 "무엇을 하는 서비스인가"가 그대로 문항이라 한 주제에 둔다
+      // (topic-plan "범위를 벗어난 주제"). 근거가 dump-gaps에만 있어
+      // concepts-raw.md 페이지가 없다.
+      { id: 'ai-ml-services', title: 'SageMaker·Comprehend·Rekognition·Lex·Transcribe·Translate·Textract', importance: 2, sourcePages: [0, 0] },
     ])
   })
 
   it('보안·운영 주제 문제 53개가 지정된 id 범위와 주제별 문항 수로 이어진다', () => {
     const expectedTopics = [
       ...Array(6).fill('route53'),
-      ...Array(6).fill('analytics-monitoring'),
+      // phase 26 step 15가 analytics-monitoring을 쪼개면서 이 여섯 문항이 세 주제로
+      // 갈라졌고, step 16이 CloudWatch를 근거로 쓰는 q126을 cloudwatch-xray로 옮겼다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(3).fill('emr-glue-athena'),
+      'cloudwatch-xray',
+      'emr-glue-athena',
+      'kinesis-streaming',
       ...Array(9).fill('security-groups-nacl'),
       ...Array(8).fill('secrets-encryption'),
-      ...Array(9).fill('threat-protection'),
-      ...Array(9).fill('identity-access'),
+      // step 18이 threat-protection을 둘로 갈라 이 아홉 문항도 두 주제로 흩어졌다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(4).fill('waf-shield'),
+      ...Array(2).fill('guardduty-macie-inspector'),
+      ...Array(3).fill('waf-shield'),
+      // step 17이 identity-access를 셋으로 갈라 이 아홉 문항도 세 주제로 흩어졌다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(3).fill('iam-permissions'),
+      ...Array(4).fill('identity-federation'),
+      ...Array(2).fill('organizations-cloudtrail-config'),
       ...Array(6).fill('cost-management'),
     ]
     const addedQuestions = questions.slice(116, 169)
@@ -245,10 +427,10 @@ describe('학습 데이터 무결성', () => {
       's3-versioning-lifecycle.event-notification',
       's3-encryption-batch.envelope-encryption',
       's3-encryption-batch.sse-kms-cost',
-      'block-file-storage.cluster-placement-group',
-      'block-file-storage.ebs-elastic-volumes',
-      'block-file-storage.efs-lifecycle-management',
-      'block-file-storage.fsx-ontap-multi-az',
+      'ebs-instance-store.cluster-placement-group',
+      'ebs-instance-store.ebs-elastic-volumes',
+      'efs-fsx.efs-lifecycle-management',
+      'efs-fsx.fsx-ontap-multi-az',
     ]
 
     expect(addedQuestions).toHaveLength(9)
@@ -261,10 +443,10 @@ describe('학습 데이터 무결성', () => {
       's3-versioning-lifecycle',
       's3-encryption-batch',
       's3-encryption-batch',
-      'block-file-storage',
-      'block-file-storage',
-      'block-file-storage',
-      'block-file-storage',
+      'ebs-instance-store',
+      'ebs-instance-store',
+      'efs-fsx',
+      'efs-fsx',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId)).toEqual(expectedConceptIds)
     expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(9)
@@ -296,11 +478,12 @@ describe('학습 데이터 무결성', () => {
       'rds-storage-features.multi-az-standby-limits',
       'rds-storage-features.automated-backup-retention',
       'rds-storage-features.connection-issue-heuristic',
-      'aurora-dynamodb-cache.aurora-serverless-v2',
-      'aurora-dynamodb-cache.aurora-reader-endpoint',
-      'aurora-dynamodb-cache.documentdb',
-      'aurora-dynamodb-cache.dynamodb-pitr',
-      'aurora-dynamodb-cache.dax-dynamodb-only',
+      // phase 26 step 7이 aurora-dynamodb-cache를 셋으로 갈라 접두사가 바뀌었다.
+      'aurora.aurora-serverless-v2',
+      'aurora.aurora-reader-endpoint',
+      'elasticache-purpose-built-db.documentdb',
+      'dynamodb.dynamodb-pitr',
+      'elasticache-purpose-built-db.dax-dynamodb-only',
     ]
 
     expect(addedQuestions).toHaveLength(9)
@@ -309,7 +492,11 @@ describe('학습 데이터 무결성', () => {
     )
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
       ...Array(4).fill('rds-storage-features'),
-      ...Array(5).fill('aurora-dynamodb-cache'),
+      'aurora',
+      'aurora',
+      'elasticache-purpose-built-db',
+      'dynamodb',
+      'elasticache-purpose-built-db',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -339,27 +526,36 @@ describe('학습 데이터 무결성', () => {
   it('컴퓨팅·메시징 보충 문제 21개가 새 개념과 일대일로 이어진다', () => {
     const addedQuestions = questions.slice(187, 208)
     const expectedConceptIds = [
-      'compute-delivery.warm-pool',
-      'compute-delivery.scheduled-scaling',
-      'compute-delivery.alb-l7-vs-nlb-l4',
-      'compute-delivery.sticky-session-tradeoff',
-      'compute-delivery.global-accelerator-protocols',
-      'compute-delivery.cloudfront-ttl',
-      'compute-delivery.edge-keyword',
-      'serverless-containers.eks',
-      'serverless-containers.fargate-no-time-limit',
-      'serverless-containers.lambda-function-url',
-      'serverless-containers.lambda-at-edge',
-      'serverless-containers.lambda-vpc-access',
-      'serverless-containers.api-gateway-jwt-authorizer',
-      'serverless-containers.aws-batch',
-      'messaging-backup.msk',
-      'messaging-backup.sqs-details',
-      'messaging-backup.sqs-queue-depth-scaling',
-      'messaging-backup.eventbridge-scheduler',
-      'messaging-backup.step-functions-features',
-      'messaging-backup.ses',
-      'messaging-backup.backup-long-term-retention',
+      // phase 26 step 8이 앞의 넷을 두 새 주제로 옮겼다. 문항 본문은 그대로이고
+      // topicId·conceptId만 따라 바뀐다.
+      'ec2-autoscaling.warm-pool',
+      'ec2-autoscaling.scheduled-scaling',
+      'elastic-load-balancing.alb-l7-vs-nlb-l4',
+      'elastic-load-balancing.sticky-session-tradeoff',
+      'cloudfront-global-accelerator.global-accelerator-protocols',
+      'cloudfront-global-accelerator.cloudfront-ttl',
+      'cloudfront-global-accelerator.edge-keyword',
+      // phase 26 step 11이 serverless-containers를 둘로 갈랐다.
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.fargate-no-time-limit',
+      // phase 26 step 10이 Lambda 계열 셋을 옮겼다. 함수 URL과 VPC 연결은 lambda로,
+      // 엣지에서 도는 Lambda@Edge는 CloudFront 쪽으로 간다.
+      'lambda.lambda-function-url',
+      'cloudfront-global-accelerator.lambda-at-edge',
+      'lambda.lambda-vpc-access',
+      'api-gateway-step-functions.api-gateway-jwt-authorizer',
+      'ecs-eks-fargate.aws-batch',
+      // phase 26 step 12가 메시징 계열을 sqs-sns-eventbridge로 옮겼고, step 15가 MSK를
+      // 스트리밍 갈림길이 있는 kinesis-streaming으로 가져갔다.
+      'kinesis-streaming.msk',
+      'sqs-sns-eventbridge.sqs-details',
+      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
+      'sqs-sns-eventbridge.eventbridge-scheduler',
+      // step 11이 messaging-backup에서 함께 가져왔다.
+      'api-gateway-step-functions.step-functions-features',
+      'sqs-sns-eventbridge.ses',
+      // step 13이 AWS Backup 계열을 backup-disaster-recovery로 옮겼다.
+      'backup-disaster-recovery.backup-long-term-retention',
     ]
 
     expect(addedQuestions).toHaveLength(21)
@@ -367,9 +563,24 @@ describe('학습 데이터 무결성', () => {
       Array.from({ length: 21 }, (_, index) => `q${index + 188}`),
     )
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
-      ...Array(7).fill('compute-delivery'),
-      ...Array(7).fill('serverless-containers'),
-      ...Array(7).fill('messaging-backup'),
+      ...Array(2).fill('ec2-autoscaling'),
+      ...Array(2).fill('elastic-load-balancing'),
+      ...Array(3).fill('cloudfront-global-accelerator'),
+      // step 10이 Lambda 계열을 옮기고 step 11이 serverless-containers를 둘로 가르면서
+      // 이 구간이 다섯 주제로 갈라졌고, step 12가 메시징 계열을 빼내며 여섯, step 13이
+      // AWS Backup 계열을 빼내며 일곱, step 15가 MSK를 옮기며 여덟이 됐다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(2).fill('ecs-eks-fargate'),
+      'lambda',
+      'cloudfront-global-accelerator',
+      'lambda',
+      'api-gateway-step-functions',
+      'ecs-eks-fargate',
+      'kinesis-streaming',
+      ...Array(3).fill('sqs-sns-eventbridge'),
+      'api-gateway-step-functions',
+      'sqs-sns-eventbridge',
+      'backup-disaster-recovery',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -412,8 +623,10 @@ describe('학습 데이터 무결성', () => {
       'hybrid-connectivity.onprem-connectivity-heuristic',
       'route53.private-hosted-zone',
       'route53.multivalue-answer-details',
-      'analytics-monitoring.glue-crawler',
-      'analytics-monitoring.log-analysis-options',
+      // phase 26 step 15가 Glue Crawler를 emr-glue-athena로 옮겼고, step 16이 로그 분석
+      // 선택지를 CloudWatch 쪽 주제인 cloudwatch-xray로 옮겼다.
+      'emr-glue-athena.glue-crawler',
+      'cloudwatch-xray.log-analysis-options',
     ]
 
     expect(addedQuestions).toHaveLength(15)
@@ -424,7 +637,8 @@ describe('학습 데이터 무결성', () => {
       ...Array(5).fill('vpc-networking'),
       ...Array(6).fill('hybrid-connectivity'),
       ...Array(2).fill('route53'),
-      ...Array(2).fill('analytics-monitoring'),
+      'emr-glue-athena',
+      'cloudwatch-xray',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -461,18 +675,18 @@ describe('학습 데이터 무결성', () => {
       'secrets-encryption.lambda-env-var-kms',
       'secrets-encryption.cloudhsm',
       'secrets-encryption.rotation-heuristic',
-      'threat-protection.waf-attach-targets',
-      'threat-protection.waf-bot-control',
-      'threat-protection.waf-rule-types',
-      'threat-protection.shield-advanced-drt',
-      'threat-protection.guardduty-db-login',
-      'threat-protection.security-service-lineup',
-      'identity-access.least-privilege',
-      'identity-access.instance-profile',
-      'identity-access.iam-group-users-only',
-      'identity-access.sts-assume-role',
-      'identity-access.cognito-pools',
-      'identity-access.organizations-scp',
+      'waf-shield.waf-attach-targets',
+      'waf-shield.waf-bot-control',
+      'waf-shield.waf-rule-types',
+      'waf-shield.shield-advanced-drt',
+      'guardduty-macie-inspector.guardduty-db-login',
+      'guardduty-macie-inspector.security-service-lineup',
+      'iam-permissions.least-privilege',
+      'iam-permissions.instance-profile',
+      'iam-permissions.iam-group-users-only',
+      'identity-federation.sts-assume-role',
+      'identity-federation.cognito-pools',
+      'organizations-cloudtrail-config.organizations-scp',
       'cost-management.cost-allocation-tag-activation',
       'cost-management.savings-plan-details',
       'cost-management.cost-anomaly-detection',
@@ -486,8 +700,11 @@ describe('학습 데이터 무결성', () => {
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
       ...Array(3).fill('security-groups-nacl'),
       ...Array(4).fill('secrets-encryption'),
-      ...Array(6).fill('threat-protection'),
-      ...Array(6).fill('identity-access'),
+      ...Array(4).fill('waf-shield'),
+      ...Array(2).fill('guardduty-macie-inspector'),
+      ...Array(3).fill('iam-permissions'),
+      ...Array(2).fill('identity-federation'),
+      'organizations-cloudtrail-config',
       ...Array(4).fill('cost-management'),
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
@@ -528,55 +745,1943 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 1 — 문항이 하나도 없던 두 주제를 개념 커버리지 기준으로 덮는다(ADR-026).
+  // 담당 개념 24개에 문항이 일대일로 붙으므로 slice와 개념 목록이 같은 길이다.
+  const step1Concepts = [
+    's3-access-control.s3-cross-account-bucket-policy',
+    's3-access-control.s3-presigned-url',
+    's3-access-control.s3-access-grants',
+    's3-access-control.s3-access-point',
+    's3-access-control.s3-multi-region-access-point',
+    's3-access-control.s3-storage-lens',
+    's3-access-control.s3-cors-not-authorization',
+    's3-access-control.s3-requester-pays',
+    's3-access-control.s3-storage-lens-advanced-activity-metrics',
+    's3-access-control.s3-account-level-public-access-block',
+    's3-access-control.block-public-access-allows-explicit-grants',
+    's3-access-control.s3-bucket-policy-source-vpc-condition',
+    's3-access-control.s3-website-endpoint-no-https',
+    'redshift-opensearch-quicksight.redshift',
+    'redshift-opensearch-quicksight.redshift-spectrum',
+    'redshift-opensearch-quicksight.opensearch-text-search',
+    'redshift-opensearch-quicksight.quicksight',
+    'redshift-opensearch-quicksight.oltp-vs-olap',
+    'redshift-opensearch-quicksight.athena-vs-redshift-workload',
+    'redshift-opensearch-quicksight.redshift-hot-cold-split',
+    'redshift-opensearch-quicksight.quicksight-ml-forecast',
+    'redshift-opensearch-quicksight.redshift-concurrency-scaling',
+    'redshift-opensearch-quicksight.redshift-copy-from-s3',
+    'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
+  ]
+
+  it('S3 접근 제어·BI 문제 24개가 담당 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(246, 270)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 247}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(13).fill('s3-access-control'),
+      ...Array(11).fill('redshift-opensearch-quicksight'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...step1Concepts].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(24)
+  })
+
+  it('S3 접근 제어·BI 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(246, 270).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('S3 접근 제어·BI 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(246, 270)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('S3 접근 제어와 웨어하우스·검색·시각화 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['s3-access-control', 'redshift-opensearch-quicksight'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+      expect(questions.filter((question) => question.topicId === topicId).length).toBeGreaterThan(0)
+    })
+  })
+
+  // phase 27 step 3 — 커버리지가 절반도 안 되던 S3 수명 주기·암호화·블록 스토리지 세
+  // 주제의 빈 개념 24개를 덮는다(ADR-026). 담당 개념과 문항이 일대일이라 slice와
+  // 개념 목록이 같은 길이다.
+  const step3Concepts = [
+    's3-versioning-lifecycle.s3-replication',
+    's3-versioning-lifecycle.s3-same-region-replication',
+    's3-versioning-lifecycle.s3-replication-time-control',
+    's3-versioning-lifecycle.s3-replication-cross-account-kms',
+    's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
+    's3-encryption-batch.client-side-encryption',
+    's3-encryption-batch.s3-inventory-report',
+    's3-encryption-batch.s3-object-lambda',
+    's3-encryption-batch.sse-kms-audit-trail',
+    's3-encryption-batch.batch-copy-vs-replication',
+    's3-encryption-batch.s3-batch-operations-lambda-invoke',
+    's3-encryption-batch.sse-c-no-rotation-or-audit',
+    's3-encryption-batch.s3-secure-transport-condition',
+    'ebs-instance-store.elastic-fabric-adapter',
+    'ebs-instance-store.ebs-volume-type-names',
+    'ebs-instance-store.gp3-iops-independent-of-size',
+    'ebs-instance-store.spread-placement-group',
+    'ebs-instance-store.io2-block-express-iops-ceiling',
+    'ebs-instance-store.ebs-encryption-by-default',
+    'ebs-instance-store.ebs-encryption-performance',
+    'ebs-instance-store.ebs-recycle-bin',
+    'ebs-instance-store.ebs-snapshot-block-public-access',
+    'ebs-instance-store.data-lifecycle-manager',
+    'ebs-instance-store.ebs-fast-snapshot-restore',
+  ]
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제 24개가 담당 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(270, 294)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 271}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(5).fill('s3-versioning-lifecycle'),
+      ...Array(8).fill('s3-encryption-batch'),
+      ...Array(11).fill('ebs-instance-store'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...step3Concepts].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(24)
+  })
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(270, 294).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('S3 수명 주기·암호화·블록 스토리지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(270, 294)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('S3 수명 주기·암호화와 블록 스토리지 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['s3-versioning-lifecycle', 's3-encryption-batch', 'ebs-instance-store'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 2 — 문항이 하나도 없던 세 주제(governance-iac·systems-manager·
+  // ai-ml-services)와, 커버리지가 남아 있던 aws-core-services·s3-storage-classes의
+  // 빈 개념 30개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 헷갈리는 짝인
+  // EC2 Instance Connect 엔드포인트(서비스 선택 ↔ 여는 포트)와 AI 서비스 넷의 갈래
+  // (Transcribe ↔ Textract)만 두 방향으로 물어 문항이 32개다.
+  const step2Concepts = [
+    'governance-iac.cloudformation',
+    'governance-iac.service-catalog',
+    'governance-iac.control-tower-landing-zone',
+    'governance-iac.resource-access-manager',
+    'governance-iac.workload-discovery',
+    'governance-iac.control-tower-controls',
+    'governance-iac.cloudformation-drift-detection',
+    'systems-manager.ssm-run-command',
+    'systems-manager.appconfig',
+    'systems-manager.ssm-session-manager',
+    'systems-manager.ec2-instance-connect-endpoint',
+    'systems-manager.ssm-patch-manager',
+    'systems-manager.ssm-managed-instance-core-policy',
+    'systems-manager.ssm-inventory',
+    'ai-ml-services.sagemaker',
+    'ai-ml-services.media-ai-service-lineup',
+    'ai-ml-services.comprehend',
+    'ai-ml-services.amazon-lex',
+    'ai-ml-services.sagemaker-autopilot',
+    'ai-ml-services.rekognition-content-moderation',
+    'aws-core-services.exponential-backoff-retry',
+    'aws-core-services.blob-offload-to-s3',
+    's3-storage-classes.s3-express-one-zone',
+    's3-storage-classes.glacier-flexible-retrieval-standard-time',
+    's3-storage-classes.glacier-flexible-retrieval-expedited',
+    's3-storage-classes.s3-storage-class-cost-order',
+    's3-storage-classes.lifecycle-vs-intelligent-tiering',
+    's3-storage-classes.s3-storage-class-analysis',
+    's3-storage-classes.s3-retrieval-fee-by-class',
+    's3-storage-classes.intelligent-tiering-monitoring-fee',
+  ]
+
+  it('거버넌스·운영 관리·AI 문제 32개가 담당 개념 30개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(294, 326)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 295}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(7).fill('governance-iac'),
+      ...Array(8).fill('systems-manager'),
+      ...Array(7).fill('ai-ml-services'),
+      ...Array(2).fill('aws-core-services'),
+      ...Array(8).fill('s3-storage-classes'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step2Concepts].sort(),
+    )
+  })
+
+  it('거버넌스·운영 관리·AI 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(294, 326).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('거버넌스·운영 관리·AI 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(294, 326)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('거버넌스·운영 관리·AI와 핵심 서비스·스토리지 클래스 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;[
+      'governance-iac',
+      'systems-manager',
+      'ai-ml-services',
+      'aws-core-services',
+      's3-storage-classes',
+    ].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+      expect(questions.filter((question) => question.topicId === topicId).length).toBeGreaterThan(0)
+    })
+  })
+
+  // phase 27 step 4 — efs-fsx의 빈 개념 21개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 둘로 갈리는 개념 셋만 두 방향으로 물어 문항이 24개다 — 처리량
+  // 모드(버스팅 ↔ 프로비저닝), 성능 모드(최대 I/O ↔ 범용), IA 파일 크기 기준
+  // (128KB에 못 미쳐 절감이 작은 쪽 ↔ 1GB라서 실효를 내는 쪽).
+  const step4Concepts = [
+    'efs-fsx.fsx-windows-file-server',
+    'efs-fsx.fsx-for-lustre',
+    'efs-fsx.fsx-file-gateway',
+    'efs-fsx.efs-throughput-modes',
+    'efs-fsx.efs-elastic-throughput',
+    'efs-fsx.efs-performance-modes',
+    'efs-fsx.efs-one-zone',
+    'efs-fsx.efs-posix-permissions',
+    'efs-fsx.fsx-lustre-sub-millisecond-latency',
+    'efs-fsx.fsx-lustre-persistent-deployment',
+    'efs-fsx.fsx-ontap-multi-protocol-tiering',
+    'efs-fsx.fsx-ontap-iscsi-block',
+    'efs-fsx.fsx-ontap-snapmirror',
+    'efs-fsx.sql-server-always-on-shared-storage',
+    'efs-fsx.efs-ia-file-size-threshold',
+    'efs-fsx.efs-lifecycle-transition-to-primary',
+    'efs-fsx.efs-mount-target-per-az',
+    'efs-fsx.efs-cross-account-mount',
+    'efs-fsx.efs-replication-one-way',
+    'efs-fsx.fsx-windows-storage-auto-scaling',
+    'efs-fsx.fsx-lustre-s3-data-repository-association',
+  ]
+
+  it('공유 파일 스토리지 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(326, 350)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 327}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(24).fill('efs-fsx'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step4Concepts].sort(),
+    )
+  })
+
+  it('공유 파일 스토리지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(326, 350).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('공유 파일 스토리지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(326, 350)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('EFS·FSx 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'efs-fsx')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 5 — data-transfer-services의 빈 개념 16개와
+  // storage-gateway-migration의 빈 개념 6개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 문항이 24개다 —
+  // 지속 수집 ↔ 예약 전송(파일 게이트웨이 ↔ DataSync), 볼륨 모드(저장 볼륨 ↔ 캐시된 볼륨).
+  const step5Concepts = [
+    'data-transfer-services.snowball-edge-compute',
+    'data-transfer-services.transfer-family-workflow',
+    'data-transfer-services.s3-transfer-acceleration',
+    'data-transfer-services.transfer-deadline-vs-bandwidth',
+    'data-transfer-services.file-gateway-vs-datasync-continuous',
+    'data-transfer-services.transfer-family-custom-hostname',
+    'data-transfer-services.transfer-family-directory-service-identity-provider',
+    'data-transfer-services.transfer-family-service-managed-users',
+    'data-transfer-services.datasync-scope-limits',
+    'data-transfer-services.datasync-in-transit-encryption',
+    'data-transfer-services.datasync-manifest',
+    'data-transfer-services.datasync-transfer-mode',
+    'data-transfer-services.datasync-task-status-event',
+    'data-transfer-services.transfer-family-workflow-actions',
+    'data-transfer-services.transfer-family-structured-logging',
+    'data-transfer-services.s3-multipart-upload',
+    'storage-gateway-migration.dms-sct',
+    'storage-gateway-migration.application-migration-service',
+    'storage-gateway-migration.storage-gateway-gateway-types',
+    'storage-gateway-migration.storage-gateway-volume-modes',
+    'storage-gateway-migration.tape-gateway-archive-tiers',
+    'storage-gateway-migration.dms-full-load-and-cdc-task',
+  ]
+
+  it('데이터 전송·마이그레이션 문제 24개가 담당 개념 22개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(350, 374)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 351}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(17).fill('data-transfer-services'),
+      ...Array(7).fill('storage-gateway-migration'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step5Concepts].sort(),
+    )
+  })
+
+  it('데이터 전송·마이그레이션 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(350, 374).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('데이터 전송·마이그레이션 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(350, 374)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('데이터 전송과 Storage Gateway·마이그레이션 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['data-transfer-services', 'storage-gateway-migration'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 6 — rds-storage-features의 빈 개념 14개와 aurora의 빈 개념 15개를
+  // 덮는다(ADR-026). 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두
+  // 방향으로 물어 문항이 32개다 — 다중 AZ 배포의 두 형태(읽을 수 있는 대기 인스턴스 ↔
+  // 지연을 허용하는 분석 분리), 캐시가 듣는 조건(반복이 없을 때의 대안 ↔ 갈림길의 축),
+  // Aurora 백업의 복구 지점 목표(지속적 증분 백업 ↔ 정해진 간격의 스냅샷).
+  const step6Concepts = [
+    'rds-storage-features.rds-blue-green-deployment',
+    'rds-storage-features.rds-custom',
+    'rds-storage-features.rds-iam-database-authentication',
+    'rds-storage-features.rds-encryption-scope-and-in-transit',
+    'rds-storage-features.rds-multi-az-db-cluster',
+    'rds-storage-features.read-replica-vs-cache',
+    'rds-storage-features.rds-proxy-failover',
+    'rds-storage-features.rds-snapshot-cross-region-copy',
+    'rds-storage-features.rds-manual-snapshot-retention',
+    'rds-storage-features.rds-pitr-transaction-log-interval',
+    'rds-storage-features.rds-multi-az-failover-rto',
+    'rds-storage-features.rds-stop-instance-restart',
+    'rds-storage-features.rds-encrypt-existing-instance',
+    'rds-storage-features.rds-custom-byol',
+    'aurora.aurora-endpoint-types',
+    'aurora.aurora-replica-auto-scaling',
+    'aurora.babelfish',
+    'aurora.aurora-pgvector',
+    'aurora.aurora-select-into-outfile-s3',
+    'aurora.aurora-global-database-dr-targets',
+    'aurora.aurora-cross-region-read-replica',
+    'aurora.aurora-continuous-backup-rpo',
+    'aurora.aurora-clone',
+    'aurora.aurora-storage-configurations',
+    'aurora.sql-server-license-cost',
+    'aurora.aurora-zdr-and-activity-streams',
+    'aurora.aurora-global-database-write-region',
+    'aurora.aurora-serverless-max-acu',
+    'aurora.read-replica-no-schema-change',
+  ]
+
+  it('RDS·Aurora 문제 32개가 담당 개념 29개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(374, 406)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 375}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(16).fill('rds-storage-features'),
+      ...Array(16).fill('aurora'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step6Concepts].sort(),
+    )
+  })
+
+  it('RDS·Aurora 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(374, 406).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('RDS·Aurora 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(374, 406)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('RDS 스토리지 기능과 Aurora 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['rds-storage-features', 'aurora'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 7 — dynamodb의 빈 개념 16개와 elasticache-purpose-built-db의
+  // 빈 개념 11개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 갈림길 하나만 두
+  // 방향으로 물어 문항이 28개다 — ElastiCache 엔진 선택(지속성이 필요한 상태를
+  // 캐시에 둘 때 고르는 쪽 ↔ Memcached에 없는 것).
+  const step7Concepts = [
+    'dynamodb.dynamodb-single-digit-latency',
+    'dynamodb.dynamodb-streams',
+    'dynamodb.dynamodb-global-tables',
+    'dynamodb.dynamodb-ttl',
+    'dynamodb.dynamodb-global-secondary-index',
+    'dynamodb.dynamodb-capacity-modes',
+    'dynamodb.dynamodb-auto-scaling-target-utilization',
+    'dynamodb.dynamodb-read-consistency',
+    'dynamodb.dynamodb-s3-export-vs-streams',
+    'dynamodb.dynamodb-incremental-export',
+    'dynamodb.dynamodb-export-no-read-capacity',
+    'dynamodb.dynamodb-export-requires-pitr',
+    'dynamodb.dynamodb-item-size-limit',
+    'dynamodb.dynamodb-ttl-deletion-delay',
+    'dynamodb.dynamodb-streams-retention-24h',
+    'dynamodb.dynamodb-streams-batch-size',
+    'elasticache-purpose-built-db.neptune',
+    'elasticache-purpose-built-db.neptune-streams',
+    'elasticache-purpose-built-db.qldb',
+    'elasticache-purpose-built-db.timestream',
+    'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
+    'elasticache-purpose-built-db.elasticache-multi-az-failover',
+    'elasticache-purpose-built-db.elasticache-global-datastore',
+    'elasticache-purpose-built-db.documentdb-global-cluster',
+    'elasticache-purpose-built-db.cache-requires-application-change',
+    'elasticache-purpose-built-db.elasticache-not-a-durable-store',
+    'elasticache-purpose-built-db.dax-encryption-at-rest',
+  ]
+
+  it('DynamoDB·캐시 문제 28개가 담당 개념 27개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(406, 434)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 407}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(16).fill('dynamodb'),
+      ...Array(12).fill('elasticache-purpose-built-db'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step7Concepts].sort(),
+    )
+  })
+
+  it('DynamoDB·캐시 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(406, 434).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('DynamoDB·캐시 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(406, 434)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('DynamoDB와 목적별 데이터베이스 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['dynamodb', 'elasticache-purpose-built-db'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 8 — ec2-autoscaling의 빈 개념 15개와 elastic-load-balancing의
+  // 빈 개념 13개를 덮는다(ADR-026). 개념당 한 문항이 기본이고, 축이 양방향으로
+  // 갈리는 개념 넷만 두 방향으로 물어 문항이 32개다 — 예약 인스턴스의 두 갈래
+  // (유형을 고정해 할인을 크게 ↔ 유형을 바꿀 여지를 남기고 덜 싸게), 스팟 할당
+  // 전략(중단 최소화 ↔ 비용과 용량의 절충), 단순 조정과 대상 추적(짧은 급증에서
+  // 무엇으로 바꾸는가 ↔ 단순 조정의 동작 방식 자체), 종단 간 암호화(뒤 구간도
+  // TLS여야 한다 ↔ 인증서 수명 주기를 누가 지는가).
+  const step8Concepts = [
+    'ec2-autoscaling.ami-and-launch-template',
+    'ec2-autoscaling.ec2-image-builder',
+    'ec2-autoscaling.memory-optimized-instance-family',
+    'ec2-autoscaling.gpu-instance-family',
+    'ec2-autoscaling.reserved-instance-types',
+    'ec2-autoscaling.spot-workload-fit',
+    'ec2-autoscaling.target-tracking-vs-simple-scaling',
+    'ec2-autoscaling.predictive-scaling',
+    'ec2-autoscaling.spot-allocation-strategy',
+    'ec2-autoscaling.asg-instance-type-override',
+    'ec2-autoscaling.asg-on-demand-base-capacity',
+    'ec2-autoscaling.asg-single-instance-self-healing',
+    'ec2-autoscaling.elb-health-check-drives-asg-replacement',
+    'ec2-autoscaling.enhanced-networking',
+    'ec2-autoscaling.parallelcluster',
+    'elastic-load-balancing.gateway-load-balancer',
+    'elastic-load-balancing.alb-routing-conditions',
+    'elastic-load-balancing.nlb-tls-listener',
+    'elastic-load-balancing.nlb-udp-listener',
+    'elastic-load-balancing.nlb-ip-targets',
+    'elastic-load-balancing.alb-cookie-stickiness',
+    'elastic-load-balancing.internal-load-balancer',
+    'elastic-load-balancing.alb-least-outstanding-requests',
+    'elastic-load-balancing.alb-target-group-independent-scaling',
+    'elastic-load-balancing.alb-listener-rule-fixed-response',
+    'elastic-load-balancing.load-balancer-idle-timeout',
+    'elastic-load-balancing.end-to-end-encryption-behind-alb',
+    'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+  ]
+
+  it('EC2·로드 밸런서 문제 32개가 담당 개념 28개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(434, 466)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 435}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(18).fill('ec2-autoscaling'),
+      ...Array(14).fill('elastic-load-balancing'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step8Concepts].sort(),
+    )
+  })
+
+  it('EC2·로드 밸런서 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(434, 466).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('EC2·로드 밸런서 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(434, 466)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('EC2와 로드 밸런서 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['ec2-autoscaling', 'elastic-load-balancing'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
+  // phase 27 step 9 — cloudfront-global-accelerator의 빈 개념 19개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어
+  // 문항이 22개다 — 서명된 URL(만료되는 일회성 링크가 맞는 자리 ↔ 매일 들어오는
+  // 상시 접근에는 아닌 이유), 엣지 캐시의 비용 절감(지연과 전송 비용이 함께 조건일 때
+  // CloudFront가 답인 자리 ↔ 리전 복제안이 비용에서 밀리는 이유), Global Accelerator의
+  // 고정 IP(뒤쪽이 바뀌어도 변하지 않는 진입점 ↔ 캐시할 사본이 없는 TCP 연결의 가속).
+  const step9Concepts = [
+    'cloudfront-global-accelerator.cloudfront-alb-origin',
+    'cloudfront-global-accelerator.cloudfront-multiple-origins',
+    'cloudfront-global-accelerator.cloudfront-onprem-origin',
+    'cloudfront-global-accelerator.global-accelerator',
+    'cloudfront-global-accelerator.global-accelerator-static-ip',
+    'cloudfront-global-accelerator.global-accelerator-endpoints',
+    'cloudfront-global-accelerator.cloudfront-functions',
+    'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
+    'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
+    'cloudfront-global-accelerator.cloudfront-signed-url',
+    'cloudfront-global-accelerator.cloudfront-signed-cookie',
+    'cloudfront-global-accelerator.cloudfront-geo-restriction',
+    'cloudfront-global-accelerator.cloudfront-field-level-encryption',
+    'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+    'cloudfront-global-accelerator.lambda-at-edge-response-compression',
+    'cloudfront-global-accelerator.cloudfront-price-class',
+    'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
+    'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
+    'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+  ]
+
+  it('CloudFront·엣지 문제 22개가 담당 개념 19개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(466, 488)
+
+    expect(addedQuestions).toHaveLength(22)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 22 }, (_, index) => `q${index + 467}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(22).fill('cloudfront-global-accelerator'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step9Concepts].sort(),
+    )
+  })
+
+  it('CloudFront·엣지 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(466, 488).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('CloudFront·엣지 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(466, 488)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('CloudFront·Global Accelerator 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'cloudfront-global-accelerator')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+
+  // phase 27 step 10 — lambda의 빈 개념 15개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 양방향으로 갈리는 개념 다섯만 두 방향으로 물어 문항이 20개다 —
+  // 호출 유형(즉시 답을 주지 않아야 하는 작업은 이벤트 호출 ↔ 요청-응답으로 받으면
+  // 처리 시간이 그대로 대기 시간이 된다), 예약된 동시성(피크에 일정한 지연이 필요하면
+  // 프로비저닝된 쪽 ↔ 예약된 쪽은 콜드 스타트를 남긴다), SnapStart(게시된 버전에서만
+  // 켜진다 ↔ 스냅샷을 되살리므로 호출마다 달라야 하는 값은 핸들러 안으로),
+  // EFS 마운트(레이어 상한을 넘는 공유 종속성 ↔ 전송 중 암호화는 이미 자동),
+  // 운영 체제 접근(컴퓨팅은 EC2 ↔ 데이터베이스는 RDS Custom).
+  const step10Concepts = [
+    'lambda.lambda-function-url-iam-auth',
+    'lambda.lambda-container-image',
+    'lambda.lambda-invocation-types',
+    'lambda.lambda-memory-cpu-proportional',
+    'lambda.lambda-reserved-concurrency',
+    'lambda.lambda-provisioned-concurrency-autoscaling',
+    'lambda.lambda-concurrency-limit-throttling',
+    'lambda.lambda-kinesis-event-source',
+    'lambda.lambda-snapstart',
+    'lambda.lambda-memory-ceiling',
+    'lambda.lambda-layer-size-limit',
+    'lambda.lambda-efs-mount',
+    'lambda.lambda-version-alias-config-freeze',
+    'lambda.lambda-execution-role-logs',
+    'lambda.serverless-runtime-no-os-access',
+  ]
+
+  it('Lambda 문제 20개가 담당 개념 15개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(488, 508)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 489}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('lambda'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step10Concepts].sort(),
+    )
+  })
+
+  it('Lambda 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(488, 508).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('Lambda 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(488, 508)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('Lambda 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'lambda')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 11 — ecs-eks-fargate의 빈 개념 19개를 덮는다(ADR-026). 개념당 한
+  // 문항이 기본이고, EKS의 컴퓨팅 세 갈래만 두 방향으로 물어 문항이 20개다 —
+  // 기본 컴퓨팅 인프라를 직접 관리하지 않는 것이 목표면 Fargate 쪽이라는 갈림길과,
+  // 그 Fargate에서 어떤 파드를 돌릴지 고르는 장치가 Fargate 프로필이라는 설정 항목.
+  const step11Concepts = [
+    'ecs-eks-fargate.ecr-image-scan-on-push',
+    'ecs-eks-fargate.elastic-beanstalk',
+    'ecs-eks-fargate.app2container',
+    'ecs-eks-fargate.eks-compute-options',
+    'ecs-eks-fargate.fargate-spot',
+    'ecs-eks-fargate.batch-fargate-compute-environment',
+    'ecs-eks-fargate.eks-fargate-pod-isolation',
+    'ecs-eks-fargate.eks-cluster-autoscaler',
+    'ecs-eks-fargate.eks-aws-load-balancer-controller',
+    'ecs-eks-fargate.eks-connector',
+    'ecs-eks-fargate.eks-anywhere',
+    'ecs-eks-fargate.ecs-task-role',
+    'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+    'ecs-eks-fargate.eks-irsa',
+    'ecs-eks-fargate.ecs-awsvpc-mode',
+    'ecs-eks-fargate.ecs-task-placement-strategy',
+    'ecs-eks-fargate.fargate-per-second-billing',
+    'ecs-eks-fargate.fargate-efs-mount',
+    'ecs-eks-fargate.eks-secrets-kms-encryption',
+  ]
+
+  it('컨테이너 문제 20개가 담당 개념 19개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(508, 528)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 509}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('ecs-eks-fargate'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step11Concepts].sort(),
+    )
+  })
+
+  it('컨테이너 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(508, 528).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('컨테이너 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(508, 528)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('컨테이너 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'ecs-eks-fargate')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 12 — api-gateway-step-functions의 빈 개념 16개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어
+  // 문항이 20개다 — 통합 타임아웃(어느 유형을 고르는가 ↔ 싼 쪽을 고른 설계가 왜 끊기는가),
+  // 엔드포인트 유형(전 세계 지연을 줄이는 노출 방식 ↔ 같은 자리에 얹히는 캐싱이 하는 일),
+  // Lambda 프록시 통합(동기 호출이라는 성질 ↔ 인증을 맡는 사용자 지정 권한 부여자),
+  // 매핑 템플릿(형식이 달라지는 변환은 함수가 맡는다 ↔ 변환할 것이 없는 쪽은 그대로 흘린다).
+  const step12Concepts = [
+    'api-gateway-step-functions.amplify',
+    'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+    'api-gateway-step-functions.api-gateway-rest-only-features',
+    'api-gateway-step-functions.api-gateway-websocket-api',
+    'api-gateway-step-functions.api-gateway-api-key-not-auth',
+    'api-gateway-step-functions.api-gateway-resource-policy',
+    'api-gateway-step-functions.api-gateway-endpoint-types',
+    'api-gateway-step-functions.api-gateway-behind-cloudfront',
+    'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
+    'api-gateway-step-functions.api-gateway-aws-service-integration',
+    'api-gateway-step-functions.step-functions-long-running-workflow',
+    'api-gateway-step-functions.step-functions-express-workflow',
+    'api-gateway-step-functions.step-functions-map-state',
+    'api-gateway-step-functions.api-gateway-custom-domain-name',
+    'api-gateway-step-functions.api-gateway-mapping-template-limits',
+    'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+  ]
+
+  it('API Gateway·Step Functions 문제 20개가 담당 개념 16개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(528, 548)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 529}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(20).fill('api-gateway-step-functions'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step12Concepts].sort(),
+    )
+  })
+
+  it('API Gateway·Step Functions 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(528, 548).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('API Gateway·Step Functions 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(528, 548)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('API Gateway·Step Functions 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'api-gateway-step-functions')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 13 — sqs-sns-eventbridge의 빈 개념 26개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 28개다 — SNS는 큐가 아니다(버퍼가 필요한 자리는 큐다 ↔ 알림 한 통이면 되는
+  // 자리에 큐를 끼우는 것도 같은 어긋남이다), 가시성 타임아웃(중복 처리 증상을 무엇으로
+  // 고치는가 ↔ 전달 지연은 왜 그 증상에 손대지 못하는가).
+  const step13Concepts = [
+    'sqs-sns-eventbridge.amazon-mq',
+    'sqs-sns-eventbridge.dead-letter-queue',
+    'sqs-sns-eventbridge.sns-is-not-a-queue',
+    'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+    'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+    'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+    'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
+    'sqs-sns-eventbridge.eventbridge-event-bus-types',
+    'sqs-sns-eventbridge.eventbridge-pipes',
+    'sqs-sns-eventbridge.eventbridge-api-destination',
+    'sqs-sns-eventbridge.eventbridge-private-api-target',
+    'sqs-sns-eventbridge.eventbridge-resource-change-rule',
+    'sqs-sns-eventbridge.sns-fifo-topic',
+    'sqs-sns-eventbridge.ses-inbound-email-receiving',
+    'sqs-sns-eventbridge.sqs-batch-and-polling',
+    'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+    'sqs-sns-eventbridge.sqs-message-size-limit',
+    'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+    'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+    'sqs-sns-eventbridge.sqs-content-based-deduplication',
+    'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+    'sqs-sns-eventbridge.sqs-queue-policy',
+    'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+    'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+    'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
+    'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+  ]
+
+  it('메시징 문제 28개가 담당 개념 26개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(548, 576)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 549}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(28).fill('sqs-sns-eventbridge'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step13Concepts].sort(),
+    )
+  })
+
+  it('메시징 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(548, 576).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('메시징 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(548, 576)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('SQS·SNS·EventBridge 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'sqs-sns-eventbridge')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 14 — 백업·재해 복구와 네트워킹 네 주제의 빈 개념 30개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 32개다 — 상태 저장과 상태 비저장(응답 규칙이 왜 필요한가 ↔ 차단 규칙이
+  // 없다는 성질이 IP 하나 막기를 어디로 보내는가), Direct Connect의 가상 인터페이스
+  // (Transit Gateway로 가는 조합은 무엇인가 ↔ 세 종류의 목적지가 어떻게 갈리는가).
+  const step14Concepts = [
+    'backup-disaster-recovery.elastic-disaster-recovery',
+    'backup-disaster-recovery.backup-and-restore-dr',
+    'backup-disaster-recovery.warm-standby-for-low-rto',
+    'backup-disaster-recovery.backup-ec2-resource-assignment',
+    'backup-disaster-recovery.organizations-backup-policy',
+    'backup-disaster-recovery.backup-cross-account-copy',
+    'backup-disaster-recovery.backup-s3-continuous-backup',
+    'backup-disaster-recovery.backup-restore-testing-plan',
+    'backup-disaster-recovery.backup-audit-manager',
+    'vpc-networking.vpc-flow-logs',
+    'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+    'vpc-networking.privatelink-endpoint-service',
+    'vpc-networking.nat-gateway-per-az',
+    'vpc-networking.internet-gateway-is-not-per-az',
+    'vpc-networking.nat-gateway-count-by-environment',
+    'vpc-networking.nat-gateway-elastic-ip',
+    'vpc-networking.vpc-endpoint-policy',
+    'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+    'security-groups-nacl.nacl-deny-at-source-subnet',
+    'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
+    'security-groups-nacl.nlb-security-group',
+    'hybrid-connectivity.virtual-private-gateway',
+    'hybrid-connectivity.region-attached-edge-options',
+    'hybrid-connectivity.per-vpc-vpn-for-isolation',
+    'hybrid-connectivity.transit-gateway-cross-region-peering',
+    'hybrid-connectivity.onprem-access-via-interface-endpoint',
+    'hybrid-connectivity.outposts-data-residency',
+    'hybrid-connectivity.direct-connect-resiliency',
+    'hybrid-connectivity.direct-connect-vif-types',
+    'hybrid-connectivity.centralized-onprem-egress',
+  ]
+
+  it('백업·네트워킹 문제 32개가 담당 개념 30개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(576, 608)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 577}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set([
+        'backup-disaster-recovery',
+        'vpc-networking',
+        'security-groups-nacl',
+        'hybrid-connectivity',
+      ]),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step14Concepts].sort(),
+    )
+  })
+
+  it('백업·네트워킹 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(576, 608).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('백업·네트워킹 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(576, 608)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('백업·재해 복구와 네트워킹 세 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) =>
+        [
+          'backup-disaster-recovery',
+          'vpc-networking',
+          'security-groups-nacl',
+          'hybrid-connectivity',
+        ].includes(id),
+      )
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 15 — Route 53과 분석 두 주제의 빈 개념 23개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어
+  // 문항이 24개다 — EMR 노드의 세 역할(저장을 맡느냐가 코어와 태스크를 가른다 ↔
+  // 그 차이 때문에 스팟으로 돌려도 되는 노드가 어디인가).
+  const step15Concepts = [
+    'route53.route53-zone-file-import',
+    'route53.route53-failover-routing',
+    'route53.multi-region-failover-for-region-outage',
+    'route53.latency-record-for-non-aws-endpoint',
+    'route53.route53-alias-record',
+    'route53.private-hosted-zone-vpc-only',
+    'route53.route53-resolver-forward-rule',
+    'route53.route53-query-logging',
+    'emr-glue-athena.emr-node-types',
+    'emr-glue-athena.glue-databrew',
+    'emr-glue-athena.lake-formation',
+    'emr-glue-athena.emr-transient-cluster',
+    'emr-glue-athena.emr-managed-scaling',
+    'emr-glue-athena.glue-etl-with-per-customer-kms-key',
+    'emr-glue-athena.athena-encrypted-and-pay-per-query',
+    'emr-glue-athena.athena-federated-query',
+    'emr-glue-athena.log-storage-s3-athena',
+    'emr-glue-athena.lake-formation-blueprint-and-athena',
+    'emr-glue-athena.lake-formation-lf-tags',
+    'emr-glue-athena.emr-node-instance-family-choice',
+    'emr-glue-athena.emr-runtime-role',
+    'emr-glue-athena.emr-security-configuration',
+    'emr-glue-athena.parquet-columnar-format',
+  ]
+
+  it('Route 53·분석 문제 24개가 담당 개념 23개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(608, 632)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 609}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['route53', 'emr-glue-athena']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step15Concepts].sort(),
+    )
+  })
+
+  it('Route 53·분석 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(608, 632).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('Route 53·분석 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(608, 632)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('Route 53과 분석 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['route53', 'emr-glue-athena'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 16 — 스트리밍과 관측 두 주제의 빈 개념 23개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 하나만 두 방향으로 물어
+  // 문항이 24개다 — Kinesis 용량 모드(두 모드가 무엇으로 갈리는가 ↔ 파티션 키 쏠림에는
+  // 온디맨드로 옮겨도 증상만 가려진다).
+  const step16Concepts = [
+    'kinesis-streaming.kinesis-data-streams',
+    'kinesis-streaming.data-firehose',
+    'kinesis-streaming.managed-service-apache-flink',
+    'kinesis-streaming.kinesis-video-streams',
+    'kinesis-streaming.flink-kinesis-source-sink',
+    'kinesis-streaming.firehose-lambda-transformation',
+    'kinesis-streaming.firehose-format-conversion',
+    'kinesis-streaming.kinesis-retention-and-fanout',
+    'kinesis-streaming.kinesis-client-library',
+    'kinesis-streaming.msk-kafka-connect',
+    'kinesis-streaming.kinesis-record-size-limit',
+    'kinesis-streaming.kinesis-partition-key-hot-shard',
+    'kinesis-streaming.kinesis-capacity-mode',
+    'kinesis-streaming.firehose-buffering',
+    'cloudwatch-xray.x-ray',
+    'cloudwatch-xray.performance-insight',
+    'cloudwatch-xray.amazon-managed-grafana',
+    'cloudwatch-xray.cloudwatch-network-monitor',
+    'cloudwatch-xray.cloudwatch-container-insights',
+    'cloudwatch-xray.performance-insights-rightsizing',
+    'cloudwatch-xray.cloudwatch-agent-memory-metric',
+    'cloudwatch-xray.ec2-detailed-monitoring',
+    'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+  ]
+
+  it('스트리밍·관측 문제 24개가 담당 개념 23개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(632, 656)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 633}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['kinesis-streaming', 'cloudwatch-xray']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step16Concepts].sort(),
+    )
+  })
+
+  it('스트리밍·관측 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(632, 656).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('스트리밍·관측 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(632, 656)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('스트리밍과 관측 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['kinesis-streaming', 'cloudwatch-xray'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 17 — 보안 서비스 세 주제의 빈 개념 26개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 28개다 — Shield Standard의 방어 범위(정상 요청 모양의 L7 공격은 WAF가 맡는다
+  // ↔ 기본 보호의 범위가 네트워크 계층까지라는 경계 자체)와 Inspector의 역할(취약점을
+  // 찾아 주는 서비스는 무엇인가 ↔ 유입을 막는 일은 발견이 아니라 조치라 자리가 다르다).
+  const step17Concepts = [
+    'secrets-encryption.kms-key-types-by-management',
+    'secrets-encryption.kms-multi-region-key',
+    'secrets-encryption.kms-imported-key-material',
+    'secrets-encryption.kms-cloudhsm-key-store',
+    'secrets-encryption.kms-key-per-tenant',
+    'secrets-encryption.acm-dns-validation',
+    'secrets-encryption.secrets-manager-batch-get-secret-value',
+    'secrets-encryption.kms-automatic-key-rotation',
+    'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
+    'secrets-encryption.imported-key-material-rotation',
+    'secrets-encryption.acm-expiration-event',
+    'waf-shield.firewall-manager',
+    'waf-shield.waf-managed-rule-groups',
+    'waf-shield.waf-rate-based-rule',
+    'waf-shield.shield-standard-network-layer',
+    'waf-shield.shield-advanced-protection-group',
+    'waf-shield.waf-body-inspection-size-limit',
+    'waf-shield.waf-web-acl-region-must-match-rest-api',
+    'waf-shield.waf-logging-to-firehose',
+    'guardduty-macie-inspector.amazon-inspector',
+    'guardduty-macie-inspector.security-hub',
+    'guardduty-macie-inspector.macie-automated-discovery',
+    'guardduty-macie-inspector.inspector-scans-ecr-images',
+    'guardduty-macie-inspector.macie-delegated-administrator',
+    'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+    'guardduty-macie-inspector.macie-finding-to-eventbridge',
+  ]
+
+  it('보안 서비스 문제 28개가 담당 개념 26개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(656, 684)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 657}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['secrets-encryption', 'waf-shield', 'guardduty-macie-inspector']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step17Concepts].sort(),
+    )
+  })
+
+  it('보안 서비스 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(656, 684).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('보안 서비스 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(656, 684)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('비밀·키와 WAF·Shield와 탐지 세 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) =>
+        ['secrets-encryption', 'waf-shield', 'guardduty-macie-inspector'].includes(id),
+      )
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 18 — 자격 증명 두 주제의 빈 개념 20개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 넷만 두 방향으로 물어
+  // 문항이 24개다 — 권한 경계(주체별 상한이라는 정의 ↔ 부착을 SCP로 의무화하는 예방적
+  // 통제), 명시적 거부(평가 순서 자체 ↔ aws:SourceIp 조건에 걸린 403 진단),
+  // NotAction Deny(한 서비스만 남기는 구성 ↔ Deny 전체+Allow 하나가 죽는 이유),
+  // AD Connector(디렉터리 정보를 AWS에 두지 않는다 ↔ 인증은 온프레미스·권한은 권한 세트).
+  const step18Concepts = [
+    'iam-permissions.iam-group-policy-attachment',
+    'iam-permissions.iam-roles-anywhere',
+    'iam-permissions.iam-access-analyzer',
+    'iam-permissions.network-access-analyzer',
+    'iam-permissions.abac',
+    'iam-permissions.permissions-boundary',
+    'iam-permissions.cross-account-iam-role',
+    'iam-permissions.iam-user-is-account-scoped',
+    'iam-permissions.iam-explicit-deny-precedence',
+    'iam-permissions.iam-notaction-deny',
+    'iam-permissions.iam-requested-region-condition',
+    'iam-permissions.access-analyzer-delegated-administrator',
+    'iam-permissions.root-user-multiple-mfa',
+    'iam-permissions.root-user-cannot-be-disabled',
+    'identity-federation.aws-directory-service',
+    'identity-federation.identity-center-external-idp',
+    'identity-federation.cognito-social-idp-federation',
+    'identity-federation.custom-identity-broker-for-non-saml',
+    'identity-federation.identity-center-permission-set',
+    'identity-federation.saml-federation-role-to-ad-group-mapping',
+  ]
+
+  it('자격 증명 문제 24개가 담당 개념 20개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(684, 708)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 685}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['iam-permissions', 'identity-federation']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step18Concepts].sort(),
+    )
+  })
+
+  it('자격 증명 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(684, 708).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('자격 증명 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(684, 708)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('IAM 권한과 자격 증명 페더레이션 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['iam-permissions', 'identity-federation'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // phase 27 step 19 — 거버넌스·비용 두 주제의 빈 개념 21개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어
+  // 문항이 24개다 — 태그 정책(표기를 통일하는 일 ↔ 막는 일은 SCP라 둘을 함께 붙인다),
+  // SCP를 붙일 수 있는 자리(넷 중 셋만 제한하는 방법 ↔ 루트에 붙여 전부 걸린 증상의 진단),
+  // 온디맨드 용량 예약(할인 수단이 아니라는 성격 ↔ 중단을 견디는 배치는 스팟이 가장 싸다).
+  const step19Concepts = [
+    'organizations-cloudtrail-config.cloudtrail-lake',
+    'organizations-cloudtrail-config.audit-manager',
+    'organizations-cloudtrail-config.organizational-unit',
+    'organizations-cloudtrail-config.organizations-tag-policy',
+    'organizations-cloudtrail-config.organizations-consolidated-billing',
+    'organizations-cloudtrail-config.cloudtrail-data-events',
+    'organizations-cloudtrail-config.config-configuration-recorder',
+    'organizations-cloudtrail-config.scp-attachment-targets',
+    'organizations-cloudtrail-config.scp-condition-exception',
+    'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+    'organizations-cloudtrail-config.config-conformance-pack',
+    'organizations-cloudtrail-config.config-custom-rule',
+    'organizations-cloudtrail-config.config-rule-remediation',
+    'cost-management.cost-and-usage-report',
+    'cost-management.savings-plan-baseline-vs-spike',
+    'cost-management.rds-reserved-instance',
+    'cost-management.on-demand-capacity-reservation',
+    'cost-management.cost-allocation-tag-activation-in-management-account',
+    'cost-management.budget-actions',
+    'cost-management.budget-forecasted-alert',
+    'cost-management.compute-optimizer-ebs-recommendations',
+  ]
+
+  it('거버넌스·비용 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(708, 732)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 709}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['organizations-cloudtrail-config', 'cost-management']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step19Concepts].sort(),
+    )
+  })
+
+  it('거버넌스·비용 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(708, 732).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('거버넌스·비용 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(708, 732)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('거버넌스와 비용 관리 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['organizations-cloudtrail-config', 'cost-management'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
+  // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
+  // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
+  // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
+  // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(13, 20).map(({ id, title, importance, sourcePages }) => ({
+    // step 14가 security-groups-nacl을 네트워크 쪽으로 옮겨 이 묶음은 여섯이 됐고,
+    // step 15가 messaging-backup을 없애 시작 위치가 한 칸 올라오면서
+    // analytics-monitoring을 쪼갠 세 주제가 더해져 아홉이 됐다.
+    // step 17이 identity-access를 셋으로 갈라 열하나가 됐고,
+    // step 18이 threat-protection을 둘로 갈라 열둘이 됐다.
+    // step 19가 governance-iac·systems-manager를 배열 끝에 신설해 열넷이 됐고,
+    // step 20이 ai-ml-services를 그 뒤에 신설해 열다섯이 됐다.
+    expect(topics.slice(24, 39).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
       sourcePages,
     }))).toEqual([
       { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
-      { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
-      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
-      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
-      { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
-      { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
-      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
+      { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
+      { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
+      { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 3, sourcePages: [44, 44] },
+      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 3, sourcePages: [45, 47] },
+      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 3, sourcePages: [45, 47] },
+      { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
+      { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
+      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
+      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
+      { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
+      { id: 'ai-ml-services', title: 'SageMaker·Comprehend·Rekognition·Lex·Transcribe·Translate·Textract', importance: 2, sourcePages: [0, 0] },
     ])
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(13, 20).map((topic) => topic.concepts.length)).toEqual([
-      5, 14, 5, 9, 11, 12, 9,
+    // security-groups-nacl의 5는 step 14가 네트워크 묶음으로 가져갔다.
+    // analytics-monitoring의 14는 step 15가 원본 10개념을 세 주제로 갈라 신규 36을
+    // 더한 결과다(20·16·11). step 16이 남은 4개념에 신규 7을 더해 cloudwatch-xray를
+    // 세우고, route53의 5에 신규 8을 더해 13으로 늘렸다.
+    // 마지막 셋 18·11·15는 step 17이 identity-access의 12개념을 셋으로 나눠(4·5·3)
+    // dump-gaps의 신규 32(IAM 14 · 페더레이션 6 · 조직·감사 12)를 더한 값이다.
+    // organizations-cloudtrail-config의 16은 step 19가 (주제 미정)의
+    // config-rule-remediation을 3단 끝으로 옮겨 와 채운 값이다.
+    // cost-management의 17은 원본 9에 step 19가 신규 8을 더한 값이고,
+    // 마지막 6·7은 같은 step이 (주제 미정)에서 거버넌스·IaC 6개와 Systems Manager
+    // 7개를 가져와 세운 두 주제다.
+    // step 18이 secrets-encryption의 9에 신규 11을 더해 20으로 늘리고,
+    // threat-protection의 11개념을 둘로 나눠(7·4) 신규 15(WAF·Shield 8 · 탐지 7)를
+    // 더해 15·11로 세웠다.
+    // step 20이 (주제 미정)의 workload-discovery를 governance-iac 1단에 넣어 7로
+    // 늘리고, AI·ML 신규 6으로 ai-ml-services를 배열 끝에 세웠다.
+    expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
+      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 16, 17, 7, 7, 6,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(6, 13).map(({ id, title, importance, sourcePages }) => ({
+    // step 14가 security-groups-nacl을 vpc-networking과 hybrid-connectivity 사이로
+    // 옮겨 이 묶음이 하나 늘었고, step 15가 껍데기만 남았던 messaging-backup을
+    // 없애면서 다시 하나 줄었다.
+    expect(topics.slice(9, 24).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
       sourcePages,
     }))).toEqual([
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
-      { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
-      { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
-      { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
-      { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
+      { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
+      { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
+      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
+      { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
+      { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
+      { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
+      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠고,
+      // step 11이 남은 껍데기를 ECS 계열과 API Gateway 계열로 갈랐다.
+      { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
+      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
+      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
+      // phase 26 step 12가 messaging-backup에서 메시징 계열을 빼내 그 자리에 놓았고,
+      // step 13이 AWS Backup 계열과 재해 복구 계열을 그 뒤에 세웠다.
+      { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
+      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
+      { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
     ])
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(6, 13).map((topic) => topic.concepts.length)).toEqual([
-      7, 8, 11, 11, 11, 12, 10,
+    // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이고,
+    // 이어지는 18·18·14는 step 7이 원본 8개념을 셋으로 갈라 신규 42를 더한 결과다.
+    // 17·16은 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
+    // 빼내 신규 27을 더한 결과이고, 24는 step 9가 남은 5개념을 옮겨 신규 16을 더한 데에
+    // step 10이 엣지 함수 셋(기존 lambda-at-edge + 신규 2)을 보태 나온 값이다.
+    // 18은 step 10이 serverless-containers의 11개념에서 Lambda 계열 4개를 빼내 신규 15를
+    // 더한 결과이고, 23·19는 step 11이 남은 7개념을 둘로 가르며 messaging-backup의
+    // step-functions-features를 함께 가져와 신규 34를 더한 결과다. 그 바람에
+    // messaging-backup은 11에서 10으로 줄었다. 33은 step 12가 그중 메시징 계열 7개념을
+    // 빼낸 값이고, 11은 step 13이 남은 AWS Backup 계열 둘에 dump-gaps의 신규 9(백업 6 +
+    // 재해 복구 3)를 더한 값이다. 그러고 남은 MSK 하나는 step 15가 kinesis-streaming으로
+    // 가져가며 그 주제를 없앴다.
+    // 마지막 셋 20·9·19는 step 14가 세 주제에 dump-gaps의 신규 21(VPC 8 · 보안 그룹 4 ·
+    // 하이브리드 연결 9)을 더한 값이다.
+    // step 20이 (주제 미정)의 parallelcluster를 ec2-autoscaling 3단 끝에,
+    // amplify를 api-gateway-step-functions 1단에 넣어 17·19가 18·20이 됐다.
+    expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 18, 16, 24, 18, 23, 20, 33, 11, 20, 9, 19,
     ])
   })
 
-  it('S3 스토리지 클래스 주제가 클래스별 개념 7개와 정리 개념 2개로 나뉜다', () => {
+  it('기초 주제가 서비스와 용어 다음에 판단 기준과 설계 원칙을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'aws-core-services')
+
+    // 1단 서비스 일곱과 DNS·리전·가용 영역이 각각 무엇인가
+    // → 2단 다중 AZ와 단일 AZ, 온프레미스와 마이그레이션
+    // → 3단 선택지를 지우는 판단 기준과, 주제 하나에 매이지 않는 설계 원칙 둘.
+    // 마지막 둘은 step 20이 (주제 미정)에서 가져왔다(topic-plan "3단 구분").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'aws-core-services.ec2',
+      'aws-core-services.rds',
+      'aws-core-services.s3',
+      'aws-core-services.route-53',
+      'aws-core-services.dns',
+      'aws-core-services.elb',
+      'aws-core-services.cloudfront',
+      'aws-core-services.lambda',
+      'aws-core-services.region',
+      'aws-core-services.availability',
+      'aws-core-services.availability-zone',
+      'aws-core-services.multi-az',
+      'aws-core-services.single-az',
+      'aws-core-services.on-premise',
+      'aws-core-services.migration',
+      'aws-core-services.exam-heuristics',
+      'aws-core-services.exponential-backoff-retry',
+      'aws-core-services.blob-offload-to-s3',
+    ])
+  })
+
+  it('S3 스토리지 클래스 주제가 클래스 8개 다음에 갈림길 7개와 비용 개념 2개를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-storage-classes')
 
+    // 1단 클래스 여덟 → 2단 어느 클래스를 고르는가 → 3단 클래스별 비용 항목.
+    // Glacier 3종을 포함한 클래스 전부가 한 주제 안에 있어야 한다 — 헷갈리는 짝을 가르면
+    // "언제 무엇을 쓰는가"를 비교할 자리가 없어진다(PRD "사용자").
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       's3-storage-classes.standard',
       's3-storage-classes.intelligent-tiering',
@@ -585,10 +2690,18 @@ describe('학습 데이터 무결성', () => {
       's3-storage-classes.glacier-instant-retrieval',
       's3-storage-classes.glacier-flexible-retrieval',
       's3-storage-classes.glacier-deep-archive',
+      's3-storage-classes.s3-express-one-zone',
       's3-storage-classes.retrieval-time',
       's3-storage-classes.glacier-or-standard-ia',
+      's3-storage-classes.glacier-flexible-retrieval-standard-time',
+      's3-storage-classes.glacier-flexible-retrieval-expedited',
+      's3-storage-classes.s3-storage-class-cost-order',
+      's3-storage-classes.lifecycle-vs-intelligent-tiering',
+      's3-storage-classes.s3-storage-class-analysis',
+      's3-storage-classes.s3-retrieval-fee-by-class',
+      's3-storage-classes.intelligent-tiering-monitoring-fee',
     ])
-    expect(topic?.concepts.map((concept) => concept.name)).toEqual([
+    expect(topic?.concepts.slice(0, 8).map((concept) => concept.name)).toEqual([
       'S3 Standard',
       'S3 Intelligent-Tiering',
       'S3 Standard-IA (Infrequent Access)',
@@ -596,15 +2709,2064 @@ describe('학습 데이터 무결성', () => {
       'S3 Glacier Instant Retrieval',
       'S3 Glacier Flexible Retrieval',
       'S3 Glacier Deep Archive',
+      'S3 Express One Zone',
+    ])
+    expect(topic?.concepts.slice(8).map((concept) => concept.name)).toEqual([
       '즉시 조회와 대기 조회',
       'Glacier와 Standard-IA 중 고르기',
+      'Glacier Flexible Retrieval의 표준 검색 시간',
+      'Glacier Flexible Retrieval의 신속 검색',
+      '아카이브 계열의 비용 순서',
+      '수명 주기 규칙과 자동 계층화의 갈림길',
+      'S3 스토리지 클래스 분석',
+      '스토리지 클래스마다 갈리는 검색 요금',
+      'Intelligent-Tiering의 객체별 감시 요금',
     ])
   })
 
-  it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
-    const storageClassQuestions = questions.filter(
-      (question) => question.topicId === 's3-storage-classes',
+  it('S3 버전 관리 주제가 기능 다섯 다음에 복제의 갈래와 구성 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-versioning-lifecycle')
+
+    // 1단 각각 무엇인가 → 2단 리전을 넘는 복제와 같은 리전 복제 → 3단 전제 조건과 구성 한계.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-versioning-lifecycle.versioning',
+      's3-versioning-lifecycle.object-lock',
+      's3-versioning-lifecycle.lifecycle-policy',
+      's3-versioning-lifecycle.event-notification',
+      's3-versioning-lifecycle.s3-replication',
+      's3-versioning-lifecycle.s3-same-region-replication',
+      's3-versioning-lifecycle.s3-replication-time-control',
+      's3-versioning-lifecycle.s3-replication-cross-account-kms',
+      's3-versioning-lifecycle.object-lock-prerequisites',
+      's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
+    ])
+  })
+
+  it('S3 암호화 주제가 암호화·배치·인벤토리 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
+
+    // 1단 SSE와 배치·인벤토리·Object Lambda가 각각 무엇인가 → 2단 어느 SSE를 고르는가와
+    // 일회성 복사 대 지속 복제 → 3단 비용 구조·SSE-C에 없는 것·전송 구간 강제.
+    // SSE-S3 ↔ SSE-KMS ↔ SSE-C가 한 주제 안에 있어야 한다(PRD "사용자").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-encryption-batch.sse',
+      's3-encryption-batch.sse-types',
+      's3-encryption-batch.client-side-encryption',
+      's3-encryption-batch.batch-operations',
+      's3-encryption-batch.s3-inventory-report',
+      's3-encryption-batch.s3-object-lambda',
+      's3-encryption-batch.envelope-encryption',
+      's3-encryption-batch.sse-kms-audit-trail',
+      's3-encryption-batch.batch-copy-vs-replication',
+      's3-encryption-batch.s3-batch-operations-lambda-invoke',
+      's3-encryption-batch.sse-kms-cost',
+      's3-encryption-batch.sse-c-no-rotation-or-audit',
+      's3-encryption-batch.s3-secure-transport-condition',
+    ])
+  })
+
+  it('S3 접근 제어 주제가 접근 경로 여섯 다음에 갈림길 둘과 한계 다섯을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-access-control')
+
+    // 1단 버킷 정책·사전 서명된 URL·액세스 권한·액세스 포인트·Storage Lens가 각각
+    // 무엇인가 → 2단 CORS와 요청자 부담이 무엇을 맡는가 → 3단 설정 항목과 제약.
+    // 버킷 정책 ↔ 액세스 포인트 ↔ 퍼블릭 액세스 차단은 서로 갈림길이라 흩지 않는다.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      's3-access-control.s3-cross-account-bucket-policy',
+      's3-access-control.s3-presigned-url',
+      's3-access-control.s3-access-grants',
+      's3-access-control.s3-access-point',
+      's3-access-control.s3-multi-region-access-point',
+      's3-access-control.s3-storage-lens',
+      's3-access-control.s3-cors-not-authorization',
+      's3-access-control.s3-requester-pays',
+      's3-access-control.s3-storage-lens-advanced-activity-metrics',
+      's3-access-control.s3-account-level-public-access-block',
+      's3-access-control.block-public-access-allows-explicit-grants',
+      's3-access-control.s3-bucket-policy-source-vpc-condition',
+      's3-access-control.s3-website-endpoint-no-https',
+    ])
+  })
+
+  it('EBS 주제가 기본 다섯 다음에 볼륨 유형의 갈림길과 스냅샷 운영을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ebs-instance-store')
+
+    // 1단 EBS·인스턴스 스토어·배치 그룹이 무엇인가 → 2단 볼륨 유형끼리의 갈림길과
+    // 클러스터 ↔ 분산 배치 그룹 → 3단 IOPS 상한·계정 속성인 기본 암호화·스냅샷 운영.
+    // gp2 ↔ gp3 ↔ io1 ↔ io2는 서로 갈림길이라 한 주제 안에 둔다(PRD "사용자").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ebs-instance-store.ebs',
+      'ebs-instance-store.ebs-elastic-volumes',
+      'ebs-instance-store.instance-store',
+      'ebs-instance-store.cluster-placement-group',
+      'ebs-instance-store.elastic-fabric-adapter',
+      'ebs-instance-store.ebs-volume-type-names',
+      'ebs-instance-store.gp3-iops-independent-of-size',
+      'ebs-instance-store.spread-placement-group',
+      'ebs-instance-store.io2-block-express-iops-ceiling',
+      'ebs-instance-store.ebs-encryption-by-default',
+      'ebs-instance-store.ebs-encryption-performance',
+      'ebs-instance-store.ebs-recycle-bin',
+      'ebs-instance-store.ebs-snapshot-block-public-access',
+      'ebs-instance-store.data-lifecycle-manager',
+      'ebs-instance-store.ebs-fast-snapshot-restore',
+    ])
+  })
+
+  it('EFS·FSx 주제가 파일 시스템 여섯 다음에 선택 기준과 구성 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'efs-fsx')
+
+    // 1단 EFS와 FSx 네 갈래가 각각 무엇인가 → 2단 어느 프로토콜·어느 지연 시간에
+    // 무엇을 고르는가 → 3단 IA 전환 조건·마운트 대상·복제가 한 방향이라는 것.
+    // EFS ↔ FSx(Windows·Lustre·ONTAP)는 공유 파일 스토리지 선택 그 자체라 흩지 않는다.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'efs-fsx.efs',
+      'efs-fsx.efs-lifecycle-management',
+      'efs-fsx.fsx',
+      'efs-fsx.fsx-windows-file-server',
+      'efs-fsx.fsx-for-lustre',
+      'efs-fsx.fsx-file-gateway',
+      'efs-fsx.efs-throughput-modes',
+      'efs-fsx.efs-elastic-throughput',
+      'efs-fsx.efs-performance-modes',
+      'efs-fsx.efs-one-zone',
+      'efs-fsx.efs-posix-permissions',
+      'efs-fsx.fsx-lustre-sub-millisecond-latency',
+      'efs-fsx.fsx-lustre-persistent-deployment',
+      'efs-fsx.fsx-ontap-multi-az',
+      'efs-fsx.fsx-ontap-multi-protocol-tiering',
+      'efs-fsx.fsx-ontap-iscsi-block',
+      'efs-fsx.fsx-ontap-snapmirror',
+      'efs-fsx.sql-server-always-on-shared-storage',
+      'efs-fsx.efs-ia-file-size-threshold',
+      'efs-fsx.efs-lifecycle-transition-to-primary',
+      'efs-fsx.efs-mount-target-per-az',
+      'efs-fsx.efs-cross-account-mount',
+      'efs-fsx.efs-replication-one-way',
+      'efs-fsx.fsx-windows-storage-auto-scaling',
+      'efs-fsx.fsx-lustre-s3-data-repository-association',
+    ])
+  })
+
+  it('데이터 전송 주제가 전송 도구 넷 다음에 선택 기준과 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'data-transfer-services')
+
+    // 1단 DataSync·Snowball Edge·Transfer Family·S3 전송이 각각 무엇인가 → 2단 기한과
+    // 대역폭을 먼저 곱해 보기, 지속 수집 ↔ 예약 전송, 어느 ID 공급자를 쓰는가 →
+    // 3단 DataSync가 맡지 않는 일·워크플로 기본 액션·멀티파트 업로드의 조건.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'data-transfer-services.datasync',
+      'data-transfer-services.snowball-edge',
+      'data-transfer-services.snowball-edge-compute',
+      'data-transfer-services.transfer-family',
+      'data-transfer-services.transfer-family-workflow',
+      'data-transfer-services.s3-transfer-acceleration',
+      'data-transfer-services.transfer-deadline-vs-bandwidth',
+      'data-transfer-services.file-gateway-vs-datasync-continuous',
+      'data-transfer-services.transfer-family-custom-hostname',
+      'data-transfer-services.transfer-family-directory-service-identity-provider',
+      'data-transfer-services.transfer-family-service-managed-users',
+      'data-transfer-services.datasync-scope-limits',
+      'data-transfer-services.datasync-in-transit-encryption',
+      'data-transfer-services.datasync-manifest',
+      'data-transfer-services.datasync-transfer-mode',
+      'data-transfer-services.datasync-task-status-event',
+      'data-transfer-services.transfer-family-workflow-actions',
+      'data-transfer-services.transfer-family-structured-logging',
+      'data-transfer-services.s3-multipart-upload',
+    ])
+  })
+
+  it('Storage Gateway·마이그레이션 주제가 서비스 셋 다음에 유형 선택과 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'storage-gateway-migration')
+
+    // 1단 Storage Gateway·DMS·SCT·MGN이 각각 무엇인가 → 2단 게이트웨이 유형 셋과
+    // 저장 볼륨 ↔ 캐시된 볼륨 → 3단 가상 테이프의 아카이브 계층·전체 로드와 CDC.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'storage-gateway-migration.storage-gateway',
+      'storage-gateway-migration.dms-sct',
+      'storage-gateway-migration.application-migration-service',
+      'storage-gateway-migration.storage-gateway-gateway-types',
+      'storage-gateway-migration.storage-gateway-volume-modes',
+      'storage-gateway-migration.tape-gateway-archive-tiers',
+      'storage-gateway-migration.dms-full-load-and-cdc-task',
+    ])
+  })
+
+  it('전송 서비스를 가르는 갈림길이 두 주제 양쪽에서 보인다', () => {
+    // step 5가 data-transfer-services를 둘로 갈랐다. DataSync ↔ Snowball ↔ Transfer
+    // Family ↔ Storage Gateway는 "언제 무엇을 쓰는가"가 그대로 문항이므로, 쪼갠 뒤에도
+    // 갈림길 개념이 양쪽에 남아야 한다(PRD "사용자").
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('data-transfer-services.transfer-deadline-vs-bandwidth')).toContain(
+      'DataSync·Storage Gateway·DMS',
     )
+    expect(bodyOf('data-transfer-services.file-gateway-vs-datasync-continuous')).toContain(
+      '파일 게이트웨이',
+    )
+    expect(bodyOf('storage-gateway-migration.storage-gateway')).toContain('DataSync·Snowball Edge와 달리')
+    expect(bodyOf('storage-gateway-migration.dms-full-load-and-cdc-task')).toContain('DataSync')
+  })
+
+  it('RDS 주제가 서비스와 기능 다음에 선택 기준과 한계값을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'rds-storage-features')
+
+    // 1단 RDS와 스토리지 유형·기능(블루/그린·Custom·IAM 인증·암호화 범위) → 2단 볼륨
+    // 유형의 갈림길, 다중 AZ ↔ 읽기 전용 복제본 ↔ 다중 AZ DB 클러스터, 캐시가 듣지
+    // 않는 조건, 연결 문제와 프록시, 리전 간 스냅샷 복사 → 3단 백업 보존 한계·수동
+    // 스냅샷·특정 시점 복구의 정밀도·장애 조치 시간·7일 자동 재시작·나중에 켤 수 없는
+    // 암호화·보유 라이선스.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'rds-storage-features.rds',
+      'rds-storage-features.storage-types',
+      'rds-storage-features.features',
+      'rds-storage-features.rds-blue-green-deployment',
+      'rds-storage-features.rds-custom',
+      'rds-storage-features.rds-iam-database-authentication',
+      'rds-storage-features.rds-encryption-scope-and-in-transit',
+      'rds-storage-features.storage-type-names',
+      'rds-storage-features.multi-az-standby-limits',
+      'rds-storage-features.rds-multi-az-db-cluster',
+      'rds-storage-features.read-replica-vs-cache',
+      'rds-storage-features.connection-issue-heuristic',
+      'rds-storage-features.rds-proxy-failover',
+      'rds-storage-features.rds-snapshot-cross-region-copy',
+      'rds-storage-features.automated-backup-retention',
+      'rds-storage-features.rds-manual-snapshot-retention',
+      'rds-storage-features.rds-pitr-transaction-log-interval',
+      'rds-storage-features.rds-multi-az-failover-rto',
+      'rds-storage-features.rds-stop-instance-restart',
+      'rds-storage-features.rds-encrypt-existing-instance',
+      'rds-storage-features.rds-custom-byol',
+    ])
+  })
+
+  it('RDS와 Aurora가 배열에서 맞붙어 있다', () => {
+    // 관리형 관계형 데이터베이스의 두 갈래다. 다른 주제로 떼어 놓으면 "언제 무엇을
+    // 쓰는가"를 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    // Aurora를 담은 주제의 id는 step 7이 바꾸므로 개념 이름으로 찾는다.
+    const rdsIndex = topics.findIndex(({ id }) => id === 'rds-storage-features')
+    const auroraIndex = topics.findIndex((topic) =>
+      topic.concepts.some(({ name }) => name === 'Aurora'),
+    )
+
+    expect(rdsIndex).toBeGreaterThanOrEqual(0)
+    expect(auroraIndex).toBe(rdsIndex + 1)
+  })
+
+  it('다중 AZ 배포의 두 형태가 대기 인스턴스의 역할로 갈린다', () => {
+    // 기존 multi-az-standby-limits는 대기 인스턴스가 아무 트래픽도 처리하지 않는다고
+    // 못박는다. step 6이 들여온 rds-multi-az-db-cluster는 그 서술이 DB 인스턴스 배포에
+    // 대한 것이고 DB 클러스터 배포는 다르다는 것을 같은 주제 안에서 잇는다.
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('rds-storage-features.multi-az-standby-limits')).toContain(
+      '아무 트래픽도 처리하지 않으므로',
+    )
+    expect(bodyOf('rds-storage-features.rds-multi-az-db-cluster')).toContain(
+      '다중 AZ DB 인스턴스 배포',
+    )
+    expect(bodyOf('rds-storage-features.rds-multi-az-db-cluster')).toContain(
+      'DB 클러스터 배포까지 부정하지는 않는다',
+    )
+    expect(bodyOf('rds-storage-features.read-replica-vs-cache')).toContain('ElastiCache')
+  })
+
+  it('Aurora 주제가 서비스와 기능 다음에 선택 기준과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'aurora')
+
+    // 1단 Aurora와 Serverless v2·엔드포인트·오토 스케일링·Babelfish·pgvector·S3 내보내기
+    // → 2단 글로벌 데이터베이스와 리전 간 복제본, 지속적 백업과 스냅샷 주기, 클론,
+    // 스토리지 구성, 어느 엔진으로 가는가 → 3단 쓰기 리전 하나·ACU 상한·복제본의 제약.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'aurora.aurora',
+      'aurora.aurora-serverless-v2',
+      'aurora.aurora-reader-endpoint',
+      'aurora.aurora-endpoint-types',
+      'aurora.aurora-replica-auto-scaling',
+      'aurora.babelfish',
+      'aurora.aurora-pgvector',
+      'aurora.aurora-select-into-outfile-s3',
+      'aurora.aurora-global-database-dr-targets',
+      'aurora.aurora-cross-region-read-replica',
+      'aurora.aurora-continuous-backup-rpo',
+      'aurora.aurora-clone',
+      'aurora.aurora-storage-configurations',
+      'aurora.sql-server-license-cost',
+      'aurora.aurora-zdr-and-activity-streams',
+      'aurora.aurora-global-database-write-region',
+      'aurora.aurora-serverless-max-acu',
+      'aurora.read-replica-no-schema-change',
+    ])
+  })
+
+  it('DynamoDB 주제가 서비스와 기능 다음에 선택 기준과 한계값을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'dynamodb')
+
+    // 1단 DynamoDB와 응답 시간·스트림·글로벌 테이블·TTL·GSI → 2단 용량 모드와 오토
+    // 스케일링, 읽기 일관성, 적재 경로 → 3단 보존 한계·전제 조건·크기 제한·설정 항목.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'dynamodb.dynamodb',
+      'dynamodb.dynamodb-single-digit-latency',
+      'dynamodb.dynamodb-streams',
+      'dynamodb.dynamodb-global-tables',
+      'dynamodb.dynamodb-ttl',
+      'dynamodb.dynamodb-global-secondary-index',
+      'dynamodb.dynamodb-capacity-modes',
+      'dynamodb.dynamodb-auto-scaling-target-utilization',
+      'dynamodb.dynamodb-read-consistency',
+      'dynamodb.dynamodb-s3-export-vs-streams',
+      'dynamodb.dynamodb-incremental-export',
+      'dynamodb.dynamodb-export-no-read-capacity',
+      'dynamodb.dynamodb-pitr',
+      'dynamodb.dynamodb-export-requires-pitr',
+      'dynamodb.dynamodb-item-size-limit',
+      'dynamodb.dynamodb-ttl-deletion-delay',
+      'dynamodb.dynamodb-streams-retention-24h',
+      'dynamodb.dynamodb-streams-batch-size',
+    ])
+  })
+
+  it('캐시·목적별 DB 주제가 서비스 여섯 다음에 갈림길 다섯과 한계 셋을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'elasticache-purpose-built-db')
+
+    // 1단 캐시와 목적별 데이터베이스 넷이 각각 무엇인가 → 2단 캐시 엔진과 리전 간
+    // 구성의 갈림길 → 3단 캐시로 풀리지 않는 것과 설정 시점의 제약.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'elasticache-purpose-built-db.elasticache',
+      'elasticache-purpose-built-db.documentdb',
+      'elasticache-purpose-built-db.neptune',
+      'elasticache-purpose-built-db.neptune-streams',
+      'elasticache-purpose-built-db.qldb',
+      'elasticache-purpose-built-db.timestream',
+      'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
+      'elasticache-purpose-built-db.dax-dynamodb-only',
+      'elasticache-purpose-built-db.elasticache-multi-az-failover',
+      'elasticache-purpose-built-db.elasticache-global-datastore',
+      'elasticache-purpose-built-db.documentdb-global-cluster',
+      'elasticache-purpose-built-db.cache-requires-application-change',
+      'elasticache-purpose-built-db.elasticache-not-a-durable-store',
+      'elasticache-purpose-built-db.dax-encryption-at-rest',
+    ])
+  })
+
+  it('캐시 갈림길이 한 주제 안에 함께 있다', () => {
+    // ElastiCache(Redis ↔ Memcached) ↔ DAX는 "언제 무엇을 쓰는가"가 그대로 문항이다.
+    // step 7이 aurora-dynamodb-cache를 셋으로 가를 때 이 셋을 떼어 놓으면 비교할
+    // 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+
+    const engines = ownerOf('elasticache-purpose-built-db.elasticache-redis-vs-memcached')
+    expect(engines).toBe('elasticache-purpose-built-db')
+    expect(ownerOf('elasticache-purpose-built-db.elasticache')).toBe(engines)
+    expect(ownerOf('elasticache-purpose-built-db.dax-dynamodb-only')).toBe(engines)
+    expect(ownerOf('elasticache-purpose-built-db.dax-encryption-at-rest')).toBe(engines)
+  })
+
+  it('EC2·Auto Scaling 주제가 서비스와 재료 다음에 선택 기준과 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
+
+    // 1단 EC2와 Auto Scaling, 인스턴스를 띄우는 재료 → 2단 어느 제품군·어느 구매
+    // 옵션·어느 조정 방식인가 → 3단 설정 항목과 주의점, 이름이 닮았지만 대상이
+    // 정해져 있는 도구.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ec2-autoscaling.ec2',
+      'ec2-autoscaling.ami-and-launch-template',
+      'ec2-autoscaling.ec2-image-builder',
+      'ec2-autoscaling.memory-optimized-instance-family',
+      'ec2-autoscaling.gpu-instance-family',
+      'ec2-autoscaling.reserved-instance-types',
+      'ec2-autoscaling.spot-workload-fit',
+      'ec2-autoscaling.scheduled-scaling',
+      'ec2-autoscaling.target-tracking-vs-simple-scaling',
+      'ec2-autoscaling.predictive-scaling',
+      'ec2-autoscaling.spot-allocation-strategy',
+      'ec2-autoscaling.asg-instance-type-override',
+      'ec2-autoscaling.asg-on-demand-base-capacity',
+      'ec2-autoscaling.warm-pool',
+      'ec2-autoscaling.asg-single-instance-self-healing',
+      'ec2-autoscaling.elb-health-check-drives-asg-replacement',
+      'ec2-autoscaling.enhanced-networking',
+      'ec2-autoscaling.parallelcluster',
+    ])
+  })
+
+  it('로드 밸런서 주제가 세 로드 밸런서 다음에 선택 기준과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'elastic-load-balancing')
+
+    // 1단 ELB와 세 로드 밸런서가 각각 무엇인가 → 2단 계층·프로토콜·대상·공개
+    // 범위로 갈린다 → 3단 분산 알고리즘·규칙·타임아웃·암호화 구간.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'elastic-load-balancing.elb',
+      'elastic-load-balancing.gateway-load-balancer',
+      'elastic-load-balancing.alb-l7-vs-nlb-l4',
+      'elastic-load-balancing.alb-routing-conditions',
+      'elastic-load-balancing.nlb-tls-listener',
+      'elastic-load-balancing.nlb-udp-listener',
+      'elastic-load-balancing.nlb-ip-targets',
+      'elastic-load-balancing.alb-cookie-stickiness',
+      'elastic-load-balancing.internal-load-balancer',
+      'elastic-load-balancing.sticky-session-tradeoff',
+      'elastic-load-balancing.alb-least-outstanding-requests',
+      'elastic-load-balancing.alb-target-group-independent-scaling',
+      'elastic-load-balancing.alb-listener-rule-fixed-response',
+      'elastic-load-balancing.load-balancer-idle-timeout',
+      'elastic-load-balancing.end-to-end-encryption-behind-alb',
+      'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+    ])
+  })
+
+  it('CloudFront·Global Accelerator 주제가 두 서비스와 오리진 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'cloudfront-global-accelerator')
+
+    // 1단 CloudFront와 그 오리진, Global Accelerator와 그 진입점, 'Edge'의 뜻,
+    // 엣지에서 도는 함수 둘 → 2단 캐싱할 사본이 있느냐·비용·DNS 캐시·접근 통제
+    // 장치 넷·엣지 함수로 할 수 있는 일의 갈림길 → 3단 가격 등급, 무효화와 TTL,
+    // 오리진 접근 제한, 엣지 함수의 한계.
+    // step 10이 lambda-at-edge·cloudfront-functions·응답 압축 셋을 옮겨 왔다.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'cloudfront-global-accelerator.cloudfront',
+      'cloudfront-global-accelerator.cloudfront-alb-origin',
+      'cloudfront-global-accelerator.cloudfront-multiple-origins',
+      'cloudfront-global-accelerator.cloudfront-onprem-origin',
+      'cloudfront-global-accelerator.global-accelerator',
+      'cloudfront-global-accelerator.global-accelerator-static-ip',
+      'cloudfront-global-accelerator.global-accelerator-endpoints',
+      'cloudfront-global-accelerator.edge-keyword',
+      'cloudfront-global-accelerator.lambda-at-edge',
+      'cloudfront-global-accelerator.cloudfront-functions',
+      'cloudfront-global-accelerator.global-accelerator-protocols',
+      'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
+      'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
+      'cloudfront-global-accelerator.cloudfront-signed-url',
+      'cloudfront-global-accelerator.cloudfront-signed-cookie',
+      'cloudfront-global-accelerator.cloudfront-geo-restriction',
+      'cloudfront-global-accelerator.cloudfront-field-level-encryption',
+      'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+      'cloudfront-global-accelerator.lambda-at-edge-response-compression',
+      'cloudfront-global-accelerator.cloudfront-price-class',
+      'cloudfront-global-accelerator.cloudfront-ttl',
+      'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
+      'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
+      'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+    ])
+  })
+
+  it('CloudFront와 Global Accelerator가 한 주제 안에 함께 있다', () => {
+    // SAA-C03 대표 혼동 짝이다. step 9가 compute-delivery를 비울 때 둘을 다른 주제로
+    // 떼어 놓으면 "언제 무엇을 쓰는가"를 비교할 자리가 없어진다
+    // (PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+
+    const fork = ownerOf('cloudfront-global-accelerator.global-accelerator-protocols')
+    expect(fork).toBe('cloudfront-global-accelerator')
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront')).toBe(fork)
+    expect(ownerOf('cloudfront-global-accelerator.global-accelerator')).toBe(fork)
+    // 갈림길을 세우는 축이 셋이다 — 사본이 있느냐, 비용, DNS 캐시.
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost')).toBe(fork)
+    expect(ownerOf('cloudfront-global-accelerator.global-accelerator-vs-dns-failover')).toBe(fork)
+  })
+
+  it('CloudFront의 접근 통제 장치 넷이 서로 무엇으로 갈리는지 한 주제 안에서 읽힌다', () => {
+    // 서명된 URL ↔ 서명된 쿠키 ↔ 지리적 제한 ↔ 필드 수준 암호화. 기준이 각각
+    // 개별 사용자·URL의 동일성·국가·값 자체라서, 떼어 놓으면 무엇이 무엇의 대안인지
+    // 알 수 없게 된다.
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-signed-url')).toContain('유효 기간 동안만')
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-signed-cookie')).toContain('파일마다 URL이 달라진다')
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-geo-restriction')).toContain('국가를 기준으로 삼지 않는다')
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-field-level-encryption')).toContain('전달되는 값 자체를 가리는')
+  })
+
+  it('로드 밸런서 셋의 선택 기준이 한 주제 안에 함께 있다', () => {
+    // ALB ↔ NLB ↔ Gateway Load Balancer는 "언제 무엇을 쓰는가"가 그대로 문항이다.
+    // step 8이 compute-delivery를 가를 때 셋을 떼어 놓으면 비교할 자리가 없어진다
+    // (PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+
+    const layers = ownerOf('elastic-load-balancing.alb-l7-vs-nlb-l4')
+    expect(layers).toBe('elastic-load-balancing')
+    expect(ownerOf('elastic-load-balancing.elb')).toBe(layers)
+    expect(ownerOf('elastic-load-balancing.gateway-load-balancer')).toBe(layers)
+    expect(ownerOf('elastic-load-balancing.nlb-udp-listener')).toBe(layers)
+    expect(ownerOf('elastic-load-balancing.gwlb-endpoint-cross-account-inspection')).toBe(layers)
+  })
+
+  it('구매 옵션 셋의 갈림길이 한 주제 안에 함께 있다', () => {
+    // 스팟 ↔ 온디맨드 ↔ 예약 인스턴스도 갈림길이다. 셋을 처음 소개하는 것은 기존
+    // ec2 개념의 문단이고, 고르는 기준은 새로 들어온 개념들이 맡는다.
+    const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
+    const slugs = new Set(topic?.concepts.map(({ id }) => id.split('.')[1]))
+    const body = topic?.concepts
+      .find(({ id }) => id === 'ec2-autoscaling.ec2')
+      ?.paragraphs.join(' ') ?? ''
+
+    expect(body).toContain('온디맨드 인스턴스')
+    expect(body).toContain('스팟 인스턴스')
+    expect(body).toContain('예약 인스턴스')
+    expect(slugs).toContain('reserved-instance-types')
+    expect(slugs).toContain('spot-workload-fit')
+    expect(slugs).toContain('spot-allocation-strategy')
+    expect(slugs).toContain('asg-on-demand-base-capacity')
+  })
+
+  it('오토 스케일링 조정 방식 넷이 한 주제 안에서 이어진다', () => {
+    // 예약된 조정 ↔ 대상 추적 ↔ 단순 조정 ↔ 예측 스케일링. 기존 scheduled-scaling이
+    // 앞의 둘을 예측 가능성으로 가르고, step 8이 들여온 둘이 남은 축을 세운다.
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('ec2-autoscaling.scheduled-scaling')).toContain('대상 추적')
+    expect(bodyOf('ec2-autoscaling.target-tracking-vs-simple-scaling')).toContain('단순 조정')
+    expect(bodyOf('ec2-autoscaling.predictive-scaling')).toContain('예약된 조정과 대상 추적')
+  })
+
+  it('Lambda 주제가 함수를 만드는 이야기 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'lambda')
+
+    // 1단 Lambda가 무엇이고 어떻게 부르고 어디에 붙이고 어떻게 배포하는가
+    // → 2단 호출 방식, 크기를 정하는 값, 동시성 세 갈래
+    // → 3단 콜드 스타트를 줄이는 다른 길, 메모리·레이어 상한, 굳는 설정, 실행 역할.
+    // Lambda가 무엇인지 모르는 사람에게 lambda-layer-size-limit은 아무것도 주지 않는다
+    // (topic-plan "주제 안의 개념 순서").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'lambda.lambda',
+      'lambda.lambda-function-url',
+      'lambda.lambda-function-url-iam-auth',
+      'lambda.lambda-vpc-access',
+      'lambda.lambda-container-image',
+      'lambda.lambda-invocation-types',
+      'lambda.lambda-memory-cpu-proportional',
+      'lambda.lambda-reserved-concurrency',
+      'lambda.lambda-provisioned-concurrency-autoscaling',
+      'lambda.lambda-concurrency-limit-throttling',
+      'lambda.lambda-kinesis-event-source',
+      'lambda.lambda-snapstart',
+      'lambda.lambda-memory-ceiling',
+      'lambda.lambda-layer-size-limit',
+      'lambda.lambda-efs-mount',
+      'lambda.lambda-version-alias-config-freeze',
+      'lambda.lambda-execution-role-logs',
+      'lambda.serverless-runtime-no-os-access',
+    ])
+  })
+
+  it('컨테이너 주제가 서비스 소개 다음에 실행 방식 갈림길과 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')
+
+    // 1단 컨테이너를 돌리고 담고 옮기는 서비스 여섯이 각각 무엇인가
+    // → 2단 세 실행 방식의 관리 책임, 파드와 노드, 클러스터 가시성, 권한을 어디에 붙이나
+    // → 3단 네트워크 모드·배치 전략·과금 단위·저장소·시크릿 암호화.
+    // ECS가 무엇인지 모르는 사람에게 ecs-task-placement-strategy는 아무것도 주지 않는다
+    // (topic-plan "주제 안의 개념 순서").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ecs-eks-fargate.ecs',
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.ecr-image-scan-on-push',
+      'ecs-eks-fargate.aws-batch',
+      'ecs-eks-fargate.elastic-beanstalk',
+      'ecs-eks-fargate.app2container',
+      'ecs-eks-fargate.eks-compute-options',
+      'ecs-eks-fargate.fargate-no-time-limit',
+      'ecs-eks-fargate.fargate-spot',
+      'ecs-eks-fargate.batch-fargate-compute-environment',
+      'ecs-eks-fargate.eks-fargate-pod-isolation',
+      'ecs-eks-fargate.eks-cluster-autoscaler',
+      'ecs-eks-fargate.eks-aws-load-balancer-controller',
+      'ecs-eks-fargate.eks-connector',
+      'ecs-eks-fargate.eks-anywhere',
+      'ecs-eks-fargate.ecs-task-role',
+      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'ecs-eks-fargate.eks-irsa',
+      'ecs-eks-fargate.ecs-awsvpc-mode',
+      'ecs-eks-fargate.ecs-task-placement-strategy',
+      'ecs-eks-fargate.fargate-per-second-billing',
+      'ecs-eks-fargate.fargate-efs-mount',
+      'ecs-eks-fargate.eks-secrets-kms-encryption',
+    ])
+  })
+
+  it('API Gateway·Step Functions 주제가 두 서비스 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'api-gateway-step-functions')
+
+    // 1단 API Gateway와 Step Functions가 무엇이고 무엇을 주는가, Amplify가 무엇인가
+    // → 2단 API 유형 셋, API 키의 한계, 접근 통제, 노출 위치, 통합 방식, 워크플로 두 유형
+    // → 3단 인증서 리전·매핑 템플릿의 한계·보안 그룹을 붙일 수 없다는 것.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'api-gateway-step-functions.api-gateway',
+      'api-gateway-step-functions.step-functions',
+      'api-gateway-step-functions.step-functions-features',
+      'api-gateway-step-functions.amplify',
+      'api-gateway-step-functions.api-gateway-jwt-authorizer',
+      'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+      'api-gateway-step-functions.api-gateway-rest-only-features',
+      'api-gateway-step-functions.api-gateway-websocket-api',
+      'api-gateway-step-functions.api-gateway-api-key-not-auth',
+      'api-gateway-step-functions.api-gateway-resource-policy',
+      'api-gateway-step-functions.api-gateway-endpoint-types',
+      'api-gateway-step-functions.api-gateway-behind-cloudfront',
+      'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
+      'api-gateway-step-functions.api-gateway-aws-service-integration',
+      'api-gateway-step-functions.step-functions-long-running-workflow',
+      'api-gateway-step-functions.step-functions-express-workflow',
+      'api-gateway-step-functions.step-functions-map-state',
+      'api-gateway-step-functions.api-gateway-custom-domain-name',
+      'api-gateway-step-functions.api-gateway-mapping-template-limits',
+      'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+    ])
+  })
+
+  it('컨테이너 실행 방식 셋의 갈림길이 한 주제 안에서 관리 책임으로 갈린다', () => {
+    // ECS ↔ EKS ↔ Fargate. 컨테이너를 어디서 돌리는가가 그대로 문항이므로 떼어 놓으면
+    // 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('ecs-eks-fargate.ecs')
+    expect(fork).toBe('ecs-eks-fargate')
+    ;[
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.eks-compute-options',
+      'ecs-eks-fargate.fargate-no-time-limit',
+      'ecs-eks-fargate.fargate-spot',
+      'ecs-eks-fargate.fargate-per-second-billing',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // ECS ↔ EKS는 원래 쿠버네티스였는지로 갈리고, 세 실행 방식은 인프라 관리 책임이
+    // 어디까지 남는지로 갈린다. Lambda ↔ Fargate는 실행 시간과 최소 과금 단위다.
+    expect(bodyOf('ecs-eks-fargate.eks')).toContain('원래 쿠버네티스였는가')
+    expect(bodyOf('ecs-eks-fargate.eks-compute-options')).toContain(
+      'EC2 인스턴스의 패치와 관리 책임은 여전히 사용자에게 남는다',
+    )
+    expect(bodyOf('ecs-eks-fargate.fargate-per-second-billing')).toContain('최소 1분을 매긴다')
+  })
+
+  it('API 유형 셋과 워크플로 두 유형이 한 주제 안에서 갈린다', () => {
+    // API Gateway REST ↔ HTTP ↔ WebSocket, Step Functions 표준 ↔ Express.
+    // 엔드포인트 유형과 지원 기능이 갈리는 자리이므로 함께 둔다
+    // (topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('api-gateway-step-functions.api-gateway')
+    expect(fork).toBe('api-gateway-step-functions')
+    ;[
+      'api-gateway-step-functions.api-gateway-jwt-authorizer',
+      'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
+      'api-gateway-step-functions.api-gateway-rest-only-features',
+      'api-gateway-step-functions.api-gateway-websocket-api',
+      'api-gateway-step-functions.step-functions-long-running-workflow',
+      'api-gateway-step-functions.step-functions-express-workflow',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 두 API 유형은 기능·비용·지연 말고 기다려 주는 시간과 기능 목록으로도 갈리고,
+    // WebSocket API는 요청·응답 모델 자체가 다르다.
+    expect(bodyOf('api-gateway-step-functions.api-gateway-rest-vs-http-timeout')).toContain(
+      '그 시간이 REST API 쪽이 더 길기 때문에',
+    )
+    expect(bodyOf('api-gateway-step-functions.api-gateway-rest-only-features')).toContain(
+      'HTTP API는 이 고급 기능들을 완전히 지원하지 않는다',
+    )
+    expect(bodyOf('api-gateway-step-functions.api-gateway-websocket-api')).toContain(
+      '연결을 오래 유지한 채',
+    )
+    // 워크플로는 실행 시간 상한과 처리량이 반대편을 맡는다.
+    expect(bodyOf('api-gateway-step-functions.step-functions-long-running-workflow')).toContain(
+      '최대 1년까지',
+    )
+    expect(bodyOf('api-gateway-step-functions.step-functions-express-workflow')).toContain(
+      '높은 처리량, 짧은 실행 시간, 낮은 비용',
+    )
+  })
+
+  it('메시징 주제가 서비스 다섯과 데드레터 큐 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'sqs-sns-eventbridge')
+
+    // 1단 SQS·SNS·EventBridge·Amazon MQ·SES가 무엇이고 큐에 실패한 메시지가 어디로 가는가
+    // → 2단 세 갈래 중 언제 무엇을 고르는가(버퍼·팬아웃·라우팅·순서·이벤트 통로·수신)
+    // → 3단 배치와 가시성 타임아웃, 크기·중복 제거 창 같은 한계값, 큐·토픽에 필요한 권한.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'sqs-sns-eventbridge.sqs',
+      'sqs-sns-eventbridge.sns',
+      'sqs-sns-eventbridge.eventbridge',
+      'sqs-sns-eventbridge.eventbridge-scheduler',
+      'sqs-sns-eventbridge.amazon-mq',
+      'sqs-sns-eventbridge.ses',
+      'sqs-sns-eventbridge.dead-letter-queue',
+      'sqs-sns-eventbridge.sns-is-not-a-queue',
+      'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+      'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+      'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+      'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
+      'sqs-sns-eventbridge.eventbridge-event-bus-types',
+      'sqs-sns-eventbridge.eventbridge-pipes',
+      'sqs-sns-eventbridge.eventbridge-api-destination',
+      'sqs-sns-eventbridge.eventbridge-private-api-target',
+      'sqs-sns-eventbridge.eventbridge-resource-change-rule',
+      'sqs-sns-eventbridge.sqs-details',
+      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.ses-inbound-email-receiving',
+      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
+      'sqs-sns-eventbridge.sqs-batch-and-polling',
+      'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+      'sqs-sns-eventbridge.sqs-message-size-limit',
+      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+      'sqs-sns-eventbridge.sqs-content-based-deduplication',
+      'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+      'sqs-sns-eventbridge.sqs-queue-policy',
+      'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+      'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+      'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
+      'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+    ])
+  })
+
+  it('메시징 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
+    // SQS ↔ SNS ↔ EventBridge. 셋 중 무엇을 고르는가가 그대로 문항이고, Amazon MQ와
+    // SES도 같은 보기 줄에 오르므로 함께 둔다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('sqs-sns-eventbridge.sqs')
+    expect(fork).toBe('sqs-sns-eventbridge')
+    ;[
+      'sqs-sns-eventbridge.sns',
+      'sqs-sns-eventbridge.eventbridge',
+      'sqs-sns-eventbridge.amazon-mq',
+      'sqs-sns-eventbridge.ses',
+      'sqs-sns-eventbridge.sns-is-not-a-queue',
+      'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+      'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+      'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // SQS ↔ SNS는 쌓아 두는 버퍼인가로 갈리고, 팬아웃은 그 둘을 겹쳐 쓴다.
+    // EventBridge는 라우팅까지가 몫이라 단계 추적도 순서·장기 보존도 맡지 않는다.
+    expect(bodyOf('sqs-sns-eventbridge.sns-is-not-a-queue')).toContain('내구성 있는 버퍼다')
+    expect(bodyOf('sqs-sns-eventbridge.sns-sqs-fanout-per-consumer')).toContain(
+      '모든 소비자가 모든 이벤트를 받는다',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.eventbridge-vs-step-functions')).toContain(
+      '이벤트 라우팅 서비스라',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.eventbridge-ordering-and-retention')).toContain(
+      '24시간 넘게 들고 있지 않는다',
+    )
+  })
+
+  it('표준 큐와 FIFO 큐의 갈림길이 한 주제 안에서 이어진다', () => {
+    // 표준 ↔ FIFO. 순서와 중복 제거가 필요한지로 갈리는 한 벌이라 떼어 놓으면
+    // 어느 쪽을 고르는지 판단할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('sqs-sns-eventbridge.sqs-details')
+    expect(fork).toBe('sqs-sns-eventbridge')
+    ;[
+      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+      'sqs-sns-eventbridge.sqs-content-based-deduplication',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 두 유형을 소개하는 것은 기존 sqs 개념의 문단이고, 표준 큐의 약점이 그 뒤를 잇는다.
+    expect(bodyOf('sqs-sns-eventbridge.sqs')).toContain('**표준 대기열**')
+    expect(bodyOf('sqs-sns-eventbridge.sqs')).toContain('**선입선출 대기열**')
+    expect(bodyOf('sqs-sns-eventbridge.sqs-details')).toContain('순서가 바뀔 수 있다')
+    // FIFO가 무엇을 어느 단위로 보장하는지, 그리고 표준 큐로는 왜 안 되는지가 이어진다.
+    expect(bodyOf('sqs-sns-eventbridge.sqs-fifo-message-group-id')).toContain(
+      '메시지 그룹 단위로 적용된다',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.sqs-fifo-deduplication-id')).toContain(
+      '걸러내는 범위가 5분이다',
+    )
+    expect(bodyOf('sqs-sns-eventbridge.sqs-content-based-deduplication')).toContain(
+      '**표준 큐로는 이 요구를 만족할 수 없다.**',
+    )
+    // SNS 쪽에도 같은 두 유형이 있고, 지점 간 큐와 갈리는 지점이 여기다.
+    expect(bodyOf('sqs-sns-eventbridge.sns-fifo-topic')).toContain(
+      '여러 구독자에게 동시에 뿌리지 못한다',
+    )
+  })
+
+  it('백업·재해 복구 주제가 서비스와 전략 넷 다음에 갈림길과 검증을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'backup-disaster-recovery')
+
+    // 1단 AWS Backup·DRS와 재해 복구 전략 둘이 각각 무엇인가
+    // → 2단 서비스 자체 백업에서 AWS Backup으로 넘어가는 순간, 무엇을 리소스로 지정하고
+    //   어디서 정하고 사본을 어디에 두고 얼마나 촘촘히 뜨는가
+    // → 3단 그 백업이 실제로 복원되는지와 규정을 지키는지 확인하는 설정 항목.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'backup-disaster-recovery.backup',
+      'backup-disaster-recovery.elastic-disaster-recovery',
+      'backup-disaster-recovery.backup-and-restore-dr',
+      'backup-disaster-recovery.warm-standby-for-low-rto',
+      'backup-disaster-recovery.backup-long-term-retention',
+      'backup-disaster-recovery.backup-ec2-resource-assignment',
+      'backup-disaster-recovery.organizations-backup-policy',
+      'backup-disaster-recovery.backup-cross-account-copy',
+      'backup-disaster-recovery.backup-s3-continuous-backup',
+      'backup-disaster-recovery.backup-restore-testing-plan',
+      'backup-disaster-recovery.backup-audit-manager',
+    ])
+  })
+
+  it('재해 복구 전략이 한 주제 안에서 복구 시간과 비용으로 갈린다', () => {
+    // 백업 및 복원 ↔ 웜 스탠바이. RTO·RPO로 갈리는 한 벌이라 흩으면 "짧은 RTO는
+    // 무엇을 고르는가"를 배울 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('backup-disaster-recovery.backup-and-restore-dr')
+    expect(fork).toBe('backup-disaster-recovery')
+    ;[
+      'backup-disaster-recovery.warm-standby-for-low-rto',
+      'backup-disaster-recovery.elastic-disaster-recovery',
+      'backup-disaster-recovery.backup',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 한쪽 끝은 대기 자원을 두지 않아 비용이 가장 낮고 복구가 즉시 끝나지 않는다.
+    expect(bodyOf('backup-disaster-recovery.backup-and-restore-dr')).toContain(
+      '컴퓨팅은 필요해질 때까지 띄우지 않는다',
+    )
+    expect(bodyOf('backup-disaster-recovery.backup-and-restore-dr')).toContain(
+      '복구가 즉시 끝나지 않는다',
+    )
+    // 반대쪽 끝은 대기 환경이 실제로 떠 있어야 하고 전환도 자동이어야 한다.
+    expect(bodyOf('backup-disaster-recovery.warm-standby-for-low-rto')).toContain(
+      '실제로 실행 중이어야 하고',
+    )
+    expect(bodyOf('backup-disaster-recovery.warm-standby-for-low-rto')).toContain(
+      '상태 점검을 건 DNS 장애 조치',
+    )
+    // DRS는 지속 복제로 그 복구 시간을 더 줄이는 쪽이다.
+    expect(bodyOf('backup-disaster-recovery.elastic-disaster-recovery')).toContain(
+      '디스크 변경을 지속적으로 복제',
+    )
+  })
+
+  it('VPC 주제가 구성 요소 여덟 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'vpc-networking')
+
+    // 1단 VPC 구성 요소가 각각 무엇인가
+    // → 2단 NAT Gateway ↔ VPC Endpoint ↔ PrivateLink ↔ 피어링 중 언제 무엇을 고르는가
+    // → 3단 가용 영역마다 두는 것과 그렇지 않은 것, 엘라스틱 IP, 엔드포인트 정책, 확장 한계.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'vpc-networking.vpc-subnet',
+      'vpc-networking.internet-gateway',
+      'vpc-networking.egress-only-igw',
+      'vpc-networking.nat-gateway',
+      'vpc-networking.vpc-endpoint',
+      'vpc-networking.privatelink',
+      'vpc-networking.vpc-peering',
+      'vpc-networking.vpc-flow-logs',
+      'vpc-networking.comparison',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+      'vpc-networking.endpoint-pricing',
+      'vpc-networking.privatelink-endpoint-service',
+      'vpc-networking.nat-instance',
+      'vpc-networking.nat-gateway-per-az',
+      'vpc-networking.internet-gateway-is-not-per-az',
+      'vpc-networking.nat-gateway-count-by-environment',
+      'vpc-networking.nat-gateway-elastic-ip',
+      'vpc-networking.vpc-endpoint-policy',
+      'vpc-networking.vpc-peering-scaling-limit',
+      'vpc-networking.s3-is-regional',
+    ])
+  })
+
+  it('보안 그룹·NACL 주제가 둘의 소개 다음에 상태 저장 갈림길과 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'security-groups-nacl')
+
+    // 1단 보안 그룹과 NACL이 각각 무엇인가 → 2단 상태 저장과 상태 비저장, Web ACL과
+    // 네트워크 ACL은 다른 것 → 3단 규칙 수 제한, 거부 규칙을 어느 서브넷에 거는가,
+    // 로드 밸런서 보안 그룹의 아웃바운드.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'security-groups-nacl.security-group',
+      'security-groups-nacl.nacl',
+      'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+      'security-groups-nacl.web-acl-vs-nacl',
+      'security-groups-nacl.security-group-referencing',
+      'security-groups-nacl.nacl-rule-limit',
+      'security-groups-nacl.nacl-deny-at-source-subnet',
+      'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
+      'security-groups-nacl.nlb-security-group',
+    ])
+  })
+
+  it('하이브리드 연결 주제가 연결 수단 여덟 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'hybrid-connectivity')
+
+    // 1단 연결 수단들이 각각 무엇인가 → 2단 VPN과 Direct Connect의 갈림길, VPC마다
+    // 따로 걸 것인가 Transit Gateway로 모을 것인가, 데이터 지역성으로 비용 줄이기
+    // → 3단 Direct Connect의 함정과 복원력 구성, VIF 유형, 온프레미스로 되돌리는 아웃바운드.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'hybrid-connectivity.site-to-site-vpn',
+      'hybrid-connectivity.client-vpn',
+      'hybrid-connectivity.direct-connect',
+      'hybrid-connectivity.virtual-private-gateway',
+      'hybrid-connectivity.access-terms',
+      'hybrid-connectivity.transit-gateway',
+      'hybrid-connectivity.direct-connect-gateway',
+      'hybrid-connectivity.region-attached-edge-options',
+      'hybrid-connectivity.onprem-connectivity-heuristic',
+      'hybrid-connectivity.vpn-vs-direct-connect',
+      'hybrid-connectivity.per-vpc-vpn-for-isolation',
+      'hybrid-connectivity.transit-gateway-cross-region-peering',
+      'hybrid-connectivity.onprem-access-via-interface-endpoint',
+      'hybrid-connectivity.data-locality-cost',
+      'hybrid-connectivity.outposts-data-residency',
+      'hybrid-connectivity.direct-connect-caveats',
+      'hybrid-connectivity.direct-connect-resiliency',
+      'hybrid-connectivity.direct-connect-vif-types',
+      'hybrid-connectivity.centralized-onprem-egress',
+    ])
+  })
+
+  it('보안 그룹과 NACL이 한 주제 안에서 상태 저장 여부로 갈린다', () => {
+    // 대표 혼동 짝이다. 둘을 다른 주제로 떼면 "응답 트래픽에 규칙이 필요한가"를
+    // 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('security-groups-nacl.security-group-stateful-vs-nacl-stateless')
+    expect(fork).toBe('security-groups-nacl')
+    ;[
+      'security-groups-nacl.security-group',
+      'security-groups-nacl.nacl',
+      'security-groups-nacl.nacl-deny-at-source-subnet',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 보안 그룹은 응답을 규칙 없이 돌려보내고, NACL은 방향마다 규칙이 있어야 한다.
+    const stateful = bodyOf('security-groups-nacl.security-group-stateful-vs-nacl-stateless')
+    expect(stateful).toContain('아웃바운드 규칙이 없어도 나가고')
+    expect(stateful).toContain('각각 규칙이 있어야 통신이 성립한다')
+    // 차단이 필요하면 자리는 NACL이고, 남는 판단은 서브넷과 방향이다.
+    expect(bodyOf('security-groups-nacl.nacl-deny-at-source-subnet')).toContain(
+      '보내는 쪽 서브넷의 아웃바운드',
+    )
+  })
+
+  it('온프레미스를 잇는 세 수단이 한 주제 안에 함께 있다', () => {
+    // Site-to-Site VPN ↔ Direct Connect ↔ Transit Gateway는 한 벌이다. 흩으면
+    // "언제 무엇을 쓰는가"를 비교할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('hybrid-connectivity.vpn-vs-direct-connect')
+    expect(fork).toBe('hybrid-connectivity')
+    ;[
+      'hybrid-connectivity.site-to-site-vpn',
+      'hybrid-connectivity.direct-connect',
+      'hybrid-connectivity.transit-gateway',
+      'hybrid-connectivity.per-vpc-vpn-for-isolation',
+      'hybrid-connectivity.transit-gateway-cross-region-peering',
+      'hybrid-connectivity.virtual-private-gateway',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // VPC마다 따로 걸면 VPC 사이에 경로가 생기지 않고, Transit Gateway로 모으면
+    // 리전을 넘어서까지 경로가 이어진다. 가상 프라이빗 게이트웨이가 그 사이의 한계다.
+    expect(bodyOf('hybrid-connectivity.per-vpc-vpn-for-isolation')).toContain(
+      'VPC 사이에는 어느 쪽 라우팅 테이블에도 경로가 없다',
+    )
+    expect(bodyOf('hybrid-connectivity.transit-gateway-cross-region-peering')).toContain(
+      '리전 수만큼만 늘어난다',
+    )
+    expect(bodyOf('hybrid-connectivity.virtual-private-gateway')).toContain(
+      'VPC마다 하나씩 붙는 장치',
+    )
+  })
+
+  it('엔드포인트 두 유형과 PrivateLink의 갈림길이 한 주제 안에서 읽힌다', () => {
+    // 게이트웨이 엔드포인트 ↔ 인터페이스 엔드포인트 ↔ PrivateLink ↔ 피어링.
+    // 넷이 같은 보기 줄에 오르므로 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('vpc-networking.comparison')
+    expect(fork).toBe('vpc-networking')
+    ;[
+      'vpc-networking.vpc-endpoint',
+      'vpc-networking.endpoint-pricing',
+      'vpc-networking.privatelink',
+      'vpc-networking.privatelink-endpoint-service',
+      'vpc-networking.vpc-peering',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // NAT를 거치면 목적지가 공용 엔드포인트라 사설 경로 요구를 채우지 못하고,
+    // 엔드포인트 서비스는 라우팅 테이블을 건드리지 않는 쪽으로 피어링과 갈린다.
+    expect(bodyOf('vpc-networking.nat-gateway-traffic-uses-public-endpoints')).toContain(
+      '그 서비스의 공용 엔드포인트다',
+    )
+    expect(bodyOf('vpc-networking.privatelink-endpoint-service')).toContain(
+      '라우팅 테이블을 건드리지 않는다',
+    )
+  })
+
+  it('동시성 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
+    // 예약된 동시성 ↔ 프로비저닝된 동시성 ↔ 계정의 동시 실행 한도. 이름이 닮아
+    // 보기 줄에 나란히 오르므로 떼어 놓으면 무엇이 무엇의 대안인지 알 수 없게 된다
+    // (PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('lambda.lambda-reserved-concurrency')
+    expect(fork).toBe('lambda')
+    expect(ownerOf('lambda.lambda-provisioned-concurrency-autoscaling')).toBe(fork)
+    expect(ownerOf('lambda.lambda-concurrency-limit-throttling')).toBe(fork)
+    // 콜드 스타트를 줄이는 쪽과 용량만 떼어 두는 쪽이 갈리고, 한도는 넘칠 때 무슨 일이
+    // 벌어지는지를 맡는다. 콜드 스타트를 소개하는 것은 기존 lambda 개념의 문단이다.
+    expect(bodyOf('lambda.lambda')).toContain('콜드 스타트')
+    expect(bodyOf('lambda.lambda-reserved-concurrency')).toContain('콜드 스타트는 그대로 남는다')
+    expect(bodyOf('lambda.lambda-provisioned-concurrency-autoscaling')).toContain('수요를 따라 오르내린다')
+    expect(bodyOf('lambda.lambda-concurrency-limit-throttling')).toContain('확장을 묶는 쪽으로 작용한다')
+  })
+
+  it('엣지에서 코드를 돌리는 두 갈래가 CloudFront 주제 안에 함께 있다', () => {
+    // Lambda@Edge ↔ CloudFront Functions. step 10이 serverless-containers에 있던
+    // lambda-at-edge를 CloudFront 쪽으로 옮겨 온 이유가 이 갈림길이다
+    // (topic-plan "헷갈리는 짝 배치", "step 경계를 넘는 개념").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const edge = ownerOf('cloudfront-global-accelerator.lambda-at-edge')
+    expect(edge).toBe('cloudfront-global-accelerator')
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront-functions')).toBe(edge)
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront-functions-no-external-calls')).toBe(edge)
+    expect(ownerOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toBe(edge)
+    // 둘을 가르는 축은 실행 모델이고, 각자 할 수 있는 일이 그 뒤에 이어진다.
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-functions')).toContain('프로그래밍 모델과 배포 방식이 서로 다르다')
+    expect(bodyOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toContain('전달 직전에 응답을 압축한다')
+  })
+
+  it('EMR·Glue·Athena 주제가 서비스 소개 다음에 갈림길과 클러스터 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'emr-glue-athena')
+
+    // 1단 EMR·Spark·Glue·Athena·Lake Formation이 각각 무엇인가
+    // → 2단 클러스터를 얼마나 띄워 두는가, 변환을 어디서 돌리는가, 조회 비용은 어떻게
+    //   붙는가, 로그를 어디에 쌓는가, 데이터 레이크의 권한은 어느 경로로 걸리는가
+    // → 3단 노드 역할별 인스턴스 제품군·작업별 권한·암호화 설정·열 지향 형식.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'emr-glue-athena.emr',
+      'emr-glue-athena.emr-node-types',
+      'emr-glue-athena.spark',
+      'emr-glue-athena.glue',
+      'emr-glue-athena.glue-crawler',
+      'emr-glue-athena.glue-databrew',
+      'emr-glue-athena.athena',
+      'emr-glue-athena.lake-formation',
+      'emr-glue-athena.emr-transient-cluster',
+      'emr-glue-athena.emr-managed-scaling',
+      'emr-glue-athena.glue-etl-with-per-customer-kms-key',
+      'emr-glue-athena.athena-encrypted-and-pay-per-query',
+      'emr-glue-athena.athena-federated-query',
+      'emr-glue-athena.log-storage-s3-athena',
+      'emr-glue-athena.lake-formation-blueprint-and-athena',
+      'emr-glue-athena.lake-formation-lf-tags',
+      'emr-glue-athena.emr-node-instance-family-choice',
+      'emr-glue-athena.emr-runtime-role',
+      'emr-glue-athena.emr-security-configuration',
+      'emr-glue-athena.parquet-columnar-format',
+    ])
+  })
+
+  it('스트리밍 주제가 서비스 다섯 다음에 갈림길과 한계값을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'kinesis-streaming')
+
+    // 1단 스트리밍 서비스 다섯이 각각 무엇인가
+    // → 2단 담당 단계의 비교, 스트림 사이에 무엇을 끼울 수 있는가, 큐 계열과 갈리는 축,
+    //   소비자를 직접 만들 때와 맡길 때, Kafka 생태계로 얻는 것
+    // → 3단 레코드 크기·파티션 키 쏠림·용량 모드·버퍼링 지연.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'kinesis-streaming.kinesis-data-streams',
+      'kinesis-streaming.data-firehose',
+      'kinesis-streaming.managed-service-apache-flink',
+      'kinesis-streaming.kinesis-video-streams',
+      'kinesis-streaming.msk',
+      'kinesis-streaming.streaming-services-comparison',
+      'kinesis-streaming.flink-kinesis-source-sink',
+      'kinesis-streaming.firehose-lambda-transformation',
+      'kinesis-streaming.firehose-format-conversion',
+      'kinesis-streaming.kinesis-retention-and-fanout',
+      'kinesis-streaming.kinesis-client-library',
+      'kinesis-streaming.msk-kafka-connect',
+      'kinesis-streaming.kinesis-record-size-limit',
+      'kinesis-streaming.kinesis-partition-key-hot-shard',
+      'kinesis-streaming.kinesis-capacity-mode',
+      'kinesis-streaming.firehose-buffering',
+    ])
+  })
+
+  it('웨어하우스·검색·시각화 주제가 서비스 넷 다음에 갈림길과 적재 경로를 둔다', () => {
+    const topic = topics.find(
+      (candidate) => candidate.id === 'redshift-opensearch-quicksight',
+    )
+
+    // 1단 Redshift·Spectrum·OpenSearch·QuickSight가 각각 무엇인가
+    // → 2단 트랜잭션과 분석, 임시 쿼리와 반복되는 고성능 쿼리, 핫·콜드 분리, 내장 예측
+    // → 3단 동시성 확장·COPY 병렬 적재·운영 테이블의 과거 데이터를 흘려보내는 자리.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'redshift-opensearch-quicksight.redshift',
+      'redshift-opensearch-quicksight.redshift-spectrum',
+      'redshift-opensearch-quicksight.opensearch-text-search',
+      'redshift-opensearch-quicksight.quicksight',
+      'redshift-opensearch-quicksight.oltp-vs-olap',
+      'redshift-opensearch-quicksight.athena-vs-redshift-workload',
+      'redshift-opensearch-quicksight.redshift-hot-cold-split',
+      'redshift-opensearch-quicksight.quicksight-ml-forecast',
+      'redshift-opensearch-quicksight.redshift-concurrency-scaling',
+      'redshift-opensearch-quicksight.redshift-copy-from-s3',
+      'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
+    ])
+  })
+
+  it('Kinesis 네 갈래와 MSK가 한 주제 안에서 담당으로 갈린다', () => {
+    // Data Streams ↔ Data Firehose ↔ Flink(옛 Data Analytics) ↔ Video Streams를 한
+    // 주제에 두고, 스트리밍 갈림길인 MSK도 같은 자리에 둔다. 흩으면 "언제 무엇을 쓰는가"를
+    // 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const streaming = ownerOf('kinesis-streaming.kinesis-data-streams')
+    expect(streaming).toBe('kinesis-streaming')
+    ;[
+      'kinesis-streaming.data-firehose',
+      'kinesis-streaming.managed-service-apache-flink',
+      'kinesis-streaming.kinesis-video-streams',
+      'kinesis-streaming.msk',
+      'kinesis-streaming.streaming-services-comparison',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(streaming))
+    // 앞의 셋은 담당 단계로 갈리고, 영상 갈래는 이름만 같은 다른 대상을 다룬다.
+    expect(bodyOf('kinesis-streaming.streaming-services-comparison')).toContain('스트림 저장소 역할을 한다')
+    expect(bodyOf('kinesis-streaming.kinesis-video-streams')).toContain('저장된 미디어 배포는')
+    // Kinesis ↔ MSK의 갈림길은 이미 Kafka를 쓰고 있는가다.
+    expect(bodyOf('kinesis-streaming.msk')).toContain('코드를 크게 바꾸지 않고 그대로 옮길 수 있는')
+    expect(bodyOf('kinesis-streaming.msk-kafka-connect')).toContain('Kafka Connect로')
+  })
+
+  it('Athena와 Redshift와 Spectrum의 갈림길이 한 주제 안에서 읽힌다', () => {
+    // 임시 쿼리 ↔ 반복되는 고성능 쿼리 ↔ S3에 둔 채 조회하기. Athena 자체를 소개하는
+    // 개념은 emr-glue-athena에 있고, 셋을 가르는 갈림길은 웨어하우스 주제에 둔다
+    // (topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const warehouse = ownerOf('redshift-opensearch-quicksight.athena-vs-redshift-workload')
+    expect(warehouse).toBe('redshift-opensearch-quicksight')
+    ;[
+      'redshift-opensearch-quicksight.redshift',
+      'redshift-opensearch-quicksight.redshift-spectrum',
+      'redshift-opensearch-quicksight.redshift-hot-cold-split',
+      'redshift-opensearch-quicksight.oltp-vs-olap',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(warehouse))
+    // 갈리는 축은 쿼리가 어떻게 들어오는가이고, Spectrum은 그 축이 아니라 조회 범위다.
+    expect(bodyOf('redshift-opensearch-quicksight.athena-vs-redshift-workload')).toContain(
+      '쿼리가 어떻게 들어오는가',
+    )
+    expect(bodyOf('redshift-opensearch-quicksight.redshift-spectrum')).toContain(
+      '조회 대상을 S3까지 넓히는 것',
+    )
+    expect(bodyOf('redshift-opensearch-quicksight.redshift-hot-cold-split')).toContain(
+      'Spectrum으로 필요할 때만 읽으면',
+    )
+    // 두 주제는 배열에서 이웃해 있어 Athena 소개와 이 갈림길이 이어 읽힌다.
+    const indexOf = (topicId: string) => topics.findIndex(({ id }) => id === topicId)
+    expect(indexOf('redshift-opensearch-quicksight') - indexOf('emr-glue-athena')).toBe(2)
+  })
+
+  it('EMR과 Glue의 갈림길이 두 서비스와 한 주제 안에 있다', () => {
+    // 변환 작업을 클러스터에서 돌리느냐 관리형 ETL에 맡기느냐. 둘을 가르면 운영 부담이라는
+    // 축을 배울 자리가 없어진다(topic-plan "담는 서비스", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('emr-glue-athena.glue-etl-with-per-customer-kms-key')
+    expect(fork).toBe('emr-glue-athena')
+    expect(ownerOf('emr-glue-athena.emr')).toBe(fork)
+    expect(ownerOf('emr-glue-athena.glue')).toBe(fork)
+    expect(bodyOf('emr-glue-athena.glue-etl-with-per-customer-kms-key')).toContain(
+      '클러스터를 띄우고 유지하는 일이 없고',
+    )
+    expect(bodyOf('emr-glue-athena.glue-etl-with-per-customer-kms-key')).toContain(
+      '고객 수만큼 운영하는 부담이 그대로 남는다',
+    )
+  })
+
+  it('Route 53 주제가 서비스와 정책 소개 다음에 갈림길과 세부 동작을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'route53')
+
+    // 1단 Route 53과 라우팅 정책·Resolver·호스팅 영역이 각각 무엇이고 호스팅을 어떻게 옮기는가
+    // → 2단 정책들 사이의 갈림길(장애 조치·리전 장애·지연 시간 레코드)과 레코드가
+    //   무엇을 가리키는가
+    // → 3단 호스팅 영역과 Resolver의 경계·다중값 응답의 세부 동작·쿼리 로깅.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'route53.route53',
+      'route53.routing-policies',
+      'route53.resolver',
+      'route53.private-hosted-zone',
+      'route53.route53-zone-file-import',
+      'route53.route53-failover-routing',
+      'route53.multi-region-failover-for-region-outage',
+      'route53.latency-record-for-non-aws-endpoint',
+      'route53.route53-alias-record',
+      'route53.private-hosted-zone-vpc-only',
+      'route53.route53-resolver-forward-rule',
+      'route53.multivalue-answer-details',
+      'route53.route53-query-logging',
+    ])
+  })
+
+  it('CloudWatch·X-Ray 주제가 서비스 넷 다음에 관측의 경계와 지표 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'cloudwatch-xray')
+
+    // 1단 CloudWatch·X-Ray·Performance Insights·Managed Grafana가 각각 무엇이고
+    //   하이브리드 연결의 품질은 무엇이 재는가
+    // → 2단 관측이 어디까지인가, 로그를 어디서 분석하는가, 규모 조정의 근거는 무엇인가
+    // → 3단 기본 지표에 없는 값·상세 모니터링의 간격·경보가 흘러가는 자리.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'cloudwatch-xray.cloudwatch',
+      'cloudwatch-xray.x-ray',
+      'cloudwatch-xray.performance-insight',
+      'cloudwatch-xray.amazon-managed-grafana',
+      'cloudwatch-xray.cloudwatch-network-monitor',
+      'cloudwatch-xray.cloudwatch-container-insights',
+      'cloudwatch-xray.log-analysis-options',
+      'cloudwatch-xray.performance-insights-rightsizing',
+      'cloudwatch-xray.cloudwatch-agent-memory-metric',
+      'cloudwatch-xray.ec2-detailed-monitoring',
+      'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+    ])
+  })
+
+  it('Route 53 라우팅 정책들이 한 주제 안에 함께 있다', () => {
+    // 가중치·지연 시간·장애 조치·지리 위치·다중값 응답은 "언제 무엇을 고르는가"가
+    // 학습 내용이므로 흩어 두면 비교할 자리가 없어진다
+    // (topic-plan "헷갈리는 짝 배치", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const dns = ownerOf('route53.routing-policies')
+    expect(dns).toBe('route53')
+    ;[
+      'route53.route53-failover-routing',
+      'route53.latency-record-for-non-aws-endpoint',
+      'route53.multivalue-answer-details',
+      'route53.multi-region-failover-for-region-outage',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(dns))
+    // 정책 목록에는 없던 장애 조치가 따로 서고, 상태 검사를 어느 레코드에 거는지가 그 축이다.
+    expect(bodyOf('route53.routing-policies')).toContain('가중치 기반 라우팅')
+    expect(bodyOf('route53.route53-failover-routing')).toContain(
+      '**상태 검사는 주 레코드에 연결한다.**',
+    )
+    // 리전 장애는 가용 영역으로 막지 못하고, 단순 라우팅으로는 자동 전환이 되지 않는다.
+    expect(bodyOf('route53.multi-region-failover-for-region-outage')).toContain(
+      '데이터 센터 하나가 멈추는 것까지다',
+    )
+    expect(bodyOf('route53.multi-region-failover-for-region-outage')).toContain(
+      '단순 라우팅 레코드를 쓰면',
+    )
+    // 지연 시간 정책은 리전이 없는 엔드포인트까지 넓혀 읽는다.
+    expect(bodyOf('route53.latency-record-for-non-aws-endpoint')).toContain(
+      '가장 가까운 리전을 골라 레코드에 연결한다',
+    )
+  })
+
+  it('CloudWatch의 지표와 로그와 경보가 한 주제 안에서 한 벌로 읽힌다', () => {
+    // 지표 ↔ 로그 ↔ 경보는 CloudWatch를 이루는 세 축이다. 하나만 떼어 두면 무엇으로
+    // 무엇을 보는지가 서지 않는다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const monitoring = ownerOf('cloudwatch-xray.cloudwatch')
+    expect(monitoring).toBe('cloudwatch-xray')
+    ;[
+      // 지표
+      'cloudwatch-xray.cloudwatch-agent-memory-metric',
+      'cloudwatch-xray.ec2-detailed-monitoring',
+      // 로그
+      'cloudwatch-xray.log-analysis-options',
+      // 경보
+      'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(monitoring))
+    // 지표 쪽 두 축 — 기본으로 올라오지 않는 값과, 올라오는 간격.
+    expect(bodyOf('cloudwatch-xray.cloudwatch-agent-memory-metric')).toContain(
+      'CloudWatch 에이전트를 설치하면',
+    )
+    expect(bodyOf('cloudwatch-xray.ec2-detailed-monitoring')).toContain('5분 간격으로 올라온다')
+    expect(bodyOf('cloudwatch-xray.ec2-detailed-monitoring')).toContain('1분 간격이 되고')
+    // 로그는 어디서 분석하는가로 갈리고, 경보는 상태 변경이 이벤트로 나가 자동 대응이 붙는다.
+    expect(bodyOf('cloudwatch-xray.log-analysis-options')).toContain('CloudWatch Logs Insights는')
+    expect(bodyOf('cloudwatch-xray.cloudwatch-alarm-state-change-event')).toContain(
+      'EventBridge 규칙이 알람의 상태 변경 이벤트를 잡고',
+    )
+  })
+
+  it('IAM 권한 주제가 구성 요소 다음에 권한을 좁히는 장치와 평가 규칙을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'iam-permissions')
+
+    // 1단 IAM의 구성 요소(사용자·역할·인스턴스 프로파일·그룹·Roles Anywhere)와
+    //   Access Analyzer가 각각 무엇인가
+    // → 2단 이름이 닮은 분석 도구의 구분, 권한을 좁히는 장치들(최소 권한·ABAC·권한 경계)과
+    //   계정을 넘는 접근을 여는 방법
+    // → 3단 그룹과 사용자의 경계·정책 평가 규칙과 조건 키·루트 사용자의 제약.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'iam-permissions.iam',
+      'iam-permissions.instance-profile',
+      'iam-permissions.iam-group-policy-attachment',
+      'iam-permissions.iam-roles-anywhere',
+      'iam-permissions.iam-access-analyzer',
+      'iam-permissions.network-access-analyzer',
+      'iam-permissions.least-privilege',
+      'iam-permissions.abac',
+      'iam-permissions.permissions-boundary',
+      'iam-permissions.cross-account-iam-role',
+      'iam-permissions.iam-group-users-only',
+      'iam-permissions.iam-user-is-account-scoped',
+      'iam-permissions.iam-explicit-deny-precedence',
+      'iam-permissions.iam-notaction-deny',
+      'iam-permissions.iam-requested-region-condition',
+      'iam-permissions.access-analyzer-delegated-administrator',
+      'iam-permissions.root-user-multiple-mfa',
+      'iam-permissions.root-user-cannot-be-disabled',
+    ])
+  })
+
+  it('자격 증명 페더레이션 주제가 서비스 넷 다음에 누구를 어떻게 들이는가를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'identity-federation')
+
+    // 1단 Identity Center·STS·Cognito·Directory Service가 각각 무엇인가
+    // → 2단 사내 디렉터리와 앱 사용자 중 어느 쪽인가, 사용자 풀과 자격 증명 풀,
+    //   SAML을 못 쓰는 디렉터리는 어떻게 잇는가
+    // → 3단 권한 세트가 계정에 배포되는 방식과 역할을 그룹에 매핑하는 방법.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'identity-federation.identity-center',
+      'identity-federation.sts',
+      'identity-federation.cognito',
+      'identity-federation.aws-directory-service',
+      'identity-federation.sts-assume-role',
+      'identity-federation.identity-center-external-idp',
+      'identity-federation.cognito-pools',
+      'identity-federation.cognito-social-idp-federation',
+      'identity-federation.custom-identity-broker-for-non-saml',
+      'identity-federation.identity-center-permission-set',
+      'identity-federation.saml-federation-role-to-ad-group-mapping',
+    ])
+  })
+
+  it('조직·감사 주제가 서비스 다섯 다음에 무엇을 기록하는가와 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'organizations-cloudtrail-config')
+
+    // 1단 Organizations·SCP·CloudTrail(과 Lake)·Config·Audit Manager가 각각 무엇인가
+    // → 2단 정책을 어디에 붙이는가, 태그 정책과 SCP가 하는 일의 차이, 계정을 나누는
+    //   또 하나의 이유, CloudTrail과 Config가 각각 무엇을 기록하는가
+    // → 3단 SCP를 붙일 자리와 예외를 두는 방법, 로그를 믿을 수 있게 하는 설정,
+    //   준수 팩과 사용자 지정 규칙, 규칙에 자동 수정을 붙이는 방법.
+    // 마지막 하나는 step 19가 (주제 미정)에서 옮겨 왔다(topic-plan "step 경계를 넘는 개념").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'organizations-cloudtrail-config.organizations-scp',
+      'organizations-cloudtrail-config.cloudtrail',
+      'organizations-cloudtrail-config.cloudtrail-lake',
+      'organizations-cloudtrail-config.aws-config',
+      'organizations-cloudtrail-config.audit-manager',
+      'organizations-cloudtrail-config.organizational-unit',
+      'organizations-cloudtrail-config.organizations-tag-policy',
+      'organizations-cloudtrail-config.organizations-consolidated-billing',
+      'organizations-cloudtrail-config.cloudtrail-data-events',
+      'organizations-cloudtrail-config.config-configuration-recorder',
+      'organizations-cloudtrail-config.scp-attachment-targets',
+      'organizations-cloudtrail-config.scp-condition-exception',
+      'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+      'organizations-cloudtrail-config.config-conformance-pack',
+      'organizations-cloudtrail-config.config-custom-rule',
+      'organizations-cloudtrail-config.config-rule-remediation',
+    ])
+  })
+
+  it('IAM 역할·사용자·정책·권한 경계가 한 주제 안에 함께 있다', () => {
+    // 무엇을 어디에 붙이는가가 이 주제의 학습 내용이다. 권한 경계를 SCP 쪽으로 떼면
+    // 계정 전체의 금지와 개별 주체의 상한선을 비교할 자리가 없어진다
+    // (step17 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const iam = ownerOf('iam-permissions.iam')
+    expect(iam).toBe('iam-permissions')
+    ;[
+      'iam-permissions.instance-profile',
+      'iam-permissions.iam-group-policy-attachment',
+      'iam-permissions.iam-group-users-only',
+      'iam-permissions.permissions-boundary',
+      'iam-permissions.abac',
+      'iam-permissions.cross-account-iam-role',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(iam))
+    // 권한 경계는 계정 전체를 막는 SCP와 재는 것이 다르다.
+    expect(bodyOf('iam-permissions.permissions-boundary')).toContain(
+      '**개별 주체가 가질 수 있는 권한의 최대치**',
+    )
+    // 정책은 사용자가 아니라 그룹에 붙고, 태그로 가르려면 정책이 태그를 조건으로 읽어야 한다.
+    expect(bodyOf('iam-permissions.iam-group-policy-attachment')).toContain(
+      '권한의 기준이 그룹 하나에 모인다',
+    )
+    expect(bodyOf('iam-permissions.abac')).toContain('조건 키로 비교해 접근을 허용하므로')
+    // 계정을 넘는 접근은 그룹이 아니라 역할과 신뢰 정책으로 연다.
+    expect(bodyOf('iam-permissions.iam-user-is-account-scoped')).toContain(
+      'IAM 사용자는 계정 사이에 공유되지 않는다',
+    )
+    expect(bodyOf('iam-permissions.cross-account-iam-role')).toContain(
+      '신뢰 정책에 접근을 허용할 주체를 적는다',
+    )
+    // 이름이 닮은 두 분석 도구는 분석 대상으로 갈린다.
+    expect(ownerOf('iam-permissions.network-access-analyzer')).toBe(iam)
+    expect(bodyOf('iam-permissions.network-access-analyzer')).toContain(
+      '분석 대상이 네트워크인지 권한인지로 갈린다',
+    )
+  })
+
+  it('Identity Center와 SAML 페더레이션과 Cognito가 한 주제 안에서 갈린다', () => {
+    // 누구를 어떻게 들이는가의 갈림길이다. 직원인가 앱 사용자인가, 디렉터리가 SAML을
+    // 지원하는가로 답이 바뀐다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const federation = ownerOf('identity-federation.identity-center')
+    expect(federation).toBe('identity-federation')
+    ;[
+      'identity-federation.cognito',
+      'identity-federation.aws-directory-service',
+      'identity-federation.identity-center-external-idp',
+      'identity-federation.cognito-social-idp-federation',
+      'identity-federation.custom-identity-broker-for-non-saml',
+      'identity-federation.saml-federation-role-to-ad-group-mapping',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(federation))
+    // 축 하나 — 대상이 AWS 계정에 들어오는 직원인가 애플리케이션의 최종 사용자인가.
+    expect(bodyOf('identity-federation.identity-center-external-idp')).toContain(
+      '직원은 쓰던 자격 증명으로 로그인하고',
+    )
+    expect(bodyOf('identity-federation.cognito-social-idp-federation')).toContain(
+      '**애플리케이션의 최종 사용자**',
+    )
+    // 축 둘 — 사내 디렉터리가 SAML을 지원하는가.
+    expect(bodyOf('identity-federation.saml-federation-role-to-ad-group-mapping')).toContain(
+      '역할을 AD 그룹에 매핑하므로',
+    )
+    expect(bodyOf('identity-federation.custom-identity-broker-for-non-saml')).toContain(
+      'SAML을 지원하지 않으면 표준 페더레이션 방식으로는 이을 수 없다',
+    )
+    expect(bodyOf('identity-federation.aws-directory-service')).toContain(
+      '디렉터리 정보를 AWS에 저장하지 않고',
+    )
+  })
+
+  it('감사 쪽으로 갈린 주제가 IAM 두 주제 바로 뒤에 붙는다', () => {
+    // CloudTrail·Config는 감사 쪽이라 쪼갤 수 있지만, 쪼갠다면 배열에서 인접해야 한다
+    // (step17 "헷갈리는 짝"). identity-access가 있던 자리에 셋이 연속으로 놓인다.
+    const ids = topics.map(({ id }) => id)
+    const first = ids.indexOf('iam-permissions')
+
+    expect(first).toBeGreaterThan(-1)
+    expect(ids.slice(first, first + 3)).toEqual([
+      'iam-permissions',
+      'identity-federation',
+      'organizations-cloudtrail-config',
+    ])
+  })
+
+  it('SCP와 태그 정책과 Config가 한 주제 안에서 예방과 탐지로 갈린다', () => {
+    // 조직 수준 정책 둘은 하는 일이 다르고, Config는 만들어진 뒤에 찾아내는 쪽이다.
+    // 셋이 흩어지면 "막는 것"과 "찾는 것"을 비교할 자리가 없어진다.
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const governance = ownerOf('organizations-cloudtrail-config.organizations-scp')
+    expect(governance).toBe('organizations-cloudtrail-config')
+    ;[
+      'organizations-cloudtrail-config.organizational-unit',
+      'organizations-cloudtrail-config.scp-attachment-targets',
+      'organizations-cloudtrail-config.scp-condition-exception',
+      'organizations-cloudtrail-config.organizations-tag-policy',
+      'organizations-cloudtrail-config.aws-config',
+      'organizations-cloudtrail-config.cloudtrail-data-events',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(governance))
+    // SCP는 붙인 자리 아래에만 걸리고, 예외는 Principal이 아니라 Condition으로 둔다.
+    expect(bodyOf('organizations-cloudtrail-config.scp-attachment-targets')).toContain(
+      '연결한 자리 아래에만 적용된다',
+    )
+    expect(bodyOf('organizations-cloudtrail-config.scp-condition-exception')).toContain(
+      '`aws:PrincipalArn`으로 허용할 주체를 지목한다',
+    )
+    // 태그 정책은 표기를 맞추고, 행동을 막는 것은 SCP다.
+    expect(bodyOf('organizations-cloudtrail-config.organizations-tag-policy')).toContain(
+      '**표기를 통일하는 일**이 태그 정책의 몫이다',
+    )
+    expect(bodyOf('organizations-cloudtrail-config.organizations-tag-policy')).toContain(
+      '만들어지는 것을 막는 쪽이 아니다',
+    )
+    // CloudTrail은 호출을 남기고 그 안이 두 갈래로 갈린다.
+    expect(bodyOf('organizations-cloudtrail-config.cloudtrail-data-events')).toContain(
+      '이것을 따로 켜야 객체 수준 활동이 기록에 남는다',
+    )
+  })
+
+  it('비밀·키 주제가 서비스 다섯 다음에 무엇을 어디에 두는가와 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'secrets-encryption')
+
+    // 1단 Secrets Manager·Parameter Store·KMS·ACM·CloudHSM이 각각 무엇인가
+    // → 2단 비밀값을 어디에 두는가, 키를 누가 관리하는가, 리전을 넘는 키와 밖에서
+    //   가져온 키, 전용 하드웨어와 KMS를 함께 쓰는 자리, 도메인 검증 방식
+    // → 3단 한 번에 여러 비밀값을 읽는 API, 자동 교체의 주기와 키 유형 제약,
+    //   가져온 키 자료의 교체, 환경 변수 암호화, CloudFront 인증서의 리전과 만료 이벤트.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'secrets-encryption.secrets-manager',
+      'secrets-encryption.parameter-store',
+      'secrets-encryption.kms',
+      'secrets-encryption.acm',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.secrets-manager-vs-parameter-store',
+      'secrets-encryption.rotation-heuristic',
+      'secrets-encryption.kms-key-types-by-management',
+      'secrets-encryption.kms-multi-region-key',
+      'secrets-encryption.kms-imported-key-material',
+      'secrets-encryption.kms-cloudhsm-key-store',
+      'secrets-encryption.kms-key-per-tenant',
+      'secrets-encryption.acm-dns-validation',
+      'secrets-encryption.secrets-manager-batch-get-secret-value',
+      'secrets-encryption.kms-automatic-key-rotation',
+      'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
+      'secrets-encryption.imported-key-material-rotation',
+      'secrets-encryption.lambda-env-var-kms',
+      'secrets-encryption.acm-cloudfront-region',
+      'secrets-encryption.acm-expiration-event',
+    ])
+  })
+
+  it('WAF·Shield 주제가 서비스 넷 다음에 규칙의 축과 검사의 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'waf-shield')
+
+    // 1단 WAF·Shield·CloudFront·Firewall Manager가 각각 무엇인가
+    // → 2단 WAF를 어디에 붙이는가, 규칙을 무엇으로 거르고 누가 쓰는가, 빈도로 거르는
+    //   규칙과 봇, Shield Standard의 범위와 Shield Advanced
+    // → 3단 보호 그룹, 본문 검사 크기 한도, Web ACL의 리전 조건, 로그가 가는 길.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'waf-shield.waf',
+      'waf-shield.shield',
+      'waf-shield.cloudfront',
+      'waf-shield.firewall-manager',
+      'waf-shield.waf-attach-targets',
+      'waf-shield.waf-rule-types',
+      'waf-shield.waf-managed-rule-groups',
+      'waf-shield.waf-rate-based-rule',
+      'waf-shield.waf-bot-control',
+      'waf-shield.shield-standard-network-layer',
+      'waf-shield.shield-advanced-drt',
+      'waf-shield.shield-advanced-protection-group',
+      'waf-shield.waf-body-inspection-size-limit',
+      'waf-shield.waf-web-acl-region-must-match-rest-api',
+      'waf-shield.waf-logging-to-firehose',
+    ])
+  })
+
+  it('탐지 주제가 서비스 넷 다음에 각각 무엇을 찾는가와 조직 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'guardduty-macie-inspector')
+
+    // 1단 GuardDuty·Macie·Inspector·Security Hub가 각각 무엇인가
+    // → 2단 헷갈리는 넷이 각각 무엇을 찾는가, DB 로그인 이상은 어디가 잡는가,
+    //   검색 작업과 자동 탐지, 컨테이너 이미지의 취약점 스캔은 어디인가
+    // → 3단 위임 관리자 계정에서 조직 전체를 보는 방법, 탐지 결과를 이벤트로 이어
+    //   자동 대응과 알림을 붙이는 방법.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'guardduty-macie-inspector.guardduty',
+      'guardduty-macie-inspector.macie',
+      'guardduty-macie-inspector.amazon-inspector',
+      'guardduty-macie-inspector.security-hub',
+      'guardduty-macie-inspector.security-service-lineup',
+      'guardduty-macie-inspector.guardduty-db-login',
+      'guardduty-macie-inspector.macie-automated-discovery',
+      'guardduty-macie-inspector.inspector-scans-ecr-images',
+      'guardduty-macie-inspector.macie-delegated-administrator',
+      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+      'guardduty-macie-inspector.macie-finding-to-eventbridge',
+    ])
+  })
+
+  it('KMS와 Secrets Manager와 Parameter Store가 한 주제 안에서 갈린다', () => {
+    // 무엇을 어디에 두는가가 이 주제의 학습 내용이다. 셋을 가르면 키와 비밀값과
+    // 설정값의 자리를 비교할 데가 없어진다(step18 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const secrets = ownerOf('secrets-encryption.secrets-manager')
+    expect(secrets).toBe('secrets-encryption')
+    ;[
+      'secrets-encryption.parameter-store',
+      'secrets-encryption.kms',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.secrets-manager-vs-parameter-store',
+      'secrets-encryption.rotation-heuristic',
+      'secrets-encryption.kms-key-types-by-management',
+      'secrets-encryption.kms-cloudhsm-key-store',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(secrets))
+    // 축 하나 — 자동 순환이 되는 쪽과 되지 않는 쪽.
+    expect(bodyOf('secrets-encryption.secrets-manager-vs-parameter-store')).toContain(
+      '자동 교체하는 순환 기능을 제공하지만 Parameter Store에는 이 기능이 없다',
+    )
+    // 축 둘 — KMS가 관리하는 것은 키이지 비밀값이 아니다.
+    expect(bodyOf('secrets-encryption.kms')).toContain(
+      '애플리케이션 설정값이나 비밀값을 저장하는 서비스는 아니다',
+    )
+    // 축 셋 — 그 키를 누가 관리하고 어디에 두는가.
+    expect(bodyOf('secrets-encryption.kms-key-types-by-management')).toContain(
+      '고객 관리 키는 내가 만들어 키 정책과 수명 주기를 직접 정하고',
+    )
+    expect(bodyOf('secrets-encryption.kms-cloudhsm-key-store')).toContain(
+      '**CloudHSM이 뒷받침하는 KMS 키**',
+    )
+  })
+
+  it('WAF와 Shield와 Shield Advanced가 한 주제 안에서 계층과 대상으로 갈린다', () => {
+    // 계층과 대상이 갈리는 한 벌이다. Shield 쪽을 떼면 L7과 네트워크 계층의 경계를
+    // 비교할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const waf = ownerOf('waf-shield.waf')
+    expect(waf).toBe('waf-shield')
+    ;[
+      'waf-shield.shield',
+      'waf-shield.shield-standard-network-layer',
+      'waf-shield.shield-advanced-drt',
+      'waf-shield.shield-advanced-protection-group',
+      'waf-shield.waf-rule-types',
+      'waf-shield.waf-managed-rule-groups',
+      'waf-shield.waf-rate-based-rule',
+      'waf-shield.firewall-manager',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(waf))
+    // 축 하나 — 어느 계층을 보는가.
+    expect(bodyOf('waf-shield.waf')).toContain('**L7 애플리케이션 계층**')
+    expect(bodyOf('waf-shield.shield-standard-network-layer')).toContain(
+      '애플리케이션 계층의 요청을 검사해 막는 것은 WAF의 몫이고',
+    )
+    // 축 둘 — Shield와 Shield Advanced는 전담 대응 팀 지원으로 갈린다.
+    expect(bodyOf('waf-shield.shield-advanced-drt')).toContain(
+      'WAF는 애플리케이션 계층 공격 방어에는 유효하지만 DRT 지원은 제공하지 않는다',
+    )
+    // 축 셋 — 규칙이 요청의 내용을 보는가 빈도를 보는가.
+    expect(bodyOf('waf-shield.waf-rate-based-rule')).toContain('**한 IP에서 오는 빈도**')
+    // 계정이 여러 개면 규칙을 거는 자리가 달라진다.
+    expect(bodyOf('waf-shield.firewall-manager')).toContain(
+      '여러 계정의 WAF 규칙을 중앙에서 정의하고 배포해',
+    )
+  })
+
+  it('탐지 서비스 넷이 한 주제 안에서 무엇을 찾는지로 갈린다', () => {
+    // GuardDuty ↔ Macie ↔ Inspector ↔ Security Hub의 갈림길이다. 넷을 가르면
+    // 무엇을 찾는 서비스인지 비교할 자리가 없어진다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const detection = ownerOf('guardduty-macie-inspector.guardduty')
+    expect(detection).toBe('guardduty-macie-inspector')
+    ;[
+      'guardduty-macie-inspector.macie',
+      'guardduty-macie-inspector.amazon-inspector',
+      'guardduty-macie-inspector.security-hub',
+      'guardduty-macie-inspector.security-service-lineup',
+      'guardduty-macie-inspector.inspector-scans-ecr-images',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(detection))
+    // 넷이 각각 무엇을 보는가 — 계정을 겨냥한 활동, 저장된 데이터의 내용, 취약점,
+    // 그리고 그 결과가 모이는 자리.
+    expect(bodyOf('guardduty-macie-inspector.guardduty')).toContain(
+      '탐지 결과를 제공할 뿐 공격에 직접 대응하지는 않는다',
+    )
+    expect(bodyOf('guardduty-macie-inspector.macie')).toContain(
+      'S3에 보관된 데이터에서 개인정보처럼 보호해야 할 내용을 찾아낸다',
+    )
+    expect(bodyOf('guardduty-macie-inspector.amazon-inspector')).toContain(
+      '**패치를 적용하는 서비스가 아니라는 점이 다른 선택지와의 갈림길이 된다.**',
+    )
+    expect(bodyOf('guardduty-macie-inspector.security-hub')).toContain(
+      '**탐지 결과가 모이는 자리**',
+    )
+    // 조사·분석을 맡는 Detective도 같은 보기 줄에 오르므로 한 주제 안에서 갈린다.
+    expect(bodyOf('guardduty-macie-inspector.security-service-lineup')).toContain(
+      '**Amazon Detective**',
+    )
+    // 취약점 스캔의 대상에 컨테이너 이미지가 들어간다.
+    expect(bodyOf('guardduty-macie-inspector.inspector-scans-ecr-images')).toContain(
+      'ECR의 컨테이너 이미지가 들어간다',
+    )
+    // 탐지하는 서비스는 결과를 이벤트로 내보내고 대응은 받는 쪽이 맡는다.
+    ;[
+      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
+      'guardduty-macie-inspector.macie-finding-to-eventbridge',
+    ].forEach((conceptId) => {
+      expect(ownerOf(conceptId)).toBe(detection)
+      expect(bodyOf(conceptId)).toContain('EventBridge')
+    })
+  })
+
+  it('비용 관리 주제가 도구 여덟 다음에 약정의 크기와 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'cost-management')
+
+    // 1단 비용 도구들이 각각 무엇인가
+    // → 2단 무엇을 얼마만큼 약정하는가, 용량 예약은 왜 할인이 아닌가
+    // → 3단 태그를 어디서 활성화하는가, 예산에 걸 수 있는 조치와 알림 기준,
+    //   권장 대상에 무엇이 들어가는가.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'cost-management.savings-plan',
+      'cost-management.aws-budgets',
+      'cost-management.cost-explorer',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.cost-and-usage-report',
+      'cost-management.billing-and-cost-management',
+      'cost-management.trusted-advisor',
+      'cost-management.compute-optimizer',
+      'cost-management.savings-plan-details',
+      'cost-management.savings-plan-baseline-vs-spike',
+      'cost-management.rds-reserved-instance',
+      'cost-management.on-demand-capacity-reservation',
+      'cost-management.cost-allocation-tag-activation',
+      'cost-management.cost-allocation-tag-activation-in-management-account',
+      'cost-management.budget-actions',
+      'cost-management.budget-forecasted-alert',
+      'cost-management.compute-optimizer-ebs-recommendations',
+    ])
+  })
+
+  it('거버넌스·IaC 주제가 서비스 넷 다음에 제어의 시점과 감지 범위를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'governance-iac')
+
+    // 1단 CloudFormation·Service Catalog·Control Tower·RAM·Workload Discovery가
+    //   각각 무엇인가
+    // → 2단 제어가 배포 시점에 막는가 만들어진 뒤에 찾는가
+    // → 3단 드리프트 감지가 보는 범위.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'governance-iac.cloudformation',
+      'governance-iac.service-catalog',
+      'governance-iac.control-tower-landing-zone',
+      'governance-iac.resource-access-manager',
+      'governance-iac.workload-discovery',
+      'governance-iac.control-tower-controls',
+      'governance-iac.cloudformation-drift-detection',
+    ])
+  })
+
+  it('Systems Manager 주제가 기능 둘 다음에 접속하는 두 길과 등록 조건을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'systems-manager')
+
+    // 1단 명령을 보내는 기능과 구성을 배포하는 서비스가 각각 무엇인가
+    // → 2단 배스천 없이 붙는 두 길, 패치를 어디서 도는가
+    // → 3단 관리형 인스턴스를 만드는 정책, 인벤토리가 모으는 것.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'systems-manager.ssm-run-command',
+      'systems-manager.appconfig',
+      'systems-manager.ssm-session-manager',
+      'systems-manager.ec2-instance-connect-endpoint',
+      'systems-manager.ssm-patch-manager',
+      'systems-manager.ssm-managed-instance-core-policy',
+      'systems-manager.ssm-inventory',
+    ])
+  })
+
+  it('AI·ML 주제가 서비스 소개 다음에 훈련이 필요한가와 검토의 쓰임을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ai-ml-services')
+
+    // 1단 SageMaker AI와 API로 부르는 AI 서비스들이 각각 무엇인가
+    // → 2단 모델을 직접 만드는 자리와 이미 만들어진 기능을 부르는 자리가 갈린다
+    // → 3단 콘텐츠 검토가 어디에 쓰이는가.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ai-ml-services.sagemaker',
+      'ai-ml-services.media-ai-service-lineup',
+      'ai-ml-services.comprehend',
+      'ai-ml-services.amazon-lex',
+      'ai-ml-services.sagemaker-autopilot',
+      'ai-ml-services.rekognition-content-moderation',
+    ])
+  })
+
+  it('입력을 나눠 맡는 AI 서비스들이 한 주제 안에서 무엇을 다루는지로 갈린다', () => {
+    // 음성·이미지·번역·문서·텍스트·대화를 나눠 맡는 서비스들은 "무엇을 하는
+    // 서비스인가"가 그대로 문항이다. 떼어 놓으면 비교할 자리가 없어진다
+    // (step20 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join('\n') ?? ''
+
+    const lineup = 'ai-ml-services.media-ai-service-lineup'
+
+    expect(ownerOf('ai-ml-services.sagemaker')).toBe('ai-ml-services')
+    expect(ownerOf(lineup)).toBe('ai-ml-services')
+    expect(ownerOf('ai-ml-services.comprehend')).toBe('ai-ml-services')
+    expect(ownerOf('ai-ml-services.amazon-lex')).toBe('ai-ml-services')
+
+    // 넷이 어느 입력을 다루는지가 한 개념 안에서 갈린다.
+    const lineupBody = bodyOf(lineup)
+    expect(lineupBody).toContain('Transcribe는 음성을 글로 옮긴다')
+    expect(lineupBody).toContain('Rekognition은 이미지와 영상을 분석하는 서비스라')
+    expect(lineupBody).toContain('Translate는 언어를 다른 언어로 옮기는 서비스이며')
+    expect(lineupBody).toContain('Textract는 문서 이미지에서 글자와 표를 뽑아내는 서비스다')
+
+    // 글의 의미를 다루는 자리와 대화를 주고받는 자리가 그 넷과 갈린다.
+    expect(bodyOf('ai-ml-services.comprehend')).toContain('글의 의미를 다루는 자리')
+    expect(bodyOf('ai-ml-services.amazon-lex')).toContain('대화형 인터페이스')
+
+    // 모델을 직접 만드는 자리와 이미 만들어진 기능을 부르는 자리가 갈린다.
+    expect(lineupBody).toContain('이미 만들어진 기능을 API로 부르는 서비스들이다')
+    expect(bodyOf('ai-ml-services.sagemaker-autopilot')).toContain('훈련이 필요한가')
+    expect(bodyOf('ai-ml-services.rekognition-content-moderation')).toContain(
+      '모델 훈련을 포함하지 않아야 한다는 조건',
+    )
+  })
+
+  it('Cost Explorer와 Budgets와 Cost Anomaly Detection이 한 주제 안에서 갈린다', () => {
+    // 셋 다 비용을 다루지만 재는 것이 다르다. 가르면 "지난 비용을 보는가, 임계값을
+    // 감시하는가, 평소와 다른 지출을 알아채는가"를 비교할 자리가 없어진다
+    // (step19 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const cost = ownerOf('cost-management.cost-explorer')
+    expect(cost).toBe('cost-management')
+    ;[
+      'cost-management.aws-budgets',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.budget-actions',
+      'cost-management.budget-forecasted-alert',
+      'cost-management.cost-and-usage-report',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(cost))
+    // 임계값 기반 요구는 Budgets이고 이상 탐지는 목적이 다르다.
+    expect(bodyOf('cost-management.cost-anomaly-detection')).toContain(
+      '"예산의 60%에 도달하면 알림"처럼 임계값 기반 요구에는 AWS Budgets가 맞다',
+    )
+    // 알리는 데서 그치지 않고 막는 것은 예산 조치뿐이다.
+    expect(bodyOf('cost-management.budget-actions')).toContain('셋 다 알려 줄 뿐 막지 않는다')
+    // 알림 기준이 실제값과 예측값 둘이다.
+    expect(bodyOf('cost-management.budget-forecasted-alert')).toContain(
+      '이번 기간의 예상 지출이 임계값을 넘을 것으로 계산되는 시점',
+    )
+    // 콘솔 화면으로 안 되는 집계는 원본 청구 데이터를 내보내는 쪽이 받는다.
+    expect(bodyOf('cost-management.cost-and-usage-report')).toContain(
+      '상세한 항목별 청구 데이터를 S3 버킷으로 내보낸다',
+    )
+  })
+
+  it('CloudFormation과 Service Catalog와 Control Tower가 한 주제 안에서 갈린다', () => {
+    // 거버넌스 갈림길이다. 셋을 가르면 "인프라를 만드는가, 승인된 제품을 고르게
+    // 하는가, 계정 환경을 세우는가"를 비교할 자리가 없어진다
+    // (topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const governance = ownerOf('governance-iac.cloudformation')
+    expect(governance).toBe('governance-iac')
+    ;[
+      'governance-iac.service-catalog',
+      'governance-iac.control-tower-landing-zone',
+      'governance-iac.control-tower-controls',
+      'governance-iac.cloudformation-drift-detection',
+      'governance-iac.resource-access-manager',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(governance))
+    // 셋이 각각 무엇을 맡는가.
+    expect(bodyOf('governance-iac.cloudformation')).toContain(
+      '인프라 구성을 파일로 적어 두고 그대로 배포하며',
+    )
+    expect(bodyOf('governance-iac.service-catalog')).toContain(
+      '조직이 허용한 구성들을 제품으로 등록해 두고',
+    )
+    expect(bodyOf('governance-iac.control-tower-landing-zone')).toContain(
+      '기준 환경(랜딩 존)을 자동으로 구성한다',
+    )
+    // 제어는 언제 작동하는지로 갈리고, 드리프트 감지는 스택 밖을 보지 못한다.
+    expect(bodyOf('governance-iac.control-tower-controls')).toContain(
+      '**사전 예방적 제어**는 배포 시점에 템플릿을 평가해',
+    )
+    expect(bodyOf('governance-iac.cloudformation-drift-detection')).toContain(
+      '계정의 모든 지원 리소스를 대상으로 삼는 쪽은 AWS Config다',
+    )
+  })
+
+  it('Systems Manager의 기능들이 한 주제 안에 함께 있다', () => {
+    // Session Manager·Patch Manager·Run Command·Inventory는 한 서비스의 하위 기능이라
+    // 흩어 놓으면 무엇이 어느 자리를 맡는지 읽히지 않는다
+    // (step19 "헷갈리는 짝", topic-plan "범위를 벗어난 주제").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const ssm = ownerOf('systems-manager.ssm-run-command')
+    expect(ssm).toBe('systems-manager')
+    ;[
+      'systems-manager.ssm-session-manager',
+      'systems-manager.ssm-patch-manager',
+      'systems-manager.ssm-inventory',
+      'systems-manager.ssm-managed-instance-core-policy',
+      'systems-manager.ec2-instance-connect-endpoint',
+      'systems-manager.appconfig',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(ssm))
+    // 배스천 없이 붙는 두 길은 SSH를 쓰는지로 갈린다.
+    expect(bodyOf('systems-manager.ssm-session-manager')).toContain(
+      'SSH 프로토콜을 쓰지 않는다',
+    )
+    expect(bodyOf('systems-manager.ec2-instance-connect-endpoint')).toContain(
+      '**보안 그룹에서 여는 포트는 22가 아니라 443이다.**',
+    )
+    // 패치는 도는 자리가, 인벤토리는 모으는 것이 각각 한계다.
+    expect(bodyOf('systems-manager.ssm-patch-manager')).toContain(
+      '실행 중인 인스턴스를 대상으로 운영체제 패치를 배포한다',
+    )
+    expect(bodyOf('systems-manager.ssm-inventory')).toContain(
+      '아키텍처 다이어그램이나 리소스 사이의 관계 전체를 만들어 내지 않는다',
+    )
+    // 그 기능들이 닿으려면 인스턴스가 관리형이어야 한다.
+    expect(bodyOf('systems-manager.ssm-managed-instance-core-policy')).toContain(
+      '`AmazonSSMManagedInstanceCore`는 AWS 관리형 정책이고',
+    )
+  })
+
+  // 이 단언이 고정하는 것은 원본 은행 246문항 안의 스토리지 클래스 문항 9개가 클래스별
+  // 개념과 일대일이라는 사실이다. phase 27 step 2가 이 주제의 빈 개념 8개를 덮으며
+  // 문항을 더했으므로(ADR-026) 대상을 원본 은행으로 좁힌다 — 더한 문항은 위의 step 2
+  // 블록이 따로 본다.
+  it('원본 은행의 S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
+    const storageClassQuestions = questions
+      .slice(0, 246)
+      .filter((question) => question.topicId === 's3-storage-classes')
 
     expect(storageClassQuestions.map(({ id }) => id)).toEqual([
       'q016',
@@ -708,6 +4870,54 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // ADR-026 — 이 앱의 주 학습 경로는 문제를 풀고 틀린 것만 개념으로 되짚는 순환이라,
+  // 문항이 가리키지 않는 개념은 그 경로에서 아예 배울 수 없는 사각지대다. phase 27이
+  // 618개를 전부 덮었고 이 단언이 그 상태가 되돌아가는 것을 막는다 — 개념을 더하는 사람은
+  // 문항도 함께 만들어야 한다.
+  // 예외 목록("이 개념들은 출제하지 않는다")을 만들어 통과시키지 마라. 그 목록이 생기는
+  // 순간 다음 사람이 거기에 개념을 추가해 사각지대가 되살아난다.
+  it('모든 개념이 문항 하나 이상을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
+  it('모든 문제의 topicId가 conceptId가 속한 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('문제 id가 q001부터 빈 번호 없이 이어진다', () => {
+    expect(questions.map(({ id }) => id)).toEqual(
+      questions.map((_, index) => `q${String(index + 1).padStart(3, '0')}`),
+    )
+  })
+
+  // step 1~19가 이어 쓴 구간이다. 앞쪽 246문항은 각 step의 slice 테스트가 이미 고정한다.
+  // 길이를 정확한 수가 아니라 하한으로 단언하는 이유: 이 구간은 문항을 더할 때마다 자라는데,
+  // 이 테스트가 지키는 것은 분량이 아니라 분포다. 하한은 빈 slice로 조용히 통과하는 것만 막는다.
+  it('phase 27이 더한 q247 이후 구간의 정답 위치가 고르게 퍼져 있다', () => {
+    const addedQuestions = questions.slice(246)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+
+    expect(addedQuestions.length).toBeGreaterThanOrEqual(486)
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+  })
+
   it('모든 문제는 서로 다른 보기 4개를 가진다', () => {
     questions.forEach((question) => {
       expect(question.choices).toHaveLength(4)
@@ -763,19 +4973,19 @@ describe('학습 데이터 무결성', () => {
 
   const termGlosses: Array<{ conceptId: string; anchor: string }> = [
     { conceptId: 's3-versioning-lifecycle.object-lock-prerequisites', anchor: 'Multi-Factor Authentication' },
-    { conceptId: 'block-file-storage.efs', anchor: 'Network File System' },
+    { conceptId: 'efs-fsx.efs', anchor: 'Network File System' },
     { conceptId: 'data-transfer-services.transfer-family', anchor: 'File Transfer Protocol' },
-    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '키-값' },
-    { conceptId: 'aurora-dynamodb-cache.dynamodb', anchor: '미리 담아 두었다가' },
-    { conceptId: 'aurora-dynamodb-cache.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
-    { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
-    { conceptId: 'compute-delivery.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
-    { conceptId: 'compute-delivery.cloudfront-ttl', anchor: 'Time-to-Live' },
-    { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
-    { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
-    { conceptId: 'threat-protection.shield-advanced-drt', anchor: 'DDoS Response Team' },
-    { conceptId: 'threat-protection.waf', anchor: 'Cross-Site Scripting' },
-    { conceptId: 'threat-protection.security-service-lineup', anchor: 'Common Vulnerabilities' },
+    { conceptId: 'dynamodb.dynamodb', anchor: '키-값' },
+    { conceptId: 'dynamodb.dynamodb', anchor: '미리 담아 두었다가' },
+    { conceptId: 'aurora.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
+    { conceptId: 'elastic-load-balancing.elb', anchor: '실어 나를지 정하는' },
+    { conceptId: 'elastic-load-balancing.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
+    { conceptId: 'cloudfront-global-accelerator.cloudfront-ttl', anchor: 'Time-to-Live' },
+    { conceptId: 'api-gateway-step-functions.api-gateway', anchor: 'JSON Web Token' },
+    { conceptId: 'waf-shield.shield', anchor: 'Distributed Denial of Service' },
+    { conceptId: 'waf-shield.shield-advanced-drt', anchor: 'DDoS Response Team' },
+    { conceptId: 'waf-shield.waf', anchor: 'Cross-Site Scripting' },
+    { conceptId: 'guardduty-macie-inspector.security-service-lineup', anchor: 'Common Vulnerabilities' },
     { conceptId: 'secrets-encryption.acm', anchor: 'SSL의 후속' },
   ]
 
@@ -805,7 +5015,7 @@ describe('학습 데이터 무결성', () => {
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'data-transfer-services.storage-gateway')
+      .find(({ id }) => id === 'storage-gateway-migration.storage-gateway')
 
     expect(concept?.paragraphs).toHaveLength(4)
     expect(concept?.paragraphs[0]).toContain('스토리지를 연결한 채 사용하는 데 있다')
@@ -997,7 +5207,7 @@ describe('학습 데이터 무결성', () => {
 
   it('개념 본문이 Lambda가 하는 일과 비용 할당 태그가 무엇인지 알려준다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
-    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const lambda = concepts.find(({ id }) => id === 'lambda.lambda')
     const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
 
     expect(lambda?.paragraphs[0]).toContain('S3에 올라온 이미지를 리사이징하거나')
@@ -1008,7 +5218,7 @@ describe('학습 데이터 무결성', () => {
 
   it('개념 본문 보강이 요약과 문단 개수를 바꾸지 않는다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
-    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const lambda = concepts.find(({ id }) => id === 'lambda.lambda')
     const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
 
     // ADR-010이 정한 편집 범위 — summary와 개념 구조는 건드리지 않는다.
@@ -1068,7 +5278,7 @@ describe('학습 데이터 무결성', () => {
   it('SQS 개념의 잘못된 표기가 바로잡혀 있다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'messaging-backup.sqs-details')
+      .find(({ id }) => id === 'sqs-sns-eventbridge.sqs-details')
 
     expect(concept?.summary).toContain('중복과 순서 뒤바뀜이 생길 수 있다')
     expect(concept?.paragraphs[1]).toContain('순서가 바뀔 수 있다')
@@ -1078,7 +5288,7 @@ describe('학습 데이터 무결성', () => {
   it('TCP와 UDP 풀이가 이름과 계층뿐 아니라 둘의 차이까지 알려준다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'compute-delivery.elb')
+      .find(({ id }) => id === 'elastic-load-balancing.elb')
 
     expect(concept?.paragraphs[1]).toContain('빠진 것은 다시 보낸다')
     expect(concept?.paragraphs[1]).toContain('일부가 유실될 수 있다')
@@ -1087,7 +5297,7 @@ describe('학습 데이터 무결성', () => {
   it('CloudFront와 Global Accelerator의 갈림길이 추상적인 대비 대신 구체적인 기준으로 쓰인다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'compute-delivery.global-accelerator-protocols')
+      .find(({ id }) => id === 'cloudfront-global-accelerator.global-accelerator-protocols')
 
     // "캐싱할 콘텐츠인가, 가속할 연결인가"는 두 말을 이미 아는 사람에게만 읽힌다.
     expect(concept?.paragraphs[1]).not.toContain('가속할 연결인가')
@@ -1100,11 +5310,11 @@ describe('학습 데이터 무결성', () => {
     )
 
     // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
-    expect(byId['compute-delivery.elb'].paragraphs).toHaveLength(3)
-    expect(byId['compute-delivery.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
-    expect(byId['compute-delivery.global-accelerator-protocols'].paragraphs).toHaveLength(2)
-    expect(byId['compute-delivery.cloudfront-ttl'].paragraphs).toHaveLength(2)
-    expect(byId['compute-delivery.cloudfront-ttl'].summary).toBe(
+    expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(3)
+    expect(byId['elastic-load-balancing.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
+    expect(byId['cloudfront-global-accelerator.global-accelerator-protocols'].paragraphs).toHaveLength(2)
+    expect(byId['cloudfront-global-accelerator.cloudfront-ttl'].paragraphs).toHaveLength(2)
+    expect(byId['cloudfront-global-accelerator.cloudfront-ttl'].summary).toBe(
       'TTL이 만료되기 전에는 원본이 바뀌어도 엣지가 옛 파일을 계속 내보낸다.',
     )
   })
@@ -1265,6 +5475,9 @@ describe('학습 데이터 무결성', () => {
     finance: '클라우드 재무 관리(Cloud Financial Management)',
     devTools: '개발자 도구(Developer Tools)',
     business: '비즈니스 애플리케이션(Business Applications)',
+    // ADR-022로 더한 둘. phase 26 step 20이 ai-ml-services와 Amplify를 만들며 썼다.
+    machineLearning: '기계 학습(Machine Learning and Artificial Intelligence)',
+    frontend: '프런트엔드 웹 및 모바일(Front-end Web and Mobile)',
   } as const
 
   // 절약 플랜만 서술이 다르다. 백서가 서비스가 아니라 pricing model로 소개하기 때문이다.
@@ -1280,67 +5493,143 @@ describe('학습 데이터 무결성', () => {
     ['aws-core-services.elb', 'ELB는', 'networking'],
     ['aws-core-services.cloudfront', 'CloudFront는', 'networking'],
     ['aws-core-services.lambda', 'Lambda는', 'compute'],
-    ['block-file-storage.ebs', 'EBS는', 'storage'],
-    ['block-file-storage.efs', 'EFS는', 'storage'],
-    ['block-file-storage.fsx', 'FSx는', 'storage'],
+    ['ebs-instance-store.ebs', 'EBS는', 'storage'],
+    ['efs-fsx.efs', 'EFS는', 'storage'],
+    ['efs-fsx.fsx', 'FSx는', 'storage'],
     ['data-transfer-services.datasync', 'DataSync는', 'migration'],
     ['data-transfer-services.snowball-edge', 'Snowball Edge는', 'migration'],
     ['data-transfer-services.transfer-family', 'Transfer Family는', 'migration'],
-    ['data-transfer-services.storage-gateway', 'Storage Gateway는', 'storage'],
+    ['storage-gateway-migration.storage-gateway', 'Storage Gateway는', 'storage'],
+    // phase 26 step 5. DMS와 SCT는 한 개념이 둘을 함께 소개하므로 주어도 함께 적는다.
+    ['storage-gateway-migration.dms-sct', 'DMS와 SCT는', 'migration'],
+    ['storage-gateway-migration.application-migration-service', 'Application Migration Service는', 'migration'],
     ['rds-storage-features.rds', 'RDS는', 'databases'],
-    ['aurora-dynamodb-cache.aurora', 'Aurora는', 'databases'],
-    ['aurora-dynamodb-cache.dynamodb', 'DynamoDB는', 'databases'],
-    ['aurora-dynamodb-cache.elasticache', 'ElastiCache는', 'databases'],
-    ['aurora-dynamodb-cache.documentdb', 'DocumentDB는', 'databases'],
-    ['compute-delivery.ec2', 'EC2는', 'compute'],
-    ['compute-delivery.elb', 'ELB는', 'networking'],
-    ['compute-delivery.cloudfront', 'CloudFront는', 'networking'],
-    ['compute-delivery.global-accelerator', 'Global Accelerator는', 'networking'],
-    ['serverless-containers.ecs', 'ECS는', 'containers'],
-    ['serverless-containers.lambda', 'Lambda는', 'compute'],
-    ['serverless-containers.step-functions', 'Step Functions는', 'appIntegration'],
-    ['serverless-containers.api-gateway', 'API Gateway는', 'networking'],
-    ['serverless-containers.eks', 'EKS는', 'containers'],
-    ['serverless-containers.aws-batch', 'AWS Batch는', 'compute'],
-    ['messaging-backup.sqs', 'SQS는', 'appIntegration'],
-    ['messaging-backup.sns', 'SNS는', 'appIntegration'],
-    ['messaging-backup.eventbridge', 'EventBridge는', 'appIntegration'],
-    ['messaging-backup.backup', 'AWS Backup은', 'storage'],
-    ['messaging-backup.msk', 'MSK는', 'analytics'],
-    ['messaging-backup.ses', 'SES는', 'business'],
+    ['aurora.aurora', 'Aurora는', 'databases'],
+    ['dynamodb.dynamodb', 'DynamoDB는', 'databases'],
+    ['elasticache-purpose-built-db.elasticache', 'ElastiCache는', 'databases'],
+    ['elasticache-purpose-built-db.documentdb', 'DocumentDB는', 'databases'],
+    // phase 26 step 7. QLDB는 백서에도 보조 출처에도 카테고리가 없어 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 없음").
+    ['elasticache-purpose-built-db.neptune', 'Neptune은', 'databases'],
+    ['elasticache-purpose-built-db.timestream', 'Timestream은', 'databases'],
+    ['ec2-autoscaling.ec2', 'EC2는', 'compute'],
+    // phase 26 step 8. GWLB는 ELB 계열의 한 종류라 별도 항목이 아니고,
+    // ASG 개념들은 서비스를 소개하는 자리가 아니라 갈림길·한계 개념이라 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['ec2-autoscaling.ec2-image-builder', 'EC2 Image Builder는', 'compute'],
+    ['elastic-load-balancing.elb', 'ELB는', 'networking'],
+    ['cloudfront-global-accelerator.cloudfront', 'CloudFront는', 'networking'],
+    ['cloudfront-global-accelerator.global-accelerator', 'Global Accelerator는', 'networking'],
+    // phase 26 step 10이 Lambda를 자기 주제로 빼냈다. 신규 15개념은 전부 Lambda의
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['lambda.lambda', 'Lambda는', 'compute'],
+    // phase 26 step 11이 serverless-containers를 둘로 갈랐다. 신규 34개념 중 셋만
+    // 서비스를 소개하는 자리이고, 나머지는 ECS·EKS·Fargate·API Gateway·Step Functions의
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['ecs-eks-fargate.ecs', 'ECS는', 'containers'],
+    ['ecs-eks-fargate.eks', 'EKS는', 'containers'],
+    ['ecs-eks-fargate.ecr-image-scan-on-push', 'ECR은', 'containers'],
+    ['ecs-eks-fargate.aws-batch', 'AWS Batch는', 'compute'],
+    // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다. 주제는 옮기지 않고
+    // 카테고리만 밝힌다(service-categories.md "주제 배치와 어긋나는 자리").
+    ['ecs-eks-fargate.elastic-beanstalk', 'Elastic Beanstalk는', 'compute'],
+    ['ecs-eks-fargate.app2container', 'App2Container는', 'containers'],
+    ['api-gateway-step-functions.api-gateway', 'API Gateway는', 'networking'],
+    ['api-gateway-step-functions.step-functions', 'Step Functions는', 'appIntegration'],
+    // phase 26 step 12가 messaging-backup의 메시징 계열을 빼냈다. 신규 26개념 중
+    // Amazon MQ만 서비스를 소개하는 자리이고, 나머지는 SQS·SNS·EventBridge·SES의
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['sqs-sns-eventbridge.sqs', 'SQS는', 'appIntegration'],
+    ['sqs-sns-eventbridge.sns', 'SNS는', 'appIntegration'],
+    ['sqs-sns-eventbridge.eventbridge', 'EventBridge는', 'appIntegration'],
+    ['sqs-sns-eventbridge.amazon-mq', 'Amazon MQ는', 'appIntegration'],
+    // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
+    // "주제 배치와 어긋나는 자리").
+    ['sqs-sns-eventbridge.ses', 'SES는', 'business'],
+    // phase 26 step 13이 AWS Backup 계열과 재해 복구 계열을 자기 주제로 빼냈다. 신규
+    // 9개념 중 DRS만 서비스를 소개하는 자리이고, Backup Audit Manager는 이미 표에 있는
+    // AWS Backup의 기능이며 나머지는 백업 계획의 설정·갈림길과 DR 전략이라 카테고리
+    // 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['backup-disaster-recovery.backup', 'AWS Backup은', 'storage'],
+    // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
+    // "주제 배치와 어긋나는 자리").
+    ['backup-disaster-recovery.elastic-disaster-recovery', 'Elastic Disaster Recovery는', 'storage'],
+    // phase 26 step 14가 세 네트워크 주제에 신규 21개념을 더했다. 그중 하나만
+    // 서비스를 소개하는 자리이고, 나머지는 NAT 게이트웨이·VPC 엔드포인트·보안 그룹·
+    // NACL·Direct Connect 같은 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
     ['vpc-networking.vpc-subnet', 'VPC는', 'networking'],
     ['vpc-networking.privatelink', 'PrivateLink는', 'networking'],
     ['hybrid-connectivity.site-to-site-vpn', 'Site-to-Site VPN은', 'networking'],
     ['hybrid-connectivity.direct-connect', 'Direct Connect는', 'networking'],
     ['hybrid-connectivity.transit-gateway', 'Transit Gateway는', 'networking'],
     ['hybrid-connectivity.client-vpn', 'Client VPN은', 'networking'],
+    // Local Zones·Outposts·Wavelength를 소개하는 자리가 이 개념 하나뿐이라 셋의 주어를
+    // 함께 적는다. storage-gateway-migration.dms-sct와 같은 방식이다.
+    ['hybrid-connectivity.region-attached-edge-options', 'Local Zones·Outposts·Wavelength는', 'compute'],
     ['route53.route53', 'Route53은', 'networking'],
-    ['analytics-monitoring.emr', 'EMR은', 'analytics'],
-    ['analytics-monitoring.redshift', 'RedShift는', 'analytics'],
-    ['analytics-monitoring.athena', 'Athena는', 'analytics'],
-    ['analytics-monitoring.cloudwatch', 'CloudWatch는', 'management'],
-    ['analytics-monitoring.glue', 'Glue는', 'analytics'],
-    ['analytics-monitoring.x-ray', 'X-Ray는', 'devTools'],
-    ['analytics-monitoring.data-firehose', 'Data Firehose는', 'analytics'],
-    ['analytics-monitoring.kinesis-data-streams', 'Kinesis Data Streams는', 'analytics'],
-    ['analytics-monitoring.managed-service-apache-flink', 'Managed Service for Apache Flink는', 'analytics'],
+    // phase 26 step 15가 analytics-monitoring의 분석·스트리밍 계열을 세 주제로 갈랐다.
+    // 신규 36개념 중 Lake Formation·Kinesis Video Streams·QuickSight·OpenSearch 넷만
+    // 서비스를 소개하는 자리이고, 나머지는 EMR·Glue·Athena·Kinesis·Redshift의 기능·설정·한계·
+    // 갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    // Glue DataBrew는 그 파일의 "카테고리 없음"에 있어 붙일 근거가 없다.
+    ['emr-glue-athena.emr', 'EMR은', 'analytics'],
+    ['emr-glue-athena.glue', 'Glue는', 'analytics'],
+    ['emr-glue-athena.athena', 'Athena는', 'analytics'],
+    ['emr-glue-athena.lake-formation', 'Lake Formation은', 'analytics'],
+    ['kinesis-streaming.kinesis-data-streams', 'Kinesis Data Streams는', 'analytics'],
+    ['kinesis-streaming.data-firehose', 'Data Firehose는', 'analytics'],
+    ['kinesis-streaming.managed-service-apache-flink', 'Managed Service for Apache Flink는', 'analytics'],
+    ['kinesis-streaming.kinesis-video-streams', 'Kinesis Video Streams는', 'analytics'],
+    ['kinesis-streaming.msk', 'MSK는', 'analytics'],
+    ['redshift-opensearch-quicksight.redshift', 'RedShift는', 'analytics'],
+    // step 15는 이 한 줄을 붙이지 않았다. service-categories.md가 OpenSearch를
+    // "붙이지 않는 예"로 적어 두었기 때문인데, 그 예는 phase 26 이전에 OpenSearch를 단
+    // 개념이 비교뿐이었을 때 쓴 것이다. step 15가 서비스를 소개하는 개념을 새로 들여왔으므로
+    // 그 파일의 매핑 표에 OpenSearch를 넣고 여기에도 붙인다(백서 분석, 2026-09-07 확인).
+    ['redshift-opensearch-quicksight.opensearch-text-search', 'OpenSearch는', 'analytics'],
+    ['redshift-opensearch-quicksight.quicksight', 'QuickSight는', 'analytics'],
+    // step 16이 남은 CloudWatch·X-Ray 계열을 cloudwatch-xray로 옮기며
+    // analytics-monitoring을 없앴다. 신규 7개념 중 서비스를 소개하는 자리는
+    // Managed Grafana 하나뿐이다 — Network Monitor·Container Insights는 CloudWatch의
+    // 기능이라 그 파일의 기준 2가 덮고, 나머지는 지표의 한계·판단 근거다.
+    ['cloudwatch-xray.cloudwatch', 'CloudWatch는', 'management'],
+    ['cloudwatch-xray.x-ray', 'X-Ray는', 'devTools'],
+    ['cloudwatch-xray.amazon-managed-grafana', 'Managed Grafana는', 'management'],
     ['secrets-encryption.secrets-manager', 'Secrets Manager는', 'security'],
     ['secrets-encryption.parameter-store', 'Parameter Store는', 'management'],
     ['secrets-encryption.kms', 'KMS는', 'security'],
     ['secrets-encryption.acm', 'ACM은', 'security'],
     ['secrets-encryption.cloudhsm', 'CloudHSM은', 'security'],
-    ['threat-protection.waf', 'WAF는', 'security'],
-    ['threat-protection.shield', 'Shield는', 'security'],
-    ['threat-protection.guardduty', 'GuardDuty는', 'security'],
-    ['threat-protection.macie', 'Macie는', 'security'],
-    ['threat-protection.cloudfront', 'CloudFront는', 'networking'],
-    ['identity-access.iam', 'IAM은', 'security'],
-    ['identity-access.identity-center', 'Identity Center는', 'security'],
-    ['identity-access.sts', 'STS는', 'security'],
-    ['identity-access.cognito', 'Cognito는', 'security'],
-    ['identity-access.cloudtrail', 'CloudTrail은', 'management'],
-    ['identity-access.aws-config', 'AWS Config는', 'management'],
-    ['identity-access.organizations-scp', 'AWS Organizations는', 'management'],
+    // phase 26 step 18이 threat-protection을 둘로 갈랐다. 신규 15개념 중 서비스를
+    // 소개하는 자리는 셋뿐이다 — 나머지는 WAF 규칙·Shield 계층·Macie 설정 같은
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['waf-shield.waf', 'WAF는', 'security'],
+    ['waf-shield.shield', 'Shield는', 'security'],
+    ['waf-shield.cloudfront', 'CloudFront는', 'networking'],
+    ['waf-shield.firewall-manager', 'Firewall Manager는', 'security'],
+    ['guardduty-macie-inspector.guardduty', 'GuardDuty는', 'security'],
+    ['guardduty-macie-inspector.macie', 'Macie는', 'security'],
+    ['guardduty-macie-inspector.amazon-inspector', 'Inspector는', 'security'],
+    ['guardduty-macie-inspector.security-hub', 'Security Hub는', 'security'],
+    ['iam-permissions.iam', 'IAM은', 'security'],
+    ['identity-federation.identity-center', 'Identity Center는', 'security'],
+    ['identity-federation.sts', 'STS는', 'security'],
+    ['identity-federation.cognito', 'Cognito는', 'security'],
+    // phase 26 step 17. Directory Service는 AD Connector와 함께 한 개념에서 소개된다.
+    ['identity-federation.aws-directory-service', 'Directory Service는', 'security'],
+    ['organizations-cloudtrail-config.cloudtrail', 'CloudTrail은', 'management'],
+    ['organizations-cloudtrail-config.aws-config', 'AWS Config는', 'management'],
+    ['organizations-cloudtrail-config.organizations-scp', 'AWS Organizations는', 'management'],
+    // service-categories.md "주제 배치와 어긋나는 자리" — 주제는 조직·감사 쪽이고
+    // 카테고리는 보안이다.
+    ['organizations-cloudtrail-config.audit-manager', 'Audit Manager는', 'security'],
     ['cost-management.savings-plan', '절약 플랜은', 'finance'],
     ['cost-management.aws-budgets', 'AWS Budgets는', 'finance'],
     ['cost-management.cost-explorer', 'Cost Explorer는', 'finance'],
@@ -1348,14 +5637,37 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.trusted-advisor', 'Trusted Advisor는', 'management'],
     ['cost-management.compute-optimizer', 'Compute Optimizer는', 'management'],
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
+    ['cost-management.cost-and-usage-report', 'Cost and Usage Report는', 'finance'],
+    // phase 26 step 19. Control Tower와 Systems Manager는 그 서비스를 소개하는 개념
+    // 하나에만 붙인다(service-categories.md "phase 26에서 들어오는 서비스").
+    ['governance-iac.cloudformation', 'CloudFormation은', 'management'],
+    ['governance-iac.service-catalog', 'Service Catalog는', 'management'],
+    ['governance-iac.control-tower-landing-zone', 'Control Tower는', 'management'],
+    // service-categories.md "주제 배치와 어긋나는 자리" — 주제는 거버넌스 쪽이고
+    // 카테고리는 보안이다.
+    ['governance-iac.resource-access-manager', 'Resource Access Manager는', 'security'],
+    ['systems-manager.ssm-run-command', 'Systems Manager는', 'management'],
+    // phase 26 step 20. ADR-022가 넓힌 두 종이 여기서 처음 쓰인다.
+    // service-categories.md "주제 배치와 어긋나는 자리" — Amplify의 주제는 API 쪽이고
+    // 카테고리는 프런트엔드다.
+    ['api-gateway-step-functions.amplify', 'Amplify는', 'frontend'],
+    ['ai-ml-services.sagemaker', 'SageMaker AI는', 'machineLearning'],
+    // 한 개념이 서비스 넷을 함께 소개하므로 주어도 함께 적는다.
+    [
+      'ai-ml-services.media-ai-service-lineup',
+      'Transcribe·Rekognition·Translate·Textract는',
+      'machineLearning',
+    ],
+    ['ai-ml-services.comprehend', 'Comprehend는', 'machineLearning'],
+    ['ai-ml-services.amazon-lex', 'Lex는', 'machineLearning'],
   ]
 
-  it('서비스 개념 75개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 107개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(75)
+    expect(serviceCategories).toHaveLength(107)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -1369,7 +5681,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 75개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 107개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
@@ -1391,12 +5703,14 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 표기가 백서의 13종을 벗어나지 않는다', () => {
+  it('카테고리 표기가 백서의 15종을 벗어나지 않는다', () => {
     const declared = Object.values(categories)
     const used = new Set(serviceCategories.map(([, , key]) => categories[key]))
 
-    expect(declared).toHaveLength(13)
-    expect([...used].sort()).toEqual([...declared].sort())
+    // ADR-022. 선언한 15종 밖의 표기를 쓰지 않는지만 본다. 등식이 아닌 이유는
+    // 선언만 해 두고 아직 안 쓰는 상태를 허용하기 위해서다.
+    expect(declared).toHaveLength(15)
+    used.forEach((name) => expect(declared).toContain(name))
   })
 
   it('카테고리 문장이 문항 프롬프트나 해설로 새지 않는다', () => {

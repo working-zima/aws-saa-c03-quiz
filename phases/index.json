@@ -123,6 +123,21 @@
     {
       "dir": "24-service-category",
       "status": "completed"
+    },
+    {
+      "dir": "25-dump-gaps",
+      "status": "completed",
+      "completed_at": "2026-09-06T22:56:53+0900"
+    },
+    {
+      "dir": "26-concept-merge",
+      "status": "completed",
+      "completed_at": "2026-09-07T20:32:37+0900"
+    },
+    {
+      "dir": "27-question-coverage",
+      "status": "completed",
+      "completed_at": "2026-09-08T05:24:43+0900"
     }
   ]
 }
