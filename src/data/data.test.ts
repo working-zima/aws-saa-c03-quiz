@@ -183,7 +183,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 22개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 23개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -200,7 +200,10 @@ describe('학습 데이터 무결성', () => {
       // 스토리지 선택이라 한 주제에 둔다(PRD "사용자").
       { id: 'ebs-instance-store', title: 'EBS·인스턴스 스토어·스냅샷·배치 그룹', importance: 3, sourcePages: [14, 15] },
       { id: 'efs-fsx', title: 'EFS·FSx(Windows·Lustre·ONTAP)', importance: 3, sourcePages: [14, 15] },
-      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·Storage Gateway', importance: 3, sourcePages: [16, 18] },
+      // phase 26 step 5가 data-transfer-services를 둘로 갈랐다. "이미 있는 것을 옮긴다"는
+      // Storage Gateway·DMS·MGN이 뒤쪽 주제로 나가고, 앞쪽은 전송 도구만 남는다.
+      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·S3 전송', importance: 3, sourcePages: [16, 18] },
+      { id: 'storage-gateway-migration', title: 'Storage Gateway·DMS·Application Migration Service', importance: 3, sourcePages: [16, 18] },
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
       { id: 'aurora-dynamodb-cache', title: 'Aurora·DynamoDB·ElastiCache', importance: 3, sourcePages: [21, 21] },
       { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
@@ -546,9 +549,10 @@ describe('학습 데이터 무결성', () => {
 
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
-  // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더 내려갔다.
+  // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
+  // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(15, 22).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(16, 23).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -565,13 +569,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(15, 22).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(16, 23).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(8, 15).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 16).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -588,7 +592,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(8, 15).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(9, 16).map((topic) => topic.concepts.length)).toEqual([
       7, 8, 11, 11, 11, 12, 10,
     ])
   })
@@ -763,6 +767,71 @@ describe('학습 데이터 무결성', () => {
       'efs-fsx.fsx-windows-storage-auto-scaling',
       'efs-fsx.fsx-lustre-s3-data-repository-association',
     ])
+  })
+
+  it('데이터 전송 주제가 전송 도구 넷 다음에 선택 기준과 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'data-transfer-services')
+
+    // 1단 DataSync·Snowball Edge·Transfer Family·S3 전송이 각각 무엇인가 → 2단 기한과
+    // 대역폭을 먼저 곱해 보기, 지속 수집 ↔ 예약 전송, 어느 ID 공급자를 쓰는가 →
+    // 3단 DataSync가 맡지 않는 일·워크플로 기본 액션·멀티파트 업로드의 조건.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'data-transfer-services.datasync',
+      'data-transfer-services.snowball-edge',
+      'data-transfer-services.snowball-edge-compute',
+      'data-transfer-services.transfer-family',
+      'data-transfer-services.transfer-family-workflow',
+      'data-transfer-services.s3-transfer-acceleration',
+      'data-transfer-services.transfer-deadline-vs-bandwidth',
+      'data-transfer-services.file-gateway-vs-datasync-continuous',
+      'data-transfer-services.transfer-family-custom-hostname',
+      'data-transfer-services.transfer-family-directory-service-identity-provider',
+      'data-transfer-services.transfer-family-service-managed-users',
+      'data-transfer-services.datasync-scope-limits',
+      'data-transfer-services.datasync-in-transit-encryption',
+      'data-transfer-services.datasync-manifest',
+      'data-transfer-services.datasync-transfer-mode',
+      'data-transfer-services.datasync-task-status-event',
+      'data-transfer-services.transfer-family-workflow-actions',
+      'data-transfer-services.transfer-family-structured-logging',
+      'data-transfer-services.s3-multipart-upload',
+    ])
+  })
+
+  it('Storage Gateway·마이그레이션 주제가 서비스 셋 다음에 유형 선택과 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'storage-gateway-migration')
+
+    // 1단 Storage Gateway·DMS·SCT·MGN이 각각 무엇인가 → 2단 게이트웨이 유형 셋과
+    // 저장 볼륨 ↔ 캐시된 볼륨 → 3단 가상 테이프의 아카이브 계층·전체 로드와 CDC.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'storage-gateway-migration.storage-gateway',
+      'storage-gateway-migration.dms-sct',
+      'storage-gateway-migration.application-migration-service',
+      'storage-gateway-migration.storage-gateway-gateway-types',
+      'storage-gateway-migration.storage-gateway-volume-modes',
+      'storage-gateway-migration.tape-gateway-archive-tiers',
+      'storage-gateway-migration.dms-full-load-and-cdc-task',
+    ])
+  })
+
+  it('전송 서비스를 가르는 갈림길이 두 주제 양쪽에서 보인다', () => {
+    // step 5가 data-transfer-services를 둘로 갈랐다. DataSync ↔ Snowball ↔ Transfer
+    // Family ↔ Storage Gateway는 "언제 무엇을 쓰는가"가 그대로 문항이므로, 쪼갠 뒤에도
+    // 갈림길 개념이 양쪽에 남아야 한다(PRD "사용자").
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('data-transfer-services.transfer-deadline-vs-bandwidth')).toContain(
+      'DataSync·Storage Gateway·DMS',
+    )
+    expect(bodyOf('data-transfer-services.file-gateway-vs-datasync-continuous')).toContain(
+      '파일 게이트웨이',
+    )
+    expect(bodyOf('storage-gateway-migration.storage-gateway')).toContain('DataSync·Snowball Edge와 달리')
+    expect(bodyOf('storage-gateway-migration.dms-full-load-and-cdc-task')).toContain('DataSync')
   })
 
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
@@ -969,7 +1038,7 @@ describe('학습 데이터 무결성', () => {
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'data-transfer-services.storage-gateway')
+      .find(({ id }) => id === 'storage-gateway-migration.storage-gateway')
 
     expect(concept?.paragraphs).toHaveLength(4)
     expect(concept?.paragraphs[0]).toContain('스토리지를 연결한 채 사용하는 데 있다')
@@ -1453,7 +1522,10 @@ describe('학습 데이터 무결성', () => {
     ['data-transfer-services.datasync', 'DataSync는', 'migration'],
     ['data-transfer-services.snowball-edge', 'Snowball Edge는', 'migration'],
     ['data-transfer-services.transfer-family', 'Transfer Family는', 'migration'],
-    ['data-transfer-services.storage-gateway', 'Storage Gateway는', 'storage'],
+    ['storage-gateway-migration.storage-gateway', 'Storage Gateway는', 'storage'],
+    // phase 26 step 5. DMS와 SCT는 한 개념이 둘을 함께 소개하므로 주어도 함께 적는다.
+    ['storage-gateway-migration.dms-sct', 'DMS와 SCT는', 'migration'],
+    ['storage-gateway-migration.application-migration-service', 'Application Migration Service는', 'migration'],
     ['rds-storage-features.rds', 'RDS는', 'databases'],
     ['aurora-dynamodb-cache.aurora', 'Aurora는', 'databases'],
     ['aurora-dynamodb-cache.dynamodb', 'DynamoDB는', 'databases'],
@@ -1517,12 +1589,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 75개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 77개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(75)
+    expect(serviceCategories).toHaveLength(77)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -1536,7 +1608,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 75개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 77개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
