@@ -1616,6 +1616,91 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+
+  // phase 27 step 10 — lambda의 빈 개념 15개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 양방향으로 갈리는 개념 다섯만 두 방향으로 물어 문항이 20개다 —
+  // 호출 유형(즉시 답을 주지 않아야 하는 작업은 이벤트 호출 ↔ 요청-응답으로 받으면
+  // 처리 시간이 그대로 대기 시간이 된다), 예약된 동시성(피크에 일정한 지연이 필요하면
+  // 프로비저닝된 쪽 ↔ 예약된 쪽은 콜드 스타트를 남긴다), SnapStart(게시된 버전에서만
+  // 켜진다 ↔ 스냅샷을 되살리므로 호출마다 달라야 하는 값은 핸들러 안으로),
+  // EFS 마운트(레이어 상한을 넘는 공유 종속성 ↔ 전송 중 암호화는 이미 자동),
+  // 운영 체제 접근(컴퓨팅은 EC2 ↔ 데이터베이스는 RDS Custom).
+  const step10Concepts = [
+    'lambda.lambda-function-url-iam-auth',
+    'lambda.lambda-container-image',
+    'lambda.lambda-invocation-types',
+    'lambda.lambda-memory-cpu-proportional',
+    'lambda.lambda-reserved-concurrency',
+    'lambda.lambda-provisioned-concurrency-autoscaling',
+    'lambda.lambda-concurrency-limit-throttling',
+    'lambda.lambda-kinesis-event-source',
+    'lambda.lambda-snapstart',
+    'lambda.lambda-memory-ceiling',
+    'lambda.lambda-layer-size-limit',
+    'lambda.lambda-efs-mount',
+    'lambda.lambda-version-alias-config-freeze',
+    'lambda.lambda-execution-role-logs',
+    'lambda.serverless-runtime-no-os-access',
+  ]
+
+  it('Lambda 문제 20개가 담당 개념 15개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(488, 508)
+
+    expect(addedQuestions).toHaveLength(20)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `q${index + 489}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('lambda'))
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step10Concepts].sort(),
+    )
+  })
+
+  it('Lambda 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(488, 508).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('Lambda 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(488, 508)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('Lambda 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'lambda')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
