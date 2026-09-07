@@ -1134,6 +1134,99 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 5 — data-transfer-services의 빈 개념 16개와
+  // storage-gateway-migration의 빈 개념 6개를 덮는다(ADR-026). 개념당 한 문항이
+  // 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어 문항이 24개다 —
+  // 지속 수집 ↔ 예약 전송(파일 게이트웨이 ↔ DataSync), 볼륨 모드(저장 볼륨 ↔ 캐시된 볼륨).
+  const step5Concepts = [
+    'data-transfer-services.snowball-edge-compute',
+    'data-transfer-services.transfer-family-workflow',
+    'data-transfer-services.s3-transfer-acceleration',
+    'data-transfer-services.transfer-deadline-vs-bandwidth',
+    'data-transfer-services.file-gateway-vs-datasync-continuous',
+    'data-transfer-services.transfer-family-custom-hostname',
+    'data-transfer-services.transfer-family-directory-service-identity-provider',
+    'data-transfer-services.transfer-family-service-managed-users',
+    'data-transfer-services.datasync-scope-limits',
+    'data-transfer-services.datasync-in-transit-encryption',
+    'data-transfer-services.datasync-manifest',
+    'data-transfer-services.datasync-transfer-mode',
+    'data-transfer-services.datasync-task-status-event',
+    'data-transfer-services.transfer-family-workflow-actions',
+    'data-transfer-services.transfer-family-structured-logging',
+    'data-transfer-services.s3-multipart-upload',
+    'storage-gateway-migration.dms-sct',
+    'storage-gateway-migration.application-migration-service',
+    'storage-gateway-migration.storage-gateway-gateway-types',
+    'storage-gateway-migration.storage-gateway-volume-modes',
+    'storage-gateway-migration.tape-gateway-archive-tiers',
+    'storage-gateway-migration.dms-full-load-and-cdc-task',
+  ]
+
+  it('데이터 전송·마이그레이션 문제 24개가 담당 개념 22개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(350, 374)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 351}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(17).fill('data-transfer-services'),
+      ...Array(7).fill('storage-gateway-migration'),
+    ])
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step5Concepts].sort(),
+    )
+  })
+
+  it('데이터 전송·마이그레이션 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(350, 374).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('데이터 전송·마이그레이션 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(350, 374)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('데이터 전송과 Storage Gateway·마이그레이션 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['data-transfer-services', 'storage-gateway-migration'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+    })
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
