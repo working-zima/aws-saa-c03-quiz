@@ -745,6 +745,101 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 27 step 1 — 문항이 하나도 없던 두 주제를 개념 커버리지 기준으로 덮는다(ADR-026).
+  // 담당 개념 24개에 문항이 일대일로 붙으므로 slice와 개념 목록이 같은 길이다.
+  const step1Concepts = [
+    's3-access-control.s3-cross-account-bucket-policy',
+    's3-access-control.s3-presigned-url',
+    's3-access-control.s3-access-grants',
+    's3-access-control.s3-access-point',
+    's3-access-control.s3-multi-region-access-point',
+    's3-access-control.s3-storage-lens',
+    's3-access-control.s3-cors-not-authorization',
+    's3-access-control.s3-requester-pays',
+    's3-access-control.s3-storage-lens-advanced-activity-metrics',
+    's3-access-control.s3-account-level-public-access-block',
+    's3-access-control.block-public-access-allows-explicit-grants',
+    's3-access-control.s3-bucket-policy-source-vpc-condition',
+    's3-access-control.s3-website-endpoint-no-https',
+    'redshift-opensearch-quicksight.redshift',
+    'redshift-opensearch-quicksight.redshift-spectrum',
+    'redshift-opensearch-quicksight.opensearch-text-search',
+    'redshift-opensearch-quicksight.quicksight',
+    'redshift-opensearch-quicksight.oltp-vs-olap',
+    'redshift-opensearch-quicksight.athena-vs-redshift-workload',
+    'redshift-opensearch-quicksight.redshift-hot-cold-split',
+    'redshift-opensearch-quicksight.quicksight-ml-forecast',
+    'redshift-opensearch-quicksight.redshift-concurrency-scaling',
+    'redshift-opensearch-quicksight.redshift-copy-from-s3',
+    'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
+  ]
+
+  it('S3 접근 제어·BI 문제 24개가 담당 개념과 일대일로 이어진다', () => {
+    const addedQuestions = questions.slice(246, 270)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 247}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(13).fill('s3-access-control'),
+      ...Array(11).fill('redshift-opensearch-quicksight'),
+    ])
+    expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
+      [...step1Concepts].sort(),
+    )
+    expect(new Set(addedQuestions.map(({ conceptId }) => conceptId)).size).toBe(24)
+  })
+
+  it('S3 접근 제어·BI 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(246, 270).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('S3 접근 제어·BI 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(246, 270)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('S3 접근 제어와 웨어하우스·검색·시각화 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+
+    ;['s3-access-control', 'redshift-opensearch-quicksight'].forEach((topicId) => {
+      const topic = topics.find(({ id }) => id === topicId)
+      const uncovered = (topic?.concepts ?? [])
+        .filter((concept) => !covered.has(concept.id))
+        .map((concept) => concept.id)
+
+      expect(uncovered).toEqual([])
+      expect(questions.filter((question) => question.topicId === topicId).length).toBeGreaterThan(0)
+    })
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
