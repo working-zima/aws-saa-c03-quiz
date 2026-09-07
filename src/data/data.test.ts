@@ -104,23 +104,25 @@ describe('학습 데이터 무결성', () => {
       // (topic-plan "step 경계를 넘는 개념").
       'ecs-eks-fargate': ['eks', 'fargate-no-time-limit', 'aws-batch'],
       'api-gateway-step-functions': ['api-gateway-jwt-authorizer', 'step-functions-features'],
-      // step 12가 messaging-backup에서 메시징 계열을 sqs-sns-eventbridge로 빼냈다.
-      // AWS Backup 계열과 MSK는 남아 각각 step 13·15를 기다린다.
+      // step 12가 messaging-backup에서 메시징 계열을 sqs-sns-eventbridge로 빼냈고,
+      // step 13이 AWS Backup 계열을 backup-disaster-recovery로 빼냈다. MSK만 남아
+      // step 15를 기다린다(topic-plan "step 경계를 넘는 개념").
       'sqs-sns-eventbridge': [
         'sqs-details',
         'sqs-queue-depth-scaling',
         'eventbridge-scheduler',
         'ses',
       ],
-      'messaging-backup': ['msk', 'backup-long-term-retention'],
+      'backup-disaster-recovery': ['backup-long-term-retention'],
+      'messaging-backup': ['msk'],
     }
 
-    // phase 26 step 8·9·10·11·12가 아래 일곱 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
-    // 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // phase 26 step 8·9·10·11·12·13이 아래 여덟 주제의 개념을 3단(기본 → 갈림길 →
+    // 한계)으로 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
     // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
     // Accelerator 주제가 ...」·「Lambda 주제가 ...」·「컨테이너 주제가 ...」·
-    // 「API Gateway·Step Functions 주제가 ...」·「메시징 주제가 ...」가
-    // 개념 id 전부로 못박는다.
+    // 「API Gateway·Step Functions 주제가 ...」·「메시징 주제가 ...」·
+    // 「백업·재해 복구 주제가 ...」가 개념 id 전부로 못박는다.
     const reordered = new Set([
       'ec2-autoscaling',
       'elastic-load-balancing',
@@ -129,6 +131,7 @@ describe('학습 데이터 무결성', () => {
       'ecs-eks-fargate',
       'api-gateway-step-functions',
       'sqs-sns-eventbridge',
+      'backup-disaster-recovery',
     ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
@@ -216,7 +219,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 30개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 31개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -256,10 +259,13 @@ describe('학습 데이터 무결성', () => {
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
       { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
       { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
-      // phase 26 step 12가 messaging-backup의 메시징 계열을 빼내 그 자리에 놓았다.
-      // SQS ↔ SNS ↔ EventBridge는 메시징 세 갈래의 선택이라 한 주제에 둔다(PRD "사용자").
-      // 남은 messaging-backup은 AWS Backup 계열과 MSK만 들고 step 13·15를 기다린다.
+      // phase 26 step 12가 messaging-backup의 메시징 계열을 빼내 그 자리에 놓았고,
+      // step 13이 AWS Backup 계열과 dump-gaps의 재해 복구 계열을 그 뒤에 세웠다.
+      // SQS ↔ SNS ↔ EventBridge는 메시징 세 갈래의 선택이라, DR 전략 둘은 RTO·RPO로
+      // 갈리는 한 벌이라 각각 한 주제에 둔다(PRD "사용자").
+      // 남은 messaging-backup은 MSK 하나만 들고 step 15를 기다린다.
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
+      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -434,8 +440,8 @@ describe('학습 데이터 무결성', () => {
       'lambda.lambda-vpc-access',
       'api-gateway-step-functions.api-gateway-jwt-authorizer',
       'ecs-eks-fargate.aws-batch',
-      // phase 26 step 12가 메시징 계열을 sqs-sns-eventbridge로 옮겼다. MSK는 step 15가,
-      // AWS Backup 계열은 step 13이 맡으므로 messaging-backup에 남는다.
+      // phase 26 step 12가 메시징 계열을 sqs-sns-eventbridge로 옮겼다. MSK는 step 15가
+      // 맡으므로 messaging-backup에 남는다.
       'messaging-backup.msk',
       'sqs-sns-eventbridge.sqs-details',
       'sqs-sns-eventbridge.sqs-queue-depth-scaling',
@@ -443,7 +449,8 @@ describe('학습 데이터 무결성', () => {
       // step 11이 messaging-backup에서 함께 가져왔다.
       'api-gateway-step-functions.step-functions-features',
       'sqs-sns-eventbridge.ses',
-      'messaging-backup.backup-long-term-retention',
+      // step 13이 AWS Backup 계열을 backup-disaster-recovery로 옮겼다.
+      'backup-disaster-recovery.backup-long-term-retention',
     ]
 
     expect(addedQuestions).toHaveLength(21)
@@ -455,7 +462,8 @@ describe('학습 데이터 무결성', () => {
       ...Array(2).fill('elastic-load-balancing'),
       ...Array(3).fill('cloudfront-global-accelerator'),
       // step 10이 Lambda 계열을 옮기고 step 11이 serverless-containers를 둘로 가르면서
-      // 이 구간이 다섯 주제로 갈라졌고, step 12가 메시징 계열을 빼내며 여섯이 됐다.
+      // 이 구간이 다섯 주제로 갈라졌고, step 12가 메시징 계열을 빼내며 여섯, step 13이
+      // AWS Backup 계열을 빼내며 일곱이 됐다.
       // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
       ...Array(2).fill('ecs-eks-fargate'),
       'lambda',
@@ -467,7 +475,7 @@ describe('학습 데이터 무결성', () => {
       ...Array(3).fill('sqs-sns-eventbridge'),
       'api-gateway-step-functions',
       'sqs-sns-eventbridge',
-      'messaging-backup',
+      'backup-disaster-recovery',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -632,7 +640,7 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(23, 30).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(24, 31).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -649,13 +657,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(23, 30).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(24, 31).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 23).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 24).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -673,8 +681,10 @@ describe('학습 데이터 무결성', () => {
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
       { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
       { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
-      // phase 26 step 12가 messaging-backup에서 메시징 계열을 빼내 그 자리에 놓았다.
+      // phase 26 step 12가 messaging-backup에서 메시징 계열을 빼내 그 자리에 놓았고,
+      // step 13이 AWS Backup 계열과 재해 복구 계열을 그 뒤에 세웠다.
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
+      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -691,10 +701,11 @@ describe('학습 데이터 무결성', () => {
     // 더한 결과이고, 23·19는 step 11이 남은 7개념을 둘로 가르며 messaging-backup의
     // step-functions-features를 함께 가져와 신규 34를 더한 결과다. 그 바람에
     // messaging-backup은 11에서 10으로 줄었다. 33은 step 12가 그중 메시징 계열 7개념을
-    // 빼내 신규 26을 더한 값이고, 남은 3은 AWS Backup 계열 둘과 MSK다 —
-    // 각각 step 13·15가 가져간다. 나머지 둘은 아직 자기 step을 기다리고 있다.
-    expect(topics.slice(9, 23).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 3, 12, 10,
+    // 빼낸 값이고, 11은 step 13이 남은 AWS Backup 계열 둘에 dump-gaps의 신규 9(백업 6 +
+    // 재해 복구 3)를 더한 값이다. 그러고 남은 1은 MSK 하나이며 step 15가 가져간다.
+    // 나머지 둘은 아직 자기 step을 기다리고 있다.
+    expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 11, 1, 12, 10,
     ])
   })
 
@@ -1545,6 +1556,66 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('백업·재해 복구 주제가 서비스와 전략 넷 다음에 갈림길과 검증을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'backup-disaster-recovery')
+
+    // 1단 AWS Backup·DRS와 재해 복구 전략 둘이 각각 무엇인가
+    // → 2단 서비스 자체 백업에서 AWS Backup으로 넘어가는 순간, 무엇을 리소스로 지정하고
+    //   어디서 정하고 사본을 어디에 두고 얼마나 촘촘히 뜨는가
+    // → 3단 그 백업이 실제로 복원되는지와 규정을 지키는지 확인하는 설정 항목.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'backup-disaster-recovery.backup',
+      'backup-disaster-recovery.elastic-disaster-recovery',
+      'backup-disaster-recovery.backup-and-restore-dr',
+      'backup-disaster-recovery.warm-standby-for-low-rto',
+      'backup-disaster-recovery.backup-long-term-retention',
+      'backup-disaster-recovery.backup-ec2-resource-assignment',
+      'backup-disaster-recovery.organizations-backup-policy',
+      'backup-disaster-recovery.backup-cross-account-copy',
+      'backup-disaster-recovery.backup-s3-continuous-backup',
+      'backup-disaster-recovery.backup-restore-testing-plan',
+      'backup-disaster-recovery.backup-audit-manager',
+    ])
+  })
+
+  it('재해 복구 전략이 한 주제 안에서 복구 시간과 비용으로 갈린다', () => {
+    // 백업 및 복원 ↔ 웜 스탠바이. RTO·RPO로 갈리는 한 벌이라 흩으면 "짧은 RTO는
+    // 무엇을 고르는가"를 배울 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('backup-disaster-recovery.backup-and-restore-dr')
+    expect(fork).toBe('backup-disaster-recovery')
+    ;[
+      'backup-disaster-recovery.warm-standby-for-low-rto',
+      'backup-disaster-recovery.elastic-disaster-recovery',
+      'backup-disaster-recovery.backup',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(fork))
+    // 한쪽 끝은 대기 자원을 두지 않아 비용이 가장 낮고 복구가 즉시 끝나지 않는다.
+    expect(bodyOf('backup-disaster-recovery.backup-and-restore-dr')).toContain(
+      '컴퓨팅은 필요해질 때까지 띄우지 않는다',
+    )
+    expect(bodyOf('backup-disaster-recovery.backup-and-restore-dr')).toContain(
+      '복구가 즉시 끝나지 않는다',
+    )
+    // 반대쪽 끝은 대기 환경이 실제로 떠 있어야 하고 전환도 자동이어야 한다.
+    expect(bodyOf('backup-disaster-recovery.warm-standby-for-low-rto')).toContain(
+      '실제로 실행 중이어야 하고',
+    )
+    expect(bodyOf('backup-disaster-recovery.warm-standby-for-low-rto')).toContain(
+      '상태 점검을 건 DNS 장애 조치',
+    )
+    // DRS는 지속 복제로 그 복구 시간을 더 줄이는 쪽이다.
+    expect(bodyOf('backup-disaster-recovery.elastic-disaster-recovery')).toContain(
+      '디스크 변경을 지속적으로 복제',
+    )
+  })
+
   it('동시성 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
     // 예약된 동시성 ↔ 프로비저닝된 동시성 ↔ 계정의 동시 실행 한도. 이름이 닮아
     // 보기 줄에 나란히 오르므로 떼어 놓으면 무엇이 무엇의 대안인지 알 수 없게 된다
@@ -2329,8 +2400,16 @@ describe('학습 데이터 무결성', () => {
     // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
     // "주제 배치와 어긋나는 자리").
     ['sqs-sns-eventbridge.ses', 'SES는', 'business'],
-    ['messaging-backup.backup', 'AWS Backup은', 'storage'],
     ['messaging-backup.msk', 'MSK는', 'analytics'],
+    // phase 26 step 13이 AWS Backup 계열과 재해 복구 계열을 자기 주제로 빼냈다. 신규
+    // 9개념 중 DRS만 서비스를 소개하는 자리이고, Backup Audit Manager는 이미 표에 있는
+    // AWS Backup의 기능이며 나머지는 백업 계획의 설정·갈림길과 DR 전략이라 카테고리
+    // 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['backup-disaster-recovery.backup', 'AWS Backup은', 'storage'],
+    // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
+    // "주제 배치와 어긋나는 자리").
+    ['backup-disaster-recovery.elastic-disaster-recovery', 'Elastic Disaster Recovery는', 'storage'],
     ['vpc-networking.vpc-subnet', 'VPC는', 'networking'],
     ['vpc-networking.privatelink', 'PrivateLink는', 'networking'],
     ['hybrid-connectivity.site-to-site-vpn', 'Site-to-Site VPN은', 'networking'],
@@ -2373,12 +2452,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 84개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 85개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(84)
+    expect(serviceCategories).toHaveLength(85)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -2392,7 +2471,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 84개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 85개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
