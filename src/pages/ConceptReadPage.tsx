@@ -1,13 +1,14 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ConceptList } from '../components/ConceptList'
-import { topics as defaultTopics } from '../data'
+import { questions as defaultQuestions, topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { adjacentTopics } from '../lib/navigation'
-import type { Topic } from '../types/content'
+import type { Question, Topic } from '../types/content'
 
 interface ConceptReadPageProps {
   topics?: Topic[]
+  questions?: Question[]
   markRead?: (topicId: string) => void
 }
 
@@ -23,6 +24,8 @@ const nextIcon = (
   </svg>
 )
 
+const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
+
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
 
 const importanceLabel = {
@@ -30,7 +33,7 @@ const importanceLabel = {
   2: { label: '★★☆', className: 'text-importance-medium' },
 } as const
 
-export function ConceptReadPage({ topics = defaultTopics, markRead: providedMarkRead }: ConceptReadPageProps) {
+export function ConceptReadPage({ topics = defaultTopics, questions = defaultQuestions, markRead: providedMarkRead }: ConceptReadPageProps) {
   const { topicId } = useParams()
   const { hash } = useLocation()
   const { markRead: storedMarkRead } = useProgress()
@@ -59,7 +62,7 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
           <h1 className="text-2xl font-semibold text-title">주제를 찾을 수 없습니다.</h1>
           <p className="text-[15px] leading-7 text-neutral-300">요청한 학습 주제가 존재하지 않습니다.</p>
         </div>
-        <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to="/">
+        <Link className={primaryButtonClass} to="/">
           주제 목록으로 돌아가기
         </Link>
       </section>
@@ -67,6 +70,15 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
   }
 
   const importance = topic.importance === 0 ? null : importanceLabel[topic.importance]
+  // 개념은 들어왔지만 확인 문제가 아직 없는 주제가 있다. 그 주제에서 주 액션을 확인 문제로 두면
+  // 개념을 다 읽은 학습자가 "아직 확인 문제가 없습니다" 안내 화면에 갇힌다. 갈 곳을 주 액션으로 둔다.
+  const hasQuestions = questions.some((question) => question.topicId === topic.id)
+  const onward = next
+    ? { to: `/topic/${next.id}`, label: '다음 주제 이어가기' }
+    : { to: '/', label: '주제 목록으로 돌아가기' }
+  const primaryAction = hasQuestions
+    ? { to: `/topic/${topic.id}/quiz`, label: '확인 문제 풀기' }
+    : onward
 
   return (
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
@@ -79,6 +91,10 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
 
       <ConceptList concepts={topic.concepts} headingLevel={2} />
 
+      {!hasQuestions && (
+        <p className="text-[15px] leading-7 text-muted">이 주제의 확인 문제는 준비 중입니다.</p>
+      )}
+
       <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0">
         <div className="flex items-center justify-between gap-3">
           {prev ? (
@@ -90,8 +106,8 @@ export function ConceptReadPage({ topics = defaultTopics, markRead: providedMark
               {previousIcon}
             </span>
           )}
-          <Link className="inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white" to={`/topic/${topic.id}/quiz`}>
-            확인 문제 풀기
+          <Link className={primaryButtonClass} to={primaryAction.to}>
+            {primaryAction.label}
           </Link>
           {next ? (
             <Link aria-label="다음 주제" className={ghostLinkClass} to={`/topic/${next.id}`}>

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { Topic } from '../types/content'
+import type { Question, Topic } from '../types/content'
 import { ConceptReadPage } from './ConceptReadPage'
 
 const testTopics: Topic[] = [
@@ -72,13 +72,36 @@ const navigationTestTopics: Topic[] = [
   },
 ]
 
-function renderPage(path: string, markRead = vi.fn(), topics = testTopics) {
+// 이 화면은 문항의 topicId만 본다. 나머지 필드는 문항이 있다는 사실을 만들기 위한 값이다.
+const questionFor = (topicId: string): Question => ({
+  id: `q-${topicId}`,
+  topicId,
+  conceptId: `${topicId}.concept`,
+  prompt: `${topicId} 질문`,
+  choices: ['정답 보기', '오답 보기 1', '오답 보기 2', '오답 보기 3'],
+  answerIndex: 0,
+  explanation: `${topicId} 해설`,
+})
+
+const testQuestions: Question[] = [
+  questionFor('storage-topic'),
+  questionFor('first-topic'),
+  questionFor('middle-topic'),
+  questionFor('last-topic'),
+]
+
+function renderPage(
+  path: string,
+  markRead = vi.fn(),
+  topics = testTopics,
+  questions = testQuestions,
+) {
   const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route
           path="/topic/:topicId"
-          element={<ConceptReadPage markRead={markRead} topics={topics} />}
+          element={<ConceptReadPage markRead={markRead} questions={questions} topics={topics} />}
         />
       </Routes>
     </MemoryRouter>,
@@ -190,6 +213,59 @@ describe('ConceptReadPage', () => {
 
     expect(markRead).toHaveBeenCalledOnce()
     expect(markRead).toHaveBeenCalledWith('storage-topic')
+  })
+
+  // 개념은 들어왔지만 문항이 아직 없는 주제가 있다. 주 액션을 확인 문제로 두면
+  // 개념을 다 읽은 학습자가 "아직 확인 문제가 없습니다" 안내 화면에 갇힌다.
+  describe('확인 문제가 없는 주제', () => {
+    it('확인 문제 링크를 렌더하지 않는다', () => {
+      renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics, [])
+
+      expect(screen.queryByRole('link', { name: '확인 문제 풀기' })).toBeNull()
+    })
+
+    it('다음 주제로 잇는 주 액션을 대신 렌더한다', () => {
+      renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics, [])
+
+      const primaryAction = screen.getByRole('link', { name: '다음 주제 이어가기' })
+      expect(primaryAction).toHaveAttribute('href', '/topic/last-topic')
+      expect(primaryAction).toHaveClass('min-h-[44px]', 'bg-neutral-100')
+    })
+
+    it('마지막 주제에서는 주제 목록으로 돌아가는 주 액션을 렌더한다', () => {
+      renderPage('/topic/last-topic', vi.fn(), navigationTestTopics, [])
+
+      const primaryAction = screen.getByRole('link', { name: '주제 목록으로 돌아가기' })
+      expect(primaryAction).toHaveAttribute('href', '/')
+      expect(primaryAction).toHaveClass('min-h-[44px]', 'bg-neutral-100')
+    })
+
+    it('다른 주제의 문항을 이 주제의 확인 문제로 세지 않는다', () => {
+      renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics, [questionFor('first-topic')])
+
+      expect(screen.queryByRole('link', { name: '확인 문제 풀기' })).toBeNull()
+    })
+
+    // 버튼이 조용히 다른 것으로 바뀌면 학습자는 확인 문제가 왜 없는지 알 수 없다.
+    it('확인 문제가 준비 중이라고 알린다', () => {
+      renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics, [])
+
+      expect(screen.getByText('이 주제의 확인 문제는 준비 중입니다.')).toBeInTheDocument()
+    })
+
+    it('문항이 있는 주제에는 그 안내를 넣지 않는다', () => {
+      renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics)
+
+      expect(screen.queryByText('이 주제의 확인 문제는 준비 중입니다.')).toBeNull()
+    })
+
+    // 이전·다음 화살표는 문항 유무와 무관하게 그대로 둔다. 주 액션만 바뀐다.
+    it('이전·다음 주제 화살표는 그대로 렌더한다', () => {
+      renderPage('/topic/middle-topic', vi.fn(), navigationTestTopics, [])
+
+      expect(screen.getByLabelText('이전 주제')).toHaveAttribute('href', '/topic/first-topic')
+      expect(screen.getByLabelText('다음 주제')).toHaveAttribute('href', '/topic/last-topic')
+    })
   })
 
   // ADR-020. 검색 결과가 개념 하나를 지목해 들어오는 경로다.

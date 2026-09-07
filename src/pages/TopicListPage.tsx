@@ -62,9 +62,14 @@ export function TopicListPage({
           {topics.map((topic, index) => {
             const stat = stats[index]
             const importance = topic.importance === 0 ? null : importanceLabel[topic.importance]
-            const status = stat.answered > 0
+            const progressStatus = stat.answered > 0
               ? `정답 ${stat.correct}/${stat.total}`
               : stat.read ? '읽음' : null
+            // 개념은 들어왔지만 확인 문제가 아직 없는 주제가 있다. 목록에서 미리 알려 주지 않으면
+            // 학습자가 개념을 다 읽고 나서야 확인 문제가 없다는 것을 발견한다.
+            const status = stat.total === 0
+              ? [progressStatus, '확인 문제 준비 중'].filter(Boolean).join(' · ')
+              : progressStatus
 
             return (
               <Link
