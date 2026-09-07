@@ -24,12 +24,18 @@ describe('학습 데이터 무결성', () => {
         'guardduty-db-login',
         'security-service-lineup',
       ],
-      'identity-access': [
+      // phase 26 step 17이 identity-access를 IAM 권한 · 페더레이션 · 조직·감사 셋으로
+      // 갈랐다. 여섯 개념이 세 주제로 흩어졌고 셋 다 3단으로 정렬돼 배열 끝이 아니다.
+      'iam-permissions': [
         'least-privilege',
         'instance-profile',
         'iam-group-users-only',
+      ],
+      'identity-federation': [
         'sts-assume-role',
         'cognito-pools',
+      ],
+      'organizations-cloudtrail-config': [
         'organizations-scp',
       ],
       'cost-management': [
@@ -43,7 +49,12 @@ describe('학습 데이터 무결성', () => {
     // phase 26 step 14가 security-groups-nacl의 개념을 3단(기본 → 갈림길 → 한계)으로
     // 정렬해, 이 세 개념은 더 이상 배열 끝이 아니다. 주제의 전체 순서는 아래
     // 「보안 그룹·NACL 주제가 ...」가 개념 id 전부로 못박는다.
-    const reordered = new Set(['security-groups-nacl'])
+    const reordered = new Set([
+      'security-groups-nacl',
+      'iam-permissions',
+      'identity-federation',
+      'organizations-cloudtrail-config',
+    ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -317,7 +328,13 @@ describe('학습 데이터 무결성', () => {
       { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
-      { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
+      // phase 26 step 17이 identity-access를 셋으로 갈라 그 자리에 놓았다. IAM 역할 ↔
+      // 사용자 ↔ 정책 ↔ 권한 경계를 한 주제에, Identity Center ↔ SAML ↔ Cognito를 다른
+      // 한 주제에 둔다(topic-plan "헷갈리는 짝 배치"). 감사 쪽인 CloudTrail·Config는
+      // Organizations와 함께 셋째로 갈리되 배열에서 바로 뒤에 붙는다.
+      { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
+      { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
+      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
       { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
     ])
   })
@@ -335,7 +352,11 @@ describe('학습 데이터 무결성', () => {
       ...Array(9).fill('security-groups-nacl'),
       ...Array(8).fill('secrets-encryption'),
       ...Array(9).fill('threat-protection'),
-      ...Array(9).fill('identity-access'),
+      // step 17이 identity-access를 셋으로 갈라 이 아홉 문항도 세 주제로 흩어졌다.
+      // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(3).fill('iam-permissions'),
+      ...Array(4).fill('identity-federation'),
+      ...Array(2).fill('organizations-cloudtrail-config'),
       ...Array(6).fill('cost-management'),
     ]
     const addedQuestions = questions.slice(116, 169)
@@ -625,12 +646,12 @@ describe('학습 데이터 무결성', () => {
       'threat-protection.shield-advanced-drt',
       'threat-protection.guardduty-db-login',
       'threat-protection.security-service-lineup',
-      'identity-access.least-privilege',
-      'identity-access.instance-profile',
-      'identity-access.iam-group-users-only',
-      'identity-access.sts-assume-role',
-      'identity-access.cognito-pools',
-      'identity-access.organizations-scp',
+      'iam-permissions.least-privilege',
+      'iam-permissions.instance-profile',
+      'iam-permissions.iam-group-users-only',
+      'identity-federation.sts-assume-role',
+      'identity-federation.cognito-pools',
+      'organizations-cloudtrail-config.organizations-scp',
       'cost-management.cost-allocation-tag-activation',
       'cost-management.savings-plan-details',
       'cost-management.cost-anomaly-detection',
@@ -645,7 +666,9 @@ describe('학습 데이터 무결성', () => {
       ...Array(3).fill('security-groups-nacl'),
       ...Array(4).fill('secrets-encryption'),
       ...Array(6).fill('threat-protection'),
-      ...Array(6).fill('identity-access'),
+      ...Array(3).fill('iam-permissions'),
+      ...Array(2).fill('identity-federation'),
+      'organizations-cloudtrail-config',
       ...Array(4).fill('cost-management'),
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
@@ -695,7 +718,8 @@ describe('학습 데이터 무결성', () => {
     // step 14가 security-groups-nacl을 네트워크 쪽으로 옮겨 이 묶음은 여섯이 됐고,
     // step 15가 messaging-backup을 없애 시작 위치가 한 칸 올라오면서
     // analytics-monitoring을 쪼갠 세 주제가 더해져 아홉이 됐다.
-    expect(topics.slice(24, 33).map(({ id, title, importance, sourcePages }) => ({
+    // step 17이 identity-access를 셋으로 갈라 열하나가 됐다.
+    expect(topics.slice(24, 35).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -708,7 +732,9 @@ describe('학습 데이터 무결성', () => {
       { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
-      { id: 'identity-access', title: 'IAM·Identity Center·STS·Cognito·CloudTrail', importance: 3, sourcePages: [48, 49] },
+      { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
+      { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
+      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
       { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
     ])
   })
@@ -718,8 +744,12 @@ describe('학습 데이터 무결성', () => {
     // analytics-monitoring의 14는 step 15가 원본 10개념을 세 주제로 갈라 신규 36을
     // 더한 결과다(20·16·11). step 16이 남은 4개념에 신규 7을 더해 cloudwatch-xray를
     // 세우고, route53의 5에 신규 8을 더해 13으로 늘렸다.
-    expect(topics.slice(24, 33).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 9, 11, 12, 9,
+    // 마지막 셋 18·11·15는 step 17이 identity-access의 12개념을 셋으로 나눠(4·5·3)
+    // dump-gaps의 신규 32(IAM 14 · 페더레이션 6 · 조직·감사 12)를 더한 값이다.
+    // organizations-cloudtrail-config의 계획값은 16이고, 남는 하나는 step 19가
+    // (주제 미정)의 config-rule-remediation을 옮겨 오며 채운다.
+    expect(topics.slice(24, 35).map((topic) => topic.concepts.length)).toEqual([
+      13, 20, 16, 11, 11, 9, 11, 18, 11, 15, 9,
     ])
   })
 
@@ -2186,6 +2216,225 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
+  it('IAM 권한 주제가 구성 요소 다음에 권한을 좁히는 장치와 평가 규칙을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'iam-permissions')
+
+    // 1단 IAM의 구성 요소(사용자·역할·인스턴스 프로파일·그룹·Roles Anywhere)와
+    //   Access Analyzer가 각각 무엇인가
+    // → 2단 이름이 닮은 분석 도구의 구분, 권한을 좁히는 장치들(최소 권한·ABAC·권한 경계)과
+    //   계정을 넘는 접근을 여는 방법
+    // → 3단 그룹과 사용자의 경계·정책 평가 규칙과 조건 키·루트 사용자의 제약.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'iam-permissions.iam',
+      'iam-permissions.instance-profile',
+      'iam-permissions.iam-group-policy-attachment',
+      'iam-permissions.iam-roles-anywhere',
+      'iam-permissions.iam-access-analyzer',
+      'iam-permissions.network-access-analyzer',
+      'iam-permissions.least-privilege',
+      'iam-permissions.abac',
+      'iam-permissions.permissions-boundary',
+      'iam-permissions.cross-account-iam-role',
+      'iam-permissions.iam-group-users-only',
+      'iam-permissions.iam-user-is-account-scoped',
+      'iam-permissions.iam-explicit-deny-precedence',
+      'iam-permissions.iam-notaction-deny',
+      'iam-permissions.iam-requested-region-condition',
+      'iam-permissions.access-analyzer-delegated-administrator',
+      'iam-permissions.root-user-multiple-mfa',
+      'iam-permissions.root-user-cannot-be-disabled',
+    ])
+  })
+
+  it('자격 증명 페더레이션 주제가 서비스 넷 다음에 누구를 어떻게 들이는가를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'identity-federation')
+
+    // 1단 Identity Center·STS·Cognito·Directory Service가 각각 무엇인가
+    // → 2단 사내 디렉터리와 앱 사용자 중 어느 쪽인가, 사용자 풀과 자격 증명 풀,
+    //   SAML을 못 쓰는 디렉터리는 어떻게 잇는가
+    // → 3단 권한 세트가 계정에 배포되는 방식과 역할을 그룹에 매핑하는 방법.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'identity-federation.identity-center',
+      'identity-federation.sts',
+      'identity-federation.cognito',
+      'identity-federation.aws-directory-service',
+      'identity-federation.sts-assume-role',
+      'identity-federation.identity-center-external-idp',
+      'identity-federation.cognito-pools',
+      'identity-federation.cognito-social-idp-federation',
+      'identity-federation.custom-identity-broker-for-non-saml',
+      'identity-federation.identity-center-permission-set',
+      'identity-federation.saml-federation-role-to-ad-group-mapping',
+    ])
+  })
+
+  it('조직·감사 주제가 서비스 다섯 다음에 무엇을 기록하는가와 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'organizations-cloudtrail-config')
+
+    // 1단 Organizations·SCP·CloudTrail(과 Lake)·Config·Audit Manager가 각각 무엇인가
+    // → 2단 정책을 어디에 붙이는가, 태그 정책과 SCP가 하는 일의 차이, 계정을 나누는
+    //   또 하나의 이유, CloudTrail과 Config가 각각 무엇을 기록하는가
+    // → 3단 SCP를 붙일 자리와 예외를 두는 방법, 로그를 믿을 수 있게 하는 설정,
+    //   준수 팩과 사용자 지정 규칙.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'organizations-cloudtrail-config.organizations-scp',
+      'organizations-cloudtrail-config.cloudtrail',
+      'organizations-cloudtrail-config.cloudtrail-lake',
+      'organizations-cloudtrail-config.aws-config',
+      'organizations-cloudtrail-config.audit-manager',
+      'organizations-cloudtrail-config.organizational-unit',
+      'organizations-cloudtrail-config.organizations-tag-policy',
+      'organizations-cloudtrail-config.organizations-consolidated-billing',
+      'organizations-cloudtrail-config.cloudtrail-data-events',
+      'organizations-cloudtrail-config.config-configuration-recorder',
+      'organizations-cloudtrail-config.scp-attachment-targets',
+      'organizations-cloudtrail-config.scp-condition-exception',
+      'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+      'organizations-cloudtrail-config.config-conformance-pack',
+      'organizations-cloudtrail-config.config-custom-rule',
+    ])
+  })
+
+  it('IAM 역할·사용자·정책·권한 경계가 한 주제 안에 함께 있다', () => {
+    // 무엇을 어디에 붙이는가가 이 주제의 학습 내용이다. 권한 경계를 SCP 쪽으로 떼면
+    // 계정 전체의 금지와 개별 주체의 상한선을 비교할 자리가 없어진다
+    // (step17 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const iam = ownerOf('iam-permissions.iam')
+    expect(iam).toBe('iam-permissions')
+    ;[
+      'iam-permissions.instance-profile',
+      'iam-permissions.iam-group-policy-attachment',
+      'iam-permissions.iam-group-users-only',
+      'iam-permissions.permissions-boundary',
+      'iam-permissions.abac',
+      'iam-permissions.cross-account-iam-role',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(iam))
+    // 권한 경계는 계정 전체를 막는 SCP와 재는 것이 다르다.
+    expect(bodyOf('iam-permissions.permissions-boundary')).toContain(
+      '**개별 주체가 가질 수 있는 권한의 최대치**',
+    )
+    // 정책은 사용자가 아니라 그룹에 붙고, 태그로 가르려면 정책이 태그를 조건으로 읽어야 한다.
+    expect(bodyOf('iam-permissions.iam-group-policy-attachment')).toContain(
+      '권한의 기준이 그룹 하나에 모인다',
+    )
+    expect(bodyOf('iam-permissions.abac')).toContain('조건 키로 비교해 접근을 허용하므로')
+    // 계정을 넘는 접근은 그룹이 아니라 역할과 신뢰 정책으로 연다.
+    expect(bodyOf('iam-permissions.iam-user-is-account-scoped')).toContain(
+      'IAM 사용자는 계정 사이에 공유되지 않는다',
+    )
+    expect(bodyOf('iam-permissions.cross-account-iam-role')).toContain(
+      '신뢰 정책에 접근을 허용할 주체를 적는다',
+    )
+    // 이름이 닮은 두 분석 도구는 분석 대상으로 갈린다.
+    expect(ownerOf('iam-permissions.network-access-analyzer')).toBe(iam)
+    expect(bodyOf('iam-permissions.network-access-analyzer')).toContain(
+      '분석 대상이 네트워크인지 권한인지로 갈린다',
+    )
+  })
+
+  it('Identity Center와 SAML 페더레이션과 Cognito가 한 주제 안에서 갈린다', () => {
+    // 누구를 어떻게 들이는가의 갈림길이다. 직원인가 앱 사용자인가, 디렉터리가 SAML을
+    // 지원하는가로 답이 바뀐다(topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const federation = ownerOf('identity-federation.identity-center')
+    expect(federation).toBe('identity-federation')
+    ;[
+      'identity-federation.cognito',
+      'identity-federation.aws-directory-service',
+      'identity-federation.identity-center-external-idp',
+      'identity-federation.cognito-social-idp-federation',
+      'identity-federation.custom-identity-broker-for-non-saml',
+      'identity-federation.saml-federation-role-to-ad-group-mapping',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(federation))
+    // 축 하나 — 대상이 AWS 계정에 들어오는 직원인가 애플리케이션의 최종 사용자인가.
+    expect(bodyOf('identity-federation.identity-center-external-idp')).toContain(
+      '직원은 쓰던 자격 증명으로 로그인하고',
+    )
+    expect(bodyOf('identity-federation.cognito-social-idp-federation')).toContain(
+      '**애플리케이션의 최종 사용자**',
+    )
+    // 축 둘 — 사내 디렉터리가 SAML을 지원하는가.
+    expect(bodyOf('identity-federation.saml-federation-role-to-ad-group-mapping')).toContain(
+      '역할을 AD 그룹에 매핑하므로',
+    )
+    expect(bodyOf('identity-federation.custom-identity-broker-for-non-saml')).toContain(
+      'SAML을 지원하지 않으면 표준 페더레이션 방식으로는 이을 수 없다',
+    )
+    expect(bodyOf('identity-federation.aws-directory-service')).toContain(
+      '디렉터리 정보를 AWS에 저장하지 않고',
+    )
+  })
+
+  it('감사 쪽으로 갈린 주제가 IAM 두 주제 바로 뒤에 붙는다', () => {
+    // CloudTrail·Config는 감사 쪽이라 쪼갤 수 있지만, 쪼갠다면 배열에서 인접해야 한다
+    // (step17 "헷갈리는 짝"). identity-access가 있던 자리에 셋이 연속으로 놓인다.
+    const ids = topics.map(({ id }) => id)
+    const first = ids.indexOf('iam-permissions')
+
+    expect(first).toBeGreaterThan(-1)
+    expect(ids.slice(first, first + 3)).toEqual([
+      'iam-permissions',
+      'identity-federation',
+      'organizations-cloudtrail-config',
+    ])
+  })
+
+  it('SCP와 태그 정책과 Config가 한 주제 안에서 예방과 탐지로 갈린다', () => {
+    // 조직 수준 정책 둘은 하는 일이 다르고, Config는 만들어진 뒤에 찾아내는 쪽이다.
+    // 셋이 흩어지면 "막는 것"과 "찾는 것"을 비교할 자리가 없어진다.
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const governance = ownerOf('organizations-cloudtrail-config.organizations-scp')
+    expect(governance).toBe('organizations-cloudtrail-config')
+    ;[
+      'organizations-cloudtrail-config.organizational-unit',
+      'organizations-cloudtrail-config.scp-attachment-targets',
+      'organizations-cloudtrail-config.scp-condition-exception',
+      'organizations-cloudtrail-config.organizations-tag-policy',
+      'organizations-cloudtrail-config.aws-config',
+      'organizations-cloudtrail-config.cloudtrail-data-events',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(governance))
+    // SCP는 붙인 자리 아래에만 걸리고, 예외는 Principal이 아니라 Condition으로 둔다.
+    expect(bodyOf('organizations-cloudtrail-config.scp-attachment-targets')).toContain(
+      '연결한 자리 아래에만 적용된다',
+    )
+    expect(bodyOf('organizations-cloudtrail-config.scp-condition-exception')).toContain(
+      '`aws:PrincipalArn`으로 허용할 주체를 지목한다',
+    )
+    // 태그 정책은 표기를 맞추고, 행동을 막는 것은 SCP다.
+    expect(bodyOf('organizations-cloudtrail-config.organizations-tag-policy')).toContain(
+      '**표기를 통일하는 일**이 태그 정책의 몫이다',
+    )
+    expect(bodyOf('organizations-cloudtrail-config.organizations-tag-policy')).toContain(
+      '만들어지는 것을 막는 쪽이 아니다',
+    )
+    // CloudTrail은 호출을 남기고 그 안이 두 갈래로 갈린다.
+    expect(bodyOf('organizations-cloudtrail-config.cloudtrail-data-events')).toContain(
+      '이것을 따로 켜야 객체 수준 활동이 기록에 남는다',
+    )
+  })
+
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
     const storageClassQuestions = questions.filter(
       (question) => question.topicId === 's3-storage-classes',
@@ -2981,13 +3230,18 @@ describe('학습 데이터 무결성', () => {
     ['threat-protection.guardduty', 'GuardDuty는', 'security'],
     ['threat-protection.macie', 'Macie는', 'security'],
     ['threat-protection.cloudfront', 'CloudFront는', 'networking'],
-    ['identity-access.iam', 'IAM은', 'security'],
-    ['identity-access.identity-center', 'Identity Center는', 'security'],
-    ['identity-access.sts', 'STS는', 'security'],
-    ['identity-access.cognito', 'Cognito는', 'security'],
-    ['identity-access.cloudtrail', 'CloudTrail은', 'management'],
-    ['identity-access.aws-config', 'AWS Config는', 'management'],
-    ['identity-access.organizations-scp', 'AWS Organizations는', 'management'],
+    ['iam-permissions.iam', 'IAM은', 'security'],
+    ['identity-federation.identity-center', 'Identity Center는', 'security'],
+    ['identity-federation.sts', 'STS는', 'security'],
+    ['identity-federation.cognito', 'Cognito는', 'security'],
+    // phase 26 step 17. Directory Service는 AD Connector와 함께 한 개념에서 소개된다.
+    ['identity-federation.aws-directory-service', 'Directory Service는', 'security'],
+    ['organizations-cloudtrail-config.cloudtrail', 'CloudTrail은', 'management'],
+    ['organizations-cloudtrail-config.aws-config', 'AWS Config는', 'management'],
+    ['organizations-cloudtrail-config.organizations-scp', 'AWS Organizations는', 'management'],
+    // service-categories.md "주제 배치와 어긋나는 자리" — 주제는 조직·감사 쪽이고
+    // 카테고리는 보안이다.
+    ['organizations-cloudtrail-config.audit-manager', 'Audit Manager는', 'security'],
     ['cost-management.savings-plan', '절약 플랜은', 'finance'],
     ['cost-management.aws-budgets', 'AWS Budgets는', 'finance'],
     ['cost-management.cost-explorer', 'Cost Explorer는', 'finance'],
@@ -2997,12 +3251,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 90개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 92개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(90)
+    expect(serviceCategories).toHaveLength(92)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -3016,7 +3270,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 90개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 92개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
