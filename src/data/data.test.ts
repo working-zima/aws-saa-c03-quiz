@@ -83,11 +83,12 @@ describe('학습 데이터 무결성', () => {
 
   it('컴퓨팅·메시징 보충 개념 21개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
     const expectedSlugs: Record<string, string[]> = {
+      // phase 26 step 8이 compute-delivery에서 EC2·ASG·ELB를 두 주제로 빼냈다.
+      // 개념 본문은 그대로이고 접두사만 새 주제를 따른다. CloudFront·Global
+      // Accelerator 쪽 셋은 아직 compute-delivery에 남아 있다(step 9 몫).
+      'ec2-autoscaling': ['warm-pool', 'scheduled-scaling'],
+      'elastic-load-balancing': ['alb-l7-vs-nlb-l4', 'sticky-session-tradeoff'],
       'compute-delivery': [
-        'warm-pool',
-        'scheduled-scaling',
-        'alb-l7-vs-nlb-l4',
-        'sticky-session-tradeoff',
         'global-accelerator-protocols',
         'cloudfront-ttl',
         'edge-keyword',
@@ -112,13 +113,21 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
+    // phase 26 step 8이 아래 두 주제의 개념을 3단(기본 → 갈림길 → 한계)으로 정렬해,
+    // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」가 개념 id 전부로 못박는다.
+    const reordered = new Set(['ec2-autoscaling', 'elastic-load-balancing'])
+
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
-      const addedConcepts = topic?.concepts.slice(-slugs.length) ?? []
+      const conceptIds = topic?.concepts.map(({ id }) => id) ?? []
+      const wanted = slugs.map((slug) => `${topicId}.${slug}`)
 
-      expect(addedConcepts.map(({ id }) => id)).toEqual(
-        slugs.map((slug) => `${topicId}.${slug}`),
-      )
+      if (reordered.has(topicId)) {
+        wanted.forEach((conceptId) => expect(conceptIds).toContain(conceptId))
+        return
+      }
+      expect(conceptIds.slice(-slugs.length)).toEqual(wanted)
     })
   })
 
@@ -194,7 +203,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 25개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 27개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -222,6 +231,12 @@ describe('학습 데이터 무결성', () => {
       { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
       { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
       { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
+      // phase 26 step 8이 compute-delivery에서 EC2·ASG와 로드 밸런서를 빼내 앞에
+      // 놓았다. 남은 compute-delivery는 CloudFront·Global Accelerator뿐이고
+      // step 9가 cloudfront-global-accelerator로 바꾸며 없앤다 — 그래서 제목은 아직
+      // 옛 이름 그대로다.
+      { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
+      { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
@@ -379,10 +394,12 @@ describe('학습 데이터 무결성', () => {
   it('컴퓨팅·메시징 보충 문제 21개가 새 개념과 일대일로 이어진다', () => {
     const addedQuestions = questions.slice(187, 208)
     const expectedConceptIds = [
-      'compute-delivery.warm-pool',
-      'compute-delivery.scheduled-scaling',
-      'compute-delivery.alb-l7-vs-nlb-l4',
-      'compute-delivery.sticky-session-tradeoff',
+      // phase 26 step 8이 앞의 넷을 두 새 주제로 옮겼다. 문항 본문은 그대로이고
+      // topicId·conceptId만 따라 바뀐다.
+      'ec2-autoscaling.warm-pool',
+      'ec2-autoscaling.scheduled-scaling',
+      'elastic-load-balancing.alb-l7-vs-nlb-l4',
+      'elastic-load-balancing.sticky-session-tradeoff',
       'compute-delivery.global-accelerator-protocols',
       'compute-delivery.cloudfront-ttl',
       'compute-delivery.edge-keyword',
@@ -407,7 +424,9 @@ describe('학습 데이터 무결성', () => {
       Array.from({ length: 21 }, (_, index) => `q${index + 188}`),
     )
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
-      ...Array(7).fill('compute-delivery'),
+      ...Array(2).fill('ec2-autoscaling'),
+      ...Array(2).fill('elastic-load-balancing'),
+      ...Array(3).fill('compute-delivery'),
       ...Array(7).fill('serverless-containers'),
       ...Array(7).fill('messaging-backup'),
     ])
@@ -574,7 +593,7 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(18, 25).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(20, 27).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -591,13 +610,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(18, 25).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(20, 27).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 18).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 20).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -607,6 +626,8 @@ describe('학습 데이터 무결성', () => {
       { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
       { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
       { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
+      { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
+      { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'compute-delivery', title: 'EC2·ELB·Global Accelerator·CloudFront', importance: 3, sourcePages: [22, 24] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
@@ -618,9 +639,11 @@ describe('학습 데이터 무결성', () => {
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이고,
     // 이어지는 18·18·14는 step 7이 원본 8개념을 셋으로 갈라 신규 42를 더한 결과다.
-    // 나머지 다섯은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
-    expect(topics.slice(9, 18).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 11, 11, 11, 12, 10,
+    // 17·16·5는 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
+    // 빼내 신규 27을 더한 결과이고, 남은 5는 step 9가 가져간다.
+    // 나머지 넷은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
+    expect(topics.slice(9, 20).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 5, 11, 11, 12, 10,
     ])
   })
 
@@ -1021,6 +1044,104 @@ describe('학습 데이터 무결성', () => {
     expect(ownerOf('elasticache-purpose-built-db.dax-encryption-at-rest')).toBe(engines)
   })
 
+  it('EC2·Auto Scaling 주제가 서비스와 재료 다음에 선택 기준과 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
+
+    // 1단 EC2와 Auto Scaling, 인스턴스를 띄우는 재료 → 2단 어느 제품군·어느 구매
+    // 옵션·어느 조정 방식인가 → 3단 설정 항목과 주의점.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'ec2-autoscaling.ec2',
+      'ec2-autoscaling.ami-and-launch-template',
+      'ec2-autoscaling.ec2-image-builder',
+      'ec2-autoscaling.memory-optimized-instance-family',
+      'ec2-autoscaling.gpu-instance-family',
+      'ec2-autoscaling.reserved-instance-types',
+      'ec2-autoscaling.spot-workload-fit',
+      'ec2-autoscaling.scheduled-scaling',
+      'ec2-autoscaling.target-tracking-vs-simple-scaling',
+      'ec2-autoscaling.predictive-scaling',
+      'ec2-autoscaling.spot-allocation-strategy',
+      'ec2-autoscaling.asg-instance-type-override',
+      'ec2-autoscaling.asg-on-demand-base-capacity',
+      'ec2-autoscaling.warm-pool',
+      'ec2-autoscaling.asg-single-instance-self-healing',
+      'ec2-autoscaling.elb-health-check-drives-asg-replacement',
+      'ec2-autoscaling.enhanced-networking',
+    ])
+  })
+
+  it('로드 밸런서 주제가 세 로드 밸런서 다음에 선택 기준과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'elastic-load-balancing')
+
+    // 1단 ELB와 세 로드 밸런서가 각각 무엇인가 → 2단 계층·프로토콜·대상·공개
+    // 범위로 갈린다 → 3단 분산 알고리즘·규칙·타임아웃·암호화 구간.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'elastic-load-balancing.elb',
+      'elastic-load-balancing.gateway-load-balancer',
+      'elastic-load-balancing.alb-l7-vs-nlb-l4',
+      'elastic-load-balancing.alb-routing-conditions',
+      'elastic-load-balancing.nlb-tls-listener',
+      'elastic-load-balancing.nlb-udp-listener',
+      'elastic-load-balancing.nlb-ip-targets',
+      'elastic-load-balancing.alb-cookie-stickiness',
+      'elastic-load-balancing.internal-load-balancer',
+      'elastic-load-balancing.sticky-session-tradeoff',
+      'elastic-load-balancing.alb-least-outstanding-requests',
+      'elastic-load-balancing.alb-target-group-independent-scaling',
+      'elastic-load-balancing.alb-listener-rule-fixed-response',
+      'elastic-load-balancing.load-balancer-idle-timeout',
+      'elastic-load-balancing.end-to-end-encryption-behind-alb',
+      'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+    ])
+  })
+
+  it('로드 밸런서 셋의 선택 기준이 한 주제 안에 함께 있다', () => {
+    // ALB ↔ NLB ↔ Gateway Load Balancer는 "언제 무엇을 쓰는가"가 그대로 문항이다.
+    // step 8이 compute-delivery를 가를 때 셋을 떼어 놓으면 비교할 자리가 없어진다
+    // (PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+
+    const layers = ownerOf('elastic-load-balancing.alb-l7-vs-nlb-l4')
+    expect(layers).toBe('elastic-load-balancing')
+    expect(ownerOf('elastic-load-balancing.elb')).toBe(layers)
+    expect(ownerOf('elastic-load-balancing.gateway-load-balancer')).toBe(layers)
+    expect(ownerOf('elastic-load-balancing.nlb-udp-listener')).toBe(layers)
+    expect(ownerOf('elastic-load-balancing.gwlb-endpoint-cross-account-inspection')).toBe(layers)
+  })
+
+  it('구매 옵션 셋의 갈림길이 한 주제 안에 함께 있다', () => {
+    // 스팟 ↔ 온디맨드 ↔ 예약 인스턴스도 갈림길이다. 셋을 처음 소개하는 것은 기존
+    // ec2 개념의 문단이고, 고르는 기준은 새로 들어온 개념들이 맡는다.
+    const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
+    const slugs = new Set(topic?.concepts.map(({ id }) => id.split('.')[1]))
+    const body = topic?.concepts
+      .find(({ id }) => id === 'ec2-autoscaling.ec2')
+      ?.paragraphs.join(' ') ?? ''
+
+    expect(body).toContain('온디맨드 인스턴스')
+    expect(body).toContain('스팟 인스턴스')
+    expect(body).toContain('예약 인스턴스')
+    expect(slugs).toContain('reserved-instance-types')
+    expect(slugs).toContain('spot-workload-fit')
+    expect(slugs).toContain('spot-allocation-strategy')
+    expect(slugs).toContain('asg-on-demand-base-capacity')
+  })
+
+  it('오토 스케일링 조정 방식 넷이 한 주제 안에서 이어진다', () => {
+    // 예약된 조정 ↔ 대상 추적 ↔ 단순 조정 ↔ 예측 스케일링. 기존 scheduled-scaling이
+    // 앞의 둘을 예측 가능성으로 가르고, step 8이 들여온 둘이 남은 축을 세운다.
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    expect(bodyOf('ec2-autoscaling.scheduled-scaling')).toContain('대상 추적')
+    expect(bodyOf('ec2-autoscaling.target-tracking-vs-simple-scaling')).toContain('단순 조정')
+    expect(bodyOf('ec2-autoscaling.predictive-scaling')).toContain('예약된 조정과 대상 추적')
+  })
+
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
     const storageClassQuestions = questions.filter(
       (question) => question.topicId === 's3-storage-classes',
@@ -1188,8 +1309,8 @@ describe('학습 데이터 무결성', () => {
     { conceptId: 'dynamodb.dynamodb', anchor: '키-값' },
     { conceptId: 'dynamodb.dynamodb', anchor: '미리 담아 두었다가' },
     { conceptId: 'aurora.aurora-reader-endpoint', anchor: '애플리케이션이 접속할 주소' },
-    { conceptId: 'compute-delivery.elb', anchor: '실어 나를지 정하는' },
-    { conceptId: 'compute-delivery.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
+    { conceptId: 'elastic-load-balancing.elb', anchor: '실어 나를지 정하는' },
+    { conceptId: 'elastic-load-balancing.sticky-session-tradeoff', anchor: '차례대로 돌아가며' },
     { conceptId: 'compute-delivery.cloudfront-ttl', anchor: 'Time-to-Live' },
     { conceptId: 'serverless-containers.api-gateway', anchor: 'JSON Web Token' },
     { conceptId: 'threat-protection.shield', anchor: 'Distributed Denial of Service' },
@@ -1498,7 +1619,7 @@ describe('학습 데이터 무결성', () => {
   it('TCP와 UDP 풀이가 이름과 계층뿐 아니라 둘의 차이까지 알려준다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
-      .find(({ id }) => id === 'compute-delivery.elb')
+      .find(({ id }) => id === 'elastic-load-balancing.elb')
 
     expect(concept?.paragraphs[1]).toContain('빠진 것은 다시 보낸다')
     expect(concept?.paragraphs[1]).toContain('일부가 유실될 수 있다')
@@ -1520,8 +1641,8 @@ describe('학습 데이터 무결성', () => {
     )
 
     // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
-    expect(byId['compute-delivery.elb'].paragraphs).toHaveLength(3)
-    expect(byId['compute-delivery.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
+    expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(3)
+    expect(byId['elastic-load-balancing.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
     expect(byId['compute-delivery.global-accelerator-protocols'].paragraphs).toHaveLength(2)
     expect(byId['compute-delivery.cloudfront-ttl'].paragraphs).toHaveLength(2)
     expect(byId['compute-delivery.cloudfront-ttl'].summary).toBe(
@@ -1722,8 +1843,12 @@ describe('학습 데이터 무결성', () => {
     // (docs/source/service-categories.md "카테고리 없음").
     ['elasticache-purpose-built-db.neptune', 'Neptune은', 'databases'],
     ['elasticache-purpose-built-db.timestream', 'Timestream은', 'databases'],
-    ['compute-delivery.ec2', 'EC2는', 'compute'],
-    ['compute-delivery.elb', 'ELB는', 'networking'],
+    ['ec2-autoscaling.ec2', 'EC2는', 'compute'],
+    // phase 26 step 8. GWLB는 ELB 계열의 한 종류라 별도 항목이 아니고,
+    // ASG 개념들은 서비스를 소개하는 자리가 아니라 갈림길·한계 개념이라 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['ec2-autoscaling.ec2-image-builder', 'EC2 Image Builder는', 'compute'],
+    ['elastic-load-balancing.elb', 'ELB는', 'networking'],
     ['compute-delivery.cloudfront', 'CloudFront는', 'networking'],
     ['compute-delivery.global-accelerator', 'Global Accelerator는', 'networking'],
     ['serverless-containers.ecs', 'ECS는', 'containers'],
@@ -1780,12 +1905,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 79개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 80개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(79)
+    expect(serviceCategories).toHaveLength(80)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -1799,7 +1924,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 79개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 80개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
