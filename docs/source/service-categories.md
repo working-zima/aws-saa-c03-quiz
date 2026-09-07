@@ -117,88 +117,118 @@ phase 26이 들여오는 서비스에서도 같은 자리가 생긴다. 위 열 
 | `Audit Manager` | `organizations-cloudtrail-config` | 보안·자격 증명·규정 준수 |
 | `Amplify` | `api-gateway-step-functions` | 프런트엔드 웹 및 모바일 |
 
-## 매핑 — 개념 75개
+## 매핑 — 개념 106개
 
 `보조`란에 표시가 있는 항목은 위 "출처"에 적은 보조 출처를 근거로 배치한 것이다.
 
 | 개념 id | 문장 주어 | 카테고리 | 보조 |
 | --- | --- | --- | --- |
-| `aws-core-services.ec2` | EC2 | 컴퓨팅 | |
-| `aws-core-services.rds` | RDS | 데이터베이스 | |
-| `aws-core-services.s3` | S3 | 스토리지 | |
-| `aws-core-services.route-53` | Route 53 | 네트워킹 및 콘텐츠 전송 | |
-| `aws-core-services.elb` | ELB | 네트워킹 및 콘텐츠 전송 | |
-| `aws-core-services.cloudfront` | CloudFront | 네트워킹 및 콘텐츠 전송 | |
-| `aws-core-services.lambda` | Lambda | 컴퓨팅 | |
-| `block-file-storage.ebs` | EBS | 스토리지 | |
-| `block-file-storage.efs` | EFS | 스토리지 | |
-| `block-file-storage.fsx` | FSx | 스토리지 | |
-| `data-transfer-services.datasync` | DataSync | 마이그레이션 및 전송 | |
-| `data-transfer-services.snowball-edge` | Snowball Edge | 마이그레이션 및 전송 | |
-| `data-transfer-services.transfer-family` | Transfer Family | 마이그레이션 및 전송 | |
-| `data-transfer-services.storage-gateway` | Storage Gateway | 스토리지 | |
-| `rds-storage-features.rds` | RDS | 데이터베이스 | |
-| `aurora-dynamodb-cache.aurora` | Aurora | 데이터베이스 | |
-| `aurora-dynamodb-cache.dynamodb` | DynamoDB | 데이터베이스 | |
-| `aurora-dynamodb-cache.elasticache` | ElastiCache | 데이터베이스 | |
-| `aurora-dynamodb-cache.documentdb` | DocumentDB | 데이터베이스 | |
-| `compute-delivery.ec2` | EC2 | 컴퓨팅 | |
-| `compute-delivery.elb` | ELB | 네트워킹 및 콘텐츠 전송 | |
-| `compute-delivery.cloudfront` | CloudFront | 네트워킹 및 콘텐츠 전송 | |
-| `compute-delivery.global-accelerator` | Global Accelerator | 네트워킹 및 콘텐츠 전송 | |
-| `serverless-containers.ecs` | ECS | 컨테이너 | |
-| `serverless-containers.lambda` | Lambda | 컴퓨팅 | |
-| `serverless-containers.step-functions` | Step Functions | 애플리케이션 통합 | |
-| `serverless-containers.api-gateway` | API Gateway | 네트워킹 및 콘텐츠 전송 | |
-| `serverless-containers.eks` | EKS | 컨테이너 | |
-| `serverless-containers.aws-batch` | AWS Batch | 컴퓨팅 | |
-| `messaging-backup.sqs` | SQS | 애플리케이션 통합 | |
-| `messaging-backup.sns` | SNS | 애플리케이션 통합 | |
-| `messaging-backup.eventbridge` | EventBridge | 애플리케이션 통합 | |
-| `messaging-backup.backup` | AWS Backup | 스토리지 | |
-| `messaging-backup.msk` | MSK | 분석 | |
-| `messaging-backup.ses` | SES | 비즈니스 애플리케이션 | |
-| `vpc-networking.vpc-subnet` | VPC | 네트워킹 및 콘텐츠 전송 | |
-| `vpc-networking.privatelink` | PrivateLink | 네트워킹 및 콘텐츠 전송 | |
-| `hybrid-connectivity.site-to-site-vpn` | Site-to-Site VPN | 네트워킹 및 콘텐츠 전송 | |
-| `hybrid-connectivity.direct-connect` | Direct Connect | 네트워킹 및 콘텐츠 전송 | |
-| `hybrid-connectivity.transit-gateway` | Transit Gateway | 네트워킹 및 콘텐츠 전송 | |
-| `hybrid-connectivity.client-vpn` | Client VPN | 네트워킹 및 콘텐츠 전송 | |
-| `route53.route53` | Route53 | 네트워킹 및 콘텐츠 전송 | |
-| `analytics-monitoring.emr` | EMR | 분석 | |
-| `analytics-monitoring.redshift` | RedShift | 분석 | |
-| `analytics-monitoring.athena` | Athena | 분석 | |
-| `analytics-monitoring.cloudwatch` | CloudWatch | 관리 및 거버넌스 | |
-| `analytics-monitoring.glue` | Glue | 분석 | |
-| `analytics-monitoring.x-ray` | X-Ray | 개발자 도구 | |
-| `analytics-monitoring.data-firehose` | Data Firehose | 분석 | |
-| `analytics-monitoring.kinesis-data-streams` | Kinesis Data Streams | 분석 | |
-| `analytics-monitoring.managed-service-apache-flink` | Managed Service for Apache Flink | 분석 | |
-| `secrets-encryption.secrets-manager` | Secrets Manager | 보안·자격 증명·규정 준수 | |
-| `secrets-encryption.parameter-store` | Parameter Store | 관리 및 거버넌스 | |
-| `secrets-encryption.kms` | KMS | 보안·자격 증명·규정 준수 | |
-| `secrets-encryption.acm` | ACM | 보안·자격 증명·규정 준수 | |
-| `secrets-encryption.cloudhsm` | CloudHSM | 보안·자격 증명·규정 준수 | |
-| `threat-protection.waf` | WAF | 보안·자격 증명·규정 준수 | |
-| `threat-protection.shield` | Shield | 보안·자격 증명·규정 준수 | |
-| `threat-protection.guardduty` | GuardDuty | 보안·자격 증명·규정 준수 | |
-| `threat-protection.macie` | Macie | 보안·자격 증명·규정 준수 | |
-| `threat-protection.cloudfront` | CloudFront | 네트워킹 및 콘텐츠 전송 | |
-| `identity-access.iam` | IAM | 보안·자격 증명·규정 준수 | |
-| `identity-access.identity-center` | Identity Center | 보안·자격 증명·규정 준수 | |
-| `identity-access.sts` | STS | 보안·자격 증명·규정 준수 | IAM 가이드 |
-| `identity-access.cognito` | Cognito | 보안·자격 증명·규정 준수 | |
-| `identity-access.cloudtrail` | CloudTrail | 관리 및 거버넌스 | |
-| `identity-access.aws-config` | AWS Config | 관리 및 거버넌스 | |
-| `identity-access.organizations-scp` | AWS Organizations | 관리 및 거버넌스 | |
-| `cost-management.savings-plan` | 절약 플랜 | 클라우드 재무 관리 | |
-| `cost-management.aws-budgets` | AWS Budgets | 클라우드 재무 관리 | |
-| `cost-management.cost-explorer` | Cost Explorer | 클라우드 재무 관리 | |
+| `aws-core-services.ec2` | EC2 | 컴퓨팅 |  |
+| `aws-core-services.rds` | RDS | 데이터베이스 |  |
+| `aws-core-services.s3` | S3 | 스토리지 |  |
+| `aws-core-services.route-53` | Route 53 | 네트워킹 및 콘텐츠 전송 |  |
+| `aws-core-services.elb` | ELB | 네트워킹 및 콘텐츠 전송 |  |
+| `aws-core-services.cloudfront` | CloudFront | 네트워킹 및 콘텐츠 전송 |  |
+| `aws-core-services.lambda` | Lambda | 컴퓨팅 |  |
+| `ebs-instance-store.ebs` | EBS | 스토리지 |  |
+| `efs-fsx.efs` | EFS | 스토리지 |  |
+| `efs-fsx.fsx` | FSx | 스토리지 |  |
+| `data-transfer-services.datasync` | DataSync | 마이그레이션 및 전송 |  |
+| `data-transfer-services.snowball-edge` | Snowball Edge | 마이그레이션 및 전송 |  |
+| `data-transfer-services.transfer-family` | Transfer Family | 마이그레이션 및 전송 |  |
+| `storage-gateway-migration.storage-gateway` | Storage Gateway | 스토리지 |  |
+| `storage-gateway-migration.dms-sct` | DMS와 SCT | 마이그레이션 및 전송 | DMS 가이드 (SCT) |
+| `storage-gateway-migration.application-migration-service` | Application Migration Service | 마이그레이션 및 전송 |  |
+| `rds-storage-features.rds` | RDS | 데이터베이스 |  |
+| `aurora.aurora` | Aurora | 데이터베이스 |  |
+| `dynamodb.dynamodb` | DynamoDB | 데이터베이스 |  |
+| `elasticache-purpose-built-db.elasticache` | ElastiCache | 데이터베이스 |  |
+| `elasticache-purpose-built-db.documentdb` | DocumentDB | 데이터베이스 |  |
+| `elasticache-purpose-built-db.neptune` | Neptune | 데이터베이스 |  |
+| `elasticache-purpose-built-db.timestream` | Timestream | 데이터베이스 |  |
+| `ec2-autoscaling.ec2` | EC2 | 컴퓨팅 |  |
+| `ec2-autoscaling.ec2-image-builder` | EC2 Image Builder | 컴퓨팅 |  |
+| `elastic-load-balancing.elb` | ELB | 네트워킹 및 콘텐츠 전송 |  |
+| `cloudfront-global-accelerator.cloudfront` | CloudFront | 네트워킹 및 콘텐츠 전송 |  |
+| `cloudfront-global-accelerator.global-accelerator` | Global Accelerator | 네트워킹 및 콘텐츠 전송 |  |
+| `lambda.lambda` | Lambda | 컴퓨팅 |  |
+| `ecs-eks-fargate.ecs` | ECS | 컨테이너 |  |
+| `ecs-eks-fargate.eks` | EKS | 컨테이너 |  |
+| `ecs-eks-fargate.ecr-image-scan-on-push` | ECR | 컨테이너 |  |
+| `ecs-eks-fargate.aws-batch` | AWS Batch | 컴퓨팅 |  |
+| `ecs-eks-fargate.elastic-beanstalk` | Elastic Beanstalk | 컴퓨팅 |  |
+| `ecs-eks-fargate.app2container` | App2Container | 컨테이너 |  |
+| `api-gateway-step-functions.api-gateway` | API Gateway | 네트워킹 및 콘텐츠 전송 |  |
+| `api-gateway-step-functions.step-functions` | Step Functions | 애플리케이션 통합 |  |
+| `sqs-sns-eventbridge.sqs` | SQS | 애플리케이션 통합 |  |
+| `sqs-sns-eventbridge.sns` | SNS | 애플리케이션 통합 |  |
+| `sqs-sns-eventbridge.eventbridge` | EventBridge | 애플리케이션 통합 |  |
+| `sqs-sns-eventbridge.amazon-mq` | Amazon MQ | 애플리케이션 통합 |  |
+| `sqs-sns-eventbridge.ses` | SES | 비즈니스 애플리케이션 |  |
+| `backup-disaster-recovery.backup` | AWS Backup | 스토리지 |  |
+| `backup-disaster-recovery.elastic-disaster-recovery` | Elastic Disaster Recovery | 스토리지 |  |
+| `vpc-networking.vpc-subnet` | VPC | 네트워킹 및 콘텐츠 전송 |  |
+| `vpc-networking.privatelink` | PrivateLink | 네트워킹 및 콘텐츠 전송 |  |
+| `hybrid-connectivity.site-to-site-vpn` | Site-to-Site VPN | 네트워킹 및 콘텐츠 전송 |  |
+| `hybrid-connectivity.direct-connect` | Direct Connect | 네트워킹 및 콘텐츠 전송 |  |
+| `hybrid-connectivity.transit-gateway` | Transit Gateway | 네트워킹 및 콘텐츠 전송 |  |
+| `hybrid-connectivity.client-vpn` | Client VPN | 네트워킹 및 콘텐츠 전송 |  |
+| `hybrid-connectivity.region-attached-edge-options` | Local Zones·Outposts·Wavelength | 컴퓨팅 |  |
+| `route53.route53` | Route53 | 네트워킹 및 콘텐츠 전송 |  |
+| `emr-glue-athena.emr` | EMR | 분석 |  |
+| `emr-glue-athena.glue` | Glue | 분석 |  |
+| `emr-glue-athena.athena` | Athena | 분석 |  |
+| `emr-glue-athena.lake-formation` | Lake Formation | 분석 |  |
+| `kinesis-streaming.kinesis-data-streams` | Kinesis Data Streams | 분석 |  |
+| `kinesis-streaming.data-firehose` | Data Firehose | 분석 |  |
+| `kinesis-streaming.managed-service-apache-flink` | Managed Service for Apache Flink | 분석 |  |
+| `kinesis-streaming.kinesis-video-streams` | Kinesis Video Streams | 분석 |  |
+| `kinesis-streaming.msk` | MSK | 분석 |  |
+| `redshift-opensearch-quicksight.redshift` | RedShift | 분석 |  |
+| `redshift-opensearch-quicksight.quicksight` | QuickSight | 분석 |  |
+| `cloudwatch-xray.cloudwatch` | CloudWatch | 관리 및 거버넌스 |  |
+| `cloudwatch-xray.x-ray` | X-Ray | 개발자 도구 |  |
+| `cloudwatch-xray.amazon-managed-grafana` | Managed Grafana | 관리 및 거버넌스 |  |
+| `secrets-encryption.secrets-manager` | Secrets Manager | 보안·자격 증명·규정 준수 |  |
+| `secrets-encryption.parameter-store` | Parameter Store | 관리 및 거버넌스 |  |
+| `secrets-encryption.kms` | KMS | 보안·자격 증명·규정 준수 |  |
+| `secrets-encryption.acm` | ACM | 보안·자격 증명·규정 준수 |  |
+| `secrets-encryption.cloudhsm` | CloudHSM | 보안·자격 증명·규정 준수 |  |
+| `waf-shield.waf` | WAF | 보안·자격 증명·규정 준수 |  |
+| `waf-shield.shield` | Shield | 보안·자격 증명·규정 준수 |  |
+| `waf-shield.cloudfront` | CloudFront | 네트워킹 및 콘텐츠 전송 |  |
+| `waf-shield.firewall-manager` | Firewall Manager | 보안·자격 증명·규정 준수 |  |
+| `guardduty-macie-inspector.guardduty` | GuardDuty | 보안·자격 증명·규정 준수 |  |
+| `guardduty-macie-inspector.macie` | Macie | 보안·자격 증명·규정 준수 |  |
+| `guardduty-macie-inspector.amazon-inspector` | Inspector | 보안·자격 증명·규정 준수 |  |
+| `guardduty-macie-inspector.security-hub` | Security Hub | 보안·자격 증명·규정 준수 |  |
+| `iam-permissions.iam` | IAM | 보안·자격 증명·규정 준수 |  |
+| `identity-federation.identity-center` | Identity Center | 보안·자격 증명·규정 준수 |  |
+| `identity-federation.sts` | STS | 보안·자격 증명·규정 준수 | IAM 가이드 |
+| `identity-federation.cognito` | Cognito | 보안·자격 증명·규정 준수 |  |
+| `identity-federation.aws-directory-service` | Directory Service | 보안·자격 증명·규정 준수 |  |
+| `organizations-cloudtrail-config.cloudtrail` | CloudTrail | 관리 및 거버넌스 |  |
+| `organizations-cloudtrail-config.aws-config` | AWS Config | 관리 및 거버넌스 |  |
+| `organizations-cloudtrail-config.organizations-scp` | AWS Organizations | 관리 및 거버넌스 |  |
+| `organizations-cloudtrail-config.audit-manager` | Audit Manager | 보안·자격 증명·규정 준수 |  |
+| `cost-management.savings-plan` | 절약 플랜 | 클라우드 재무 관리 |  |
+| `cost-management.aws-budgets` | AWS Budgets | 클라우드 재무 관리 |  |
+| `cost-management.cost-explorer` | Cost Explorer | 클라우드 재무 관리 |  |
 | `cost-management.billing-and-cost-management` | Billing and Cost Management | 클라우드 재무 관리 | 비용 관리 가이드 |
-| `cost-management.trusted-advisor` | Trusted Advisor | 관리 및 거버넌스 | |
-| `cost-management.compute-optimizer` | Compute Optimizer | 관리 및 거버넌스 | |
+| `cost-management.trusted-advisor` | Trusted Advisor | 관리 및 거버넌스 |  |
+| `cost-management.compute-optimizer` | Compute Optimizer | 관리 및 거버넌스 |  |
 | `cost-management.cost-anomaly-detection` | Cost Anomaly Detection | 클라우드 재무 관리 | 비용 관리 가이드 |
-
+| `cost-management.cost-and-usage-report` | Cost and Usage Report | 클라우드 재무 관리 |  |
+| `governance-iac.cloudformation` | CloudFormation | 관리 및 거버넌스 |  |
+| `governance-iac.service-catalog` | Service Catalog | 관리 및 거버넌스 |  |
+| `governance-iac.control-tower-landing-zone` | Control Tower | 관리 및 거버넌스 |  |
+| `governance-iac.resource-access-manager` | Resource Access Manager | 보안·자격 증명·규정 준수 |  |
+| `systems-manager.ssm-run-command` | Systems Manager | 관리 및 거버넌스 |  |
+| `api-gateway-step-functions.amplify` | Amplify | 프런트엔드 웹 및 모바일 |  |
+| `ai-ml-services.sagemaker` | SageMaker AI | 기계 학습 |  |
+| `ai-ml-services.media-ai-service-lineup` | Transcribe·Rekognition·Translate·Textract | 기계 학습 |  |
+| `ai-ml-services.comprehend` | Comprehend | 기계 학습 |  |
+| `ai-ml-services.amazon-lex` | Lex | 기계 학습 |  |
 ## phase 26에서 들어오는 서비스
 
 `dump-gaps/`의 개념이 다루는 서비스 중 위 표에 없던 것들이다.
