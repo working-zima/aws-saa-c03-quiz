@@ -76,13 +76,19 @@ describe('학습 데이터 무결성', () => {
         'onprem-connectivity-heuristic',
       ],
       route53: ['private-hosted-zone', 'multivalue-answer-details'],
-      'analytics-monitoring': ['glue-crawler', 'log-analysis-options'],
+      // phase 26 step 15가 analytics-monitoring에서 분석·스트리밍 계열을 빼내며
+      // Glue Crawler를 emr-glue-athena로 옮겼다. 로그 분석 선택지는 CloudWatch 쪽이라
+      // 남아 step 16을 기다린다(topic-plan "주제 목록").
+      'emr-glue-athena': ['glue-crawler'],
+      'analytics-monitoring': ['log-analysis-options'],
     }
 
     // phase 26 step 14가 두 네트워크 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
-    // 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
-    // 「VPC 주제가 ...」·「하이브리드 연결 주제가 ...」가 개념 id 전부로 못박는다.
-    const reordered = new Set(['vpc-networking', 'hybrid-connectivity'])
+    // 정렬했고 step 15가 emr-glue-athena를 같은 방식으로 세웠다. 그래서 이 개념들은
+    // 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래 「VPC 주제가 ...」·
+    // 「하이브리드 연결 주제가 ...」·「EMR·Glue·Athena 주제가 ...」가 개념 id
+    // 전부로 못박는다.
+    const reordered = new Set(['vpc-networking', 'hybrid-connectivity', 'emr-glue-athena'])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
       const topic = topics.find(({ id }) => id === topicId)
@@ -121,8 +127,9 @@ describe('학습 데이터 무결성', () => {
       'ecs-eks-fargate': ['eks', 'fargate-no-time-limit', 'aws-batch'],
       'api-gateway-step-functions': ['api-gateway-jwt-authorizer', 'step-functions-features'],
       // step 12가 messaging-backup에서 메시징 계열을 sqs-sns-eventbridge로 빼냈고,
-      // step 13이 AWS Backup 계열을 backup-disaster-recovery로 빼냈다. MSK만 남아
-      // step 15를 기다린다(topic-plan "step 경계를 넘는 개념").
+      // step 13이 AWS Backup 계열을 backup-disaster-recovery로 빼냈다. 마지막으로 남은
+      // MSK는 step 15가 kinesis-streaming으로 가져가며 그 주제를 없앴다
+      // (topic-plan "step 경계를 넘는 개념").
       'sqs-sns-eventbridge': [
         'sqs-details',
         'sqs-queue-depth-scaling',
@@ -130,15 +137,15 @@ describe('학습 데이터 무결성', () => {
         'ses',
       ],
       'backup-disaster-recovery': ['backup-long-term-retention'],
-      'messaging-backup': ['msk'],
+      'kinesis-streaming': ['msk'],
     }
 
-    // phase 26 step 8·9·10·11·12·13이 아래 여덟 주제의 개념을 3단(기본 → 갈림길 →
+    // phase 26 step 8·9·10·11·12·13·15가 아래 아홉 주제의 개념을 3단(기본 → 갈림길 →
     // 한계)으로 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
     // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
     // Accelerator 주제가 ...」·「Lambda 주제가 ...」·「컨테이너 주제가 ...」·
     // 「API Gateway·Step Functions 주제가 ...」·「메시징 주제가 ...」·
-    // 「백업·재해 복구 주제가 ...」가 개념 id 전부로 못박는다.
+    // 「백업·재해 복구 주제가 ...」·「스트리밍 주제가 ...」가 개념 id 전부로 못박는다.
     const reordered = new Set([
       'ec2-autoscaling',
       'elastic-load-balancing',
@@ -148,6 +155,7 @@ describe('학습 데이터 무결성', () => {
       'api-gateway-step-functions',
       'sqs-sns-eventbridge',
       'backup-disaster-recovery',
+      'kinesis-streaming',
     ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
@@ -235,7 +243,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 31개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 33개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -279,10 +287,9 @@ describe('학습 데이터 무결성', () => {
       // step 13이 AWS Backup 계열과 dump-gaps의 재해 복구 계열을 그 뒤에 세웠다.
       // SQS ↔ SNS ↔ EventBridge는 메시징 세 갈래의 선택이라, DR 전략 둘은 RTO·RPO로
       // 갈리는 한 벌이라 각각 한 주제에 둔다(PRD "사용자").
-      // 남은 messaging-backup은 MSK 하나만 들고 step 15를 기다린다.
+      // 남아 있던 messaging-backup은 step 15가 MSK를 kinesis-streaming으로 가져가며 없앴다.
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
       { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
-      { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       // phase 26 step 14가 security-groups-nacl을 vpc-networking 바로 뒤로 옮겼다.
       // VPC를 읽은 자리에서 트래픽을 거르는 두 장치를 이어 읽고, step 14가 맡은
       // 세 주제가 배열에서 한 덩어리가 된다(topic-plan "배열 위치 근거").
@@ -290,6 +297,13 @@ describe('학습 데이터 무결성', () => {
       { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
       { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
+      // phase 26 step 15가 analytics-monitoring에서 분석·스트리밍 계열을 세 주제로
+      // 빼냈다. Kinesis 4종은 한 주제에, Athena ↔ Redshift ↔ Spectrum의 갈림길은
+      // 웨어하우스 쪽에 둔다(topic-plan "헷갈리는 짝 배치"). 남은 CloudWatch·X-Ray는
+      // step 16이 마저 옮긴다.
+      { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
+      { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
+      { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
       { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
@@ -301,7 +315,13 @@ describe('학습 데이터 무결성', () => {
   it('보안·운영 주제 문제 53개가 지정된 id 범위와 주제별 문항 수로 이어진다', () => {
     const expectedTopics = [
       ...Array(6).fill('route53'),
-      ...Array(6).fill('analytics-monitoring'),
+      // phase 26 step 15가 analytics-monitoring을 쪼개면서 이 여섯 문항이 세 주제로
+      // 갈라졌다. 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를
+      // 따른다 — CloudWatch를 근거로 쓰는 q126만 남는다.
+      ...Array(3).fill('emr-glue-athena'),
+      'analytics-monitoring',
+      'emr-glue-athena',
+      'kinesis-streaming',
       ...Array(9).fill('security-groups-nacl'),
       ...Array(8).fill('secrets-encryption'),
       ...Array(9).fill('threat-protection'),
@@ -459,9 +479,9 @@ describe('학습 데이터 무결성', () => {
       'lambda.lambda-vpc-access',
       'api-gateway-step-functions.api-gateway-jwt-authorizer',
       'ecs-eks-fargate.aws-batch',
-      // phase 26 step 12가 메시징 계열을 sqs-sns-eventbridge로 옮겼다. MSK는 step 15가
-      // 맡으므로 messaging-backup에 남는다.
-      'messaging-backup.msk',
+      // phase 26 step 12가 메시징 계열을 sqs-sns-eventbridge로 옮겼고, step 15가 MSK를
+      // 스트리밍 갈림길이 있는 kinesis-streaming으로 가져갔다.
+      'kinesis-streaming.msk',
       'sqs-sns-eventbridge.sqs-details',
       'sqs-sns-eventbridge.sqs-queue-depth-scaling',
       'sqs-sns-eventbridge.eventbridge-scheduler',
@@ -482,7 +502,7 @@ describe('학습 데이터 무결성', () => {
       ...Array(3).fill('cloudfront-global-accelerator'),
       // step 10이 Lambda 계열을 옮기고 step 11이 serverless-containers를 둘로 가르면서
       // 이 구간이 다섯 주제로 갈라졌고, step 12가 메시징 계열을 빼내며 여섯, step 13이
-      // AWS Backup 계열을 빼내며 일곱이 됐다.
+      // AWS Backup 계열을 빼내며 일곱, step 15가 MSK를 옮기며 여덟이 됐다.
       // 문항의 id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
       ...Array(2).fill('ecs-eks-fargate'),
       'lambda',
@@ -490,7 +510,7 @@ describe('학습 데이터 무결성', () => {
       'lambda',
       'api-gateway-step-functions',
       'ecs-eks-fargate',
-      'messaging-backup',
+      'kinesis-streaming',
       ...Array(3).fill('sqs-sns-eventbridge'),
       'api-gateway-step-functions',
       'sqs-sns-eventbridge',
@@ -537,7 +557,9 @@ describe('학습 데이터 무결성', () => {
       'hybrid-connectivity.onprem-connectivity-heuristic',
       'route53.private-hosted-zone',
       'route53.multivalue-answer-details',
-      'analytics-monitoring.glue-crawler',
+      // phase 26 step 15가 Glue Crawler를 emr-glue-athena로 옮겼다. 로그 분석 선택지는
+      // CloudWatch 쪽이라 analytics-monitoring에 남아 step 16을 기다린다.
+      'emr-glue-athena.glue-crawler',
       'analytics-monitoring.log-analysis-options',
     ]
 
@@ -549,7 +571,8 @@ describe('학습 데이터 무결성', () => {
       ...Array(5).fill('vpc-networking'),
       ...Array(6).fill('hybrid-connectivity'),
       ...Array(2).fill('route53'),
-      ...Array(2).fill('analytics-monitoring'),
+      'emr-glue-athena',
+      'analytics-monitoring',
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
       [...expectedConceptIds].sort(),
@@ -659,14 +682,19 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    // step 14가 security-groups-nacl을 네트워크 쪽으로 옮겨 이 묶음은 여섯이 됐다.
-    expect(topics.slice(25, 31).map(({ id, title, importance, sourcePages }) => ({
+    // step 14가 security-groups-nacl을 네트워크 쪽으로 옮겨 이 묶음은 여섯이 됐고,
+    // step 15가 messaging-backup을 없애 시작 위치가 한 칸 올라오면서
+    // analytics-monitoring을 쪼갠 세 주제가 더해져 아홉이 됐다.
+    expect(topics.slice(24, 33).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
       sourcePages,
     }))).toEqual([
       { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
+      { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
+      { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
+      { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
       { id: 'analytics-monitoring', title: 'EMR·Spark·Redshift·Athena·Kinesis·Glue·X-Ray·CloudWatch', importance: 2, sourcePages: [38, 40] },
       { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM', importance: 3, sourcePages: [44, 44] },
       { id: 'threat-protection', title: 'WAF·Shield·GuardDuty·Macie·CloudFront', importance: 3, sourcePages: [45, 47] },
@@ -677,15 +705,18 @@ describe('학습 데이터 무결성', () => {
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     // security-groups-nacl의 5는 step 14가 네트워크 묶음으로 가져갔다.
-    expect(topics.slice(25, 31).map((topic) => topic.concepts.length)).toEqual([
-      5, 14, 9, 11, 12, 9,
+    // analytics-monitoring의 14는 step 15가 원본 10개념을 세 주제로 갈라 신규 36을
+    // 더한 결과다(20·16·11). 남은 4는 CloudWatch·X-Ray 계열이고 step 16이 가져간다.
+    expect(topics.slice(24, 33).map((topic) => topic.concepts.length)).toEqual([
+      5, 20, 16, 11, 4, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
     // step 14가 security-groups-nacl을 vpc-networking과 hybrid-connectivity 사이로
-    // 옮겨 이 묶음이 하나 늘었다.
-    expect(topics.slice(9, 25).map(({ id, title, importance, sourcePages }) => ({
+    // 옮겨 이 묶음이 하나 늘었고, step 15가 껍데기만 남았던 messaging-backup을
+    // 없애면서 다시 하나 줄었다.
+    expect(topics.slice(9, 24).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -707,7 +738,6 @@ describe('학습 데이터 무결성', () => {
       // step 13이 AWS Backup 계열과 재해 복구 계열을 그 뒤에 세웠다.
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
       { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
-      { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
       { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
@@ -725,11 +755,12 @@ describe('학습 데이터 무결성', () => {
     // step-functions-features를 함께 가져와 신규 34를 더한 결과다. 그 바람에
     // messaging-backup은 11에서 10으로 줄었다. 33은 step 12가 그중 메시징 계열 7개념을
     // 빼낸 값이고, 11은 step 13이 남은 AWS Backup 계열 둘에 dump-gaps의 신규 9(백업 6 +
-    // 재해 복구 3)를 더한 값이다. 그러고 남은 1은 MSK 하나이며 step 15가 가져간다.
+    // 재해 복구 3)를 더한 값이다. 그러고 남은 MSK 하나는 step 15가 kinesis-streaming으로
+    // 가져가며 그 주제를 없앴다.
     // 마지막 셋 20·9·19는 step 14가 세 주제에 dump-gaps의 신규 21(VPC 8 · 보안 그룹 4 ·
     // 하이브리드 연결 9)을 더한 값이다.
-    expect(topics.slice(9, 25).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 11, 1, 20, 9, 19,
+    expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 24, 18, 23, 19, 33, 11, 20, 9, 19,
     ])
   })
 
@@ -1857,6 +1888,174 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toContain('전달 직전에 응답을 압축한다')
   })
 
+  it('EMR·Glue·Athena 주제가 서비스 소개 다음에 갈림길과 클러스터 설정을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'emr-glue-athena')
+
+    // 1단 EMR·Spark·Glue·Athena·Lake Formation이 각각 무엇인가
+    // → 2단 클러스터를 얼마나 띄워 두는가, 변환을 어디서 돌리는가, 조회 비용은 어떻게
+    //   붙는가, 로그를 어디에 쌓는가, 데이터 레이크의 권한은 어느 경로로 걸리는가
+    // → 3단 노드 역할별 인스턴스 제품군·작업별 권한·암호화 설정·열 지향 형식.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'emr-glue-athena.emr',
+      'emr-glue-athena.emr-node-types',
+      'emr-glue-athena.spark',
+      'emr-glue-athena.glue',
+      'emr-glue-athena.glue-crawler',
+      'emr-glue-athena.glue-databrew',
+      'emr-glue-athena.athena',
+      'emr-glue-athena.lake-formation',
+      'emr-glue-athena.emr-transient-cluster',
+      'emr-glue-athena.emr-managed-scaling',
+      'emr-glue-athena.glue-etl-with-per-customer-kms-key',
+      'emr-glue-athena.athena-encrypted-and-pay-per-query',
+      'emr-glue-athena.athena-federated-query',
+      'emr-glue-athena.log-storage-s3-athena',
+      'emr-glue-athena.lake-formation-blueprint-and-athena',
+      'emr-glue-athena.lake-formation-lf-tags',
+      'emr-glue-athena.emr-node-instance-family-choice',
+      'emr-glue-athena.emr-runtime-role',
+      'emr-glue-athena.emr-security-configuration',
+      'emr-glue-athena.parquet-columnar-format',
+    ])
+  })
+
+  it('스트리밍 주제가 서비스 다섯 다음에 갈림길과 한계값을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'kinesis-streaming')
+
+    // 1단 스트리밍 서비스 다섯이 각각 무엇인가
+    // → 2단 담당 단계의 비교, 스트림 사이에 무엇을 끼울 수 있는가, 큐 계열과 갈리는 축,
+    //   소비자를 직접 만들 때와 맡길 때, Kafka 생태계로 얻는 것
+    // → 3단 레코드 크기·파티션 키 쏠림·용량 모드·버퍼링 지연.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'kinesis-streaming.kinesis-data-streams',
+      'kinesis-streaming.data-firehose',
+      'kinesis-streaming.managed-service-apache-flink',
+      'kinesis-streaming.kinesis-video-streams',
+      'kinesis-streaming.msk',
+      'kinesis-streaming.streaming-services-comparison',
+      'kinesis-streaming.flink-kinesis-source-sink',
+      'kinesis-streaming.firehose-lambda-transformation',
+      'kinesis-streaming.firehose-format-conversion',
+      'kinesis-streaming.kinesis-retention-and-fanout',
+      'kinesis-streaming.kinesis-client-library',
+      'kinesis-streaming.msk-kafka-connect',
+      'kinesis-streaming.kinesis-record-size-limit',
+      'kinesis-streaming.kinesis-partition-key-hot-shard',
+      'kinesis-streaming.kinesis-capacity-mode',
+      'kinesis-streaming.firehose-buffering',
+    ])
+  })
+
+  it('웨어하우스·검색·시각화 주제가 서비스 넷 다음에 갈림길과 적재 경로를 둔다', () => {
+    const topic = topics.find(
+      (candidate) => candidate.id === 'redshift-opensearch-quicksight',
+    )
+
+    // 1단 Redshift·Spectrum·OpenSearch·QuickSight가 각각 무엇인가
+    // → 2단 트랜잭션과 분석, 임시 쿼리와 반복되는 고성능 쿼리, 핫·콜드 분리, 내장 예측
+    // → 3단 동시성 확장·COPY 병렬 적재·운영 테이블의 과거 데이터를 흘려보내는 자리.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'redshift-opensearch-quicksight.redshift',
+      'redshift-opensearch-quicksight.redshift-spectrum',
+      'redshift-opensearch-quicksight.opensearch-text-search',
+      'redshift-opensearch-quicksight.quicksight',
+      'redshift-opensearch-quicksight.oltp-vs-olap',
+      'redshift-opensearch-quicksight.athena-vs-redshift-workload',
+      'redshift-opensearch-quicksight.redshift-hot-cold-split',
+      'redshift-opensearch-quicksight.quicksight-ml-forecast',
+      'redshift-opensearch-quicksight.redshift-concurrency-scaling',
+      'redshift-opensearch-quicksight.redshift-copy-from-s3',
+      'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
+    ])
+  })
+
+  it('Kinesis 네 갈래와 MSK가 한 주제 안에서 담당으로 갈린다', () => {
+    // Data Streams ↔ Data Firehose ↔ Flink(옛 Data Analytics) ↔ Video Streams를 한
+    // 주제에 두고, 스트리밍 갈림길인 MSK도 같은 자리에 둔다. 흩으면 "언제 무엇을 쓰는가"를
+    // 비교할 자리가 없어진다(PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const streaming = ownerOf('kinesis-streaming.kinesis-data-streams')
+    expect(streaming).toBe('kinesis-streaming')
+    ;[
+      'kinesis-streaming.data-firehose',
+      'kinesis-streaming.managed-service-apache-flink',
+      'kinesis-streaming.kinesis-video-streams',
+      'kinesis-streaming.msk',
+      'kinesis-streaming.streaming-services-comparison',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(streaming))
+    // 앞의 셋은 담당 단계로 갈리고, 영상 갈래는 이름만 같은 다른 대상을 다룬다.
+    expect(bodyOf('kinesis-streaming.streaming-services-comparison')).toContain('스트림 저장소 역할을 한다')
+    expect(bodyOf('kinesis-streaming.kinesis-video-streams')).toContain('저장된 미디어 배포는')
+    // Kinesis ↔ MSK의 갈림길은 이미 Kafka를 쓰고 있는가다.
+    expect(bodyOf('kinesis-streaming.msk')).toContain('코드를 크게 바꾸지 않고 그대로 옮길 수 있는')
+    expect(bodyOf('kinesis-streaming.msk-kafka-connect')).toContain('Kafka Connect로')
+  })
+
+  it('Athena와 Redshift와 Spectrum의 갈림길이 한 주제 안에서 읽힌다', () => {
+    // 임시 쿼리 ↔ 반복되는 고성능 쿼리 ↔ S3에 둔 채 조회하기. Athena 자체를 소개하는
+    // 개념은 emr-glue-athena에 있고, 셋을 가르는 갈림길은 웨어하우스 주제에 둔다
+    // (topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const warehouse = ownerOf('redshift-opensearch-quicksight.athena-vs-redshift-workload')
+    expect(warehouse).toBe('redshift-opensearch-quicksight')
+    ;[
+      'redshift-opensearch-quicksight.redshift',
+      'redshift-opensearch-quicksight.redshift-spectrum',
+      'redshift-opensearch-quicksight.redshift-hot-cold-split',
+      'redshift-opensearch-quicksight.oltp-vs-olap',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(warehouse))
+    // 갈리는 축은 쿼리가 어떻게 들어오는가이고, Spectrum은 그 축이 아니라 조회 범위다.
+    expect(bodyOf('redshift-opensearch-quicksight.athena-vs-redshift-workload')).toContain(
+      '쿼리가 어떻게 들어오는가',
+    )
+    expect(bodyOf('redshift-opensearch-quicksight.redshift-spectrum')).toContain(
+      '조회 대상을 S3까지 넓히는 것',
+    )
+    expect(bodyOf('redshift-opensearch-quicksight.redshift-hot-cold-split')).toContain(
+      'Spectrum으로 필요할 때만 읽으면',
+    )
+    // 두 주제는 배열에서 이웃해 있어 Athena 소개와 이 갈림길이 이어 읽힌다.
+    const indexOf = (topicId: string) => topics.findIndex(({ id }) => id === topicId)
+    expect(indexOf('redshift-opensearch-quicksight') - indexOf('emr-glue-athena')).toBe(2)
+  })
+
+  it('EMR과 Glue의 갈림길이 두 서비스와 한 주제 안에 있다', () => {
+    // 변환 작업을 클러스터에서 돌리느냐 관리형 ETL에 맡기느냐. 둘을 가르면 운영 부담이라는
+    // 축을 배울 자리가 없어진다(topic-plan "담는 서비스", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('emr-glue-athena.glue-etl-with-per-customer-kms-key')
+    expect(fork).toBe('emr-glue-athena')
+    expect(ownerOf('emr-glue-athena.emr')).toBe(fork)
+    expect(ownerOf('emr-glue-athena.glue')).toBe(fork)
+    expect(bodyOf('emr-glue-athena.glue-etl-with-per-customer-kms-key')).toContain(
+      '클러스터를 띄우고 유지하는 일이 없고',
+    )
+    expect(bodyOf('emr-glue-athena.glue-etl-with-per-customer-kms-key')).toContain(
+      '고객 수만큼 운영하는 부담이 그대로 남는다',
+    )
+  })
+
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
     const storageClassQuestions = questions.filter(
       (question) => question.topicId === 's3-storage-classes',
@@ -2595,7 +2794,6 @@ describe('학습 데이터 무결성', () => {
     // 백서 카테고리가 이 앱의 주제 배치와 갈리는 자리다(service-categories.md
     // "주제 배치와 어긋나는 자리").
     ['sqs-sns-eventbridge.ses', 'SES는', 'business'],
-    ['messaging-backup.msk', 'MSK는', 'analytics'],
     // phase 26 step 13이 AWS Backup 계열과 재해 복구 계열을 자기 주제로 빼냈다. 신규
     // 9개념 중 DRS만 서비스를 소개하는 자리이고, Backup Audit Manager는 이미 표에 있는
     // AWS Backup의 기능이며 나머지는 백업 계획의 설정·갈림길과 DR 전략이라 카테고리
@@ -2619,15 +2817,25 @@ describe('학습 데이터 무결성', () => {
     // 함께 적는다. storage-gateway-migration.dms-sct와 같은 방식이다.
     ['hybrid-connectivity.region-attached-edge-options', 'Local Zones·Outposts·Wavelength는', 'compute'],
     ['route53.route53', 'Route53은', 'networking'],
-    ['analytics-monitoring.emr', 'EMR은', 'analytics'],
-    ['analytics-monitoring.redshift', 'RedShift는', 'analytics'],
-    ['analytics-monitoring.athena', 'Athena는', 'analytics'],
+    // phase 26 step 15가 analytics-monitoring의 분석·스트리밍 계열을 세 주제로 갈랐다.
+    // 신규 36개념 중 Lake Formation·Kinesis Video Streams·QuickSight 셋만 서비스를
+    // 소개하는 자리이고, 나머지는 EMR·Glue·Athena·Kinesis·Redshift의 기능·설정·한계·
+    // 갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    // Glue DataBrew는 그 파일의 "카테고리 없음"에 있어 붙일 근거가 없다.
+    ['emr-glue-athena.emr', 'EMR은', 'analytics'],
+    ['emr-glue-athena.glue', 'Glue는', 'analytics'],
+    ['emr-glue-athena.athena', 'Athena는', 'analytics'],
+    ['emr-glue-athena.lake-formation', 'Lake Formation은', 'analytics'],
+    ['kinesis-streaming.kinesis-data-streams', 'Kinesis Data Streams는', 'analytics'],
+    ['kinesis-streaming.data-firehose', 'Data Firehose는', 'analytics'],
+    ['kinesis-streaming.managed-service-apache-flink', 'Managed Service for Apache Flink는', 'analytics'],
+    ['kinesis-streaming.kinesis-video-streams', 'Kinesis Video Streams는', 'analytics'],
+    ['kinesis-streaming.msk', 'MSK는', 'analytics'],
+    ['redshift-opensearch-quicksight.redshift', 'RedShift는', 'analytics'],
+    ['redshift-opensearch-quicksight.quicksight', 'QuickSight는', 'analytics'],
     ['analytics-monitoring.cloudwatch', 'CloudWatch는', 'management'],
-    ['analytics-monitoring.glue', 'Glue는', 'analytics'],
     ['analytics-monitoring.x-ray', 'X-Ray는', 'devTools'],
-    ['analytics-monitoring.data-firehose', 'Data Firehose는', 'analytics'],
-    ['analytics-monitoring.kinesis-data-streams', 'Kinesis Data Streams는', 'analytics'],
-    ['analytics-monitoring.managed-service-apache-flink', 'Managed Service for Apache Flink는', 'analytics'],
     ['secrets-encryption.secrets-manager', 'Secrets Manager는', 'security'],
     ['secrets-encryption.parameter-store', 'Parameter Store는', 'management'],
     ['secrets-encryption.kms', 'KMS는', 'security'],
@@ -2654,12 +2862,12 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
   ]
 
-  it('서비스 개념 86개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 89개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(86)
+    expect(serviceCategories).toHaveLength(89)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -2673,7 +2881,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 86개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 89개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
