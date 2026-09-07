@@ -62,6 +62,9 @@ describe('학습 데이터 무결성', () => {
       'iam-permissions',
       'identity-federation',
       'organizations-cloudtrail-config',
+      // step 19가 cost-management에 dump-gaps의 신규 8개념을 더하며 3단으로 정렬해,
+      // 이 넷도 더 이상 배열 끝이 아니다.
+      'cost-management',
     ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
@@ -270,7 +273,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 36개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 38개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -348,7 +351,14 @@ describe('학습 데이터 무결성', () => {
       { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
       { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
       { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
-      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      // phase 26 step 19가 cost-management 뒤에 관리·거버넌스 계열 둘을 신설했다.
+      // CloudFormation ↔ Service Catalog ↔ Control Tower는 거버넌스 갈림길이라,
+      // Systems Manager의 기능들은 한 서비스의 하위 기능이라 각각 한 주제에 둔다
+      // (topic-plan "범위를 벗어난 주제"). 근거가 dump-gaps에만 있어
+      // concepts-raw.md 페이지가 없다.
+      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
+      { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
     ])
   })
 
@@ -738,7 +748,8 @@ describe('학습 데이터 무결성', () => {
     // analytics-monitoring을 쪼갠 세 주제가 더해져 아홉이 됐다.
     // step 17이 identity-access를 셋으로 갈라 열하나가 됐고,
     // step 18이 threat-protection을 둘로 갈라 열둘이 됐다.
-    expect(topics.slice(24, 36).map(({ id, title, importance, sourcePages }) => ({
+    // step 19가 governance-iac·systems-manager를 배열 끝에 신설해 열넷이 됐다.
+    expect(topics.slice(24, 38).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -755,7 +766,9 @@ describe('학습 데이터 무결성', () => {
       { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
       { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
       { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
-      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Billing and Cost Management·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
+      { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
+      { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
     ])
   })
 
@@ -766,13 +779,16 @@ describe('학습 데이터 무결성', () => {
     // 세우고, route53의 5에 신규 8을 더해 13으로 늘렸다.
     // 마지막 셋 18·11·15는 step 17이 identity-access의 12개념을 셋으로 나눠(4·5·3)
     // dump-gaps의 신규 32(IAM 14 · 페더레이션 6 · 조직·감사 12)를 더한 값이다.
-    // organizations-cloudtrail-config의 계획값은 16이고, 남는 하나는 step 19가
-    // (주제 미정)의 config-rule-remediation을 옮겨 오며 채운다.
+    // organizations-cloudtrail-config의 16은 step 19가 (주제 미정)의
+    // config-rule-remediation을 3단 끝으로 옮겨 와 채운 값이다.
+    // cost-management의 17은 원본 9에 step 19가 신규 8을 더한 값이고,
+    // 마지막 6·7은 같은 step이 (주제 미정)에서 거버넌스·IaC 6개와 Systems Manager
+    // 7개를 가져와 세운 두 주제다.
     // step 18이 secrets-encryption의 9에 신규 11을 더해 20으로 늘리고,
     // threat-protection의 11개념을 둘로 나눠(7·4) 신규 15(WAF·Shield 8 · 탐지 7)를
     // 더해 15·11로 세웠다.
-    expect(topics.slice(24, 36).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 15, 9,
+    expect(topics.slice(24, 38).map((topic) => topic.concepts.length)).toEqual([
+      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 16, 17, 6, 7,
     ])
   })
 
@@ -2298,7 +2314,8 @@ describe('학습 데이터 무결성', () => {
     // → 2단 정책을 어디에 붙이는가, 태그 정책과 SCP가 하는 일의 차이, 계정을 나누는
     //   또 하나의 이유, CloudTrail과 Config가 각각 무엇을 기록하는가
     // → 3단 SCP를 붙일 자리와 예외를 두는 방법, 로그를 믿을 수 있게 하는 설정,
-    //   준수 팩과 사용자 지정 규칙.
+    //   준수 팩과 사용자 지정 규칙, 규칙에 자동 수정을 붙이는 방법.
+    // 마지막 하나는 step 19가 (주제 미정)에서 옮겨 왔다(topic-plan "step 경계를 넘는 개념").
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'organizations-cloudtrail-config.organizations-scp',
       'organizations-cloudtrail-config.cloudtrail',
@@ -2315,6 +2332,7 @@ describe('학습 데이터 무결성', () => {
       'organizations-cloudtrail-config.cloudtrail-log-file-validation',
       'organizations-cloudtrail-config.config-conformance-pack',
       'organizations-cloudtrail-config.config-custom-rule',
+      'organizations-cloudtrail-config.config-rule-remediation',
     ])
   })
 
@@ -2668,6 +2686,186 @@ describe('학습 데이터 무결성', () => {
       expect(ownerOf(conceptId)).toBe(detection)
       expect(bodyOf(conceptId)).toContain('EventBridge')
     })
+  })
+
+  it('비용 관리 주제가 도구 여덟 다음에 약정의 크기와 설정 항목을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'cost-management')
+
+    // 1단 비용 도구들이 각각 무엇인가
+    // → 2단 무엇을 얼마만큼 약정하는가, 용량 예약은 왜 할인이 아닌가
+    // → 3단 태그를 어디서 활성화하는가, 예산에 걸 수 있는 조치와 알림 기준,
+    //   권장 대상에 무엇이 들어가는가.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'cost-management.savings-plan',
+      'cost-management.aws-budgets',
+      'cost-management.cost-explorer',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.cost-and-usage-report',
+      'cost-management.billing-and-cost-management',
+      'cost-management.trusted-advisor',
+      'cost-management.compute-optimizer',
+      'cost-management.savings-plan-details',
+      'cost-management.savings-plan-baseline-vs-spike',
+      'cost-management.rds-reserved-instance',
+      'cost-management.on-demand-capacity-reservation',
+      'cost-management.cost-allocation-tag-activation',
+      'cost-management.cost-allocation-tag-activation-in-management-account',
+      'cost-management.budget-actions',
+      'cost-management.budget-forecasted-alert',
+      'cost-management.compute-optimizer-ebs-recommendations',
+    ])
+  })
+
+  it('거버넌스·IaC 주제가 서비스 넷 다음에 제어의 시점과 감지 범위를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'governance-iac')
+
+    // 1단 CloudFormation·Service Catalog·Control Tower·RAM이 각각 무엇인가
+    // → 2단 제어가 배포 시점에 막는가 만들어진 뒤에 찾는가
+    // → 3단 드리프트 감지가 보는 범위.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'governance-iac.cloudformation',
+      'governance-iac.service-catalog',
+      'governance-iac.control-tower-landing-zone',
+      'governance-iac.resource-access-manager',
+      'governance-iac.control-tower-controls',
+      'governance-iac.cloudformation-drift-detection',
+    ])
+  })
+
+  it('Systems Manager 주제가 기능 둘 다음에 접속하는 두 길과 등록 조건을 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'systems-manager')
+
+    // 1단 명령을 보내는 기능과 구성을 배포하는 서비스가 각각 무엇인가
+    // → 2단 배스천 없이 붙는 두 길, 패치를 어디서 도는가
+    // → 3단 관리형 인스턴스를 만드는 정책, 인벤토리가 모으는 것.
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'systems-manager.ssm-run-command',
+      'systems-manager.appconfig',
+      'systems-manager.ssm-session-manager',
+      'systems-manager.ec2-instance-connect-endpoint',
+      'systems-manager.ssm-patch-manager',
+      'systems-manager.ssm-managed-instance-core-policy',
+      'systems-manager.ssm-inventory',
+    ])
+  })
+
+  it('Cost Explorer와 Budgets와 Cost Anomaly Detection이 한 주제 안에서 갈린다', () => {
+    // 셋 다 비용을 다루지만 재는 것이 다르다. 가르면 "지난 비용을 보는가, 임계값을
+    // 감시하는가, 평소와 다른 지출을 알아채는가"를 비교할 자리가 없어진다
+    // (step19 "헷갈리는 짝", PRD "사용자").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const cost = ownerOf('cost-management.cost-explorer')
+    expect(cost).toBe('cost-management')
+    ;[
+      'cost-management.aws-budgets',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.budget-actions',
+      'cost-management.budget-forecasted-alert',
+      'cost-management.cost-and-usage-report',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(cost))
+    // 임계값 기반 요구는 Budgets이고 이상 탐지는 목적이 다르다.
+    expect(bodyOf('cost-management.cost-anomaly-detection')).toContain(
+      '"예산의 60%에 도달하면 알림"처럼 임계값 기반 요구에는 AWS Budgets가 맞다',
+    )
+    // 알리는 데서 그치지 않고 막는 것은 예산 조치뿐이다.
+    expect(bodyOf('cost-management.budget-actions')).toContain('셋 다 알려 줄 뿐 막지 않는다')
+    // 알림 기준이 실제값과 예측값 둘이다.
+    expect(bodyOf('cost-management.budget-forecasted-alert')).toContain(
+      '이번 기간의 예상 지출이 임계값을 넘을 것으로 계산되는 시점',
+    )
+    // 콘솔 화면으로 안 되는 집계는 원본 청구 데이터를 내보내는 쪽이 받는다.
+    expect(bodyOf('cost-management.cost-and-usage-report')).toContain(
+      '상세한 항목별 청구 데이터를 S3 버킷으로 내보낸다',
+    )
+  })
+
+  it('CloudFormation과 Service Catalog와 Control Tower가 한 주제 안에서 갈린다', () => {
+    // 거버넌스 갈림길이다. 셋을 가르면 "인프라를 만드는가, 승인된 제품을 고르게
+    // 하는가, 계정 환경을 세우는가"를 비교할 자리가 없어진다
+    // (topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const governance = ownerOf('governance-iac.cloudformation')
+    expect(governance).toBe('governance-iac')
+    ;[
+      'governance-iac.service-catalog',
+      'governance-iac.control-tower-landing-zone',
+      'governance-iac.control-tower-controls',
+      'governance-iac.cloudformation-drift-detection',
+      'governance-iac.resource-access-manager',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(governance))
+    // 셋이 각각 무엇을 맡는가.
+    expect(bodyOf('governance-iac.cloudformation')).toContain(
+      '인프라 구성을 파일로 적어 두고 그대로 배포하며',
+    )
+    expect(bodyOf('governance-iac.service-catalog')).toContain(
+      '조직이 허용한 구성들을 제품으로 등록해 두고',
+    )
+    expect(bodyOf('governance-iac.control-tower-landing-zone')).toContain(
+      '기준 환경(랜딩 존)을 자동으로 구성한다',
+    )
+    // 제어는 언제 작동하는지로 갈리고, 드리프트 감지는 스택 밖을 보지 못한다.
+    expect(bodyOf('governance-iac.control-tower-controls')).toContain(
+      '**사전 예방적 제어**는 배포 시점에 템플릿을 평가해',
+    )
+    expect(bodyOf('governance-iac.cloudformation-drift-detection')).toContain(
+      '계정의 모든 지원 리소스를 대상으로 삼는 쪽은 AWS Config다',
+    )
+  })
+
+  it('Systems Manager의 기능들이 한 주제 안에 함께 있다', () => {
+    // Session Manager·Patch Manager·Run Command·Inventory는 한 서비스의 하위 기능이라
+    // 흩어 놓으면 무엇이 어느 자리를 맡는지 읽히지 않는다
+    // (step19 "헷갈리는 짝", topic-plan "범위를 벗어난 주제").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const ssm = ownerOf('systems-manager.ssm-run-command')
+    expect(ssm).toBe('systems-manager')
+    ;[
+      'systems-manager.ssm-session-manager',
+      'systems-manager.ssm-patch-manager',
+      'systems-manager.ssm-inventory',
+      'systems-manager.ssm-managed-instance-core-policy',
+      'systems-manager.ec2-instance-connect-endpoint',
+      'systems-manager.appconfig',
+    ].forEach((conceptId) => expect(ownerOf(conceptId)).toBe(ssm))
+    // 배스천 없이 붙는 두 길은 SSH를 쓰는지로 갈린다.
+    expect(bodyOf('systems-manager.ssm-session-manager')).toContain(
+      'SSH 프로토콜을 쓰지 않는다',
+    )
+    expect(bodyOf('systems-manager.ec2-instance-connect-endpoint')).toContain(
+      '**보안 그룹에서 여는 포트는 22가 아니라 443이다.**',
+    )
+    // 패치는 도는 자리가, 인벤토리는 모으는 것이 각각 한계다.
+    expect(bodyOf('systems-manager.ssm-patch-manager')).toContain(
+      '실행 중인 인스턴스를 대상으로 운영체제 패치를 배포한다',
+    )
+    expect(bodyOf('systems-manager.ssm-inventory')).toContain(
+      '아키텍처 다이어그램이나 리소스 사이의 관계 전체를 만들어 내지 않는다',
+    )
+    // 그 기능들이 닿으려면 인스턴스가 관리형이어야 한다.
+    expect(bodyOf('systems-manager.ssm-managed-instance-core-policy')).toContain(
+      '`AmazonSSMManagedInstanceCore`는 AWS 관리형 정책이고',
+    )
   })
 
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
@@ -3491,14 +3689,24 @@ describe('학습 데이터 무결성', () => {
     ['cost-management.trusted-advisor', 'Trusted Advisor는', 'management'],
     ['cost-management.compute-optimizer', 'Compute Optimizer는', 'management'],
     ['cost-management.cost-anomaly-detection', 'Cost Anomaly Detection은', 'finance'],
+    ['cost-management.cost-and-usage-report', 'Cost and Usage Report는', 'finance'],
+    // phase 26 step 19. Control Tower와 Systems Manager는 그 서비스를 소개하는 개념
+    // 하나에만 붙인다(service-categories.md "phase 26에서 들어오는 서비스").
+    ['governance-iac.cloudformation', 'CloudFormation은', 'management'],
+    ['governance-iac.service-catalog', 'Service Catalog는', 'management'],
+    ['governance-iac.control-tower-landing-zone', 'Control Tower는', 'management'],
+    // service-categories.md "주제 배치와 어긋나는 자리" — 주제는 거버넌스 쪽이고
+    // 카테고리는 보안이다.
+    ['governance-iac.resource-access-manager', 'Resource Access Manager는', 'security'],
+    ['systems-manager.ssm-run-command', 'Systems Manager는', 'management'],
   ]
 
-  it('서비스 개념 95개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
+  it('서비스 개념 101개가 AWS 공식 카테고리 한 줄로 시작한다', () => {
     const byConceptId = Object.fromEntries(
       topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
     )
 
-    expect(serviceCategories).toHaveLength(95)
+    expect(serviceCategories).toHaveLength(101)
 
     serviceCategories.forEach(([conceptId, subject, key]) => {
       const concept = byConceptId[conceptId]
@@ -3512,7 +3720,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('카테고리 문장이 그 95개 개념의 본문에만 한 번씩 들어간다', () => {
+  it('카테고리 문장이 그 101개 개념의 본문에만 한 번씩 들어간다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
     const marker = 'AWS 분류로는'
     const holders = concepts.filter((concept) =>
