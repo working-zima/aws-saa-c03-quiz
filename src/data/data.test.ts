@@ -1870,6 +1870,100 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 13 — sqs-sns-eventbridge의 빈 개념 26개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 28개다 — SNS는 큐가 아니다(버퍼가 필요한 자리는 큐다 ↔ 알림 한 통이면 되는
+  // 자리에 큐를 끼우는 것도 같은 어긋남이다), 가시성 타임아웃(중복 처리 증상을 무엇으로
+  // 고치는가 ↔ 전달 지연은 왜 그 증상에 손대지 못하는가).
+  const step13Concepts = [
+    'sqs-sns-eventbridge.amazon-mq',
+    'sqs-sns-eventbridge.dead-letter-queue',
+    'sqs-sns-eventbridge.sns-is-not-a-queue',
+    'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+    'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+    'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
+    'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
+    'sqs-sns-eventbridge.eventbridge-event-bus-types',
+    'sqs-sns-eventbridge.eventbridge-pipes',
+    'sqs-sns-eventbridge.eventbridge-api-destination',
+    'sqs-sns-eventbridge.eventbridge-private-api-target',
+    'sqs-sns-eventbridge.eventbridge-resource-change-rule',
+    'sqs-sns-eventbridge.sns-fifo-topic',
+    'sqs-sns-eventbridge.ses-inbound-email-receiving',
+    'sqs-sns-eventbridge.sqs-batch-and-polling',
+    'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+    'sqs-sns-eventbridge.sqs-message-size-limit',
+    'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+    'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+    'sqs-sns-eventbridge.sqs-content-based-deduplication',
+    'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+    'sqs-sns-eventbridge.sqs-queue-policy',
+    'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+    'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+    'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
+    'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+  ]
+
+  it('메시징 문제 28개가 담당 개념 26개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(548, 576)
+
+    expect(addedQuestions).toHaveLength(28)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 28 }, (_, index) => `q${index + 549}`),
+    )
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(
+      Array(28).fill('sqs-sns-eventbridge'),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step13Concepts].sort(),
+    )
+  })
+
+  it('메시징 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(548, 576).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('메시징 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(548, 576)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('SQS·SNS·EventBridge 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const topic = topics.find(({ id }) => id === 'sqs-sns-eventbridge')
+    const uncovered = (topic?.concepts ?? [])
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
