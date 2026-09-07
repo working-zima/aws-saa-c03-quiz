@@ -2444,6 +2444,96 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 19 — 거버넌스·비용 두 주제의 빈 개념 21개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 셋만 두 방향으로 물어
+  // 문항이 24개다 — 태그 정책(표기를 통일하는 일 ↔ 막는 일은 SCP라 둘을 함께 붙인다),
+  // SCP를 붙일 수 있는 자리(넷 중 셋만 제한하는 방법 ↔ 루트에 붙여 전부 걸린 증상의 진단),
+  // 온디맨드 용량 예약(할인 수단이 아니라는 성격 ↔ 중단을 견디는 배치는 스팟이 가장 싸다).
+  const step19Concepts = [
+    'organizations-cloudtrail-config.cloudtrail-lake',
+    'organizations-cloudtrail-config.audit-manager',
+    'organizations-cloudtrail-config.organizational-unit',
+    'organizations-cloudtrail-config.organizations-tag-policy',
+    'organizations-cloudtrail-config.organizations-consolidated-billing',
+    'organizations-cloudtrail-config.cloudtrail-data-events',
+    'organizations-cloudtrail-config.config-configuration-recorder',
+    'organizations-cloudtrail-config.scp-attachment-targets',
+    'organizations-cloudtrail-config.scp-condition-exception',
+    'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+    'organizations-cloudtrail-config.config-conformance-pack',
+    'organizations-cloudtrail-config.config-custom-rule',
+    'organizations-cloudtrail-config.config-rule-remediation',
+    'cost-management.cost-and-usage-report',
+    'cost-management.savings-plan-baseline-vs-spike',
+    'cost-management.rds-reserved-instance',
+    'cost-management.on-demand-capacity-reservation',
+    'cost-management.cost-allocation-tag-activation-in-management-account',
+    'cost-management.budget-actions',
+    'cost-management.budget-forecasted-alert',
+    'cost-management.compute-optimizer-ebs-recommendations',
+  ]
+
+  it('거버넌스·비용 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(708, 732)
+
+    expect(addedQuestions).toHaveLength(24)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 24 }, (_, index) => `q${index + 709}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set(['organizations-cloudtrail-config', 'cost-management']),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step19Concepts].sort(),
+    )
+  })
+
+  it('거버넌스·비용 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(708, 732).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('거버넌스·비용 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(708, 732)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('거버넌스와 비용 관리 두 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) => ['organizations-cloudtrail-config', 'cost-management'].includes(id))
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
