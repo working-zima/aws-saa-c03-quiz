@@ -88,17 +88,19 @@ describe('학습 데이터 무결성', () => {
       // 옮기며 compute-delivery를 없앴다. 개념 본문은 그대로이고 접두사만 새 주제를 따른다.
       'ec2-autoscaling': ['warm-pool', 'scheduled-scaling'],
       'elastic-load-balancing': ['alb-l7-vs-nlb-l4', 'sticky-session-tradeoff'],
+      // step 10이 serverless-containers에서 Lambda 계열을 lambda 주제로 빼내고,
+      // 엣지에서 도는 lambda-at-edge는 CloudFront 쪽으로 보냈다
+      // (topic-plan "step 경계를 넘는 개념").
       'cloudfront-global-accelerator': [
         'global-accelerator-protocols',
         'cloudfront-ttl',
         'edge-keyword',
+        'lambda-at-edge',
       ],
+      lambda: ['lambda-function-url', 'lambda-vpc-access'],
       'serverless-containers': [
         'eks',
         'fargate-no-time-limit',
-        'lambda-function-url',
-        'lambda-at-edge',
-        'lambda-vpc-access',
         'api-gateway-jwt-authorizer',
         'aws-batch',
       ],
@@ -113,14 +115,15 @@ describe('학습 데이터 무결성', () => {
       ],
     }
 
-    // phase 26 step 8·9가 아래 세 주제의 개념을 3단(기본 → 갈림길 → 한계)으로 정렬해,
-    // 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
+    // phase 26 step 8·9·10이 아래 네 주제의 개념을 3단(기본 → 갈림길 → 한계)으로
+    // 정렬해, 이 개념들은 더 이상 배열 끝이 아니다. 각 주제의 전체 순서는 아래
     // 「EC2·Auto Scaling 주제가 ...」·「로드 밸런서 주제가 ...」·「CloudFront·Global
-    // Accelerator 주제가 ...」가 개념 id 전부로 못박는다.
+    // Accelerator 주제가 ...」·「Lambda 주제가 ...」가 개념 id 전부로 못박는다.
     const reordered = new Set([
       'ec2-autoscaling',
       'elastic-load-balancing',
       'cloudfront-global-accelerator',
+      'lambda',
     ])
 
     Object.entries(expectedSlugs).forEach(([topicId, slugs]) => {
@@ -208,7 +211,7 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('보충 개념 추가 후에도 27개 주제의 메타데이터가 그대로다', () => {
+  it('보충 개념 추가 후에도 28개 주제의 메타데이터가 그대로다', () => {
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -242,6 +245,9 @@ describe('학습 데이터 무결성', () => {
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
+      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠다.
+      // 남은 껍데기(ECS·EKS·Batch·Step Functions·API Gateway)는 step 11이 비운다.
+      { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
@@ -409,9 +415,11 @@ describe('학습 데이터 무결성', () => {
       'cloudfront-global-accelerator.edge-keyword',
       'serverless-containers.eks',
       'serverless-containers.fargate-no-time-limit',
-      'serverless-containers.lambda-function-url',
-      'serverless-containers.lambda-at-edge',
-      'serverless-containers.lambda-vpc-access',
+      // phase 26 step 10이 Lambda 계열 셋을 옮겼다. 함수 URL과 VPC 연결은 lambda로,
+      // 엣지에서 도는 Lambda@Edge는 CloudFront 쪽으로 간다.
+      'lambda.lambda-function-url',
+      'cloudfront-global-accelerator.lambda-at-edge',
+      'lambda.lambda-vpc-access',
       'serverless-containers.api-gateway-jwt-authorizer',
       'serverless-containers.aws-batch',
       'messaging-backup.msk',
@@ -431,7 +439,13 @@ describe('학습 데이터 무결성', () => {
       ...Array(2).fill('ec2-autoscaling'),
       ...Array(2).fill('elastic-load-balancing'),
       ...Array(3).fill('cloudfront-global-accelerator'),
-      ...Array(7).fill('serverless-containers'),
+      // step 10이 Lambda 계열을 옮기면서 이 구간이 세 주제로 갈라졌다. 문항의
+      // id 순서는 그대로이고 topicId만 자기 conceptId를 담은 주제를 따른다.
+      ...Array(2).fill('serverless-containers'),
+      'lambda',
+      'cloudfront-global-accelerator',
+      'lambda',
+      ...Array(2).fill('serverless-containers'),
       ...Array(7).fill('messaging-backup'),
     ])
     expect(addedQuestions.map(({ conceptId }) => conceptId).sort()).toEqual(
@@ -597,7 +611,7 @@ describe('학습 데이터 무결성', () => {
   // data-transfer-services가 storage-gateway-migration을 내놓으며 또 한 칸 더 내려갔고,
   // aurora-dynamodb-cache가 셋으로 갈리면서 두 칸이 더 내려갔다.
   it('보안·운영 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(20, 27).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(21, 28).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -614,13 +628,13 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보안·운영 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
-    expect(topics.slice(20, 27).map((topic) => topic.concepts.length)).toEqual([
+    expect(topics.slice(21, 28).map((topic) => topic.concepts.length)).toEqual([
       5, 14, 5, 9, 11, 12, 9,
     ])
   })
 
   it('네트워크 데이터 주제가 지정된 순서와 메타데이터로 추가된다', () => {
-    expect(topics.slice(9, 20).map(({ id, title, importance, sourcePages }) => ({
+    expect(topics.slice(9, 21).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
@@ -633,6 +647,8 @@ describe('학습 데이터 무결성', () => {
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
+      // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠다.
+      { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
       { id: 'serverless-containers', title: 'ECS·Lambda·Step Functions·API Gateway', importance: 3, sourcePages: [25, 26] },
       { id: 'messaging-backup', title: 'SQS·SNS·EventBridge·AWS Backup', importance: 3, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
@@ -643,11 +659,13 @@ describe('학습 데이터 무결성', () => {
   it('네트워크 데이터 주제는 원본 항목 수만큼 개념을 가진다', () => {
     // 첫 값 21은 원본 7에 phase 26 step 6이 dump-gaps에서 옮긴 신규 14를 더한 것이고,
     // 이어지는 18·18·14는 step 7이 원본 8개념을 셋으로 갈라 신규 42를 더한 결과다.
-    // 17·16·21은 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
-    // 빼내 신규 27을 더하고, step 9가 남은 5개념을 옮겨 신규 16을 더한 결과다.
-    // 나머지 넷은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
-    expect(topics.slice(9, 20).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 17, 16, 21, 11, 11, 12, 10,
+    // 17·16은 step 8이 compute-delivery의 11개념 중 EC2·ASG 쪽 3개와 ELB 쪽 3개를
+    // 빼내 신규 27을 더한 결과이고, 24는 step 9가 남은 5개념을 옮겨 신규 16을 더한 데에
+    // step 10이 엣지 함수 셋(기존 lambda-at-edge + 신규 2)을 보태 나온 값이다.
+    // 18·7은 step 10이 serverless-containers의 11개념에서 Lambda 계열 4개를 빼내
+    // 신규 15를 더한 결과다. 나머지 셋은 아직 자기 step을 기다리고 있어 원본 수 그대로다.
+    expect(topics.slice(9, 21).map((topic) => topic.concepts.length)).toEqual([
+      21, 18, 18, 14, 17, 16, 24, 18, 7, 11, 12, 10,
     ])
   })
 
@@ -1102,10 +1120,11 @@ describe('학습 데이터 무결성', () => {
   it('CloudFront·Global Accelerator 주제가 두 서비스와 오리진 다음에 갈림길과 한계를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cloudfront-global-accelerator')
 
-    // 1단 CloudFront와 그 오리진, Global Accelerator와 그 진입점, 'Edge'의 뜻
-    // → 2단 캐싱할 사본이 있느냐·비용·DNS 캐시·접근 통제 장치 넷의 갈림길
-    // → 3단 가격 등급, 무효화와 TTL, 오리진 접근 제한, 엣지 함수의 한계.
-    // step 10이 lambda-at-edge·cloudfront-functions를 이 주제로 옮겨 온다.
+    // 1단 CloudFront와 그 오리진, Global Accelerator와 그 진입점, 'Edge'의 뜻,
+    // 엣지에서 도는 함수 둘 → 2단 캐싱할 사본이 있느냐·비용·DNS 캐시·접근 통제
+    // 장치 넷·엣지 함수로 할 수 있는 일의 갈림길 → 3단 가격 등급, 무효화와 TTL,
+    // 오리진 접근 제한, 엣지 함수의 한계.
+    // step 10이 lambda-at-edge·cloudfront-functions·응답 압축 셋을 옮겨 왔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cloudfront-global-accelerator.cloudfront',
       'cloudfront-global-accelerator.cloudfront-alb-origin',
@@ -1115,6 +1134,8 @@ describe('학습 데이터 무결성', () => {
       'cloudfront-global-accelerator.global-accelerator-static-ip',
       'cloudfront-global-accelerator.global-accelerator-endpoints',
       'cloudfront-global-accelerator.edge-keyword',
+      'cloudfront-global-accelerator.lambda-at-edge',
+      'cloudfront-global-accelerator.cloudfront-functions',
       'cloudfront-global-accelerator.global-accelerator-protocols',
       'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
       'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
@@ -1123,6 +1144,7 @@ describe('학습 데이터 무결성', () => {
       'cloudfront-global-accelerator.cloudfront-geo-restriction',
       'cloudfront-global-accelerator.cloudfront-field-level-encryption',
       'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+      'cloudfront-global-accelerator.lambda-at-edge-response-compression',
       'cloudfront-global-accelerator.cloudfront-price-class',
       'cloudfront-global-accelerator.cloudfront-ttl',
       'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
@@ -1208,6 +1230,82 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('ec2-autoscaling.scheduled-scaling')).toContain('대상 추적')
     expect(bodyOf('ec2-autoscaling.target-tracking-vs-simple-scaling')).toContain('단순 조정')
     expect(bodyOf('ec2-autoscaling.predictive-scaling')).toContain('예약된 조정과 대상 추적')
+  })
+
+  it('Lambda 주제가 함수를 만드는 이야기 다음에 갈림길과 한계를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'lambda')
+
+    // 1단 Lambda가 무엇이고 어떻게 부르고 어디에 붙이고 어떻게 배포하는가
+    // → 2단 호출 방식, 크기를 정하는 값, 동시성 세 갈래
+    // → 3단 콜드 스타트를 줄이는 다른 길, 메모리·레이어 상한, 굳는 설정, 실행 역할.
+    // Lambda가 무엇인지 모르는 사람에게 lambda-layer-size-limit은 아무것도 주지 않는다
+    // (topic-plan "주제 안의 개념 순서").
+    expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+      'lambda.lambda',
+      'lambda.lambda-function-url',
+      'lambda.lambda-function-url-iam-auth',
+      'lambda.lambda-vpc-access',
+      'lambda.lambda-container-image',
+      'lambda.lambda-invocation-types',
+      'lambda.lambda-memory-cpu-proportional',
+      'lambda.lambda-reserved-concurrency',
+      'lambda.lambda-provisioned-concurrency-autoscaling',
+      'lambda.lambda-concurrency-limit-throttling',
+      'lambda.lambda-kinesis-event-source',
+      'lambda.lambda-snapstart',
+      'lambda.lambda-memory-ceiling',
+      'lambda.lambda-layer-size-limit',
+      'lambda.lambda-efs-mount',
+      'lambda.lambda-version-alias-config-freeze',
+      'lambda.lambda-execution-role-logs',
+      'lambda.serverless-runtime-no-os-access',
+    ])
+  })
+
+  it('동시성 세 갈래가 한 주제 안에서 서로 무엇으로 갈리는지 읽힌다', () => {
+    // 예약된 동시성 ↔ 프로비저닝된 동시성 ↔ 계정의 동시 실행 한도. 이름이 닮아
+    // 보기 줄에 나란히 오르므로 떼어 놓으면 무엇이 무엇의 대안인지 알 수 없게 된다
+    // (PRD "사용자", topic-plan "헷갈리는 짝 배치").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const fork = ownerOf('lambda.lambda-reserved-concurrency')
+    expect(fork).toBe('lambda')
+    expect(ownerOf('lambda.lambda-provisioned-concurrency-autoscaling')).toBe(fork)
+    expect(ownerOf('lambda.lambda-concurrency-limit-throttling')).toBe(fork)
+    // 콜드 스타트를 줄이는 쪽과 용량만 떼어 두는 쪽이 갈리고, 한도는 넘칠 때 무슨 일이
+    // 벌어지는지를 맡는다. 콜드 스타트를 소개하는 것은 기존 lambda 개념의 문단이다.
+    expect(bodyOf('lambda.lambda')).toContain('콜드 스타트')
+    expect(bodyOf('lambda.lambda-reserved-concurrency')).toContain('콜드 스타트는 그대로 남는다')
+    expect(bodyOf('lambda.lambda-provisioned-concurrency-autoscaling')).toContain('수요를 따라 오르내린다')
+    expect(bodyOf('lambda.lambda-concurrency-limit-throttling')).toContain('확장을 묶는 쪽으로 작용한다')
+  })
+
+  it('엣지에서 코드를 돌리는 두 갈래가 CloudFront 주제 안에 함께 있다', () => {
+    // Lambda@Edge ↔ CloudFront Functions. step 10이 serverless-containers에 있던
+    // lambda-at-edge를 CloudFront 쪽으로 옮겨 온 이유가 이 갈림길이다
+    // (topic-plan "헷갈리는 짝 배치", "step 경계를 넘는 개념").
+    const ownerOf = (conceptId: string) =>
+      topics.find((topic) => topic.concepts.some(({ id }) => id === conceptId))?.id
+    const bodyOf = (conceptId: string) =>
+      topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+        ?.paragraphs.join(' ') ?? ''
+
+    const edge = ownerOf('cloudfront-global-accelerator.lambda-at-edge')
+    expect(edge).toBe('cloudfront-global-accelerator')
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront-functions')).toBe(edge)
+    expect(ownerOf('cloudfront-global-accelerator.cloudfront-functions-no-external-calls')).toBe(edge)
+    expect(ownerOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toBe(edge)
+    // 둘을 가르는 축은 실행 모델이고, 각자 할 수 있는 일이 그 뒤에 이어진다.
+    expect(bodyOf('cloudfront-global-accelerator.cloudfront-functions')).toContain('프로그래밍 모델과 배포 방식이 서로 다르다')
+    expect(bodyOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toContain('전달 직전에 응답을 압축한다')
   })
 
   it('S3 스토리지 클래스 문제 9개가 클래스별 개념과 일대일로 이어진다', () => {
@@ -1606,7 +1704,7 @@ describe('학습 데이터 무결성', () => {
 
   it('개념 본문이 Lambda가 하는 일과 비용 할당 태그가 무엇인지 알려준다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
-    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const lambda = concepts.find(({ id }) => id === 'lambda.lambda')
     const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
 
     expect(lambda?.paragraphs[0]).toContain('S3에 올라온 이미지를 리사이징하거나')
@@ -1617,7 +1715,7 @@ describe('학습 데이터 무결성', () => {
 
   it('개념 본문 보강이 요약과 문단 개수를 바꾸지 않는다', () => {
     const concepts = topics.flatMap((topic) => topic.concepts)
-    const lambda = concepts.find(({ id }) => id === 'serverless-containers.lambda')
+    const lambda = concepts.find(({ id }) => id === 'lambda.lambda')
     const tag = concepts.find(({ id }) => id === 'cost-management.cost-allocation-tag-activation')
 
     // ADR-010이 정한 편집 범위 — summary와 개념 구조는 건드리지 않는다.
@@ -1919,8 +2017,11 @@ describe('학습 데이터 무결성', () => {
     ['elastic-load-balancing.elb', 'ELB는', 'networking'],
     ['cloudfront-global-accelerator.cloudfront', 'CloudFront는', 'networking'],
     ['cloudfront-global-accelerator.global-accelerator', 'Global Accelerator는', 'networking'],
+    // phase 26 step 10이 Lambda를 자기 주제로 빼냈다. 신규 15개념은 전부 Lambda의
+    // 기능·설정·한계·갈림길이라 카테고리 한 줄을 붙이지 않는다
+    // (docs/source/service-categories.md "카테고리 문장을 붙이지 않는 개념").
+    ['lambda.lambda', 'Lambda는', 'compute'],
     ['serverless-containers.ecs', 'ECS는', 'containers'],
-    ['serverless-containers.lambda', 'Lambda는', 'compute'],
     ['serverless-containers.step-functions', 'Step Functions는', 'appIntegration'],
     ['serverless-containers.api-gateway', 'API Gateway는', 'networking'],
     ['serverless-containers.eks', 'EKS는', 'containers'],
