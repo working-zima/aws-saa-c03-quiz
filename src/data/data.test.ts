@@ -1964,6 +1964,117 @@ describe('학습 데이터 무결성', () => {
     expect(uncovered).toEqual([])
   })
 
+  // phase 27 step 14 — 백업·재해 복구와 네트워킹 네 주제의 빈 개념 30개를 덮는다(ADR-026).
+  // 개념당 한 문항이 기본이고, 축이 양방향으로 갈리는 개념 둘만 두 방향으로 물어
+  // 문항이 32개다 — 상태 저장과 상태 비저장(응답 규칙이 왜 필요한가 ↔ 차단 규칙이
+  // 없다는 성질이 IP 하나 막기를 어디로 보내는가), Direct Connect의 가상 인터페이스
+  // (Transit Gateway로 가는 조합은 무엇인가 ↔ 세 종류의 목적지가 어떻게 갈리는가).
+  const step14Concepts = [
+    'backup-disaster-recovery.elastic-disaster-recovery',
+    'backup-disaster-recovery.backup-and-restore-dr',
+    'backup-disaster-recovery.warm-standby-for-low-rto',
+    'backup-disaster-recovery.backup-ec2-resource-assignment',
+    'backup-disaster-recovery.organizations-backup-policy',
+    'backup-disaster-recovery.backup-cross-account-copy',
+    'backup-disaster-recovery.backup-s3-continuous-backup',
+    'backup-disaster-recovery.backup-restore-testing-plan',
+    'backup-disaster-recovery.backup-audit-manager',
+    'vpc-networking.vpc-flow-logs',
+    'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+    'vpc-networking.privatelink-endpoint-service',
+    'vpc-networking.nat-gateway-per-az',
+    'vpc-networking.internet-gateway-is-not-per-az',
+    'vpc-networking.nat-gateway-count-by-environment',
+    'vpc-networking.nat-gateway-elastic-ip',
+    'vpc-networking.vpc-endpoint-policy',
+    'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+    'security-groups-nacl.nacl-deny-at-source-subnet',
+    'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
+    'security-groups-nacl.nlb-security-group',
+    'hybrid-connectivity.virtual-private-gateway',
+    'hybrid-connectivity.region-attached-edge-options',
+    'hybrid-connectivity.per-vpc-vpn-for-isolation',
+    'hybrid-connectivity.transit-gateway-cross-region-peering',
+    'hybrid-connectivity.onprem-access-via-interface-endpoint',
+    'hybrid-connectivity.outposts-data-residency',
+    'hybrid-connectivity.direct-connect-resiliency',
+    'hybrid-connectivity.direct-connect-vif-types',
+    'hybrid-connectivity.centralized-onprem-egress',
+  ]
+
+  it('백업·네트워킹 문제 32개가 담당 개념 30개를 빠짐없이 덮는다', () => {
+    const addedQuestions = questions.slice(576, 608)
+
+    expect(addedQuestions).toHaveLength(32)
+    expect(addedQuestions.map(({ id }) => id)).toEqual(
+      Array.from({ length: 32 }, (_, index) => `q${index + 577}`),
+    )
+    expect(new Set(addedQuestions.map(({ topicId }) => topicId))).toEqual(
+      new Set([
+        'backup-disaster-recovery',
+        'vpc-networking',
+        'security-groups-nacl',
+        'hybrid-connectivity',
+      ]),
+    )
+    expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
+      [...step14Concepts].sort(),
+    )
+  })
+
+  it('백업·네트워킹 문제의 topicId가 conceptId의 주제와 같다', () => {
+    const topicOfConcept = new Map(
+      topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, topic.id])),
+    )
+
+    questions.slice(576, 608).forEach((question) => {
+      expect(topicOfConcept.get(question.conceptId)).toBe(question.topicId)
+    })
+  })
+
+  it('백업·네트워킹 문제의 정답 위치와 문구가 출제 규칙을 따른다', () => {
+    const addedQuestions = questions.slice(576, 608)
+    const answerCounts = [0, 1, 2, 3].map(
+      (answerIndex) => addedQuestions.filter((question) => question.answerIndex === answerIndex).length,
+    )
+    const learnerFacingText = addedQuestions
+      .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+      .join(' ')
+
+    answerCounts.forEach((count) => {
+      expect(count / addedQuestions.length).toBeGreaterThanOrEqual(0.2)
+      expect(count / addedQuestions.length).toBeLessThanOrEqual(0.3)
+    })
+    addedQuestions.forEach(({ choices, explanation }) => {
+      expect(choices).toHaveLength(4)
+      expect(new Set(choices).size).toBe(4)
+      expect(explanation.length).toBeGreaterThanOrEqual(100)
+    })
+    expect(learnerFacingText).not.toMatch(
+      /원본에서|원본은|문서에서|본문에서|위 글에 따르면|덤프|해설지|\[섹션/,
+    )
+    // ADR-011 — 문항과 보기는 열 때마다 섞이므로 순서를 가리키는 표현이 성립하지 않는다.
+    expect(learnerFacingText).not.toMatch(/위의|다음 중|번 보기/)
+  })
+
+  it('백업·재해 복구와 네트워킹 세 주제의 모든 개념이 문항을 갖는다', () => {
+    const covered = new Set(questions.map(({ conceptId }) => conceptId))
+    const uncovered = topics
+      .filter(({ id }) =>
+        [
+          'backup-disaster-recovery',
+          'vpc-networking',
+          'security-groups-nacl',
+          'hybrid-connectivity',
+        ].includes(id),
+      )
+      .flatMap(({ concepts }) => concepts)
+      .filter((concept) => !covered.has(concept.id))
+      .map((concept) => concept.id)
+
+    expect(uncovered).toEqual([])
+  })
+
   // slice의 시작 위치는 phase 26이 주제를 넣고 뺄 때마다 밀린다. 지금은 step 3이
   // s3-access-control을 4번 자리에 넣어 뒤쪽 주제가 한 칸씩 내려갔고,
   // block-file-storage가 ebs-instance-store·efs-fsx 둘로 갈리면서 한 칸 더,
