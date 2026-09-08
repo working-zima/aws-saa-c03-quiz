@@ -138,6 +138,21 @@
       "dir": "27-question-coverage",
       "status": "completed",
       "completed_at": "2026-09-08T05:24:43+0900"
+    },
+    {
+      "dir": "28-explanation-rewrite",
+      "status": "completed",
+      "completed_at": "2026-09-08T11:40:56+0900"
+    },
+    {
+      "dir": "29-content-quality-pilot",
+      "status": "completed",
+      "completed_at": "2026-09-08T16:28:41+0900"
+    },
+    {
+      "dir": "30-prompt-korean-polish",
+      "status": "completed",
+      "completed_at": "2026-09-09T04:48:14+0900"
     }
   ]
 }

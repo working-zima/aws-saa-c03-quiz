@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "508b72165ae051f38b9f57952b78175ea8c8bfb41f9227f200d69ea3c0241773",
+ "questionsSha256":"3834f3103a2260d68532c2def05948d49b2a5915d5bbaa06fd9c20ed2ca12099",
  "topics": [
   {
    "id": "aws-core-services",
@@ -243,7 +243,7 @@
     },
     {
      "id": "s3-encryption-batch.s3-inventory-report",
-     "name": "버킷의 객체 목록을 파일로 받아 둔다"
+     "name": "S3 인벤토리"
     },
     {
      "id": "s3-encryption-batch.s3-object-lambda",
@@ -263,7 +263,7 @@
     },
     {
      "id": "s3-encryption-batch.s3-batch-operations-lambda-invoke",
-     "name": "배치 작업이 객체마다 Lambda를 부른다"
+     "name": "S3 Batch Operations의 Lambda 호출"
     },
     {
      "id": "s3-encryption-batch.sse-kms-cost",
@@ -271,11 +271,11 @@
     },
     {
      "id": "s3-encryption-batch.sse-c-no-rotation-or-audit",
-     "name": "SSE-C에는 자동 교체도 감사 추적도 없다"
+     "name": "SSE-C의 자동 교체와 감사 추적 한계"
     },
     {
      "id": "s3-encryption-batch.s3-secure-transport-condition",
-     "name": "전송 중 암호화는 버킷 정책 조건으로 강제한다"
+     "name": "버킷 정책의 전송 구간 암호화 강제"
     }
    ]
   },
@@ -2297,7 +2297,7 @@
     },
     {
      "id": "secrets-encryption.parameter-store",
-     "name": "System Manager Parameter Store"
+     "name": "Systems Manager Parameter Store"
     },
     {
      "id": "secrets-encryption.kms",
@@ -2313,7 +2313,7 @@
     },
     {
      "id": "secrets-encryption.secrets-manager-vs-parameter-store",
-     "name": "Secrets Manager vs System Manager Parameter Store"
+     "name": "Secrets Manager vs Systems Manager Parameter Store"
     },
     {
      "id": "secrets-encryption.rotation-heuristic",
