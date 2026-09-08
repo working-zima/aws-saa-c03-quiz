@@ -5430,8 +5430,10 @@ describe('학습 데이터 무결성', () => {
     const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
 
     // 리드인을 붙이면 개념 summary가 곧 정답이 되는 문항들이다. 바뀌면 정답이 노출된 것이다.
-    expect(prompts.q053).toBe('Storage Gateway의 주된 목적은?')
-    expect(prompts.q057).toBe('Storage Gateway 자체의 스토리지 기능에 대한 설명으로 맞는 것은?')
+    // phase 30 step 5가 앞의 둘을 온전한 물음으로 닫았다 — 리드인은 여전히 붙이지 않고
+    // 서술어만 `무엇인가`로 맞췄으므로 이 단언이 지키려는 「상황 문장 없이」는 그대로다.
+    expect(prompts.q053).toBe('Storage Gateway의 주된 목적은 무엇인가?')
+    expect(prompts.q057).toBe('Storage Gateway 자체의 스토리지 기능을 옳게 설명한 것은 무엇인가?')
     expect(prompts.q144).toBe('Secrets Manager와 Parameter Store의 공통 기능은?')
     expect(prompts.q160).toBe('만료 기간이 있는 Access Key나 Token 형태의 임시 권한을 발급하는 서비스는?')
   })
