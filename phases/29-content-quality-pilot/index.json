@@ -1,0 +1,12 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "29-content-quality-pilot",
+  "steps": [
+    { "step": 0, "name": "adr-028-basic-vocabulary", "status": "pending" },
+    { "step": 1, "name": "concept-titles-noun-phrase", "status": "pending" },
+    { "step": 2, "name": "concept-body-lead-in", "status": "pending" },
+    { "step": 3, "name": "question-prompt-leak", "status": "pending" },
+    { "step": 4, "name": "question-scope-and-wording", "status": "pending" },
+    { "step": 5, "name": "content-audit-and-adr-029", "status": "pending" }
+  ]
+}

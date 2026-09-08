@@ -143,6 +143,10 @@
       "dir": "28-explanation-rewrite",
       "status": "completed",
       "completed_at": "2026-09-08T11:40:56+0900"
+    },
+    {
+      "dir": "29-content-quality-pilot",
+      "status": "pending"
     }
   ]
 }
