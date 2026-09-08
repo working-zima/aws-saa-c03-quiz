@@ -24,9 +24,10 @@
 | `q001`~`q246` | 246 | 126자 | 58자 | 309자 |
 | `q247`~`q732` (phase 27) | 486 | 356자 | **187자** | 599자 |
 
-앞 구간 246개 **전부**가 뒤 구간의 최소값 아래에 있다. 확인 문제만 푸는 학습자에게 해설은 그
-개념에 대해 읽는 유일한 설명 텍스트인데(ADR-026), 지금은 문항 세 개 중 하나가 "정답은 A다"
-수준으로 끝난다. 이 phase가 246개를 전부 다시 쓴다.
+앞 구간 246개 중 **229개**가 뒤 구간의 최소값 아래에 있다. 확인 문제만 푸는 학습자에게 해설은
+그 개념에 대해 읽는 유일한 설명 텍스트인데(ADR-026), 지금은 문항 세 개 중 하나가 "정답은 A다"
+수준으로 끝난다. **이 phase는 246개를 전부 다시 쓴다** — 하한을 이미 넘는 17개도 대상이다.
+하한을 넘는 것과 ADR-026이 요구하는 "그 개념을 가르치는 글"인 것은 다른 이야기다.
 
 **근거 문제가 하나 있다.** 이 구간이 가리키는 개념 175개 중 다수는 0-mvp 때 만든 기본 개념이고,
 그 사실의 근거는 `docs/source/concepts-raw.md`에만 있다. 그 파일은 gitignore로 로컬에만 두는
@@ -116,10 +117,10 @@ node scripts/explanation-audit.mjs <주제id> [<주제id> ...]  # 그 주제만,
 
 ### 3. 동작을 확인한다
 
-지금 데이터에서는 246문항 **전부**가 미달이어야 한다. 그것이 이 phase의 출발점이다.
+지금 데이터에서는 246문항 중 **229개**가 미달이어야 한다. 그것이 이 phase의 출발점이다.
 
 ```bash
-node scripts/explanation-audit.mjs                    # 전체 표, exit 0, 미달 246
+node scripts/explanation-audit.mjs                    # 전체 표, exit 0, 미달 229
 node scripts/explanation-audit.mjs cost-management     # 미달 목록 + exit 1
 node scripts/explanation-audit.mjs no-such-topic       # 없는 주제라고 알리고 exit 1
 ```
@@ -157,8 +158,8 @@ node scripts/check-structure.mjs                  # exit 0 — 이 step은 문�
 ## 검증 절차
 
 1. 위 AC 커맨드를 실행한다.
-2. `node scripts/explanation-audit.mjs`의 전체 미달 개수가 **246**인지 확인한다.
-   246이 아니면 대상 구간(`q001`~`q246`)을 잘못 잡은 것이다.
+2. `node scripts/explanation-audit.mjs`의 전체 문항 수가 **246**, 미달이 **229**인지 확인한다.
+   문항 수가 246이 아니면 대상 구간(`q001`~`q246`)을 잘못 잡은 것이다.
 3. 아키텍처 체크리스트를 확인한다:
    - ARCHITECTURE.md 디렉토리 구조를 따르는가?
    - ADR 기술 스택을 벗어나지 않았는가?

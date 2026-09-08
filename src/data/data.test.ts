@@ -4938,6 +4938,24 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // ADR-027. 하한 187자는 phase 27이 ADR-026의 규칙대로 쓴 해설 486개(q247~q732)의
+  // 실측 최소값이다. 임의로 고른 값이 아니다. 정답이 왜 맞는지와 오답 셋이 왜 아닌지를
+  // 함께 담으면 자연히 넘게 되는 선이므로, 길이는 목표가 아니라 통과 조건이다.
+  // 넘기려고 같은 말을 늘려 쓰면 단언을 통과해도 ADR-026·ADR-027을 어긴 것이고,
+  // 반대로 이 값을 낮춰서 통과시키면 근거가 실측에서 임의값으로 바뀐다.
+  const explanationMinLength = 187
+
+  it('모든 문제의 해설이 그 개념을 가르칠 만큼의 길이를 갖는다', () => {
+    // 구간을 나누지 않고 문제 은행 732문항 전체에 건다. phase 28이 q001~q246을 다시 써서
+    // 앞 구간도 하한을 넘었으므로, 구간을 나누면 다음 사람이 "옛 구간은 예외"라고 읽는다.
+    // 예외 목록을 만들어 통과시키지 마라 — 그 목록이 생기는 순간 사각지대가 되살아난다.
+    const tooShort = questions
+      .filter((question) => question.explanation.length < explanationMinLength)
+      .map((question) => `${question.id}(${question.explanation.length}자)`)
+
+    expect(tooShort).toEqual([])
+  })
+
   it('정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다', () => {
     const glacierAnswered = questions.filter((question) =>
       question.choices[question.answerIndex].includes('Glacier'),
@@ -5453,10 +5471,10 @@ describe('학습 데이터 무결성', () => {
     const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
 
     expect(byId.q130.explanation).toBe(
-      'NACL(Network Access Control List)은 서브넷에 대해 트래픽을 허용하거나 거부한다. 보안 그룹은 AWS 리소스의 트래픽을 제어한다.',
+      'NACL(Network Access Control List)은 서브넷 경계에 붙어 그 서브넷을 지나는 트래픽을 허용하거나 거부한다. 기본 상태에서는 인바운드와 아웃바운드가 모두 허용이고 필요에 따라 허용 규칙과 차단 규칙을 함께 넣을 수 있어서, 서브넷 단위로 여닫는다는 조건이 이것을 가리킨다. 보안 그룹은 통제하는 자리가 서브넷이 아니라 개별 리소스이고 허용 규칙만 추가할 수 있어 거부를 표현하지 못한다. WAF(Web Application Firewall)는 웹 요청의 내용을 살펴 애플리케이션 계층 공격을 막는 장치라 서브넷을 다루지 않는다. 인터넷 게이트웨이는 VPC(Virtual Private Cloud)와 외부 인터넷 사이에 통신 경로를 마련하는 것이지, 규칙으로 트래픽을 걸러 내는 기능이 아니다.',
     )
     expect(byId.q080.explanation).toBe(
-      'NLB(Network Load Balancer)는 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 처리하며 빠른 응답 속도를 제공한다. ALB(Application Load Balancer)는 HTTP(HyperText Transfer Protocol)와 HTTPS에 사용하고 GLB(Gateway Load Balancer)는 보안 장비용이다.',
+      'NLB(Network Load Balancer)는 4계층, 곧 전송 계층에서 동작하는 로드 밸런서라 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 다루며 매우 빠른 응답 속도를 준다. TCP는 보낸 데이터가 빠짐없이 도착했는지 확인하고 빠진 것은 다시 보내며, UDP는 그 확인을 생략해 더 빠른 대신 일부가 유실될 수 있다. 두 규약을 다 받아야 한다는 조건이 이 로드 밸런서를 가리킨다. ALB(Application Load Balancer)는 7계층에서 HTTP(HyperText Transfer Protocol)와 HTTPS 웹 요청을 다루는 장치라 TCP·UDP를 지원하지 않는다. GLB(Gateway Load Balancer)는 방화벽 같은 보안 장비에 트래픽을 넘기는 용도다. CloudFront는 로드 밸런서가 아니라 콘텐츠를 엣지에 캐싱해 내주는 서비스다.',
     )
   })
 

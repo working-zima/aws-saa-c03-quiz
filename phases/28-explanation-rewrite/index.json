@@ -2,19 +2,119 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "28-explanation-rewrite",
   "steps": [
-    { "step": 0, "name": "adr-and-audit", "status": "pending" },
-    { "step": 1, "name": "rewrite-core-storage-classes", "status": "pending" },
-    { "step": 2, "name": "rewrite-s3-lifecycle-encryption", "status": "pending" },
-    { "step": 3, "name": "rewrite-block-file-transfer", "status": "pending" },
-    { "step": 4, "name": "rewrite-rds-aurora-dynamodb", "status": "pending" },
-    { "step": 5, "name": "rewrite-cache-compute-edge", "status": "pending" },
-    { "step": 6, "name": "rewrite-serverless-containers", "status": "pending" },
-    { "step": 7, "name": "rewrite-messaging-analytics", "status": "pending" },
-    { "step": 8, "name": "rewrite-vpc-route53", "status": "pending" },
-    { "step": 9, "name": "rewrite-hybrid-threat-detection", "status": "pending" },
-    { "step": 10, "name": "rewrite-network-acl-waf", "status": "pending" },
-    { "step": 11, "name": "rewrite-secrets-iam", "status": "pending" },
-    { "step": 12, "name": "rewrite-federation-cost", "status": "pending" },
-    { "step": 13, "name": "invariant-and-baseline", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "adr-and-audit",
+      "status": "completed",
+      "started_at": "2026-09-08T09:02:25+0900",
+      "summary": "ADR-027 추가(해설 재작성의 근거를 개념 본문·오답이 가리키는 이웃 개념 본문·exam-gaps 항목 셋으로 한정 — 출처를 넓히지 않고 되짚을 자리만 지정) + scripts/explanation-audit.mjs 신설: `node scripts/explanation-audit.mjs [topicId…]` — 인자 없으면 q001~q246의 주제별 표(문항 수·평균·최소·187자 미달·참고 지표 「오답 언급」)를 내고 항상 exit 0, 주제 id를 주면 그 주제의 문항별 길이를 찍고 미달이 있으면 exit 1(없는 주제 id도 exit 1). 현재 미달 229개(q001~q246 246개 중, 평균 126자). step 문서는 246개 전부 미달로 적었으나 실측은 229개다 — 17문항(q005 191·q021 192·q034 309 등)이 이미 하한을 넘는다. step 문서 자신의 표에 최대 309자가 적혀 있어 246은 서술 오류이고, 그 17개도 재작성 대상에서 빠지지 않는다.",
+      "completed_at": "2026-09-08T09:07:43+0900"
+    },
+    {
+      "step": 1,
+      "name": "rewrite-core-storage-classes",
+      "status": "completed",
+      "started_at": "2026-09-08T09:18:09+0900",
+      "summary": "aws-core-services 16개(q001~q015·q170)와 s3-storage-classes 9개(q016~q024), 합 25개의 explanation을 재작성했다. 평균 123자 → 400자(최소 325 q014, 최대 505 q024)로 전부 187자 하한을 넘었고, `node scripts/explanation-audit.mjs aws-core-services s3-storage-classes`가 exit 0이다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 주제의 개념 본문과 q170의 exam-gaps `exam-heuristics` 항목뿐이다. explanation 외의 필드와 topics.json은 건드리지 않았다(diff 25줄, 문항당 1줄). 오답 언급 60/61 — q170의 `ECS + EFS + Aurora` 보기만 서비스 이름을 쓰지 않고 구성의 모양(실행 환경·저장소·데이터베이스를 각각 띄운다)으로 지웠다. 그 셋의 사실은 담당 주제 밖이라 ADR-027의 세 근거에 없기 때문이다. check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 개념 본문에서 발견한 문제 1건(고치지 않았다): `s3-storage-classes.retrieval-time`의 summary가 `일곱 개 클래스`라고 하는데 이 주제의 스토리지 클래스는 phase 26이 `s3-express-one-zone`을 들여와 여덟이다. 본문의 즉시/대기 목록에도 그 클래스가 없어 수가 낡았다.",
+      "completed_at": "2026-09-08T09:28:43+0900"
+    },
+    {
+      "step": 2,
+      "name": "rewrite-s3-lifecycle-encryption",
+      "status": "completed",
+      "started_at": "2026-09-08T09:29:34+0900",
+      "summary": "s3-versioning-lifecycle 11개(q025~q033·q171·q172)와 s3-encryption-batch 8개(q034~q039·q173·q174), 합 19개의 explanation을 재작성했다. 평균 109자 → 400자(최소 341 q026, 최대 525 q034)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs s3-versioning-lifecycle s3-encryption-batch`가 exit 0, 오답 언급 38/38이다(나머지는 한국어 서술형 보기라 판정 대상에서 빠졌다). 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 두 주제의 개념 본문과 q171·q172·q173·q174의 exam-gaps 항목(object-lock-prerequisites·event-notification·envelope-encryption·sse-kms-cost)뿐이다. explanation 외의 필드와 topics.json은 건드리지 않았다(diff 19줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). npm run build·npm test(453개) 통과. check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 담당 주제 밖 사실을 다룬 자리 둘: q034의 오답 CloudHSM·ACM은 두 주제 어디에도 개념이 없어 기존 해설에 이미 있던 설명을 그대로 살렸고(빼면 학습자가 그 두 보기를 지울 근거를 잃는다), q027의 오답 S3 Intelligent-Tiering은 s3-storage-classes 주제의 개념이라 사양을 쓰지 않고 «객체를 어느 저장 유형에 둘 것인가에 붙은 이름»이라는 성격만으로 지웠다. 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T09:38:26+0900"
+    },
+    {
+      "step": 3,
+      "name": "rewrite-block-file-transfer",
+      "status": "completed",
+      "started_at": "2026-09-08T09:38:56+0900",
+      "summary": "ebs-instance-store 5개(q040·q041·q044·q175·q176), efs-fsx 8개(q042·q043·q045~q048·q177·q178), data-transfer-services 3개(q049~q051), storage-gateway-migration 6개(q052~q057), 합 22개의 explanation을 재작성했다. 평균 144자 → 462자(최소 417 q053, 최대 537 q043)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs ebs-instance-store efs-fsx data-transfer-services storage-gateway-migration`가 exit 0, 오답 언급 51/52다(빠진 하나는 q043의 「최대 12시간」 보기로, 그 수치는 담당 주제 밖 사실이라 쓰지 않고 즉시 액세스가 되지 않는 아카이브 계열의 성질이라는 근거로 지웠다 — 나머지는 한국어 서술형 보기라 판정 대상에서 빠졌다). 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 네 주제의 개념 본문과 q175·q176·q177·q178의 exam-gaps 항목(cluster-placement-group·ebs-elastic-volumes·efs-lifecycle-management·fsx-ontap-multi-az)뿐이다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(diff 22줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). npm run build·npm test(453개)·npm run lint 통과. check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 주제 밖 개념 본문을 쓴 자리 셋: q175의 오답 「EFS 수명 주기 관리」·「FSx for NetApp ONTAP」과 q176의 「EFS IA」는 efs-fsx 주제, q176의 「S3 Batch Operations」와 q177의 「S3 수명 주기 정책」·「S3 이벤트 알림」은 s3 계열 주제의 개념이다. ADR-027 2번은 「같은 주제의 이웃 개념」으로 적혀 있지만 이 문항들의 오답이 주제 밖을 가리키므로, 지어내는 대신 그 개념들의 topics.json 본문에 있는 성격만 한 줄로 썼다(step 2가 q171에 쓴 표현과 같게 맞췄다). 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T09:49:26+0900"
+    },
+    {
+      "step": 4,
+      "name": "rewrite-rds-aurora-dynamodb",
+      "status": "completed",
+      "started_at": "2026-09-08T09:49:57+0900",
+      "summary": "rds-storage-features 12개(q058~q065·q179~q182), aurora 5개(q066~q068·q183·q184), dynamodb 4개(q069~q071·q186), 합 21개의 explanation을 재작성했다. 평균 117자 → 403자(최소 346 q181, 최대 461 q059)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs rds-storage-features aurora dynamodb`가 exit 0, 오답 언급 55/55다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 세 주제의 개념 본문과 q179~q184·q186의 exam-gaps 항목(storage-type-names·multi-az-standby-limits·automated-backup-retention·connection-issue-heuristic·aurora-serverless-v2·aurora-reader-endpoint·dynamodb-pitr)뿐이다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(diff 21줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). npm run build·npm test(453개)·npm run lint 통과. check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 주제 밖 개념 본문을 쓴 자리 셋: q059의 오답 「EFS IA」·「인스턴스 스토어」와 q179의 「EBS·EFS」가 efs-fsx·ebs-instance-store 주제의 개념이다. ADR-027 2번은 「같은 주제의 이웃 개념」으로 적혀 있지만 이 오답들이 주제 밖을 가리키므로, 지어내는 대신 그 개념들의 topics.json 본문에 있는 성격만 한 줄로 썼다(step 3이 쓴 방식과 같게 맞췄다). 「S3」(q058)와 「파일 저장 서비스」(q066)도 같은 방식이되 근거는 담당 주제 안에 있다 — dynamodb.dynamodb-item-size-limit이 파일 자체는 S3에 두고 DynamoDB에는 메타데이터만 남긴다고 말한다. 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T09:58:52+0900"
+    },
+    {
+      "step": 5,
+      "name": "rewrite-cache-compute-edge",
+      "status": "completed",
+      "started_at": "2026-09-08T10:01:46+0900",
+      "summary": "elasticache-purpose-built-db 4개(q072·q073·q185·q187), ec2-autoscaling 6개(q074~q077·q188·q189), elastic-load-balancing 6개(q078~q081·q190·q191), cloudfront-global-accelerator 5개(q082·q192~q194·q198), 합 21개의 explanation을 재작성했다. 평균 136자 → 450자(최소 354 q077, 최대 553 q192)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs elasticache-purpose-built-db ec2-autoscaling elastic-load-balancing cloudfront-global-accelerator`가 exit 0, 오답 언급 42/43이다(빠진 하나는 q073으로, 보기 넷이 전부 한국어 서술형이고 영문 토큰이 「DB」뿐인데 해설에서 「데이터베이스」로 풀어 썼기 때문이다 — 오답 셋은 모두 해설에서 지목해 지웠다). 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 네 주제의 개념 본문과 q185·q187~q194·q198의 exam-gaps 항목(documentdb·dax-dynamodb-only·warm-pool·scheduled-scaling·alb-l7-vs-nlb-l4· sticky-session-tradeoff·global-accelerator-protocols·cloudfront-ttl·edge-keyword·lambda-at-edge)뿐이다. npm run build·npm test(453개)·npm run lint 통과. step 문서의 「해설 텍스트를 고정하는 단정은 없다」는 서술이 틀렸다 — src/data/data.test.ts의 「풀이가 그 약어의 첫 등장 자리에 붙는다」 테스트가 q080과 q130의 explanation을 문자열 그대로 고정하고 있다(ADR-015 phase가 남긴 fixture). q080은 이 step의 재작성 대상이라 둘을 함께 지킬 수 없어 그 fixture 문자열만 새 해설로 갱신했다. 테스트가 실제로 주장하는 것(약어 풀이가 그 약어의 첫 등장 자리에 붙는가)은 새 해설에서도 그대로 성립하고, q130 fixture와 나머지 단언은 건드리지 않았다. q130을 담당하는 뒤 step이 같은 문제를 만난다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 21줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 주제 밖 개념 본문을 쓴 자리 넷: q072의 오답 「DynamoDB Streams」·「Aurora Global Database」·「RDS Proxy」와 q187의 「RDS Proxy」, q076·q077의 「Fargate」, q198의 「AWS Fargate」가 dynamodb·aurora·rds-storage-features·ecs-eks-fargate 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3·4가 쓴 방식과 같게 맞췄다). 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T10:14:01+0900"
+    },
+    {
+      "step": 6,
+      "name": "rewrite-serverless-containers",
+      "status": "completed",
+      "started_at": "2026-09-08T10:15:25+0900",
+      "summary": "lambda 5개(q085~q087·q197·q199), ecs-eks-fargate 5개(q083·q084·q195·q196·q201), api-gateway-step-functions 5개(q088~q090·q200·q206), backup-disaster-recovery 2개(q098·q208), kinesis-streaming 2개(q128·q202), 합 19개의 explanation을 재작성했다. 평균 138자 → 484자(최소 413 q128, 최대 589 q090)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs lambda ecs-eks-fargate api-gateway-step-functions backup-disaster-recovery kinesis-streaming`가 exit 0, 오답 언급 47/47이다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 다섯 주제의 개념 본문과 q195~q197·q199~q202·q206·q208의 exam-gaps 항목(eks·fargate-no-time-limit·lambda-function-url·lambda-vpc-access·api-gateway-jwt-authorizer·aws-batch·msk·step-functions-features·backup-long-term-retention)뿐이다. npm run build·npm test(453개)·npm run lint 통과. q087은 오답 언급이 0/0인데 보기 넷이 전부 한국어 서술형이라 도구가 셀 영문 토큰이 없기 때문이다 — 오답 셋(간헐적으로 실행되는 작업·요청이 있을 때만 실행되는 작업·코드만 올려 실행하는 작업)은 모두 해설에서 지목해 Lambda가 오히려 잘하는 쪽임을 밝혔다. step 5가 지적한 「해설 텍스트를 문자열로 고정하는 단정」은 이 step에서 걸리지 않았다 — data.test.ts가 고정하는 것은 q080과 q130뿐이고 둘 다 담당 밖이라 테스트를 한 줄도 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 19줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리: q085·q086의 「Sticky Session」·「대상 추적」·「오토 스케일링」·「엣지 최적화」, q084의 「온디맨드 인스턴스」, q089·q090의 「ALB」·「ELB」·「EventBridge」, q128의 「Spark」, q196의 「EC2 예약 인스턴스」·「Lambda@Edge」, q197·q206의 「EventBridge Scheduler」, q199의 「인터넷 게이트웨이」, q202의 「SNS」, q098·q208의 「EBS 스냅샷」·「S3 버전 관리」가 elastic-load-balancing·ec2-autoscaling·api-gateway-step-functions·sqs-sns-eventbridge·emr-glue-athena·cloudfront-global-accelerator·vpc-networking·ebs-instance-store·s3-versioning-lifecycle 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~5가 쓴 방식과 같게 맞췄다). q098·q208의 「RDS 자동 백업 35일」·「DynamoDB PITR 35일」만 수치를 썼는데, 그 수치가 담당 주제 안의 backup-disaster-recovery.backup-long-term-retention 본문에 있는 사실이기 때문이다. 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T10:25:46+0900"
+    },
+    {
+      "step": 7,
+      "name": "rewrite-messaging-analytics",
+      "status": "completed",
+      "started_at": "2026-09-08T10:26:03+0900",
+      "summary": "sqs-sns-eventbridge 12개(q091~q097·q099·q203~q205·q207), cloudwatch-xray 2개(q126·q223), emr-glue-athena 5개(q123~q125·q127·q222), 합 19개의 explanation을 재작성했다. 평균 129자 → 465자(최소 369 q203, 최대 543 q223)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs sqs-sns-eventbridge cloudwatch-xray emr-glue-athena`가 exit 0, 오답 언급 48/49다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 세 주제의 개념 본문과 q203·q204·q205·q207·q222·q223의 exam-gaps 항목(sqs-details·sqs-queue-depth-scaling·eventbridge-scheduler·ses·glue-crawler·log-analysis-options)뿐이다. npm run build·npm test(453개)·npm run lint 통과. 오답 언급이 3/3에 못 미친 둘은 도구가 셀 영문 토큰이 없어서다 — q094는 보기 넷이 전부 한국어 서술형이라 0/0이고(오답 셋 「여러 대상에 동시에 발행한다」·「서비스 동작을 직접 연결한다」·「서비스별 백업을 예약한다」를 모두 해설에서 지목해 지웠다), q099는 유일한 영문 토큰이 「여러 리전에 DB가 생성된다」의 DB인데 해설에서 「데이터베이스」로 풀어 써서 0/1이다(ADR-015가 DB를 풀이 대상에서 뺐으므로 약어를 그대로 쓰지 않았고, 오답 셋은 모두 해설에서 지목했다). step 5가 지적한 「해설 텍스트를 문자열로 고정하는 단정」은 이 step에서도 걸리지 않았다 — data.test.ts가 고정하는 것은 q080과 q130뿐이고 둘 다 담당 밖이라 테스트를 한 줄도 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 19줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리: q091·q094~q097·q099의 「AWS Backup」이 backup-disaster-recovery, q123~q125·q127·q222의 「Redshift」와 q223의 「OpenSearch」가 redshift-opensearch-quicksight, q204의 「CloudFront」가 cloudfront-global-accelerator, q205의 「S3 이벤트 알림」이 s3-versioning-lifecycle, q222·q223의 「Kinesis」가 kinesis-streaming, q205의 「Step Functions」가 api-gateway-step-functions 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~6이 쓴 방식과 같게 맞췄다). q205의 「Step Functions 승인 단계」만 기능을 지목했는데, 사람의 승인이 낀 흐름을 Step Functions가 맡는다는 사실이 담당 주제 안의 sqs-sns-eventbridge.eventbridge-pipes 본문에 있기 때문이다. q099의 「읽기 성능」·「여러 리전의 데이터베이스」는 보기가 서비스 이름이 아니라 효과를 서술한 것이라, 특정 서비스를 지목하지 않고 그 효과를 내는 것이 큐가 아니라는 것만 밝혔다. 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T10:39:12+0900"
+    },
+    {
+      "step": 8,
+      "name": "rewrite-vpc-route53",
+      "status": "completed",
+      "started_at": "2026-09-08T10:39:42+0900",
+      "summary": "vpc-networking 14개(q100~q108·q209~q213)와 route53 8개(q117~q122·q220·q221), 합 22개의 explanation을 재작성했다. 평균 125자 → 444자(최소 357 q221, 최대 509 q212)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs vpc-networking route53`가 exit 0, 오답 언급 41/41이다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 두 주제의 개념 본문과 q209~q213·q220·q221의 exam-gaps 항목(endpoint-pricing·egress-only-igw·nat-instance·vpc-peering-scaling-limit·s3-is-regional·private-hosted-zone·multivalue-answer-details)뿐이다. npm run build·npm test(453개)·npm run lint 통과. 오답 언급이 0/0인 셋(q119·q120·q220)은 보기 넷이 전부 한국어 라우팅 정책 이름이라 도구가 셀 영문 토큰이 없어서이고, 세 문항 모두 오답 셋을 해설에서 이름으로 지목해 지웠다(q119는 단순·다중값 응답·지연시간 기반, q120은 지리적 위치·지리적 근접·가중치 기반, q220은 퍼블릭 호스팅 영역·프라이빗 호스팅 영역·다중값 응답 라우팅). step 5가 지적한 「해설 텍스트를 문자열로 고정하는 단정」은 이 step에서도 걸리지 않았다 — data.test.ts가 고정하는 것은 q080과 q130뿐이고 둘 다 담당 밖이라 테스트를 한 줄도 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 22줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리 넷: q117의 「CloudFront」·「Global Accelerator」가 cloudfront-global-accelerator, q212의 「Transit Gateway」·「Site-to-Site VPN」과 q213의 「Bastion Host」가 hybrid-connectivity, q213의 「보안 그룹」·「서브넷 NACL」이 security-groups-nacl 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~7이 쓴 방식과 같게 맞췄다). 개념 본문에서 발견한 문제 3건(고치지 않았다): ① route53.private-hosted-zone 문단 0의 「Resolver 아웃바운드 엔드포인트의 몹이다」는 「몫이다」의 오타다(exam-gaps 원항목은 「몫이다」). ② route53.multivalue-answer-details 문단 1의 「기억해 둠다」도 「기억해 둔다」의 오타다(같은 자리 원항목 확인). ③ vpc-networking.vpc-endpoint 문단 2는 인터페이스 엔드포인트를 「S3와 DynamoDB를 제외한 AWS 리소스에 연결한다」고 하는데 같은 주제의 endpoint-pricing 문단 0은 「인터페이스 엔드포인트는 S3 접근에도 쓸 수 있으나 시간당 요금이 붙는다」고 해, 한 주제 안에서 두 문장이 어긋나 보인다. 해설에서는 q104·q105를 vpc-endpoint 기준으로, q209를 endpoint-pricing 기준으로 각각 그 개념의 본문을 따라 썼다.",
+      "completed_at": "2026-09-08T10:49:17+0900"
+    },
+    {
+      "step": 9,
+      "name": "rewrite-hybrid-threat-detection",
+      "status": "completed",
+      "started_at": "2026-09-08T10:50:05+0900",
+      "summary": "hybrid-connectivity 14개(q109~q116·q214~q219)와 guardduty-macie-inspector 4개(q150·q151·q235·q236), 합 18개의 explanation을 재작성했다. 평균 138자 → 444자(최소 380 q113, 최대 553 q219)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs hybrid-connectivity guardduty-macie-inspector`가 exit 0, 오답 언급 50/50이다(0이 찍힌 문항 없음). 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 두 주제의 개념 본문과 q214~q219·q235·q236의 exam-gaps 항목(direct-connect-caveats·direct-connect-gateway·client-vpn·access-terms·data-locality-cost·onprem-connectivity-heuristic·guardduty-db-login·security-service-lineup)뿐이다. npm run build·npm test(453개)·npm run lint 통과. step 5가 지적한 「해설 텍스트를 문자열로 고정하는 단정」은 이 step에서도 걸리지 않았다 — data.test.ts가 고정하는 것은 q080과 q130뿐이고 둘 다 담당 밖이라 테스트를 한 줄도 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 18줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리 넷: q115·q217·q219의 「NAT 게이트웨이」와 q215의 「NAT Gateway」, q217·q219의 「인터넷 게이트웨이」가 vpc-networking, q150의 「Shield」·「WAF」와 q151의 「WAF」가 waf-shield, q151의 「CloudFront」가 cloudfront-global-accelerator, q235의 「CloudTrail」이 organizations-cloudtrail-config 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~8이 쓴 방식과 같게 맞췄다). q111·q219의 「PrivateLink」와 q113·q116의 「VPC 피어링」은 vpc-networking 주제에도 개념이 있지만 근거는 담당 주제 안에서 가져왔다 — onprem-connectivity-heuristic 문단 1이 PrivateLink를, transit-gateway-cross-region-peering 문단 1이 피어링의 1:1 확장 한계를 말한다. q114의 오답 셋(「AWS 서비스끼리 동작을 연결한다」·「서로 다른 VPC만 직접 연결한다」·「외부 요청을 백엔드로 전달한다」)과 q218의 오답 셋은 보기가 서비스 이름이 아니라 효과·배치를 서술한 것이라, 특정 서비스를 지목하지 않고 그 효과가 이 두 연결 방식의 일이 아니라는 것만 밝혔다. 개념 본문에서 발견한 문제 1건(고치지 않았다): hybrid-connectivity.direct-connect-caveats 문단 1의 「빠리 연결해야 한다」는 「빨리」의 오타다(exam-gaps 원항목은 「빠르게 연결해야 한다」).",
+      "completed_at": "2026-09-08T11:00:25+0900"
+    },
+    {
+      "step": 10,
+      "name": "rewrite-network-acl-waf",
+      "status": "completed",
+      "started_at": "2026-09-08T11:00:49+0900",
+      "summary": "security-groups-nacl 12개(q129~q137·q224~q226)와 waf-shield 11개(q146~q149·q152~q154·q231~q234), 합 23개의 explanation을 재작성했다. 평균 125자 → 425자(최소 335 q132, 최대 517 q148)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs security-groups-nacl waf-shield`가 exit 0, 오답 언급 50/50이다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 두 주제의 개념 본문과 q224~q226·q231~q234의 exam-gaps 항목(security-group-referencing·nacl-rule-limit·web-acl-vs-nacl·waf-attach-targets·waf-bot-control·waf-rule-types·shield-advanced-drt)뿐이다. npm run build·npm test(453개)·npm run lint 통과. 오답 언급이 0/0으로 찍힌 둘(q133·q134)은 보기 넷이 전부 한국어 상태 서술이라 도구가 셀 영문 토큰이 없어서다 — q133은 오답 셋(특정 트래픽 차단·모든 규칙 우회·서브넷 경로 변경)을, q134는 오답 셋(둘 다 차단·인바운드만 허용·아웃바운드만 허용)을 각각 해설에서 이름으로 지목해 지웠고, q134는 처음 초안이 한 방향만 허용된 두 보기를 뭉쳐 다뤄 각각 지목하도록 다시 썼다. step 문서가 예고한 대로 src/data/data.test.ts의 「풀이가 그 약어의 첫 등장 자리에 붙는다」가 q130 해설을 문자열로 고정하고 있어 그 fixture 한 줄만 새 해설로 갱신했다(diff 1줄) — 테스트가 실제로 주장하는 것(NACL·WAF·VPC 풀이가 각 약어의 첫 등장 자리에 붙는가)이 새 해설에서도 성립함을 확인했고, 같은 it의 q080 fixture와 다른 단언은 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 23줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리 넷: q130·q224의 「인터넷 게이트웨이」가 vpc-networking, q136의 「Route 53」과 q137의 「Route 53 Resolver」·q153의 「가중치 기반 라우팅」이 route53, q146·q148·q149의 「GuardDuty」·「Macie」와 q225·q232·q234의 「GuardDuty」·「Inspector」·「Detective」·q226의 「Inspector」가 guardduty-macie-inspector, q231의 「NLB」와 q154의 「ELB」가 elastic-load-balancing 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~9가 쓴 방식과 같게 맞췄다). q129·q130·q133·q137의 「WAF」와 q147의 「Shield Standard」는 담당 두 주제가 함께 이 step의 범위라 근거가 주제 안에 있다. q131~q135는 보기가 서비스 이름이 아니라 기본값의 모양(모두 허용·모두 차단·한쪽만 허용 등)이라, 그 상태가 규칙을 넣은 뒤에 만들어지는 것이거나 다른 쪽 기능의 기본값임을 밝혀 지웠다. 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T11:13:18+0900"
+    },
+    {
+      "step": 11,
+      "name": "rewrite-secrets-iam",
+      "status": "completed",
+      "started_at": "2026-09-08T11:13:48+0900",
+      "summary": "secrets-encryption 12개(q138~q145·q227~q230)와 iam-permissions 6개(q155~q157·q237~q239), 합 18개의 explanation을 재작성했다. 평균 123자 → 431자(최소 390 q155, 최대 474 q228)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs secrets-encryption iam-permissions`가 exit 0, 오답 언급 48/48이다(0이 찍힌 문항 없음). 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 두 주제의 개념 본문과 q227~q230·q237~q239의 exam-gaps 항목(acm-cloudfront-region·lambda-env-var-kms·cloudhsm·rotation-heuristic·least-privilege·instance-profile·iam-group-users-only)뿐이다. npm run build·npm test(453개)·npm run lint 통과. step 5가 지적한 「해설 텍스트를 문자열로 고정하는 단정」은 이 step에서도 걸리지 않았다 — data.test.ts가 고정하는 것은 q080과 q130뿐이고 둘 다 담당 밖이라 테스트를 한 줄도 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 18줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리 넷: q155~q157의 「Identity Center」·「STS」·「Cognito」·「Permission Set」·「JWT」가 identity-federation, q144·q145의 「CloudTrail」이 organizations-cloudtrail-config, q142의 「비용 태그」가 cost-management, q237의 「다중 AZ」가 aws-core-services 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~10이 쓴 방식과 같게 맞췄다). q143의 「IAM」과 q238의 「STS」는 담당 두 주제가 함께 이 step의 범위라 근거가 주제 안에 있다(iam-permissions.iam·instance-profile). q237의 오답 「직무 분리 원칙」·「책임 공유 모델」은 네 출처 어디에도 개념이 없어 사실을 지어내지 않았다 — 두 이름이 가리키는 축이 일과 책임을 누가 맡는가여서 한 주체에게 줄 권한의 범위를 정하는 기준이 되지 못한다는 것만 밝혀 지웠고, 같은 문항의 「다중 AZ」는 aws-core-services.multi-az 본문의 성격(가용 영역 분산으로 고가용성)으로 지웠다. 개념 본문에서 발견한 문제 1건(고치지 않았다): secrets-encryption.parameter-store의 name이 「System Manager Parameter Store」이고 secrets-manager-vs-parameter-store의 name도 「Secrets Manager vs System Manager Parameter Store」인데, 같은 개념의 문단 본문은 「Systems Manager Parameter Store」로 적는다. 문항 prompt·choices와 exam-gaps 항목도 Systems 쪽이라 name 두 곳만 s가 빠져 있다. name은 ADR-009가 고정한 필드이고 check-structure.mjs의 baseline 대상이라 이 step에서 고치지 않았다.",
+      "completed_at": "2026-09-08T11:24:46+0900"
+    },
+    {
+      "step": 12,
+      "name": "rewrite-federation-cost",
+      "status": "completed",
+      "started_at": "2026-09-08T11:25:06+0900",
+      "summary": "identity-federation 6개(q158~q161·q240·q241), organizations-cloudtrail-config 3개(q162·q163·q242), cost-management 10개(q164~q169·q243~q246), 합 19개의 explanation을 재작성했다. 평균 109자 → 414자(최소 370 q162, 최대 491 q242)로 전부 187자 하한을 넘었고 audit exit 0, 오답 언급 55/55다. 근거는 담당 세 주제의 개념 본문과 q240~q246의 exam-gaps 항목(sts-assume-role·cognito-pools·organizations-scp·cost-allocation-tag-activation·savings-plan-details·cost-anomaly-detection·compute-optimizer)뿐이다. npm run build·npm test(453개)·npm run lint 통과. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(diff 19줄). 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T11:33:17+0900"
+    },
+    {
+      "step": 13,
+      "name": "invariant-and-baseline",
+      "status": "completed",
+      "started_at": "2026-09-08T11:33:50+0900",
+      "completed_at": "2026-09-08T11:40:55+0900",
+      "summary": "q001~q246 해설 246개 재작성 결과를 실측으로 고정했다. 평균 126자→434자, 최소 58자→325자(q014), 최대 589자(q090), 187자 미달 229개→0개(explanation-audit exit 0). src/data/data.test.ts에 새 it 하나를 더해 187자 하한을 구간을 나누지 않고 문제 은행 732문항 전체에 걸었고(전체 평균 382자·최소 187자 q254), 하한의 근거(phase 27 해설 486개의 실측 최소값)를 주석으로 남겼다 — 예외 목록은 만들지 않았고 phase 27 step들의 >=100 단정은 기록으로 그대로 뒀다. 테스트 453개→454개 통과. scripts/topics-baseline.json의 questionsSha256을 57ad72e9…로 갱신해 check-structure.mjs exit 0(conceptLineCount·topics는 손대지 않았다 — topics.json이 안 바뀌었음을 그 검사가 확인한다). coverage.mjs 618/618 exit 0, npm run build·lint 통과. src/data/questions.json은 이 step의 diff에 없다. ADR-027에 「결과 — 실측으로 확인한 것」 절을, phases/NEXT.md에 갱신된 상태(후보 A 삭제, 후보 E 신설, phase 28 소요 실적 12 step·135분·246문항)를, ARCHITECTURE 스크롤 표 아래에 확인 문제 행(0)이 낡았다는 한 문장을 덧붙였다(새 픽셀 값은 넣지 않았다). PRD·UI_GUIDE에는 해설 길이를 언급하는 자리가 없어 고치지 않았다. 다음 phase로 넘긴 개념 본문 문제 5건: s3-storage-classes.retrieval-time의 「일곱 개 클래스」가 여덟이고 즉시/대기 목록에 s3-express-one-zone이 빠졌다, route53.private-hosted-zone의 「몹이다」·route53.multivalue-answer-details의 「기억해 둠다」·hybrid-connectivity.direct-connect-caveats의 「빠리」 오타 셋, secrets-encryption의 name 두 곳에서 「Systems Manager」의 s 누락(name이라 baseline도 함께 고쳐야 한다). 오타가 아닌 사안 하나는 따로 적었다 — vpc-networking.vpc-endpoint 문단 2와 endpoint-pricing 문단 0이 인터페이스 엔드포인트의 S3 접근을 두고 어긋나 보이며, 원본 대조가 필요해 판정하지 않았다."
+    }
+  ],
+  "created_at": "2026-09-08T09:02:25+0900",
+  "completed_at": "2026-09-08T11:40:56+0900"
 }
