@@ -1,0 +1,151 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "30-prompt-korean-polish",
+  "steps": [
+    {
+      "step": 0,
+      "name": "polish-aws-core-services",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "polish-s3-storage-classes",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "polish-s3-encryption-batch",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "polish-ebs-instance-store",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "polish-efs-fsx",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "polish-data-transfer-services",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "polish-rds-storage-features",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "polish-aurora",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "polish-dynamodb",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "polish-elasticache-purpose-built-db",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "polish-ec2-autoscaling",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "polish-elastic-load-balancing",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "polish-cloudfront-global-accelerator",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "polish-lambda",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "polish-ecs-eks-fargate",
+      "status": "pending"
+    },
+    {
+      "step": 15,
+      "name": "polish-api-gateway-step-functions",
+      "status": "pending"
+    },
+    {
+      "step": 16,
+      "name": "polish-sqs-sns-eventbridge",
+      "status": "pending"
+    },
+    {
+      "step": 17,
+      "name": "polish-backup-disaster-recovery",
+      "status": "pending"
+    },
+    {
+      "step": 18,
+      "name": "polish-security-groups-nacl",
+      "status": "pending"
+    },
+    {
+      "step": 19,
+      "name": "polish-hybrid-connectivity",
+      "status": "pending"
+    },
+    {
+      "step": 20,
+      "name": "polish-route53",
+      "status": "pending"
+    },
+    {
+      "step": 21,
+      "name": "polish-emr-glue-athena",
+      "status": "pending"
+    },
+    {
+      "step": 22,
+      "name": "polish-kinesis-streaming",
+      "status": "pending"
+    },
+    {
+      "step": 23,
+      "name": "polish-cloudwatch-xray",
+      "status": "pending"
+    },
+    {
+      "step": 24,
+      "name": "polish-waf-shield",
+      "status": "pending"
+    },
+    {
+      "step": 25,
+      "name": "polish-iam-permissions",
+      "status": "pending"
+    },
+    {
+      "step": 26,
+      "name": "polish-identity-federation",
+      "status": "pending"
+    },
+    {
+      "step": 27,
+      "name": "polish-cost-management",
+      "status": "pending"
+    },
+    {
+      "step": 28,
+      "name": "polish-ai-ml-services",
+      "status": "pending"
+    }
+  ]
+}
