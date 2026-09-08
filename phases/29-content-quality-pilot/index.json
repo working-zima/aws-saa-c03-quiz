@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-09-08T12:38:13+0900",
       "summary": "s3-encryption-batch의 문장형 개념 제목 넷을 명사구로 바꿨다(id·순서·본문·문항은 그대로). 「버킷의 객체 목록을 파일로 받아 둔다」 → 「S3 인벤토리」, 「배치 작업이 객체마다 Lambda를 부른다」 → 「S3 Batch Operations의 Lambda 호출」, 「SSE-C에는 자동 교체도 감사 추적도 없다」 → 「SSE-C의 자동 교체와 감사 추적 한계」, 「전송 중 암호화는 버킷 정책 조건으로 강제한다」 → 「버킷 정책의 전송 구간 암호화 강제」. 제목이 하던 주장은 넷 다 summary에 이미 있어 본문은 손대지 않았다. topics-baseline.json의 name 넷을 함께 갱신했고, data.test.ts가 이 주제 개념 13개의 name이 종결어미(-다)로 끝나지 않는지 단언한다(범위는 이 주제 하나 — 나머지 38개 주제는 다음 phase).",
-      "completed_at": "2026-09-08T12:43:00+0900"
+      "completed_at": "2026-09-08T12:43:29+0900"
     },
     {
       "step": 2,
