@@ -2297,7 +2297,7 @@
     },
     {
      "id": "secrets-encryption.parameter-store",
-     "name": "System Manager Parameter Store"
+     "name": "Systems Manager Parameter Store"
     },
     {
      "id": "secrets-encryption.kms",
@@ -2313,7 +2313,7 @@
     },
     {
      "id": "secrets-encryption.secrets-manager-vs-parameter-store",
-     "name": "Secrets Manager vs System Manager Parameter Store"
+     "name": "Secrets Manager vs Systems Manager Parameter Store"
     },
     {
      "id": "secrets-encryption.rotation-heuristic",
