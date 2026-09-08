@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "rewrite-core-storage-classes",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T09:18:09+0900",
+      "summary": "aws-core-services 16개(q001~q015·q170)와 s3-storage-classes 9개(q016~q024), 합 25개의 explanation을 재작성했다. 평균 123자 → 400자(최소 325 q014, 최대 505 q024)로 전부 187자 하한을 넘었고, `node scripts/explanation-audit.mjs aws-core-services s3-storage-classes`가 exit 0이다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 주제의 개념 본문과 q170의 exam-gaps `exam-heuristics` 항목뿐이다. explanation 외의 필드와 topics.json은 건드리지 않았다(diff 25줄, 문항당 1줄). 오답 언급 60/61 — q170의 `ECS + EFS + Aurora` 보기만 서비스 이름을 쓰지 않고 구성의 모양(실행 환경·저장소·데이터베이스를 각각 띄운다)으로 지웠다. 그 셋의 사실은 담당 주제 밖이라 ADR-027의 세 근거에 없기 때문이다. check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 개념 본문에서 발견한 문제 1건(고치지 않았다): `s3-storage-classes.retrieval-time`의 summary가 `일곱 개 클래스`라고 하는데 이 주제의 스토리지 클래스는 phase 26이 `s3-express-one-zone`을 들여와 여덟이다. 본문의 즉시/대기 목록에도 그 클래스가 없어 수가 낡았다.",
+      "completed_at": "2026-09-08T09:31:00+0900"
     },
     {
       "step": 2,
