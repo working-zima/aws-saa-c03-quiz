@@ -40,7 +40,7 @@
       "status": "completed",
       "started_at": "2026-09-08T09:49:57+0900",
       "summary": "rds-storage-features 12개(q058~q065·q179~q182), aurora 5개(q066~q068·q183·q184), dynamodb 4개(q069~q071·q186), 합 21개의 explanation을 재작성했다. 평균 117자 → 403자(최소 346 q181, 최대 461 q059)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs rds-storage-features aurora dynamodb`가 exit 0, 오답 언급 55/55다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 세 주제의 개념 본문과 q179~q184·q186의 exam-gaps 항목(storage-type-names·multi-az-standby-limits·automated-backup-retention·connection-issue-heuristic·aurora-serverless-v2·aurora-reader-endpoint·dynamodb-pitr)뿐이다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(diff 21줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). npm run build·npm test(453개)·npm run lint 통과. check-structure.mjs는 questionsSha256이 어긋나 실패하는 것이 정상이며 마지막 step이 갱신한다. 주제 밖 개념 본문을 쓴 자리 셋: q059의 오답 「EFS IA」·「인스턴스 스토어」와 q179의 「EBS·EFS」가 efs-fsx·ebs-instance-store 주제의 개념이다. ADR-027 2번은 「같은 주제의 이웃 개념」으로 적혀 있지만 이 오답들이 주제 밖을 가리키므로, 지어내는 대신 그 개념들의 topics.json 본문에 있는 성격만 한 줄로 썼다(step 3이 쓴 방식과 같게 맞췄다). 「S3」(q058)와 「파일 저장 서비스」(q066)도 같은 방식이되 근거는 담당 주제 안에 있다 — dynamodb.dynamodb-item-size-limit이 파일 자체는 S3에 두고 DynamoDB에는 메타데이터만 남긴다고 말한다. 개념 본문에서 발견한 문제는 없다.",
-      "completed_at": "2026-09-08T10:02:00+0900"
+      "completed_at": "2026-09-08T09:58:52+0900"
     },
     {
       "step": 5,
