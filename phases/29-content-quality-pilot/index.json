@@ -7,7 +7,8 @@
       "name": "adr-028-basic-vocabulary",
       "status": "completed",
       "started_at": "2026-09-08T12:32:46+0900",
-      "summary": "ADR-028로 ADR-010의 예외 경계를 넓혀 버킷·객체·접두사 3종의 뜻풀이를 허용하고, aws-core-services.s3 본문에 세 낱말을 도입하는 문단을 더했다(data.test.ts가 존재를 단언)."
+      "summary": "ADR-028로 ADR-010의 예외 경계를 넓혀 버킷·객체·접두사 3종의 뜻풀이를 허용하고, aws-core-services.s3 본문에 세 낱말을 도입하는 문단을 더했다(data.test.ts가 존재를 단언).",
+      "completed_at": "2026-09-08T12:38:13+0900"
     },
     {
       "step": 1,
