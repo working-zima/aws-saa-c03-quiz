@@ -9,6 +9,65 @@ step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
 > **콘텐츠 전반의 방향을 다시 잡는 일**이라고 못박았다. 코드를 고치기 전에 사용자와
 > 논의하는 것이 먼저다.
 
+## 진행 중 — phase 29 (2026-09-08, 세션 중단 지점)
+
+아래 「콘텐츠 품질 재검토」의 기획이 끝나 **phase 29 `29-content-quality-pilot`이
+진행 중이다.** 브랜치는 `feat-29-content-quality-pilot`이고 `develop`은 아직 이 작업을
+담고 있지 않다. **이어받으려면 그 브랜치로 가서 아래를 실행한다.**
+
+```bash
+git checkout feat-29-content-quality-pilot
+python scripts/execute.py 29-content-quality-pilot --max-steps 4   # step 3만 돌린다
+```
+
+`python3`는 이 환경에 없다 — `py` 또는 `python`이 Python 3.13이다.
+
+### 사용자가 이미 답한 결정 넷 — 다시 묻지 마라
+
+1. **범위** — 시범 주제 하나(`s3-encryption-batch`)로 기준을 세우고 검수받은 뒤 넓힌다.
+2. **출처 제한** — ADR-010의 예외를 AWS 고유 기초 용어까지 넓힌다(ADR-028, step 0이 씀).
+3. **`name` 개정** — `name`만 바꾸고 `id`는 유지한다.
+4. **용어가 안 닿는 문제** — 용어집 페이지나 툴팁이 아니라 **주제마다 본문 한 줄을
+   되풀이한다.** ADR-010의 「한 번만」을 「각 주제에서 처음 나오는 자리에서 한 번」으로
+   개정하는 것이 step 3의 일이다.
+
+### 어디까지 됐나
+
+| step | 이름 | 상태 |
+|---|---|---|
+| 0 | `adr-028-basic-vocabulary` | completed |
+| 1 | `concept-titles-noun-phrase` | completed |
+| 2 | `concept-body-lead-in` | completed |
+| 3 | `term-reachability` | **pending ← 다음에 할 것** |
+| 4 | `question-prompt-leak` | pending |
+| 5 | `question-scope-and-wording` | pending |
+| 6 | `content-audit-and-adr-029` | pending |
+
+step 0~2 뒤 `npm test` 456개 통과, `check-structure`·`coverage` exit 0, 문장형 제목
+618개 중 185개 잔여(189−4). 그 밖에 사람 판단으로 커밋 둘을 더 넣었다 —
+`5ef218b`(시범 주제의 「자동 순환」→「자동 교체」 통일)와 `39751f3`(step 3 신설·번호 재정렬).
+
+### step 3이 왜 생겼나 — 가장 중요한 교훈
+
+step 0이 `버킷`·`객체`·`접두사`를 첫 주제 `aws-core-services.s3`에만 넣고 "고쳤다"고
+보고했는데, **사용자가 실제 화면을 열어 `s3-encryption-batch` 주제를 읽자 똑같은 자리에서
+다시 막혔다.** 이 앱의 읽는 단위는 개념이 아니라 **주제 페이지**다. 다른 주제에 정의가
+있다는 것은 지금 이 화면을 읽는 사람에게 도움이 되지 않는다. `CloudTrail`이 같은 모양의
+증거로, `organizations-cloudtrail-config`에서만 정의되는데 다른 8개 주제의 개념 9곳에서
+소개 없이 쓰인다.
+
+**그러므로 검수를 데이터 grep이나 테스트 통과로 갈음하지 마라.** 주제 페이지를 처음 읽는
+사람의 눈으로 통독하고 소개 없이 등장하는 낱말을 직접 세어야 한다. 사용자는 `npm run dev`로
+30초 만에 네 자리를 더 찾아냈다.
+
+### step 3이 끝난 뒤 할 일
+
+사용자에게 다시 검수를 받는다 — `npm run dev` → `#/topic/s3-encryption-batch`.
+**판정 기준은 「이 주제 페이지만 읽고 뜻이 서는가」이고 사용자만 판정할 수 있다.**
+통과하면 `--max-steps 7`로 step 4~6(문항 ③④⑥⑦ + ADR + 검출 스크립트)을 이어 돌린다.
+
+---
+
 ## 콘텐츠 품질 재검토 — 사용자 피드백 (2026-09-08)
 
 사용자가 `S3 암호화(SSE)·Batch Operations·인벤토리` 주제를 읽다가 멈추고 낸 지적이다.
