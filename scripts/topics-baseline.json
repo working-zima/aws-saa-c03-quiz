@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "36db1f95b688d7c85a278e48d0ced6bb8d71e7237349ac85aa605a99fcb6e0df",
+ "questionsSha256": "528343acd5a22b4ee1e9208dcdf8909bf429b08adba94c19a39c8711b5c04712",
  "topics": [
   {
    "id": "aws-core-services",

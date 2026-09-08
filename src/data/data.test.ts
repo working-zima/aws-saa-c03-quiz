@@ -5178,6 +5178,67 @@ describe('학습 데이터 무결성', () => {
     expect(leaked).toEqual([])
   })
 
+  // phase 29 step 5 — 문항 쪽의 관용 표현·범위 결함을 이 주제에서 고정한다.
+  describe('S3 암호화 주제의 문항이 한 개념을 뜻이 통하는 말로 묻는다', () => {
+    const topicQuestions = questions.filter(({ topicId }) => topicId === 's3-encryption-batch')
+
+    // 「돌린다」는 프로그램을 실행한다는 뜻으로 쓰였지만 그 뜻으로 읽히지 않는다.
+    // 문항은 열 때마다 섞이므로(ADR-011) 앞뒤 문맥이 뜻을 보정해 주지 않는다.
+    // 「돌려준다」(반환)는 대상이 아니다 — s3-object-lambda 개념 본문이 쓰는 말이고,
+    // 실행·운영의 비유가 아니라서 phase 29 step 2가 개념 쪽에서도 그대로 두었다.
+    it('실행을 「돌린다」로 쓰지 않는다', () => {
+      const offenders = topicQuestions
+        .filter(({ prompt, choices, explanation }) =>
+          [prompt, ...choices, explanation].some((text) => /돌(릴|린|리는|아가)/.test(text)),
+        )
+        .map(({ id }) => id)
+
+      expect(offenders).toEqual([])
+    })
+
+    // 개념 본문이 「자동 교체」·「인벤토리 보고서」로 통일돼 있다(phase 29 step 2·3).
+    // 같은 동작을 문항이 다른 이름으로 부르면 개념 펼치기와 해설이 어긋나 보인다.
+    it('키 교체와 인벤토리 산출물을 개념 본문과 같은 이름으로 부른다', () => {
+      const text = topicQuestions
+        .flatMap(({ prompt, choices, explanation }) => [prompt, ...choices, explanation])
+        .join(' ')
+
+      expect(text).not.toContain('자동 순환')
+      expect(text).not.toContain('평면 파일')
+    })
+
+    // 목록 얻기를 어렵게 만드는 것은 객체 수이지 접두사 개수가 아니다.
+    // 개념 본문은 step 3이 이미 고쳤고, 같은 오독을 부르던 프롬프트를 여기서 맞춘다.
+    it('인벤토리 문항이 접두사 개수를 어려움의 원인으로 들지 않는다', () => {
+      const question = topicQuestions.find(({ id }) => id === 'q277')
+
+      expect(question?.prompt).toContain('버킷에 객체가 수백만 개 쌓여 있다')
+      expect(question?.prompt).not.toContain('접두사')
+    })
+
+    // ③ — 정답 논리에 쓰이지 않는 요구를 얹으면 무엇을 배우는 문항인지 흐려진다.
+    // 봉투 암호화는 q173(envelope-encryption)이 맡는 축이라 여기서 빼고, SSE-C가
+    // 키 관리를 어디까지 맡길 수 있는가 하나만 묻는다. 그래서 보기 넷이 모두 키 축이다.
+    it('SSE-C 문항이 키 관리 하나만 묻고 보기 넷이 그 축 안에 있다', () => {
+      const question = topicQuestions.find(({ id }) => id === 'q282')
+
+      expect(question?.prompt).not.toContain('봉투 암호화')
+      question?.choices.forEach((choice) => {
+        expect(choice).toContain('키')
+      })
+    })
+
+    // 개념 하나를 묻는 문항이 「두 요구」라고 스스로 말하면 학습자는 둘을 묻는다고 읽는다.
+    // sse-kms-audit-trail은 감사 추적과 업로드 강제를 한 쌍으로 묶은 개념이고, 두 요구
+    // 어느 쪽으로도 같은 보기가 남으므로 프롬프트에서 그 라벨만 뺐다.
+    it('감사 추적 문항이 스스로를 두 요구라 부르지 않는다', () => {
+      const question = topicQuestions.find(({ id }) => id === 'q279')
+
+      expect(question?.prompt).not.toContain('두 요구')
+      expect(question?.explanation).not.toContain('두 요구')
+    })
+  })
+
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
