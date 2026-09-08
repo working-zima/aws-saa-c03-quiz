@@ -101,7 +101,10 @@
     {
       "step": 12,
       "name": "rewrite-federation-cost",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T11:25:06+0900",
+      "summary": "identity-federation 6개(q158~q161·q240·q241), organizations-cloudtrail-config 3개(q162·q163·q242), cost-management 10개(q164~q169·q243~q246), 합 19개의 explanation을 재작성했다. 평균 109자 → 414자(최소 370 q162, 최대 491 q242)로 전부 187자 하한을 넘었고 audit exit 0, 오답 언급 55/55다. 근거는 담당 세 주제의 개념 본문과 q240~q246의 exam-gaps 항목(sts-assume-role·cognito-pools·organizations-scp·cost-allocation-tag-activation·savings-plan-details·cost-anomaly-detection·compute-optimizer)뿐이다. npm run build·npm test(453개)·npm run lint 통과. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(diff 19줄). 개념 본문에서 발견한 문제는 없다.",
+      "completed_at": "2026-09-08T11:32:37+0900"
     },
     {
       "step": 13,
