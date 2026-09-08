@@ -5074,6 +5074,91 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // ADR-029 — 용어 풀이는 주제마다 한 번씩 되풀이한다. 판정 기준은 "저장소 안에 정의가
+  // 있는가"가 아니라 "이 주제 페이지만 읽고 뜻이 서는가"다. ADR-028이 버킷·객체·접두사를
+  // aws-core-services.s3에 넣은 직후에도 사용자가 이 주제에서 접두사에 다시 막혔다 —
+  // 정의는 저장소에 있었지만 그 화면에는 없었다.
+  //
+  // 범위를 이 주제로 한정하는 이유: 나머지 38개 주제가 아직 안 고쳐졌다. 넓히는 것은
+  // 다음 phase의 몫이고, 통과시키려고 예외 목록을 만들지 마라 — 목록이 생기는 순간
+  // 거기에 개념이 추가되어 사각지대가 되살아난다(ADR-026의 경고와 같다).
+  describe('S3 암호화 주제가 주제 안에서 읽히는 용어만 쓴다', () => {
+    const body = (conceptId: string) => {
+      const concept = topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+
+      return concept?.paragraphs.join(' ') ?? ''
+    }
+
+    const topicText = () => {
+      const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
+
+      return (topic?.concepts ?? [])
+        .flatMap((concept) => [concept.name, concept.summary, ...concept.paragraphs])
+        .join(' ')
+    }
+
+    // 덤프 해설의 "플랫 파일"을 직역한 말이라 없는 대립쌍(입체 파일)을 떠올리게 한다.
+    // 출처에 낱말이 있다는 것이 그 낱말을 쓸 근거가 되지 않는다(ADR-009).
+    it('인벤토리 산출물을 평면 파일이라 부르지 않는다', () => {
+      expect(topicText()).not.toContain('평면 파일')
+    })
+
+    // 같은 것을 평면 파일·보고서·인벤토리 보고서 셋으로 부르던 것을 하나로 모았다.
+    // q281과 s3-batch-operations-lambda-invoke가 이미 쓰던 이름을 살린 것이다.
+    it('인벤토리 산출물의 이름이 인벤토리 보고서 하나로 통일돼 있다', () => {
+      const text = topicText()
+      const reports = text.split('보고서').length - 1
+      const inventoryReports = text.split('인벤토리 보고서').length - 1
+
+      expect(inventoryReports).toBeGreaterThan(0)
+      expect(reports).toBe(inventoryReports)
+    })
+
+    // 목록 얻기를 어렵게 만드는 것은 객체 수이지 접두사 개수가 아니다([Q818 p553] 계열).
+    it('인벤토리가 필요한 이유를 접두사 개수가 아니라 객체 수로 든다', () => {
+      const text = body('s3-encryption-batch.s3-inventory-report')
+
+      expect(text).toContain('객체가 수백만 개 쌓여 있으면')
+      expect(text).not.toContain('접두사')
+    })
+
+    // ADR-028의 뜻풀이가 이 주제 안에도 서 있어야 한다. 자리는 접두사가 정말 필요한
+    // batch-copy-vs-replication이고, 이 주제에서 처음 나오는 자리다.
+    it('접두사의 뜻이 이 주제 안에서 풀린다', () => {
+      expect(body('s3-encryption-batch.batch-copy-vs-replication')).toContain(
+        '접두사는 객체 이름의 앞부분을 가리키며, 앞부분이 같은 객체들을 폴더처럼 한 묶음으로 묶어 다루는 단위가 된다',
+      )
+    })
+
+    // ADR-027의 "사양·수치가 아니라 성격만"을 개념 본문에 쓴 것이다. CloudTrail은
+    // sse-kms-audit-trail에서 감사 추적이 되는 이유의 핵심이라 성격이 없으면 그 문단이
+    // 통째로 읽히지 않는다. 근거는 organizations-cloudtrail-config.cloudtrail 본문이다.
+    it('CloudTrail의 성격이 이 주제 안에서 밝혀진다', () => {
+      expect(body('s3-encryption-batch.sse-kms-audit-trail')).toContain(
+        'CloudTrail은 계정에서 일어난 AWS 호출을 빠짐없이 이벤트로 남기는 기록 서비스',
+      )
+    })
+
+    // 형태는 ADR-010과 같다 — 풀이는 summary가 아니라 paragraphs에만 들어간다.
+    it('이 주제의 풀이가 개념 요약이나 제목으로 새지 않는다', () => {
+      const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
+      const glosses = [
+        '접두사는 객체 이름의 앞부분을 가리키며',
+        'CloudTrail은 계정에서 일어난 AWS 호출을',
+        '메타데이터는 객체의 내용 자체가 아니라',
+      ]
+
+      topic?.concepts.forEach((concept) => {
+        glosses.forEach((gloss) => {
+          expect(concept.summary).not.toContain(gloss)
+          expect(concept.name).not.toContain(gloss)
+        })
+      })
+    })
+  })
+
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)

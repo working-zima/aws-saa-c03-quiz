@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "term-reachability",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T14:23:07+0900",
+      "summary": "ADR-029를 써서 ADR-010의 「형태」를 개정했다 — 「처음 등장하는 개념에서 한 번만」을 「각 주제에서 처음 나오는 자리에서 한 번」으로 바꿔 주제 사이 되풀이를 허용하고, 일반 IT 용어 넷(메타데이터·서버리스·ETL·PII)을 목록에 더했다. 주제 밖 서비스의 성격 한 줄은 ADR-027이 이미 정한 것이라 새 예외가 아니라고 명시했고, ADR-010·ADR-028 제목 줄에 개정 표시만 붙이고 본문은 그대로 뒀다. 고친 개념 넷(s3-inventory-report·sse-kms-audit-trail·batch-copy-vs-replication·s3-secure-transport-condition) — id·name·개수·순서·questions.json·baseline은 그대로다. ① 「평면 파일」을 없애고 이름을 **「인벤토리 보고서」** 하나로 통일했다(0회 확인). s3-inventory-report의 summary와 p0·p1이 쓰던 「평면 파일」·「보고서」를 전부 이 이름으로 모았고, p0에서 「버킷 안의 모든 객체와 그 메타데이터를 나열한 파일을 … 이 파일을 **인벤토리 보고서**라 부른다」로 처음 나오는 자리에서 정체를 밝힌다. step 4·5는 이 이름을 써라 — q281은 이미 「인벤토리 보고서」이고, **q277은 해설에 「평면 파일」이 남아 있고 보기에 「보고서」를 쓴다**(questions.json은 이 step의 범위 밖이라 손대지 않았다). ② 접두사 문장의 사실 오류를 바로잡았다 — 「접두사 여러 개로 나뉜 버킷에 객체가 수백만 개 쌓여 있으면」에서 원인이 접두사 개수처럼 읽히던 것을 「버킷에 객체가 수백만 개 쌓여 있으면」으로 고쳐 **원인을 객체 수로** 세웠고, 원인이 아닌 접두사는 그 자리에서 뺐다. **q277의 프롬프트도 「접두사가 여러 개인 버킷에」로 같은 오독을 부른다 — step 4·5 후보다.** 접두사 풀이는 그 말이 정말 필요한 batch-copy-vs-replication p0(이 주제의 첫 등장 자리)에 ADR-028과 같은 문구로 넣었다. ③ 풀이·성격 한 줄을 붙인 용어 여덟 — 접두사(batch-copy-vs-replication p0), 메타데이터·EC2·서버리스·ETL(s3-inventory-report p0·p2), CloudTrail(sse-kms-audit-trail p1), 버전 관리·수명 주기 정책·DataSync(batch-copy-vs-replication p1·p2), IAM(s3-secure-transport-condition p2). Glue는 「ETL을 맡는 도구」로 성격이 드러나 따로 붙이지 않았고, PII는 s3-object-lambda p1에 「개인 식별 정보(PII)」로 이미 풀려 있었다. 근거는 전부 그 서비스의 개념 본문(cloudtrail·iam·ec2·datasync·lifecycle-policy·versioning·glue·lambda)의 성격 한 줄이고 사양·수치는 하나도 가져오지 않았다. 한 용어는 이 주제 안에서 한 번만 풀었다(CloudTrail 4회 중 [7]에서 한 번, 서버리스 3회 중 [4]에서 한 번). ④ data.test.ts에 describe 블록 하나(단언 6개)를 더했다 — 평면 파일 부재, 보고서 이름 통일, 인벤토리의 이유가 객체 수인 것, 접두사·CloudTrail 풀이의 존재, 풀이가 summary·name으로 새지 않는 것. 범위는 이 주제 하나다. 456개 → 462개 통과. 남긴 것 — **버킷(17회, 첫 자리 [1] sse-types)과 객체(29회, 첫 자리 [2] client-side-encryption)에는 이 주제 안에 풀이가 없다.** ADR-028의 3종 중 둘이고 ADR-029의 새 규칙대로면 여기에도 풀이가 서야 하지만, step 3의 대상 표가 접두사 하나만 들고 있어 범위 밖으로 두었다(사용자의 2차 피드백도 이 둘은 다시 짚지 않았다). Lambda는 5회 나오지만 step이 「개념 이름으로 소개하므로 대상이 아니다」로 명시해 두었다. 마이그레이션 1회([8])도 풀이 없이 쓰인다 — 문맥에서 뜻이 잡혀 그대로 뒀다.",
+      "completed_at": "2026-09-08T14:32:16+09:00"
     },
     {
       "step": 4,
