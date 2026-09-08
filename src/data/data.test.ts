@@ -5430,7 +5430,7 @@ describe('학습 데이터 무결성', () => {
   it('가리키는 대상이 없던 명사와 전제 용어가 문항 안에서 해결된다', () => {
     const prompts = Object.fromEntries(questions.map(({ id, prompt }) => [id, prompt]))
 
-    expect(prompts.q039).toBe('수백만~수십억 개의 파일을 한꺼번에 복사하거나 삭제하는 것처럼 동일한 작업을 일괄 실행하는 서비스는?')
+    expect(prompts.q039).toBe('S3 버킷에 파일이 수백만 개에서 수십억 개 들어 있다. 이 파일 전부에 복사나 삭제 같은 동일한 작업을 한 번에 적용해야 한다. 이 일을 맡는 서비스는 무엇인가?')
     expect(prompts.q043).toBe('EFS IA(Infrequent Access)는 접근이 뜸한 파일을 옮겨 두는 EFS 클래스다. 이 클래스로 옮긴 파일의 접근 특성으로 맞는 것은?')
     expect(prompts.q075).toBe('평균 CPU 사용률 70% 같은 목표값을 유지하도록 서버를 자동으로 확장하거나 축소하는 정책은?')
     expect(prompts.q103).toBe('NAT 게이트웨이는 외부에서 시작하는 접근은 막고 내부에서 인터넷으로 나가는 통신만 가능하게 하는 장치다. 이 게이트웨이를 연결하는 위치는?')
