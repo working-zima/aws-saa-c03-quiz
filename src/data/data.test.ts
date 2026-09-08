@@ -5249,6 +5249,38 @@ describe('학습 데이터 무결성', () => {
       expect(question?.prompt).not.toContain('두 요구')
       expect(question?.explanation).not.toContain('두 요구')
     })
+
+    // phase 29 step 7 — 문항에는 주제 문맥이 없다. ADR-011이 문항 순서를 섞고 ADR-012·018의
+    // 랜덤 세트는 732문항에서 일부만 뽑으므로, 학습자는 이 주제를 읽지 않은 채로 문항을 만난다.
+    // 개념 본문은 주제 페이지 안에서 읽혀 한 줄 풀이로 해결되지만(ADR-029) 문항은 그렇지 않다.
+    // 그래서 문항에서는 풀이를 붙이는 대신 낱말에 소속을 붙인다 — 프롬프트가 길어지지 않고,
+    // 그 낱말이 무엇에 대한 이야기인지가 그 자리에서 잡힌다.
+    it('버킷·객체·접두사를 쓰는 프롬프트가 그 낱말이 S3의 것임을 밝힌다', () => {
+      const orphans = topicQuestions
+        .filter(({ prompt }) => /버킷|객체|접두사/.test(prompt) && !prompt.includes('S3'))
+        .map(({ id }) => id)
+
+      expect(orphans).toEqual([])
+    })
+
+    // 같은 개념에 정답까지 같은 문항이 둘이면 낱말만 다른 같은 문항일 가능성이 크다.
+    // q036(자동 교체 → SSE-KMS)과 q173(봉투 암호화 → SSE-KMS)이 그 자리였다 — 개념이 달라
+    // 이 단언에는 걸리지 않지만, step 7이 q173을 봉투 암호화 하나로 좁혀 근거를 갈랐다.
+    // **후보와 위반은 다르다** — 같은 답을 다른 성질로 묻는 짝은 배우는 것이 서로 다르다.
+    // 그래서 개념까지 같은 경우만 잡는다.
+    it('같은 개념에 정답이 같은 문항이 둘 있지 않다', () => {
+      const seen = new Map<string, string>()
+      const duplicates: string[] = []
+
+      topicQuestions.forEach((question) => {
+        const key = `${question.conceptId}|${question.choices[question.answerIndex]}`
+        const first = seen.get(key)
+        if (first) duplicates.push(`${first}·${question.id}`)
+        else seen.set(key, question.id)
+      })
+
+      expect(duplicates).toEqual([])
+    })
   })
 
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
@@ -5280,8 +5312,11 @@ describe('학습 데이터 무결성', () => {
 
     expect(prompts.q171).toBe('S3 객체 잠금은 정해진 기간 동안 객체의 수정과 삭제를 막는 기능이다. 이 잠금을 걸려면 버킷에 먼저 활성화해야 하는 기능은?')
     expect(prompts.q172).toBe('S3 이벤트 알림은 파일이 올라오는 즉시 Lambda 같은 서비스를 자동으로 호출한다. 이 알림이 객체 생성 이벤트를 발생시키는 대상은?')
-    expect(prompts.q173).toBe('봉투 암호화는 데이터를 데이터 키로 암호화하고 그 키를 다시 마스터 키로 암호화하는 방식이다. 이 방식과 암호화 키의 주기적 자동 교체가 모두 필요할 때 선택할 것은?')
-    expect(prompts.q174).toBe('SSE-KMS는 객체를 암호화할 때마다 KMS API를 불러서 객체가 많으면 호출 비용이 급증한다. 암호화 방식은 그대로 두고 이 비용을 줄이는 기능은?')
+    // q173은 phase 29 step 7이 봉투 암호화 하나로 좁혔다. 앞서 함께 걸려 있던 「자동 교체」는
+    // step 4가 q036의 축으로 삼은 것이라, 두 문항이 같은 정답을 같은 근거로 묻고 있었다.
+    expect(prompts.q173).toBe('봉투 암호화는 데이터를 데이터 키로 암호화한다. 그리고 그 데이터 키를 다시 마스터 키로 한 번 더 암호화한다. S3에 저장할 때 이 구조를 쓰는 것은 무엇인가?')
+    // q174는 같은 step이 「객체」에 소속(S3)을 붙이고 세 문장으로 쪼갰다.
+    expect(prompts.q174).toBe('SSE-KMS로 암호화한 S3 버킷에 객체가 초당 수백만 건씩 올라온다. 객체마다 KMS API를 불러서 그 호출 비용이 청구서에서 큰 몫이 된다. 암호화 방식은 그대로 두고 이 호출 수를 줄이는 기능은 무엇인가?')
     expect(prompts.q175).toBe('수천 개 노드가 동시에 데이터를 읽고 쓰는 HPC 워크로드에서 노드 사이의 네트워크 지연을 최대한 줄여야 한다. EC2를 어떻게 배치해야 하는가?')
     expect(prompts.q176).toBe('서비스를 멈추지 않고 EC2에 붙어 있는 EBS 볼륨의 크기를 늘려야 한다. 볼륨을 떼었다 붙이지 않고 확장하는 기능은?')
     expect(prompts.q177).toBe('EFS에 오래 방치된 파일의 보관 비용을 줄이되 필요할 때는 즉시 읽을 수 있어야 한다. 접근이 없는 파일을 자동으로 저렴한 클래스로 옮기는 기능은?')
@@ -5471,9 +5506,11 @@ describe('학습 데이터 무결성', () => {
     const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
 
     expect(byId.q034.choices).toEqual(['KMS', 'SSE', 'CloudHSM', 'ACM'])
-    // 프롬프트는 phase 29가 다시 썼다 — 「서버가 자체적으로 데이터를 암호화하는 방식」이
-    // 곧 Server Side Encryption의 뜻이라 정답이 프롬프트에 들어 있었다. 보기는 그대로다.
-    expect(byId.q034.prompt).toBe('보안 침해가 일어나도 공격자가 파일 내용을 곧바로 확인하지 못하도록, S3에 저장하는 파일을 키로 암호문으로 바꿔 둔다. 이 처리를 무엇이라 하는가?')
+    // 프롬프트는 phase 29가 두 번 다시 썼다. step 4가 「서버가 자체적으로 데이터를 암호화하는
+    // 방식」을 뺐고(그것이 곧 Server Side Encryption의 뜻이라 정답이 프롬프트에 있었다),
+    // step 7이 67자짜리 한 호흡을 「상황 → 무엇을 하는가 → 묻는 것」 세 문장으로 쪼갰다.
+    // 보기는 두 번 다 그대로다.
+    expect(byId.q034.prompt).toBe('S3에 파일을 그대로 저장하면 보안 침해가 일어났을 때 공격자가 내용을 곧바로 확인할 수 있다. 그래서 저장하는 파일은 키를 써서 암호문으로 바꿔 둔다. 이 처리를 무엇이라 하는가?')
     expect(byId.q075.choices).toEqual(['Sticky Session', '대상 추적 정책', '예약 인스턴스', '예약된 조정'])
     expect(byId.q098.choices).toEqual(['AWS Backup', 'RDS 자동 백업', 'EBS 스냅샷', 'S3 버전 관리'])
     expect(byId.q164.choices).toEqual(['AWS Budgets', 'Cost Explorer', '온디맨드 인스턴스', '절약 플랜'])

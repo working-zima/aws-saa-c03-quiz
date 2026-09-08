@@ -5,11 +5,17 @@
  * phase 29가 시범 주제(`s3-encryption-batch`) 하나에서 세운 기준이 ADR-030에 있고, 이 도구는
  * 그중 **기계가 볼 수 있는 셋**을 잰다. 나머지 38개 주제로 넓히는 작업의 입력이다.
  *
- * | 지표 | 무엇을 보는가 | ADR-030의 기준 |
+ * | 지표 | 무엇을 보는가 | 근거 |
  * |---|---|---|
- * | ① 문장형 제목 | 개념 `name`이 종결어미 `-다`로 끝나는가 | 기준 1 (명사구) |
- * | ② 관용 표현   | 본문·문항에 `돌린다`·`띄운다` 계열이 있는가 | 기준 5 (하는 일을 그대로) |
- * | ③ 정답 노출   | 정답 보기의 영문·숫자 토큰이 프롬프트에 있고 오답 셋에는 없는가 | 기준 3 (이름을 꺼내지 않는다) |
+ * | ① 문장형 제목 | 개념 `name`이 종결어미 `-다`로 끝나는가 | ADR-030 기준 1 (명사구) |
+ * | ② 관용 표현   | 본문·문항에 `돌린다`·`띄운다` 계열이 있는가 | ADR-030 기준 5 (하는 일을 그대로) |
+ * | ③ 정답 노출   | 정답 보기의 영문·숫자 토큰이 프롬프트에 있고 오답 셋에는 없는가 | ADR-030 기준 3 (이름을 꺼내지 않는다) |
+ * | ④ 소속 없는 용어 | 프롬프트가 `버킷`·`객체`·`접두사`를 쓰는데 `S3`가 한 번도 없는가 | phase 29 step 7 (A) |
+ * | ⑤ 장문       | 프롬프트에 60자를 넘는 문장이 있는가 | phase 29 step 7 (B) |
+ * | ⑥ 중복 후보  | 같은 `conceptId`에 정답 텍스트까지 같은 짝이 있는가 | phase 29 step 7 (C) |
+ *
+ * **④~⑥은 phase 29 step 7이 3차 피드백에서 얻은 잣대다.** 셋 다 앞의 셋과 같은 성질을 갖는다 —
+ * 세는 것과 판정하는 것이 다르고 마지막 판정은 사람이 한다. 각각의 한계를 아래에 적었다.
  *
  * **③은 후보 목록이지 위반 목록이 아니다.** 정당한 자리가 다수 섞인다 — `q327`은 프롬프트의
  * "Windows 애플리케이션 서버"가 정답 `FSx for Windows File Server`와 글자로 이어지지만,
@@ -17,6 +23,33 @@
  * 판정 기준은 "그 낱말이 프롬프트에 없으면 문제가 성립하지 않는가"이고 사람이 읽어야 갈린다.
  * `AWS`·`DB`·`IP`처럼 상식으로 통하는 토큰도 걸리므로(ADR-015가 풀이 대상에서 뺀 것들)
  * 걸린 수를 위반 건수로 읽지 마라. ②도 마지막에 한 번은 읽어야 한다 — 아래 「제외한 뜻」을 봐라.
+ *
+ * **③과 ④가 서로를 끌어당긴다.** ④를 고치려고 프롬프트에 `S3`를 넣으면, 정답 보기에만 `S3`가
+ * 붙어 있고 오답 셋에는 없는 문항에서 ③이 새로 걸린다. 그때 고칠 것은 프롬프트가 아니라
+ * **보기의 이름 표기**다 — 같은 주제의 기능을 한쪽은 `S3 수명 주기 규칙`, 다른 쪽은
+ * `수명 주기 규칙`으로 부르면 그 글자가 정답을 가리키는 신호가 된다. phase 29 step 7이
+ * `q280`·`q281`에서 오답 하나씩의 표기를 나란히 맞춰 이 자리를 풀었다.
+ *
+ * **⑤의 60자는 위반선이 아니라 검사해 볼 신호다.** 사용자가 직접 다시 쓴 `q038`은 원래와
+ * 길이가 거의 같은데도 읽힌다 — `사용자가`(누가) → `키를 직접 생성하고 보관·관리해야 해서`
+ * (무엇을) → `운영 부담과 …이 큰`(왜) → `암호화 방식은 무엇인가`(묻는 것)로 끊기기 때문이다.
+ * 즉 **재는 것은 길이이고 문제는 덩어리 구분이다.** 기계가 잴 수 없는 것을 재는 척하지 않으려고
+ * 이 지표는 길이만 찍는다. 걸린 프롬프트는 소리 내어 읽어 「누가 / 무엇을 / 왜」로 끊어지는지
+ * 사람이 판정해라. 끊어져 읽히면 60자를 넘어도 그대로 두는 것이 맞다.
+ *
+ * **⑥은 후보 목록이지 위반 목록이 아니다.** 문제 은행 732문항 전체를 이 규칙으로 훑으면
+ * 짝이 여덟인데, phase 29 step 7이 여덟을 다 읽어 보니 **실제 중복은 셋뿐이었다.**
+ * 중복인 셋 — `q113`·`q116`(낱말만 다르고 묻는 것이 같다), `q031`·`q033`(뒤가 앞의 부분집합),
+ * `q040`·`q041`(뒤가 `단일 AZ` 하나를 더한 것뿐). 셋 다 다음 phase의 몫이다.
+ * 중복이 아닌 다섯 — `q096`·`q097` / `q129`·`q136` / `q130`·`q137` / `q141`·`q145` /
+ * `q146`·`q148`. **같은 답을 다른 성질로 묻고 있어 학습되는 것이 다르다** — `q141`은 KMS가
+ * 키를 만들고 보관하는 것을 묻고 `q145`는 자동 교체를 묻는다.
+ *
+ * **⑥은 개념이 다르면 잡지 못한다.** 사용자가 지적한 `q036`·`q173`이 그 자리였다 —
+ * 자동 교체 → SSE-KMS와 봉투 암호화 + 자동 교체 → SSE-KMS로 정답도 근거도 겹쳤는데,
+ * `conceptId`가 `sse-types`와 `envelope-encryption`으로 갈려 이 표에는 한 번도 뜨지 않았다.
+ * 개념까지 같은 경우만 세는 이유는 위 다섯 짝 때문이다 — 개념이 다르면 묻는 성질이 다른 쪽이
+ * 다수여서, 넓히면 후보가 잡음으로 덮인다.
  *
  * **기계로 검출되지 않는 결함이 넷 더 있다.** 사용자가 낸 지적 일곱 중 아래 넷이고,
  * 이 도구는 하나도 세지 못한다.
@@ -88,6 +121,23 @@ const OTHER_SENSE = /되돌|돌려(주|준|줄|줘|받|보|놓)|돌아오|맞물
 /** ③ 정답 노출 후보에서 쓰는 토큰. 2자 이상의 영문·숫자 덩어리만 본다(`KMS`·`FSx`·`io2`). */
 const TOKEN = /[A-Za-z0-9]+/g
 
+/**
+ * ④ 소속 없이 쓰이면 막히는 S3 고유의 기초 용어. ADR-028이 뜻풀이를 허용한 셋과 같다.
+ * 개념 본문에서는 주제 안에 풀이를 한 줄 두면 되지만(ADR-029) **문항에는 그 주제가 없다** —
+ * 순서가 열 때마다 섞이고(ADR-011) 랜덤 세트는 일부만 뽑으므로(ADR-012·018) 학습자는 그
+ * 주제를 읽지 않은 채로 문항을 만난다. 그래서 문항에서는 풀이가 아니라 소속을 붙인다.
+ */
+const ORPHAN_TERM = /버킷|객체|접두사/
+
+/** ④에서 소속을 세우는 이름. 위 세 낱말이 어느 서비스의 것인지 밝히는 유일한 글자다. */
+const OWNER_NAME = 'S3'
+
+/** ⑤ 문장을 가르는 자리. 한국어 프롬프트도 마침표·물음표로 끝난다. */
+const SENTENCE_END = /[.?!]/
+
+/** ⑤ 검사해 볼 신호가 되는 길이. 위반선이 아니다 — 머리주석을 봐라. */
+const LONG_SENTENCE = 60
+
 const topics = read('src/data/topics.json')
 const questions = read('src/data/questions.json')
 
@@ -117,7 +167,37 @@ const leakedTokens = (question) => {
   })
 }
 
-/** 주제 하나의 집계. 세 지표에 걸린 항목을 그대로 들고 있는다. */
+/** ④ 프롬프트가 소속 없이 쓴 기초 용어. 없으면 빈 배열이다. */
+const orphanTermsIn = (prompt) =>
+  prompt.includes(OWNER_NAME)
+    ? []
+    : [...new Set(prompt.match(new RegExp(ORPHAN_TERM, 'g')) ?? [])]
+
+/** ⑤ 프롬프트 안에서 60자를 넘는 문장. 재는 것은 길이뿐이다. */
+const longSentencesIn = (prompt) =>
+  prompt
+    .split(SENTENCE_END)
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.length > LONG_SENTENCE)
+
+/** ⑥ 같은 개념에 정답 텍스트까지 같은 짝. 먼저 나온 쪽을 앞에 둔다. */
+const duplicatePairsIn = (topicQuestions) => {
+  const first = new Map()
+  const pairs = []
+
+  for (const question of topicQuestions) {
+    const answer = question.choices[question.answerIndex]
+    const key = `${question.conceptId}|${answer}`
+    const seen = first.get(key)
+
+    if (seen) pairs.push({ ids: [seen, question.id], conceptId: question.conceptId, answer })
+    else first.set(key, question.id)
+  }
+
+  return pairs
+}
+
+/** 주제 하나의 집계. 여섯 지표에 걸린 항목을 그대로 들고 있는다. */
 const measure = (topic) => {
   const topicQuestions = questions.filter((q) => q.topicId === topic.id)
 
@@ -137,6 +217,13 @@ const measure = (topic) => {
     leakCandidates: topicQuestions
       .map((q) => ({ id: q.id, tokens: leakedTokens(q), answer: q.choices[q.answerIndex] }))
       .filter((row) => row.tokens.length > 0),
+    orphanTerms: topicQuestions
+      .map((q) => ({ id: q.id, terms: orphanTermsIn(q.prompt) }))
+      .filter((row) => row.terms.length > 0),
+    longPrompts: topicQuestions
+      .map((q) => ({ id: q.id, sentences: longSentencesIn(q.prompt) }))
+      .filter((row) => row.sentences.length > 0),
+    duplicateCandidates: duplicatePairsIn(topicQuestions),
   }
 }
 
@@ -147,12 +234,18 @@ const counts = (stats) => ({
   idiomConcepts: stats.reduce((n, s) => n + s.idiomConcepts.length, 0),
   idiomQuestions: stats.reduce((n, s) => n + s.idiomQuestions.length, 0),
   leakCandidates: stats.reduce((n, s) => n + s.leakCandidates.length, 0),
+  orphanTerms: stats.reduce((n, s) => n + s.orphanTerms.length, 0),
+  longPrompts: stats.reduce((n, s) => n + s.longPrompts.length, 0),
+  duplicateCandidates: stats.reduce((n, s) => n + s.duplicateCandidates.length, 0),
 })
 
 const isClean = (s) =>
   s.sentenceNames.length === 0 &&
   s.idiomConcepts.length + s.idiomQuestions.length === 0 &&
-  s.leakCandidates.length === 0
+  s.leakCandidates.length === 0 &&
+  s.orphanTerms.length === 0 &&
+  s.longPrompts.length === 0 &&
+  s.duplicateCandidates.length === 0
 
 const wanted = process.argv.slice(2)
 
@@ -183,6 +276,23 @@ if (wanted.length > 0) {
     for (const row of s.leakCandidates) {
       console.log(`     ? ${row.id}  [${row.tokens.join(' ')}] → "${row.answer}"`)
     }
+
+    console.log(`  ④ 소속 없는 용어 ${s.orphanTerms.length}건`)
+    for (const row of s.orphanTerms) {
+      console.log(`     ✗ ${row.id}  ${row.terms.join('·')} — 프롬프트에 ${OWNER_NAME}가 없다`)
+    }
+
+    console.log(`  ⑤ 장문 ${s.longPrompts.length}건 (${LONG_SENTENCE}자는 위반선이 아니라 신호다)`)
+    for (const row of s.longPrompts) {
+      for (const sentence of row.sentences) {
+        console.log(`     ? ${row.id}  ${sentence.length}자  ${sentence}`)
+      }
+    }
+
+    console.log(`  ⑥ 중복 후보 ${s.duplicateCandidates.length}쌍 (사람이 읽어야 갈린다)`)
+    for (const row of s.duplicateCandidates) {
+      console.log(`     ? ${row.ids.join('·')}  ${row.conceptId} → "${row.answer}"`)
+    }
     console.log('')
   }
 
@@ -190,9 +300,10 @@ if (wanted.length > 0) {
   console.log(
     `지정한 주제: 개념 ${c.concepts}개·문항 ${c.questions}개 —` +
     ` 문장형 제목 ${c.sentenceNames}건, 관용 표현 ${c.idiomConcepts + c.idiomQuestions}건,` +
-    ` 정답 노출 후보 ${c.leakCandidates}건`,
+    ` 정답 노출 후보 ${c.leakCandidates}건, 소속 없는 용어 ${c.orphanTerms}건,` +
+    ` 장문 ${c.longPrompts}건, 중복 후보 ${c.duplicateCandidates}쌍`,
   )
-  if (stats.every(isClean)) console.log('✓ 기계로 검출되는 세 지표가 모두 0건이다')
+  if (stats.every(isClean)) console.log('✓ 기계로 검출되는 여섯 지표가 모두 0건이다')
   console.log(
     '기계로 검출되지 않는 넷(①기초 용어 ②도입 문장 ③요구 겹치기 ⑦문항 목적)은 사람이 읽어야 한다',
   )
@@ -210,7 +321,10 @@ for (const s of stats) {
     `  ① 제목 ${String(s.sentenceNames.length).padStart(2)}` +
     `  ② 관용 ${String(idiom).padStart(2)}` +
     ` (개념 ${String(s.idiomConcepts.length).padStart(2)}/문항 ${String(s.idiomQuestions.length).padStart(2)})` +
-    `  ③ 노출 후보 ${String(s.leakCandidates.length).padStart(2)}`,
+    `  ③ 노출 ${String(s.leakCandidates.length).padStart(2)}` +
+    `  ④ 무소속 ${String(s.orphanTerms.length).padStart(2)}` +
+    `  ⑤ 장문 ${String(s.longPrompts.length).padStart(2)}` +
+    `  ⑥ 중복 ${String(s.duplicateCandidates.length).padStart(2)}`,
   )
 }
 
@@ -229,7 +343,13 @@ console.log(
 )
 console.log(`③ 정답 노출 후보 ${c.leakCandidates}건 — 위반 건수가 아니다. 사람이 읽어 갈라야 한다`)
 console.log(
-  `세 지표가 모두 0건인 주제 ${cleanTopics.length}개: ${cleanTopics.map((s) => s.id).join(', ')}`,
+  `④ 소속 없는 용어 ${c.orphanTerms}건` +
+  ` (걸린 주제 ${stats.filter((s) => s.orphanTerms.length > 0).length}개)`,
+)
+console.log(`⑤ 장문 ${c.longPrompts}건 — ${LONG_SENTENCE}자는 위반선이 아니라 검사해 볼 신호다`)
+console.log(`⑥ 중복 후보 ${c.duplicateCandidates}쌍 — 여덟 짝 중 셋만 실제 중복이었다(머리주석 참고)`)
+console.log(
+  `여섯 지표가 모두 0건인 주제 ${cleanTopics.length}개: ${cleanTopics.map((s) => s.id).join(', ')}`,
 )
 console.log('')
 console.log(
