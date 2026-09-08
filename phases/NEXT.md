@@ -8,8 +8,7 @@ step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
 
 | | |
 |---|---|
-| `feat-28-explanation-rewrite` | phase 28의 작업 브랜치. `develop`보다 29 커밋 앞서 있고 **아직 병합·push하지 않았다** |
-| `develop` | `3afe768` — phase 28 step 명세. origin보다 1 커밋 앞서 있다 |
+| `develop` | phase 28 병합 + 개념 본문 오타 수정. origin과 같다 |
 | `main` | `1a28bd5` — release. origin과 같고 GitHub Pages 배포 성공(1분 24초) |
 | 배포 주소 | https://working-zima.github.io/aws-saa-c03-quiz/ |
 | 문항 | 732개 (q001~q732) — phase 28은 문항을 더하지 않고 `explanation`만 다시 썼다 |
@@ -17,9 +16,9 @@ step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
 | 해설 길이 | 전 구간 187자 이상. 732문항 평균 382자, 최소 187자(`q254`) — `data.test.ts`의 불변식이다 |
 | 테스트 | 454개 통과 |
 
-`phases/index.json`의 phase 27은 `completed`이고, `phases/28-explanation-rewrite/index.json`도
-step 13까지 `completed`다. **병합과 push는 사람이 판단한다**(CLAUDE.md) — 지금 남아 있는 일은
-`feat-28-explanation-rewrite` → `develop` 병합과 `develop` push다.
+`phases/index.json`의 phase 28은 `completed`이고 `develop`에 병합해 push까지 끝냈다.
+커밋되지 않은 작업은 없다. `main`은 아직 phase 28을 담고 있지 않다 — **배포는 사람이
+판단한다**(CLAUDE.md).
 
 ## 다른 기기에서 시작하는 법
 
@@ -80,16 +79,23 @@ phase 28(해설 재작성)은 14 step에 약 2.6시간이고, 그중 해설을 �
 하룻밤에 자동 생성된 문항이라 사실 오류나 변별력 없는 오답이 섞였을 수 있다. 다만 step별
 검증(정답 위치 분포, 커버리지, 약어 규칙, 중복 prompt 0건)은 이미 통과한 상태다.
 
-### E. 개념 본문의 낡은 수·오타 정리 — 2~3 step, 30~60분
+### E. VPC Endpoint 두 본문의 어긋남 판정 — 1 step, 20~30분
 
-phase 28이 해설을 쓰며 근거 본문에서 찾아 **고치지 않고 남긴 것 다섯 건**이다. 목록과 근거는
-ADR-027의 결과 절에 있다. `s3-storage-classes.retrieval-time`의 `일곱 개 클래스`가 여덟이 된
-것(가장 큰 것 — 수와 목록이 함께 낡았다), 오타 셋(`몹이다`·`기억해 둠다`·`빠리`),
-`Systems Manager`의 `s`가 빠진 `name` 둘이다. 마지막 것은 `name` 필드라
-`scripts/topics-baseline.json`을 함께 고쳐야 한다.
+**후보 E의 나머지(오타 셋·`name` 둘·`retrieval-time`)는 커밋 `5945daa`가 끝냈다.**
+`retrieval-time`은 수를 7에서 8로 바꾸지 않았다 — `s3-express-one-zone` 본문이 "이 클래스는
+그 축 바깥에 있다"고 하므로 일곱이 맞고, 어느 일곱인지를 밝히는 쪽으로 고쳤다. 그 판단의
+근거는 그 커밋 메시지에 있다.
 
-`vpc-networking`의 두 본문이 인터페이스 엔드포인트를 두고 어긋나 보이는 자리도 있는데,
-**그건 오타가 아니라 원본 대조가 필요한 사안이라 이 후보에 넣지 않는다.**
+남은 것은 하나다. `vpc-networking.vpc-endpoint` 문단 2는 인터페이스 엔드포인트를
+"S3와 DynamoDB를 **제외한**" 리소스에 연결한다고 하는데, 같은 주제의 `endpoint-pricing`
+문단 0은 "인터페이스 엔드포인트는 **S3 접근에도 쓸 수 있으나** 시간당 요금이 붙는다"고 한다.
+한 주제 안에서 두 문장이 어긋나 보인다.
+
+**오타가 아니라 어느 쪽이 맞는지를 정하는 사안이다.** `endpoint-pricing`은 `exam-gaps.md`에
+덤프 인용과 함께 있고 `vpc-endpoint`는 `concepts-raw.md`에서 왔는데, 후자가 이 기기에 없어
+원문을 대조할 수 없다. 전례는 ADR-008의 예외(덤프 해설이 실제 AWS 동작과 어긋나면 정확한
+쪽으로 고친다)와 phase 26의 Glacier 조회 시간 통일이다 — 둘 다 **모순을 남기지 않고 한쪽으로
+통일**했다. 고칠 때는 근거 문항(`q104`·`q105`·`q209`)의 해설도 함께 맞춰야 한다.
 
 ## 이어받을 때 주의할 것
 
