@@ -910,3 +910,47 @@ ADR-026이 요구하는 "그 개념을 가르치는 글"인 것은 다른 이야
 그리고 해설이 길어지므로 확인 문제 화면의 정답 확인 영역이 길어진다. ADR-026이 복습 화면
 길이를 열린 문제로 남긴 것과 같은 성격이라 **여기서 새 실측값을 만들지 않는다** —
 ARCHITECTURE 「화면 전환 시 스크롤」의 규칙대로, 다시 재기 전에는 숫자를 적지 않는다.
+
+**결과 — 실측으로 확인한 것**: step 1~12가 `q001`~`q246`의 해설 246개를 전부 다시 썼다.
+착수 시점의 평균 126자·최소 58자가 **평균 434자·최소 325자(`q014`)·최대 589자(`q090`)** 가 됐고,
+229개였던 187자 미달이 **0개**다(`node scripts/explanation-audit.mjs` → exit 0). 문제 은행
+732문항 전체로 보면 평균 382자·최소 187자(`q254`)·최대 599자(`q705`)이고, 전 구간에 미달이 없다.
+
+**하한 187자는 이제 불변식이다**: `src/data/data.test.ts`의
+「모든 문제의 해설이 그 개념을 가르칠 만큼의 길이를 갖는다」가 **구간을 나누지 않고 732문항
+전체**에 건다. `q001`~`q246`만 재작성했지만 단언을 그 구간으로 좁히지 않은 이유는, 좁히는
+순간 다음 사람이 "옛 구간은 예외"라고 읽기 때문이다. **예외 목록을 만들어 통과시키지 마라** —
+ADR-026이 커버리지에 남긴 경고와 같다. phase 27의 step들이 자기 구간에 걸어 둔 `>= 100`
+단언은 **그대로 뒀다.** 새 단언이 더 강해 실질적으로 덮이지만, 그것들은 어느 step이 무엇을
+보장했는지의 기록이라 지우면 이력이 사라진다.
+
+**`questionsSha256`을 한 번에 갱신했다**: 위 트레이드오프가 예고한 대로 step 1~12 동안
+`scripts/check-structure.mjs`가 실패하는 것이 정상이었고, 마지막 step이 새 해시를 넣어
+exit 0으로 되돌렸다. `conceptLineCount`·`topics`는 손대지 않았다 — 이 phase는 `topics.json`을
+한 글자도 고치지 않았고, `check-structure.mjs`가 그 사실을 확인해 준다.
+
+**개념 본문에서 발견해 남긴 문제 다섯**: 해설을 쓰며 근거 본문을 읽다 나온 것이고, **이 phase는
+범위가 `explanation` 하나라 고치지 않았다.** 다음 phase의 후보다.
+
+1. `s3-storage-classes.retrieval-time`의 `summary`가 `일곱 개 클래스`라고 하는데 이 주제의
+   스토리지 클래스는 여덟이다. phase 26이 `s3-express-one-zone`을 들여왔고, 본문의 즉시 조회
+   목록(5개)·대기 조회 목록(2개) 어디에도 그 클래스가 없어 수와 목록이 함께 낡았다.
+2. `route53.private-hosted-zone` 문단 0의 `아웃바운드 엔드포인트의 몹이다`는 `몫이다`의 오타다.
+   `exam-gaps.md`의 원항목은 `몫이다`로 적혀 있다.
+3. `route53.multivalue-answer-details` 문단 1의 `기억해 둠다`는 `기억해 둔다`의 오타다.
+4. `hybrid-connectivity.direct-connect-caveats` 문단 1의 `"빠리 연결해야 한다"`는 `빨리`의
+   오타다. `exam-gaps.md`의 원항목은 `빠르게 연결해야 한다`이다.
+5. `secrets-encryption.parameter-store`의 `name`이 `System Manager Parameter Store`이고
+   `secrets-manager-vs-parameter-store`의 `name`도 `Secrets Manager vs System Manager
+   Parameter Store`인데, 같은 개념의 문단 본문·문항 `prompt`·`choices`·`exam-gaps.md` 항목은
+   모두 `Systems Manager`로 적는다. `name` 두 곳에서만 `s`가 빠졌다. **이것은 오타 교정이라도
+   `name` 필드를 건드리므로 `scripts/topics-baseline.json`을 함께 고쳐야 한다** — ADR-009가
+   `name`을 고정한 필드로 두었고 `check-structure.mjs`가 baseline과 대조하기 때문이다.
+
+한 자리는 오타가 아니라 **본문끼리 어긋나 보이는 것**이라 따로 적는다.
+`vpc-networking.vpc-endpoint` 문단 2는 인터페이스 엔드포인트를 `S3와 DynamoDB를 제외한 AWS
+리소스에 연결한다`고 하는데, 같은 주제의 `endpoint-pricing` 문단 0은 `인터페이스 엔드포인트는
+S3 접근에도 쓸 수 있으나 시간당 요금이 붙는다`고 한다. 해설에서는 문항이 가리키는 개념의
+본문을 각각 따랐다(`q104`·`q105`는 `vpc-endpoint` 기준, `q209`는 `endpoint-pricing` 기준).
+**어느 쪽이 맞는지는 이 phase가 판정하지 않는다** — 두 문장 모두 출처에서 온 것이고,
+고치려면 원본을 다시 대조해야 한다.

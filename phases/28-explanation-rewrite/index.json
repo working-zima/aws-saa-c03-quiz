@@ -109,7 +109,10 @@
     {
       "step": 13,
       "name": "invariant-and-baseline",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T11:33:50+0900",
+      "completed_at": "2026-09-08T11:42:00+0900",
+      "summary": "q001~q246 해설 246개 재작성 결과를 실측으로 고정했다. 평균 126자→434자, 최소 58자→325자(q014), 최대 589자(q090), 187자 미달 229개→0개(explanation-audit exit 0). src/data/data.test.ts에 새 it 하나를 더해 187자 하한을 구간을 나누지 않고 문제 은행 732문항 전체에 걸었고(전체 평균 382자·최소 187자 q254), 하한의 근거(phase 27 해설 486개의 실측 최소값)를 주석으로 남겼다 — 예외 목록은 만들지 않았고 phase 27 step들의 >=100 단정은 기록으로 그대로 뒀다. 테스트 453개→454개 통과. scripts/topics-baseline.json의 questionsSha256을 57ad72e9…로 갱신해 check-structure.mjs exit 0(conceptLineCount·topics는 손대지 않았다 — topics.json이 안 바뀌었음을 그 검사가 확인한다). coverage.mjs 618/618 exit 0, npm run build·lint 통과. src/data/questions.json은 이 step의 diff에 없다. ADR-027에 「결과 — 실측으로 확인한 것」 절을, phases/NEXT.md에 갱신된 상태(후보 A 삭제, 후보 E 신설, phase 28 소요 실적 12 step·135분·246문항)를, ARCHITECTURE 스크롤 표 아래에 확인 문제 행(0)이 낡았다는 한 문장을 덧붙였다(새 픽셀 값은 넣지 않았다). PRD·UI_GUIDE에는 해설 길이를 언급하는 자리가 없어 고치지 않았다. 다음 phase로 넘긴 개념 본문 문제 5건: s3-storage-classes.retrieval-time의 「일곱 개 클래스」가 여덟이고 즉시/대기 목록에 s3-express-one-zone이 빠졌다, route53.private-hosted-zone의 「몹이다」·route53.multivalue-answer-details의 「기억해 둠다」·hybrid-connectivity.direct-connect-caveats의 「빠리」 오타 셋, secrets-encryption의 name 두 곳에서 「Systems Manager」의 s 누락(name이라 baseline도 함께 고쳐야 한다). 오타가 아닌 사안 하나는 따로 적었다 — vpc-networking.vpc-endpoint 문단 2와 endpoint-pricing 문단 0이 인터페이스 엔드포인트의 S3 접근을 두고 어긋나 보이며, 원본 대조가 필요해 판정하지 않았다."
     }
   ],
   "created_at": "2026-09-08T09:02:25+0900"

@@ -4938,6 +4938,24 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // ADR-027. 하한 187자는 phase 27이 ADR-026의 규칙대로 쓴 해설 486개(q247~q732)의
+  // 실측 최소값이다. 임의로 고른 값이 아니다. 정답이 왜 맞는지와 오답 셋이 왜 아닌지를
+  // 함께 담으면 자연히 넘게 되는 선이므로, 길이는 목표가 아니라 통과 조건이다.
+  // 넘기려고 같은 말을 늘려 쓰면 단언을 통과해도 ADR-026·ADR-027을 어긴 것이고,
+  // 반대로 이 값을 낮춰서 통과시키면 근거가 실측에서 임의값으로 바뀐다.
+  const explanationMinLength = 187
+
+  it('모든 문제의 해설이 그 개념을 가르칠 만큼의 길이를 갖는다', () => {
+    // 구간을 나누지 않고 문제 은행 732문항 전체에 건다. phase 28이 q001~q246을 다시 써서
+    // 앞 구간도 하한을 넘었으므로, 구간을 나누면 다음 사람이 "옛 구간은 예외"라고 읽는다.
+    // 예외 목록을 만들어 통과시키지 마라 — 그 목록이 생기는 순간 사각지대가 되살아난다.
+    const tooShort = questions
+      .filter((question) => question.explanation.length < explanationMinLength)
+      .map((question) => `${question.id}(${question.explanation.length}자)`)
+
+    expect(tooShort).toEqual([])
+  })
+
   it('정답이 Glacier 계열인 문항은 모두 법·감사 목적을 문제문에 담는다', () => {
     const glacierAnswered = questions.filter((question) =>
       question.choices[question.answerIndex].includes('Glacier'),
