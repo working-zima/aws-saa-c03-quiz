@@ -69,7 +69,10 @@
     {
       "step": 8,
       "name": "rewrite-vpc-route53",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-08T10:39:42+0900",
+      "summary": "vpc-networking 14개(q100~q108·q209~q213)와 route53 8개(q117~q122·q220·q221), 합 22개의 explanation을 재작성했다. 평균 125자 → 444자(최소 357 q221, 최대 509 q212)로 전부 187자 하한을 넘었고 `node scripts/explanation-audit.mjs vpc-networking route53`가 exit 0, 오답 언급 41/41이다. 문항마다 개념 정의 → 정답이 조건과 맞물리는 이유 → 오답 3개가 각각 어긋나는 자리를 담았고, 근거는 담당 두 주제의 개념 본문과 q209~q213·q220·q221의 exam-gaps 항목(endpoint-pricing·egress-only-igw·nat-instance·vpc-peering-scaling-limit·s3-is-regional·private-hosted-zone·multivalue-answer-details)뿐이다. npm run build·npm test(453개)·npm run lint 통과. 오답 언급이 0/0인 셋(q119·q120·q220)은 보기 넷이 전부 한국어 라우팅 정책 이름이라 도구가 셀 영문 토큰이 없어서이고, 세 문항 모두 오답 셋을 해설에서 이름으로 지목해 지웠다(q119는 단순·다중값 응답·지연시간 기반, q120은 지리적 위치·지리적 근접·가중치 기반, q220은 퍼블릭 호스팅 영역·프라이빗 호스팅 영역·다중값 응답 라우팅). step 5가 지적한 「해설 텍스트를 문자열로 고정하는 단정」은 이 step에서도 걸리지 않았다 — data.test.ts가 고정하는 것은 q080과 q130뿐이고 둘 다 담당 밖이라 테스트를 한 줄도 건드리지 않았다. explanation 외의 필드와 topics.json·topics-baseline.json은 건드리지 않았다(questions.json diff 22줄, 문항당 1줄, id·topicId·conceptId·prompt·choices·answerIndex 전부 동일함을 HEAD와 대조해 확인). check-structure.mjs는 questionsSha256만 어긋나고 다른 구조 위반은 0건이며, 그 갱신은 마지막 step의 몫이다. 주제 밖 개념 본문을 쓴 자리 넷: q117의 「CloudFront」·「Global Accelerator」가 cloudfront-global-accelerator, q212의 「Transit Gateway」·「Site-to-Site VPN」과 q213의 「Bastion Host」가 hybrid-connectivity, q213의 「보안 그룹」·「서브넷 NACL」이 security-groups-nacl 주제의 개념이다. ADR-027 2번대로 사양과 수치는 가져오지 않고 그 개념이 무엇을 하는 것인지(성격)만 한 줄로 써서 지웠다(step 3~7이 쓴 방식과 같게 맞췄다). 개념 본문에서 발견한 문제 3건(고치지 않았다): ① route53.private-hosted-zone 문단 0의 「Resolver 아웃바운드 엔드포인트의 몹이다」는 「몫이다」의 오타다(exam-gaps 원항목은 「몫이다」). ② route53.multivalue-answer-details 문단 1의 「기억해 둠다」도 「기억해 둔다」의 오타다(같은 자리 원항목 확인). ③ vpc-networking.vpc-endpoint 문단 2는 인터페이스 엔드포인트를 「S3와 DynamoDB를 제외한 AWS 리소스에 연결한다」고 하는데 같은 주제의 endpoint-pricing 문단 0은 「인터페이스 엔드포인트는 S3 접근에도 쓸 수 있으나 시간당 요금이 붙는다」고 해, 한 주제 안에서 두 문장이 어긋나 보인다. 해설에서는 q104·q105를 vpc-endpoint 기준으로, q209를 endpoint-pricing 기준으로 각각 그 개념의 본문을 따라 썼다.",
+      "completed_at": "2026-09-08T10:48:31+0900"
     },
     {
       "step": 9,
