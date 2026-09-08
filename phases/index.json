@@ -151,7 +151,8 @@
     },
     {
       "dir": "30-prompt-korean-polish",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-09T04:48:14+0900"
     }
   ]
 }
