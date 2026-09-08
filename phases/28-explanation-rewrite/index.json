@@ -2,19 +2,78 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "28-explanation-rewrite",
   "steps": [
-    { "step": 0, "name": "adr-and-audit", "status": "pending" },
-    { "step": 1, "name": "rewrite-core-storage-classes", "status": "pending" },
-    { "step": 2, "name": "rewrite-s3-lifecycle-encryption", "status": "pending" },
-    { "step": 3, "name": "rewrite-block-file-transfer", "status": "pending" },
-    { "step": 4, "name": "rewrite-rds-aurora-dynamodb", "status": "pending" },
-    { "step": 5, "name": "rewrite-cache-compute-edge", "status": "pending" },
-    { "step": 6, "name": "rewrite-serverless-containers", "status": "pending" },
-    { "step": 7, "name": "rewrite-messaging-analytics", "status": "pending" },
-    { "step": 8, "name": "rewrite-vpc-route53", "status": "pending" },
-    { "step": 9, "name": "rewrite-hybrid-threat-detection", "status": "pending" },
-    { "step": 10, "name": "rewrite-network-acl-waf", "status": "pending" },
-    { "step": 11, "name": "rewrite-secrets-iam", "status": "pending" },
-    { "step": 12, "name": "rewrite-federation-cost", "status": "pending" },
-    { "step": 13, "name": "invariant-and-baseline", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "adr-and-audit",
+      "status": "completed",
+      "started_at": "2026-09-08T09:02:25+0900",
+      "summary": "ADR-027 추가(해설 재작성의 근거를 개념 본문·오답이 가리키는 이웃 개념 본문·exam-gaps 항목 셋으로 한정 — 출처를 넓히지 않고 되짚을 자리만 지정) + scripts/explanation-audit.mjs 신설: `node scripts/explanation-audit.mjs [topicId…]` — 인자 없으면 q001~q246의 주제별 표(문항 수·평균·최소·187자 미달·참고 지표 「오답 언급」)를 내고 항상 exit 0, 주제 id를 주면 그 주제의 문항별 길이를 찍고 미달이 있으면 exit 1(없는 주제 id도 exit 1). 현재 미달 229개(q001~q246 246개 중, 평균 126자). step 문서는 246개 전부 미달로 적었으나 실측은 229개다 — 17문항(q005 191·q021 192·q034 309 등)이 이미 하한을 넘는다. step 문서 자신의 표에 최대 309자가 적혀 있어 246은 서술 오류이고, 그 17개도 재작성 대상에서 빠지지 않는다."
+    },
+    {
+      "step": 1,
+      "name": "rewrite-core-storage-classes",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "rewrite-s3-lifecycle-encryption",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "rewrite-block-file-transfer",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "rewrite-rds-aurora-dynamodb",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "rewrite-cache-compute-edge",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "rewrite-serverless-containers",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "rewrite-messaging-analytics",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "rewrite-vpc-route53",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "rewrite-hybrid-threat-detection",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "rewrite-network-acl-waf",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "rewrite-secrets-iam",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "rewrite-federation-cost",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "invariant-and-baseline",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-08T09:02:25+0900"
 }
