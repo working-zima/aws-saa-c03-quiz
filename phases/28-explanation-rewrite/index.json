@@ -1,0 +1,20 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "28-explanation-rewrite",
+  "steps": [
+    { "step": 0, "name": "adr-and-audit", "status": "pending" },
+    { "step": 1, "name": "rewrite-core-storage-classes", "status": "pending" },
+    { "step": 2, "name": "rewrite-s3-lifecycle-encryption", "status": "pending" },
+    { "step": 3, "name": "rewrite-block-file-transfer", "status": "pending" },
+    { "step": 4, "name": "rewrite-rds-aurora-dynamodb", "status": "pending" },
+    { "step": 5, "name": "rewrite-cache-compute-edge", "status": "pending" },
+    { "step": 6, "name": "rewrite-serverless-containers", "status": "pending" },
+    { "step": 7, "name": "rewrite-messaging-analytics", "status": "pending" },
+    { "step": 8, "name": "rewrite-vpc-route53", "status": "pending" },
+    { "step": 9, "name": "rewrite-hybrid-threat-detection", "status": "pending" },
+    { "step": 10, "name": "rewrite-network-acl-waf", "status": "pending" },
+    { "step": 11, "name": "rewrite-secrets-iam", "status": "pending" },
+    { "step": 12, "name": "rewrite-federation-cost", "status": "pending" },
+    { "step": 13, "name": "invariant-and-baseline", "status": "pending" }
+  ]
+}

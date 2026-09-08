@@ -138,6 +138,10 @@
       "dir": "27-question-coverage",
       "status": "completed",
       "completed_at": "2026-09-08T05:24:43+0900"
+    },
+    {
+      "dir": "28-explanation-rewrite",
+      "status": "pending"
     }
   ]
 }
