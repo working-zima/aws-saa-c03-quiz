@@ -5159,6 +5159,25 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // 「AWS KMS가 암호화 키를 생성하고 관리하는 방식은?」 → 정답 SSE-KMS처럼, 프롬프트의 낱말이
+  // 정답 이름과 글자로 이어지면 개념을 몰라도 골라진다. 이 앱은 시험 시뮬레이터가 아니라
+  // 학습 도구이므로(CLAUDE.md) 문항은 요구나 상황을 주고 개념을 잇게 해야 한다.
+  // 낱말이 프롬프트에 없으면 문항이 성립하지 않는 자리는 예외다 — q037의 SSE-KMS가 그렇다.
+  // 그 자리는 정답이 아니라 전제이므로, 정답 보기의 이름만 검사한다.
+  it('S3 암호화 주제의 문항이 정답 보기의 이름을 프롬프트에 꺼내지 않는다', () => {
+    const leaked = questions
+      .filter(({ topicId }) => topicId === 's3-encryption-batch')
+      .filter((question) => {
+        const answer = question.choices[question.answerIndex]
+        const names = answer.match(/[A-Za-z][A-Za-z0-9-]{2,}/g) ?? []
+
+        return names.some((name) => question.prompt.toUpperCase().includes(name.toUpperCase()))
+      })
+      .map(({ id }) => id)
+
+    expect(leaked).toEqual([])
+  })
+
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
@@ -5379,7 +5398,9 @@ describe('학습 데이터 무결성', () => {
     const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
 
     expect(byId.q034.choices).toEqual(['KMS', 'SSE', 'CloudHSM', 'ACM'])
-    expect(byId.q034.prompt).toBe('S3에 저장하는 파일은 암호화로 보호하며 이 과정에는 키가 필요하다. 이때 서버가 자체적으로 데이터를 암호화하는 방식을 무엇이라 하는가?')
+    // 프롬프트는 phase 29가 다시 썼다 — 「서버가 자체적으로 데이터를 암호화하는 방식」이
+    // 곧 Server Side Encryption의 뜻이라 정답이 프롬프트에 들어 있었다. 보기는 그대로다.
+    expect(byId.q034.prompt).toBe('보안 침해가 일어나도 공격자가 파일 내용을 곧바로 확인하지 못하도록, S3에 저장하는 파일을 키로 암호문으로 바꿔 둔다. 이 처리를 무엇이라 하는가?')
     expect(byId.q075.choices).toEqual(['Sticky Session', '대상 추적 정책', '예약 인스턴스', '예약된 조정'])
     expect(byId.q098.choices).toEqual(['AWS Backup', 'RDS 자동 백업', 'EBS 스냅샷', 'S3 버전 관리'])
     expect(byId.q164.choices).toEqual(['AWS Budgets', 'Cost Explorer', '온디맨드 인스턴스', '절약 플랜'])
