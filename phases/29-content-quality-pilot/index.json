@@ -28,16 +28,21 @@
     },
     {
       "step": 3,
-      "name": "question-prompt-leak",
+      "name": "term-reachability",
       "status": "pending"
     },
     {
       "step": 4,
-      "name": "question-scope-and-wording",
+      "name": "question-prompt-leak",
       "status": "pending"
     },
     {
       "step": 5,
+      "name": "question-scope-and-wording",
+      "status": "pending"
+    },
+    {
+      "step": 6,
       "name": "content-audit-and-adr-029",
       "status": "pending"
     }
