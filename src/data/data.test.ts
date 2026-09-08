@@ -5132,6 +5132,17 @@ describe('학습 데이터 무결성', () => {
       )
     })
 
+    // 사용자가 처음 지적한 낱말이 버킷·객체·접두사 셋이었다. 접두사만 이 주제 안에 풀고
+    // 둘을 aws-core-services.s3에만 두면 같은 결함이 그대로 남는다 — 이 주제로 곧바로
+    // 들어온 학습자는 그 개념을 읽지 않는다. 자리는 이 주제의 첫 개념이고, 본문이 이미
+    // 쓰고 있는 "파일"에 두 낱말을 이어 붙인다.
+    it('버킷과 객체의 뜻이 이 주제 안에서 풀린다', () => {
+      const text = body('s3-encryption-batch.sse')
+
+      expect(text).toContain('파일을 담는 저장 공간을 **버킷**이라 부르고')
+      expect(text).toContain('버킷에 담긴 파일 하나하나를 **객체**라 부른다')
+    })
+
     // ADR-027의 "사양·수치가 아니라 성격만"을 개념 본문에 쓴 것이다. CloudTrail은
     // sse-kms-audit-trail에서 감사 추적이 되는 이유의 핵심이라 성격이 없으면 그 문단이
     // 통째로 읽히지 않는다. 근거는 organizations-cloudtrail-config.cloudtrail 본문이다.
@@ -5148,6 +5159,7 @@ describe('학습 데이터 무결성', () => {
         '접두사는 객체 이름의 앞부분을 가리키며',
         'CloudTrail은 계정에서 일어난 AWS 호출을',
         '메타데이터는 객체의 내용 자체가 아니라',
+        '파일을 담는 저장 공간을 **버킷**이라 부르고',
       ]
 
       topic?.concepts.forEach((concept) => {
