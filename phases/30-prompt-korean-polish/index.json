@@ -12,12 +12,12 @@
     },
     {
       "step": 1,
-      "name": "polish-s3-storage-classes",
+      "name": "polish-s3-encryption-batch",
       "status": "pending"
     },
     {
       "step": 2,
-      "name": "polish-s3-encryption-batch",
+      "name": "polish-s3-storage-classes",
       "status": "pending"
     },
     {
