@@ -5456,7 +5456,7 @@ describe('학습 데이터 무결성', () => {
       'NACL(Network Access Control List)은 서브넷에 대해 트래픽을 허용하거나 거부한다. 보안 그룹은 AWS 리소스의 트래픽을 제어한다.',
     )
     expect(byId.q080.explanation).toBe(
-      'NLB(Network Load Balancer)는 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 처리하며 빠른 응답 속도를 제공한다. ALB(Application Load Balancer)는 HTTP(HyperText Transfer Protocol)와 HTTPS에 사용하고 GLB(Gateway Load Balancer)는 보안 장비용이다.',
+      'NLB(Network Load Balancer)는 4계층, 곧 전송 계층에서 동작하는 로드 밸런서라 TCP(Transmission Control Protocol)와 UDP(User Datagram Protocol) 트래픽을 모두 다루며 매우 빠른 응답 속도를 준다. TCP는 보낸 데이터가 빠짐없이 도착했는지 확인하고 빠진 것은 다시 보내며, UDP는 그 확인을 생략해 더 빠른 대신 일부가 유실될 수 있다. 두 규약을 다 받아야 한다는 조건이 이 로드 밸런서를 가리킨다. ALB(Application Load Balancer)는 7계층에서 HTTP(HyperText Transfer Protocol)와 HTTPS 웹 요청을 다루는 장치라 TCP·UDP를 지원하지 않는다. GLB(Gateway Load Balancer)는 방화벽 같은 보안 장비에 트래픽을 넘기는 용도다. CloudFront는 로드 밸런서가 아니라 콘텐츠를 엣지에 캐싱해 내주는 서비스다.',
     )
   })
 
