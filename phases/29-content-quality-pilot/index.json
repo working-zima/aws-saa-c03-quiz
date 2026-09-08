@@ -2,11 +2,38 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "29-content-quality-pilot",
   "steps": [
-    { "step": 0, "name": "adr-028-basic-vocabulary", "status": "pending" },
-    { "step": 1, "name": "concept-titles-noun-phrase", "status": "pending" },
-    { "step": 2, "name": "concept-body-lead-in", "status": "pending" },
-    { "step": 3, "name": "question-prompt-leak", "status": "pending" },
-    { "step": 4, "name": "question-scope-and-wording", "status": "pending" },
-    { "step": 5, "name": "content-audit-and-adr-029", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "adr-028-basic-vocabulary",
+      "status": "completed",
+      "started_at": "2026-09-08T12:32:46+0900",
+      "summary": "ADR-028로 ADR-010의 예외 경계를 넓혀 버킷·객체·접두사 3종의 뜻풀이를 허용하고, aws-core-services.s3 본문에 세 낱말을 도입하는 문단을 더했다(data.test.ts가 존재를 단언)."
+    },
+    {
+      "step": 1,
+      "name": "concept-titles-noun-phrase",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "concept-body-lead-in",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "question-prompt-leak",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "question-scope-and-wording",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "content-audit-and-adr-029",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-08T12:32:46+0900"
 }

@@ -5030,6 +5030,32 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // ADR-028 — 버킷·객체·접두사는 두 원본에 정의가 없어 뜻풀이만 예외로 허용한
+  // AWS 고유 기초 용어다. 자리는 aws-core-services.s3 하나다 — 첫 주제의 개념이라
+  // 어느 S3 주제보다 앞에서 읽힌다.
+  it('AWS 고유 기초 용어 3종의 뜻풀이가 S3 개념 본문에 들어 있다', () => {
+    const concept = topics
+      .flatMap((topic) => topic.concepts)
+      .find(({ id }) => id === 'aws-core-services.s3')
+    const body = concept?.paragraphs.join(' ') ?? ''
+
+    // ADR-028이 목록으로 못박은 셋. 늘리려면 그 ADR을 먼저 고쳐야 한다.
+    const basicTerms = ['버킷', '객체', '접두사']
+
+    basicTerms.forEach((term) => expect(body).toContain(term))
+
+    // 낱말이 나오는 것만으로는 부족하다 — 무엇을 가리키는지가 함께 있어야 한다.
+    expect(body).toContain('파일을 담는 최상위 저장 공간을 **버킷**이라 부르고')
+    expect(body).toContain('버킷에 담긴 파일 하나하나를 **객체**라 부른다')
+    expect(body).toContain('객체 이름의 앞부분은 **접두사**라 하며')
+
+    // 형태는 ADR-010과 같다 — 풀이는 summary가 아니라 paragraphs에만 들어간다.
+    basicTerms.forEach((term) => {
+      expect(concept?.summary).not.toContain(term)
+      expect(concept?.name).not.toContain(term)
+    })
+  })
+
   it('Storage Gateway 문단이 일회성 전송과의 차이와 S3 저장 사실을 함께 밝힌다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
