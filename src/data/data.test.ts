@@ -2765,6 +2765,24 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
+  // 개념 제목은 목록에서 훑으며 찾아가는 이름표이지 그 개념이 주장하는 문장이 아니다.
+  // 「배치 작업이 객체마다 Lambda를 부른다」처럼 문장이 제목 자리에 오면 무엇의 이름인지
+  // 알 수 없고, 읽고 나서 다시 찾아올 이름도 되지 못한다. 주어가 되는 대상을 제목으로
+  // 올리고 주장은 summary·paragraphs로 내린다 — 사용자가 직접 정한 기준이고 phase 29가
+  // 이 주제 하나에서 세운다. 한국어 평서형 종결어미는 모두 `-다`로 끝나므로 그것으로 잰다.
+  //
+  // 범위를 이 주제로 한정하는 이유: 나머지 38개 주제에 문장형 제목이 아직 남아 있다.
+  // 넓히는 것은 다음 phase의 몫이고, 통과시키려고 예외 목록을 만들지 마라 — 목록이
+  // 생기는 순간 거기에 개념이 추가되어 사각지대가 되살아난다(ADR-026의 경고와 같다).
+  it('S3 암호화 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
+    const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
+
+    expect(topic?.concepts).toHaveLength(13)
+    topic?.concepts.forEach((concept) => {
+      expect(concept.name, `${concept.id}의 name이 문장이다: "${concept.name}"`).not.toMatch(/다$/)
+    })
+  })
+
   it('S3 접근 제어 주제가 접근 경로 여섯 다음에 갈림길 둘과 한계 다섯을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-access-control')
 

@@ -243,7 +243,7 @@
     },
     {
      "id": "s3-encryption-batch.s3-inventory-report",
-     "name": "버킷의 객체 목록을 파일로 받아 둔다"
+     "name": "S3 인벤토리"
     },
     {
      "id": "s3-encryption-batch.s3-object-lambda",
@@ -263,7 +263,7 @@
     },
     {
      "id": "s3-encryption-batch.s3-batch-operations-lambda-invoke",
-     "name": "배치 작업이 객체마다 Lambda를 부른다"
+     "name": "S3 Batch Operations의 Lambda 호출"
     },
     {
      "id": "s3-encryption-batch.sse-kms-cost",
@@ -271,11 +271,11 @@
     },
     {
      "id": "s3-encryption-batch.sse-c-no-rotation-or-audit",
-     "name": "SSE-C에는 자동 교체도 감사 추적도 없다"
+     "name": "SSE-C의 자동 교체와 감사 추적 한계"
     },
     {
      "id": "s3-encryption-batch.s3-secure-transport-condition",
-     "name": "전송 중 암호화는 버킷 정책 조건으로 강제한다"
+     "name": "버킷 정책의 전송 구간 암호화 강제"
     }
    ]
   },
