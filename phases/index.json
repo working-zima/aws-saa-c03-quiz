@@ -146,8 +146,8 @@
     },
     {
       "dir": "29-content-quality-pilot",
-      "status": "pending",
-      "completed_at": "2026-09-08T15:15:58+0900"
+      "status": "completed",
+      "completed_at": "2026-09-08T16:28:41+0900"
     }
   ]
 }
