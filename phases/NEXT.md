@@ -497,6 +497,11 @@ phase 28이 판정을 미루며 해설을 각 개념 본문에 맞춰 둔 결과
 
 ## 이어받을 때 주의할 것
 
+- **worktree를 새로 파면 `docs/source/concepts-raw.md`를 손으로 복사해 넣어라.** 이 파일은
+  gitignore라 `git worktree add`가 옮기지 않는다. 없으면 `check-verbatim.mjs`가 **검사를
+  건너뛰고 exit 0으로 끝난다** — 통과한 것처럼 보이지만 전사 검사가 돌지 않은 것이다(ADR-009).
+  2026-09-09 phase 31의 첫 3 step이 이 상태로 돌았다. 원본을 넣고 다시 검사해 이상 없음을
+  확인했지만, **다음 worktree에서는 harness를 돌리기 전에 복사해라.**
 - **`concepts-raw.md`를 `grep`으로 뒤질 때는 `-a`를 붙여라.** macOS의 BSD grep이 이 파일을
   binary로 판정해서, `-a` 없이 부르면 **일치가 있어도 아무것도 출력하지 않고 exit 1로 끝난다**
   (`file`도 `data`라고 답한다). 후보 E가 "원문이 이 기기에 없어 대조할 수 없다"로 넘어갔던
