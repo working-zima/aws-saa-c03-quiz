@@ -1,0 +1,191 @@
+{
+ "project": "AWS SAA-C03 개념 학습 앱",
+ "phase": "31-content-quality-rollout",
+ "steps": [
+  {
+   "step": 0,
+   "name": "aws-core-services",
+   "status": "pending"
+  },
+  {
+   "step": 1,
+   "name": "s3-storage-classes",
+   "status": "pending"
+  },
+  {
+   "step": 2,
+   "name": "s3-versioning-lifecycle",
+   "status": "pending"
+  },
+  {
+   "step": 3,
+   "name": "s3-access-control",
+   "status": "pending"
+  },
+  {
+   "step": 4,
+   "name": "ebs-instance-store",
+   "status": "pending"
+  },
+  {
+   "step": 5,
+   "name": "efs-fsx",
+   "status": "pending"
+  },
+  {
+   "step": 6,
+   "name": "data-transfer-services",
+   "status": "pending"
+  },
+  {
+   "step": 7,
+   "name": "storage-gateway-migration",
+   "status": "pending"
+  },
+  {
+   "step": 8,
+   "name": "rds-storage-features",
+   "status": "pending"
+  },
+  {
+   "step": 9,
+   "name": "aurora",
+   "status": "pending"
+  },
+  {
+   "step": 10,
+   "name": "dynamodb",
+   "status": "pending"
+  },
+  {
+   "step": 11,
+   "name": "elasticache-purpose-built-db",
+   "status": "pending"
+  },
+  {
+   "step": 12,
+   "name": "ec2-autoscaling",
+   "status": "pending"
+  },
+  {
+   "step": 13,
+   "name": "elastic-load-balancing",
+   "status": "pending"
+  },
+  {
+   "step": 14,
+   "name": "cloudfront-global-accelerator",
+   "status": "pending"
+  },
+  {
+   "step": 15,
+   "name": "lambda",
+   "status": "pending"
+  },
+  {
+   "step": 16,
+   "name": "ecs-eks-fargate",
+   "status": "pending"
+  },
+  {
+   "step": 17,
+   "name": "api-gateway-step-functions",
+   "status": "pending"
+  },
+  {
+   "step": 18,
+   "name": "sqs-sns-eventbridge-a",
+   "status": "pending"
+  },
+  {
+   "step": 19,
+   "name": "sqs-sns-eventbridge-b",
+   "status": "pending"
+  },
+  {
+   "step": 20,
+   "name": "backup-disaster-recovery",
+   "status": "pending"
+  },
+  {
+   "step": 21,
+   "name": "vpc-networking",
+   "status": "pending"
+  },
+  {
+   "step": 22,
+   "name": "security-groups-nacl",
+   "status": "pending"
+  },
+  {
+   "step": 23,
+   "name": "hybrid-connectivity",
+   "status": "pending"
+  },
+  {
+   "step": 24,
+   "name": "route53",
+   "status": "pending"
+  },
+  {
+   "step": 25,
+   "name": "emr-glue-athena",
+   "status": "pending"
+  },
+  {
+   "step": 26,
+   "name": "kinesis-streaming",
+   "status": "pending"
+  },
+  {
+   "step": 27,
+   "name": "redshift-opensearch-quicksight-and-cloudwatch-xray",
+   "status": "pending"
+  },
+  {
+   "step": 28,
+   "name": "secrets-encryption",
+   "status": "pending"
+  },
+  {
+   "step": 29,
+   "name": "waf-shield",
+   "status": "pending"
+  },
+  {
+   "step": 30,
+   "name": "guardduty-macie-inspector",
+   "status": "pending"
+  },
+  {
+   "step": 31,
+   "name": "iam-permissions",
+   "status": "pending"
+  },
+  {
+   "step": 32,
+   "name": "identity-federation",
+   "status": "pending"
+  },
+  {
+   "step": 33,
+   "name": "organizations-cloudtrail-config",
+   "status": "pending"
+  },
+  {
+   "step": 34,
+   "name": "cost-management",
+   "status": "pending"
+  },
+  {
+   "step": 35,
+   "name": "governance-iac-and-systems-manager-and-ai-ml-services",
+   "status": "pending"
+  },
+  {
+   "step": 36,
+   "name": "rollout-wrapup",
+   "status": "pending"
+  }
+ ]
+}

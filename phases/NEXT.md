@@ -16,8 +16,12 @@ step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
 아래 본문 곳곳에 "phase 29·30은 push되지 않았다"고 적힌 것은 **병합 전에 쓰인 문장이니 믿지
 마라** — 최신은 아래 「지금 상태」 표다.
 
-지금 병합·push를 기다리는 것은 브랜치 `fix-vpc-endpoint-fact` 하나다(후보 E 판정, ADR-031).
-**병합과 push는 사람이 판단한다**(CLAUDE.md).
+지금 병합·push를 기다리는 것은 브랜치 `fix-vpc-endpoint-fact` 하나다. 커밋 둘이 들어 있다 —
+**(1) 후보 E 판정(ADR-031)**, **(2) phase 31 명세**. **병합과 push는 사람이 판단한다**(CLAUDE.md).
+
+**phase 31을 돌리기 전에 이 브랜치를 `develop`에 병합해라.** harness가 현재 브랜치에서
+`feat-31-content-quality-rollout`을 파므로, 병합하지 않고 돌리면 step 21(`vpc-networking`)이
+ADR-031이 이미 고친 자리를 다시 열게 된다.
 
 ```bash
 git checkout develop
@@ -329,7 +333,7 @@ SSE-C가 후보에서 빠지는 까닭은?"
 
 | | |
 |---|---|
-| `fix-vpc-endpoint-fact` | 후보 E 판정(ADR-031). `develop`에서 팠고 **병합·push는 아직이다** |
+| `fix-vpc-endpoint-fact` | 후보 E 판정(ADR-031) + phase 31 명세. `develop`에서 팠고 **병합·push는 아직이다** |
 | `develop` | phase 28·29·30 전부. `feat-30-prompt-korean-polish`와 같고 origin과도 같다 |
 | `main` | `7339754` — release(phase 28~30). origin과 같다 |
 | 배포 주소 | https://working-zima.github.io/aws-saa-c03-quiz/ |
@@ -344,8 +348,62 @@ SSE-C가 후보에서 빠지는 까닭은?"
 않았다"고 적혀 있는데 그것은 병합 전에 쓰인 문장이다** — 이 표가 최신이다.
 지금 병합·push를 기다리는 것은 `fix-vpc-endpoint-fact` 하나다(사람이 판단한다).
 
-**phase 31로 고른 방향**: 사용자가 2026-09-09에 "38개 주제로 넓히는 작업"의 순서를
-**`topics.json` 배열 순서**로 정했다. 위 「다음 phase에 남은 판단」의 셋 중 첫 번째다.
+## phase 31 — 명세를 짜 두었다. 아직 돌리지 않았다
+
+`phases/31-content-quality-rollout/` 에 **step 0~36**이 있다. phase 29가 시범 주제 하나에서
+세운 기준을 나머지 38개 주제로 넓힌다. `phases/index.json`에 `pending`으로 등록돼 있다.
+
+### 사용자가 답한 결정 — 다시 묻지 마라
+
+2026-09-09에 넷을 정했다.
+
+1. **훑는 순서** — `topics.json` **배열 순서**다. 학습 순서와 같아서 검수도 사용자가 읽던
+   흐름 그대로 할 수 있다. (문항이 많은 주제부터·audit 지표가 많은 주제부터는 탈락)
+2. **step 크기** — **주제 하나가 step 하나**다. 결함 종류별로 가르지 않는다.
+   `sqs-sns-eventbridge`(개념 33·문항 40)만 둘로 쪼갰고, 작은 주제 둘·셋은 묶었다.
+3. **검수 리듬** — **처음 3 step 뒤에 끊는다.** `--max-steps 3`으로 돌리고 멈춰서, 사용자가
+   `npm run dev`로 그 세 주제를 읽고 합격선을 확정한 뒤 나머지를 이어 돌린다.
+   기준이 틀렸다면 3 step치만 되돌리면 된다.
+4. **해설 범위** — **개념 본문과 어긋나는 자리만** 고친다. 전면 재작성이 아니다.
+   phase 28이 732개를 이미 다시 썼고 187자 하한이 `data.test.ts`의 불변식이다.
+
+### 돌리는 법
+
+```bash
+# 이 브랜치를 develop에 병합한 뒤 develop에서 실행한다
+pgrep -f execute.py            # 이미 돌고 있는 것이 없는지 먼저 확인
+python3 scripts/execute.py 31-content-quality-rollout --max-steps 3
+# 멈추면 사용자 검수 → 통과하면 나머지를 이어 돌린다
+```
+
+**규모**: 37 step. phase 30이 29 step에 약 5시간이었고 이건 개념 본문까지 보므로 더 무겁다 —
+**7~10시간**으로 본다. 사용량 한도에 걸릴 것을 전제해라(아래 「이어받을 때 주의할 것」).
+
+### step 배치
+
+주제 39개 중 `s3-encryption-batch`(phase 29의 시범)만 빠진다. `s3-storage-classes`와
+`governance-iac`은 기계 지표가 0이지만 **넣었다** — 기계가 못 보는 다섯(기초 용어·도입
+문장·요구 겹치기·문항 목적·용어 불일치)이 남아 있을 수 있고, 그게 phase 29가 배운 것이다.
+
+| step | 맡은 주제 |
+|---|---|
+| 0~5 | `aws-core-services` `s3-storage-classes` `s3-versioning-lifecycle` `s3-access-control` `ebs-instance-store` `efs-fsx` |
+| 6~11 | `data-transfer-services` `storage-gateway-migration` `rds-storage-features` `aurora` `dynamodb` `elasticache-purpose-built-db` |
+| 12~17 | `ec2-autoscaling` `elastic-load-balancing` `cloudfront-global-accelerator` `lambda` `ecs-eks-fargate` `api-gateway-step-functions` |
+| 18~19 | `sqs-sns-eventbridge` — A는 개념 33 + 문항 앞 20, B는 문항 뒤 20 |
+| 20~26 | `backup-disaster-recovery` `vpc-networking` `security-groups-nacl` `hybrid-connectivity` `route53` `emr-glue-athena` `kinesis-streaming` |
+| 27 | `redshift-opensearch-quicksight` + `cloudwatch-xray` |
+| 28~34 | `secrets-encryption` `waf-shield` `guardduty-macie-inspector` `iam-permissions` `identity-federation` `organizations-cloudtrail-config` `cost-management` |
+| 35 | `governance-iac` + `systems-manager` + `ai-ml-services` |
+| 36 | 마무리 — 명사구 단언을 전 주제로, audit 전체 재측정, ADR·이 파일 갱신 |
+
+### 각 step이 하는 일
+
+콘텐츠를 고치는 것보다 **판정하고 그대로 두는 것**이 중요하고, 그 근거를 `summary`에 남기는
+것이 step의 산출물이다. 기계 지표 여섯은 `content-audit.mjs`가 세고 ③⑤⑥은 후보 목록이라
+사람이 갈라야 한다. 기계가 못 보는 다섯은 **주제 페이지를 처음 읽는 학습자의 눈으로 통독**하는
+것 외에 찾는 방법이 없다 — step 파일이 "지표를 먼저 보면 지표가 있는 자리만 보게 되니
+통독을 먼저 하라"고 못 박고 있다.
 
 ## 다른 기기에서 시작하는 법
 
