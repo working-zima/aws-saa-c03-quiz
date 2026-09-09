@@ -10,14 +10,21 @@ step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
 > 시작한다. phase 29가 남긴 교훈이 그대로 적용된다 — **검수를 테스트 통과나 grep으로
 > 갈음하지 마라.**
 
-## 먼저 읽어라 — 다른 기기에서 이어받는 법 (2026-09-09)
+## 먼저 읽어라 — 다른 기기에서 이어받는 법 (2026-09-09에 갱신)
 
-**브랜치는 `feat-30-prompt-korean-polish`이고 push되지 않았다.** `develop`도 `main`도
-phase 29·30을 담고 있지 않다(배포된 사이트에는 이 변경이 없다).
-**병합과 push는 사람이 판단한다**(CLAUDE.md).
+**phase 28~30은 `develop`을 거쳐 `main`까지 나갔다**(`7339754`, 배포된 사이트에 반영돼 있다).
+아래 본문 곳곳에 "phase 29·30은 push되지 않았다"고 적힌 것은 **병합 전에 쓰인 문장이니 믿지
+마라** — 최신은 아래 「지금 상태」 표다.
+
+지금 병합·push를 기다리는 것은 브랜치 `fix-vpc-endpoint-fact` 하나다. 커밋 둘이 들어 있다 —
+**(1) 후보 E 판정(ADR-031)**, **(2) phase 31 명세**. **병합과 push는 사람이 판단한다**(CLAUDE.md).
+
+**phase 31을 돌리기 전에 이 브랜치를 `develop`에 병합해라.** harness가 현재 브랜치에서
+`feat-31-content-quality-rollout`을 파므로, 병합하지 않고 돌리면 step 21(`vpc-networking`)이
+ADR-031이 이미 고친 자리를 다시 열게 된다.
 
 ```bash
-git checkout feat-30-prompt-korean-polish
+git checkout develop
 npm install            # Node 18.17.1
 npm test               # 471개 통과해야 정상
 node scripts/check-structure.mjs   # 이상 없음이어야 정상
@@ -238,6 +245,7 @@ step들이 범위 밖이라 남긴 것들이다. 각각의 판정 근거는 `ind
 3. **`q036`과 `q173`이 정답(`SSE-KMS`)과 요구(자동 교체)를 공유한다.** `q173`의 주 축은
    봉투 암호화이고 프롬프트가 `data.test.ts`에 문자열로 고정돼 있어 손대지 않았다.
 4. **`vpc-networking.vpc-endpoint`와 `endpoint-pricing`의 어긋남** — 아래 후보 E.
+   **ADR-031이 판정해 끝났다(2026-09-09).**
 
 **판정하고 그대로 두기로 한 것 둘**은 후보가 아니다. 되짚을 때 다시 열지 마라.
 
@@ -325,20 +333,77 @@ SSE-C가 후보에서 빠지는 까닭은?"
 
 | | |
 |---|---|
-| `feat-30-prompt-korean-polish` | phase 29 전부 + phase 30 step 0~28. **push되지 않았다** |
-| `feat-29-content-quality-pilot` | phase 29 step 0~6. origin에 push돼 있다 |
-| `develop` | phase 28 병합 + 개념 본문 오타 수정. origin과 같다 |
-| `main` | `1a28bd5` — release. origin과 같고 GitHub Pages 배포 성공(1분 24초) |
+| `fix-vpc-endpoint-fact` | 후보 E 판정(ADR-031) + phase 31 명세. `develop`에서 팠고 **병합·push는 아직이다** |
+| `develop` | phase 28·29·30 전부. `feat-30-prompt-korean-polish`와 같고 origin과도 같다 |
+| `main` | `7339754` — release(phase 28~30). origin과 같다 |
 | 배포 주소 | https://working-zima.github.io/aws-saa-c03-quiz/ |
 | 문항 | 732개 (q001~q732) — phase 30은 문항을 더하거나 빼지 않고 프롬프트 718개를 다시 썼다 |
 | 개념 | 618개 / 주제 39개 — phase 30은 `topics.json`을 건드리지 않았다 |
 | 개념 커버리지 | 618/618 (100%) — `data.test.ts`의 불변식으로 고정돼 있다 |
 | 해설 길이 | 전 구간 187자 이상 — `data.test.ts`의 불변식이다 |
-| 테스트 | **471개 통과.** `check-structure`·`lint`·`build` 모두 통과 |
+| 테스트 | **471개 통과.** `check-structure`·`coverage`·`check-verbatim`·`lint`·`build` 모두 통과 |
 
-`phases/index.json`의 phase 28은 `completed`이고 `develop`에 병합해 push까지 끝냈다.
-**phase 29와 30은 브랜치에만 있고 push도 되지 않았다** — 병합과 push는 사람이 판단한다
-(CLAUDE.md). `main`은 아직 phase 28도 담고 있지 않다.
+`phases/index.json`의 phase는 0~30이 전부 `completed`이고, phase 28~30은 `develop`을
+거쳐 `main`까지 나갔다(`7339754`). **위 인수인계 본문 곳곳에 "phase 29·30은 push되지
+않았다"고 적혀 있는데 그것은 병합 전에 쓰인 문장이다** — 이 표가 최신이다.
+지금 병합·push를 기다리는 것은 `fix-vpc-endpoint-fact` 하나다(사람이 판단한다).
+
+## phase 31 — 명세를 짜 두었다. 아직 돌리지 않았다
+
+`phases/31-content-quality-rollout/` 에 **step 0~36**이 있다. phase 29가 시범 주제 하나에서
+세운 기준을 나머지 38개 주제로 넓힌다. `phases/index.json`에 `pending`으로 등록돼 있다.
+
+### 사용자가 답한 결정 — 다시 묻지 마라
+
+2026-09-09에 넷을 정했다.
+
+1. **훑는 순서** — `topics.json` **배열 순서**다. 학습 순서와 같아서 검수도 사용자가 읽던
+   흐름 그대로 할 수 있다. (문항이 많은 주제부터·audit 지표가 많은 주제부터는 탈락)
+2. **step 크기** — **주제 하나가 step 하나**다. 결함 종류별로 가르지 않는다.
+   `sqs-sns-eventbridge`(개념 33·문항 40)만 둘로 쪼갰고, 작은 주제 둘·셋은 묶었다.
+3. **검수 리듬** — **처음 3 step 뒤에 끊는다.** `--max-steps 3`으로 돌리고 멈춰서, 사용자가
+   `npm run dev`로 그 세 주제를 읽고 합격선을 확정한 뒤 나머지를 이어 돌린다.
+   기준이 틀렸다면 3 step치만 되돌리면 된다.
+4. **해설 범위** — **개념 본문과 어긋나는 자리만** 고친다. 전면 재작성이 아니다.
+   phase 28이 732개를 이미 다시 썼고 187자 하한이 `data.test.ts`의 불변식이다.
+
+### 돌리는 법
+
+```bash
+# 이 브랜치를 develop에 병합한 뒤 develop에서 실행한다
+pgrep -f execute.py            # 이미 돌고 있는 것이 없는지 먼저 확인
+python3 scripts/execute.py 31-content-quality-rollout --max-steps 3
+# 멈추면 사용자 검수 → 통과하면 나머지를 이어 돌린다
+```
+
+**규모**: 37 step. phase 30이 29 step에 약 5시간이었고 이건 개념 본문까지 보므로 더 무겁다 —
+**7~10시간**으로 본다. 사용량 한도에 걸릴 것을 전제해라(아래 「이어받을 때 주의할 것」).
+
+### step 배치
+
+주제 39개 중 `s3-encryption-batch`(phase 29의 시범)만 빠진다. `s3-storage-classes`와
+`governance-iac`은 기계 지표가 0이지만 **넣었다** — 기계가 못 보는 다섯(기초 용어·도입
+문장·요구 겹치기·문항 목적·용어 불일치)이 남아 있을 수 있고, 그게 phase 29가 배운 것이다.
+
+| step | 맡은 주제 |
+|---|---|
+| 0~5 | `aws-core-services` `s3-storage-classes` `s3-versioning-lifecycle` `s3-access-control` `ebs-instance-store` `efs-fsx` |
+| 6~11 | `data-transfer-services` `storage-gateway-migration` `rds-storage-features` `aurora` `dynamodb` `elasticache-purpose-built-db` |
+| 12~17 | `ec2-autoscaling` `elastic-load-balancing` `cloudfront-global-accelerator` `lambda` `ecs-eks-fargate` `api-gateway-step-functions` |
+| 18~19 | `sqs-sns-eventbridge` — A는 개념 33 + 문항 앞 20, B는 문항 뒤 20 |
+| 20~26 | `backup-disaster-recovery` `vpc-networking` `security-groups-nacl` `hybrid-connectivity` `route53` `emr-glue-athena` `kinesis-streaming` |
+| 27 | `redshift-opensearch-quicksight` + `cloudwatch-xray` |
+| 28~34 | `secrets-encryption` `waf-shield` `guardduty-macie-inspector` `iam-permissions` `identity-federation` `organizations-cloudtrail-config` `cost-management` |
+| 35 | `governance-iac` + `systems-manager` + `ai-ml-services` |
+| 36 | 마무리 — 명사구 단언을 전 주제로, audit 전체 재측정, ADR·이 파일 갱신 |
+
+### 각 step이 하는 일
+
+콘텐츠를 고치는 것보다 **판정하고 그대로 두는 것**이 중요하고, 그 근거를 `summary`에 남기는
+것이 step의 산출물이다. 기계 지표 여섯은 `content-audit.mjs`가 세고 ③⑤⑥은 후보 목록이라
+사람이 갈라야 한다. 기계가 못 보는 다섯은 **주제 페이지를 처음 읽는 학습자의 눈으로 통독**하는
+것 외에 찾는 방법이 없다 — step 파일이 "지표를 먼저 보면 지표가 있는 자리만 보게 되니
+통독을 먼저 하라"고 못 박고 있다.
 
 ## 다른 기기에서 시작하는 법
 
@@ -404,26 +469,38 @@ phase 28(해설 재작성)은 14 step에 약 2.6시간이고, 그중 해설을 �
 **위 「38개 주제로 넓히는 작업」과 대상이 겹친다** — `q247`~`q732`가 그 486개다. 둘을 따로
 돌리지 말고 주제를 훑을 때 함께 보는 편이 싸다.
 
-### E. VPC Endpoint 두 본문의 어긋남 판정 — 1 step, 20~30분
+### E. VPC Endpoint 두 본문의 어긋남 판정 — **끝났다 (2026-09-09)**
 
 **후보 E의 나머지(오타 셋·`name` 둘·`retrieval-time`)는 커밋 `5945daa`가 끝냈다.**
 `retrieval-time`은 수를 7에서 8로 바꾸지 않았다 — `s3-express-one-zone` 본문이 "이 클래스는
 그 축 바깥에 있다"고 하므로 일곱이 맞고, 어느 일곱인지를 밝히는 쪽으로 고쳤다. 그 판단의
 근거는 그 커밋 메시지에 있다.
 
-남은 것은 하나다. `vpc-networking.vpc-endpoint` 문단 2는 인터페이스 엔드포인트를
-"S3와 DynamoDB를 **제외한**" 리소스에 연결한다고 하는데, 같은 주제의 `endpoint-pricing`
-문단 0은 "인터페이스 엔드포인트는 **S3 접근에도 쓸 수 있으나** 시간당 요금이 붙는다"고 한다.
-한 주제 안에서 두 문장이 어긋나 보인다.
+남아 있던 하나도 브랜치 `fix-vpc-endpoint-fact`가 끝냈다. 판정은 **ADR-031**이다.
 
-**오타가 아니라 어느 쪽이 맞는지를 정하는 사안이다.** `endpoint-pricing`은 `exam-gaps.md`에
-덤프 인용과 함께 있고 `vpc-endpoint`는 `concepts-raw.md`에서 왔는데, 후자가 이 기기에 없어
-원문을 대조할 수 없다. 전례는 ADR-008의 예외(덤프 해설이 실제 AWS 동작과 어긋나면 정확한
-쪽으로 고친다)와 phase 26의 Glacier 조회 시간 통일이다 — 둘 다 **모순을 남기지 않고 한쪽으로
-통일**했다. 고칠 때는 근거 문항(`q104`·`q105`·`q209`)의 해설도 함께 맞춰야 한다.
+원문을 대조할 수 있었다 — `concepts-raw.md` p33이 "인터페이스 VPC 엔드포인트는 인터넷을
+거치지 않고 S3, DynamoDB 를 제외한 모든 AWS 리소스에 접근할 수 있게 해준다"고 적고 있고,
+**이 문장의 "S3 제외"가 틀렸다.** S3에는 인터페이스 엔드포인트가 있으므로 덤프 인용
+[네트워크1 #98 p203]을 담은 `endpoint-pricing` 쪽이 맞다.
+
+**DynamoDB의 "제외"는 그대로 두었다.** 덤프 인용이 반박하는 것은 S3 하나뿐이고, DynamoDB에
+인터페이스 엔드포인트가 있다고 말하는 출처는 없다. 반박의 사거리를 넘겨 고치면 틀린 문장을
+지우는 대신 근거 없는 문장을 넣게 된다 — 그 규칙이 ADR-031의 본체다. 덕분에 `q104`
+("S3와 DynamoDB 둘 다" → 게이트웨이)의 변별점이 살아서 **세 문항 모두 `prompt`·`choices`를
+손대지 않고 해설만 고쳤다.**
+
+**어긋남은 개념 본문 둘이 아니라 해설 셋까지였다.** `q104` 해설은 "인터페이스는 S3와
+DynamoDB를 제외한 AWS 리소스에 연결하는 유형"이라 하고 `q209` 해설은 "인터페이스도 S3에
+연결할 수는 있으나"라고 해서, 같은 문제 은행이 서로 반대되는 사실을 가르치고 있었다.
+phase 28이 판정을 미루며 해설을 각 개념 본문에 맞춰 둔 결과다. 고친 자리는
+`topics.json` 2개념·`questions.json` 3해설·`exam-gaps.md`(「원본 수정 이력」 4번)다.
 
 ## 이어받을 때 주의할 것
 
+- **`concepts-raw.md`를 `grep`으로 뒤질 때는 `-a`를 붙여라.** macOS의 BSD grep이 이 파일을
+  binary로 판정해서, `-a` 없이 부르면 **일치가 있어도 아무것도 출력하지 않고 exit 1로 끝난다**
+  (`file`도 `data`라고 답한다). 후보 E가 "원문이 이 기기에 없어 대조할 수 없다"로 넘어갔던
+  것이 실은 이 조용한 실패였다 — 파일은 있었다. 근거는 ADR-031 말미.
 - **`python3`는 이 환경에 없다 — `py` 또는 `python`이 Python 3.13이다.** harness는
   `python scripts/execute.py <phase> --max-steps N`으로 돌린다.
 - **harness를 돌리기 전에 이미 돌고 있는 것이 없는지 확인한다: `pgrep -f execute.py`.**
