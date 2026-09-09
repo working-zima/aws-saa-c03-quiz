@@ -2789,7 +2789,11 @@ describe('학습 데이터 무결성', () => {
   // 그때까지는 아직 안 고친 주제가 남아 있어 전체에 걸면 곧바로 실패한다.
   // **통과시키려고 예외 목록을 만들지 마라**(ADR-026의 경고와 같다). 여기 적히는 것은
   // "고쳤다"는 기록이고, 고치지 않은 주제를 넘기는 목록이 아니다.
-  const nounPhraseRatchet = ['aws-core-services', 's3-storage-classes']
+  const nounPhraseRatchet = [
+    'aws-core-services',
+    's3-storage-classes',
+    's3-versioning-lifecycle',
+  ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
     nounPhraseRatchet.forEach((topicId) => {
@@ -2979,6 +2983,124 @@ describe('학습 데이터 무결성', () => {
         .map(({ id }) => id)
 
       expect(prompts).toEqual([])
+    })
+  })
+
+  describe('S3 버전 관리 주제가 주제 안에서 읽히는 용어만 쓴다', () => {
+    const topicId = 's3-versioning-lifecycle'
+
+    const body = (conceptId: string) => {
+      const concept = topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+
+      return concept?.paragraphs.join(' ') ?? ''
+    }
+
+    // ADR-028의 뜻풀이가 이 주제 안에도 서 있어야 한다(ADR-029 — 주제마다 되풀이한다).
+    // 자리는 배열의 첫 개념이고, 이 주제에서 두 낱말이 처음 나오는 자리다.
+    it('버킷과 객체의 뜻이 이 주제 안에서 풀린다', () => {
+      const text = body('s3-versioning-lifecycle.versioning')
+
+      expect(text).toContain('파일을 담는 최상위 저장 공간을 **버킷**이라 부르고')
+      expect(text).toContain('버킷에 담긴 파일 하나하나를 **객체**라 부른다')
+    })
+
+    // 접두사는 이 주제에서 마지막 개념의 크기 필터 설명에만 나온다 — 그 자리가 첫 등장이다.
+    it('접두사의 뜻이 처음 나오는 자리에서 풀린다', () => {
+      expect(body('s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter')).toContain(
+        '접두사는 객체 이름의 앞부분을 가리키며',
+      )
+    })
+
+    // 수명 주기 정책이 옮기는 대상을 이 주제는 `S3 유형`, 개념 넷과 문항 넷은
+    // `저장 유형`·`클래스`·`스토리지 클래스`로 불렀다. 개념 본문이 쓰는 이름 하나로 모으고
+    // 그것이 무엇인지 처음 나오는 자리에서 밝힌다. 근거는 s3-storage-classes.standard 본문.
+    it('스토리지 클래스가 무엇인지 이 주제 안에서 밝혀지고 다른 이름으로 불리지 않는다', () => {
+      expect(body('s3-versioning-lifecycle.lifecycle-policy')).toContain(
+        '스토리지 클래스는 객체를 어느 조건으로 보관할지 고르는 유형이며',
+      )
+
+      const topicText = (topics.find((candidate) => candidate.id === topicId)?.concepts ?? [])
+        .flatMap((concept) => [concept.name, concept.summary, ...concept.paragraphs])
+        .join(' ')
+      const questionText = questions
+        .filter((question) => question.topicId === topicId)
+        .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+        .join(' ')
+
+      expect(topicText).not.toContain('저장 유형')
+      expect(questionText).not.toContain('저장 유형')
+      expect(topicText).not.toContain('S3 유형')
+      expect(questionText).not.toContain('S3 유형')
+    })
+
+    // 복제 계열 셋이 리전을 축으로 갈리는데 리전이 무엇인지가 이 주제에 없었고,
+    // 아카이브 계열은 q271의 오답을 지우는 근거인데 개념 본문에도 풀이가 없었다.
+    // 근거는 aws-core-services.region과 s3-storage-classes.glacier-instant-retrieval 본문이다.
+    it('리전과 아카이브 계열이 복제 개념 안에서 무엇인지 밝혀진다', () => {
+      const text = body('s3-versioning-lifecycle.s3-replication')
+
+      expect(text).toContain('리전은 AWS가 서비스를 제공하는 컴퓨터들이 자리한 지리적 위치를 가리킨다')
+      expect(text).toContain('데이터를 오래 보관해 두는 쪽이라 아카이브 계열이라고 부른다')
+    })
+
+    // 주제 밖 서비스는 사양·수치가 아니라 성격 한 줄만 가져온다(ADR-027·ADR-029).
+    // 근거는 각각 aws-core-services.lambda·iam-permissions.iam·s3-encryption-batch.sse-types 본문이다.
+    it('주제 밖 서비스 셋의 성격이 쓰이는 자리에서 한 줄로 붙는다', () => {
+      expect(body('s3-versioning-lifecycle.event-notification')).toContain(
+        'Lambda는 서버를 직접 만들어 관리하지 않고 올려 둔 코드만 실행하는 AWS 서비스다',
+      )
+      expect(body('s3-versioning-lifecycle.s3-same-region-replication')).toContain(
+        'IAM 역할은 원래 접근 권한이 없는 사용자나 서비스에 AWS 리소스 권한을 넘겨주는 장치다',
+      )
+      expect(body('s3-versioning-lifecycle.s3-replication-cross-account-kms')).toContain(
+        'SSE-KMS는 키 관리 서비스인 AWS KMS가 암호화 키를 만들고 관리하는 S3 암호화 방식이다',
+      )
+    })
+
+    // 이 주제는 같은 기능을 `정책`(개념 2)·`구성`(개념 9)·`규칙`(구성 안의 조건)으로 부른다.
+    // 셋은 실제로 다른 것을 가리키므로 하나로 합치지 않고, 마지막 개념이 관계를 밝힌다.
+    it('수명 주기 구성이 무엇이고 규칙과 어떻게 다른지 밝혀진다', () => {
+      expect(body('s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter')).toContain(
+        '버킷에 걸어 두는 수명 주기 설정 한 벌을 수명 주기 구성이라 부르고, 그 구성은 버킷당 하나다',
+      )
+    })
+
+    // 형태는 ADR-010과 같다 — 풀이는 summary가 아니라 paragraphs에만 들어간다.
+    it('이 주제의 풀이가 개념 요약이나 제목으로 새지 않는다', () => {
+      const topic = topics.find((candidate) => candidate.id === topicId)
+      const glosses = [
+        '파일을 담는 최상위 저장 공간을 **버킷**이라 부르고',
+        '접두사는 객체 이름의 앞부분을 가리키며',
+        '스토리지 클래스는 객체를 어느 조건으로 보관할지 고르는 유형이며',
+        '리전은 AWS가 서비스를 제공하는',
+        '아카이브 계열이라고 부른다',
+        'Lambda는 서버를 직접 만들어 관리하지 않고',
+        'IAM 역할은 원래 접근 권한이 없는',
+        'SSE-KMS는 키 관리 서비스인',
+      ]
+
+      topic?.concepts.forEach((concept) => {
+        glosses.forEach((gloss) => {
+          expect(concept.summary).not.toContain(gloss)
+          expect(concept.name).not.toContain(gloss)
+        })
+      })
+    })
+
+    // q031·q033은 개념도 정답 텍스트도 같아 content-audit의 ⑥에 뜬다. 중복이 아닌 이유는
+    // 묻는 성질이 다르다는 것이고, 그 차이가 프롬프트에 남아 있어야 한다 — q031은 대상 목록
+    // 없이 시간에 따라 적용되는 자동화(변별 상대는 S3 Batch Operations), q033은 보존 기한이
+    // 끝난 객체의 자동 삭제(변별 상대는 삭제를 막는 객체 잠금·법적 보존)다.
+    it('같은 개념에 붙은 수명 주기 문항 셋이 서로 다른 축을 묻는다', () => {
+      const byId = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+      expect(byId.q031.prompt).toContain('대상 목록')
+      expect(byId.q031.choices).toContain('S3 Batch Operations')
+      expect(byId.q032.prompt).toContain('얼마나 자주 접근할지')
+      expect(byId.q033.prompt).toContain('보존 기한')
+      expect(new Set([byId.q031.prompt, byId.q032.prompt, byId.q033.prompt]).size).toBe(3)
     })
   })
 
