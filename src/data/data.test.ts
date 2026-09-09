@@ -3041,7 +3041,7 @@ describe('학습 데이터 무결성', () => {
     it('리전과 아카이브 계열이 복제 개념 안에서 무엇인지 밝혀진다', () => {
       const text = body('s3-versioning-lifecycle.s3-replication')
 
-      expect(text).toContain('리전은 AWS가 서비스를 제공하는 컴퓨터들이 자리한 지리적 위치를 가리킨다')
+      expect(text).toContain('리전은 AWS가 서비스를 제공하는 컴퓨터들이 모여 있는 지리적 위치를 가리킨다')
       expect(text).toContain('데이터를 오래 보관해 두는 쪽이라 아카이브 계열이라고 부른다')
     })
 
