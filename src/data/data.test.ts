@@ -2789,7 +2789,7 @@ describe('학습 데이터 무결성', () => {
   // 그때까지는 아직 안 고친 주제가 남아 있어 전체에 걸면 곧바로 실패한다.
   // **통과시키려고 예외 목록을 만들지 마라**(ADR-026의 경고와 같다). 여기 적히는 것은
   // "고쳤다"는 기록이고, 고치지 않은 주제를 넘기는 목록이 아니다.
-  const nounPhraseRatchet = ['aws-core-services']
+  const nounPhraseRatchet = ['aws-core-services', 's3-storage-classes']
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
     nounPhraseRatchet.forEach((topicId) => {
@@ -2880,6 +2880,105 @@ describe('학습 데이터 무결성', () => {
           expect(concept.name).not.toContain(gloss)
         })
       })
+    })
+  })
+
+  // ADR-029 — 용어 풀이는 주제마다 한 번씩 되풀이한다. 이 주제는 클래스 여덟 개를
+  // 소개하면서 버킷·객체·AZ·수명 주기 규칙을 풀이 없이 쓰고 있었다. 정의는 저장소의
+  // 다른 주제에 있었지만, 주제 페이지 단위로 읽는 학습자에게는 없는 것과 같다.
+  describe('S3 스토리지 클래스 주제가 주제 안에서 읽히는 용어만 쓴다', () => {
+    const topicId = 's3-storage-classes'
+
+    const body = (conceptId: string) => {
+      const concept = topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+
+      return concept?.paragraphs.join(' ') ?? ''
+    }
+
+    // ADR-028의 뜻풀이가 이 주제 안에도 서 있어야 한다. 자리는 배열의 첫 개념이고,
+    // 이 주제에서 두 낱말이 처음 나오는 자리다 — 뒤의 개념 열이 이 위에서 읽힌다.
+    it('버킷과 객체의 뜻이 이 주제 안에서 풀린다', () => {
+      const text = body('s3-storage-classes.standard')
+
+      expect(text).toContain('파일을 담는 저장 공간을 **버킷**이라 부르고')
+      expect(text).toContain('버킷에 담긴 파일 하나하나를 **객체**라 부른다')
+    })
+
+    // one-zone-ia와 s3-express-one-zone이 AZ를 풀이 없이 쓰고, 뒤의
+    // intelligent-tiering-monitoring-fee는 같은 것을 `가용 영역`이라 불렀다.
+    // 근거는 aws-core-services.availability-zone·single-az 본문의 성격 한 줄이다.
+    it('AZ의 뜻이 이 주제 안에서 풀리고 가용 영역과 이어진다', () => {
+      expect(body('s3-storage-classes.one-zone-ia')).toContain(
+        'AZ는 가용 영역(Availability Zone)의 약자로, 서로 물리적으로 떨어져 있는 데이터 센터 하나하나를 가리킨다',
+      )
+    })
+
+    // lifecycle-vs-intelligent-tiering이 수명 주기 규칙을 정의 없이 갈림길의 한쪽으로
+    // 세우고 있었다. 근거는 s3-versioning-lifecycle.lifecycle-policy 본문이다.
+    it('수명 주기 규칙이 무엇인지 이 주제 안에서 밝혀진다', () => {
+      expect(body('s3-storage-classes.lifecycle-vs-intelligent-tiering')).toContain(
+        '지정한 기간이 지난 객체를 다른 클래스로 자동으로 옮기도록 미리 정해 두는 수명 주기 규칙',
+      )
+    })
+
+    // 아카이브 계열·검색이라는 말이 Glacier 개념 셋과 3단 개념 넷에서 쓰이는데
+    // 무엇을 가리키는지가 없었다. 계열을 처음 여는 glacier-instant-retrieval과
+    // 검색이 처음 나오는 glacier-flexible-retrieval이 그 자리다.
+    it('아카이브 계열과 검색이 처음 나오는 자리에서 무엇인지 밝혀진다', () => {
+      expect(body('s3-storage-classes.glacier-instant-retrieval')).toContain(
+        '오래 보관해 두는 쪽이라 아카이브 계열이라고도 부른다',
+      )
+      expect(body('s3-storage-classes.glacier-flexible-retrieval')).toContain(
+        '맡긴 데이터를 꺼내는 일은 검색이라 부르고',
+      )
+    })
+
+    // 형태는 ADR-010과 같다 — 풀이는 summary가 아니라 paragraphs에만 들어간다.
+    it('이 주제의 풀이가 개념 요약이나 제목으로 새지 않는다', () => {
+      const topic = topics.find((candidate) => candidate.id === topicId)
+      const glosses = [
+        '파일을 담는 저장 공간을 **버킷**이라 부르고',
+        'AZ는 가용 영역(Availability Zone)의 약자로',
+        '미리 정해 두는 수명 주기 규칙',
+        '아카이브 계열이라고도 부른다',
+      ]
+
+      topic?.concepts.forEach((concept) => {
+        glosses.forEach((gloss) => {
+          expect(concept.summary).not.toContain(gloss)
+          expect(concept.name).not.toContain(gloss)
+        })
+      })
+    })
+
+    // s3-storage-class-analysis의 산출물을 개념은 `분석과 권고`라 부르는데 q323의
+    // 보기 하나만 `분석 보고서`라 불렀다. 같은 것을 두 이름으로 부르면 학습자가
+    // 어느 쪽이 무엇인지 알 수 없다 — 개념이 쓰는 말 하나로 모았다.
+    it('스토리지 클래스 분석의 산출물을 보고서라 부르지 않는다', () => {
+      const topicText = (topics.find((candidate) => candidate.id === topicId)?.concepts ?? [])
+        .flatMap((concept) => [concept.name, concept.summary, ...concept.paragraphs])
+        .join(' ')
+      const questionText = questions
+        .filter((question) => question.topicId === topicId)
+        .flatMap((question) => [question.prompt, ...question.choices, question.explanation])
+        .join(' ')
+
+      expect(topicText).not.toContain('보고서')
+      expect(questionText).not.toContain('보고서')
+    })
+
+    // 문항은 열 때마다 순서가 섞이고(ADR-011) 랜덤 세트는 일부만 뽑으므로(ADR-012)
+    // 학습자는 이 주제를 읽지 않은 채로 문항을 만난다. 그래서 문항 안에서는 풀이가
+    // 아니라 개념 본문이 함께 쓰는 말을 쓴다 — q019의 `하나의 AZ`가 그 자리였다.
+    it('이 주제의 문제문이 풀이 없는 AZ 약어를 쓰지 않는다', () => {
+      const prompts = questions
+        .filter((question) => question.topicId === topicId)
+        .filter((question) => /AZ/.test(question.prompt))
+        .map(({ id }) => id)
+
+      expect(prompts).toEqual([])
     })
   })
 
