@@ -2783,6 +2783,106 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
+  // phase 31이 위 기준을 나머지 38개 주제로 넓히는 동안, 끝낸 주제가 되돌아가지 않게
+  // 붙잡는 래칫이다. step 하나가 주제 하나를 끝내면 이 목록에 그 주제 id를 더한다.
+  // 목록이 39개를 다 채우면 마지막 step이 이 단언을 전 주제 검사로 갈아치운다 —
+  // 그때까지는 아직 안 고친 주제가 남아 있어 전체에 걸면 곧바로 실패한다.
+  // **통과시키려고 예외 목록을 만들지 마라**(ADR-026의 경고와 같다). 여기 적히는 것은
+  // "고쳤다"는 기록이고, 고치지 않은 주제를 넘기는 목록이 아니다.
+  const nounPhraseRatchet = ['aws-core-services']
+
+  it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
+    nounPhraseRatchet.forEach((topicId) => {
+      const topic = topics.find((candidate) => candidate.id === topicId)
+
+      expect(topic, `${topicId} 주제가 없다`).toBeDefined()
+      topic?.concepts.forEach((concept) => {
+        expect(concept.name, `${concept.id}의 name이 문장이다: "${concept.name}"`).not.toMatch(
+          /다$/,
+        )
+      })
+    })
+  })
+
+  // ADR-029 — 용어 풀이는 주제마다 한 번씩 되풀이한다. 판정 기준은 "저장소 안에 정의가
+  // 있는가"가 아니라 "이 주제 페이지만 읽고 뜻이 서는가"다. 이 주제는 버킷·객체·접두사의
+  // 원적지이지만(ADR-028) 그 셋만으로 읽히지 않는 자리가 더 있었다.
+  describe('AWS 핵심 서비스 주제가 주제 안에서 읽히는 용어만 쓴다', () => {
+    const topicId = 'aws-core-services'
+
+    const body = (conceptId: string) => {
+      const concept = topics
+        .flatMap((topic) => topic.concepts)
+        .find(({ id }) => id === conceptId)
+
+      return concept?.paragraphs.join(' ') ?? ''
+    }
+
+    const topicText = () => {
+      const topic = topics.find((candidate) => candidate.id === topicId)
+
+      return (topic?.concepts ?? [])
+        .flatMap((concept) => [concept.name, concept.summary, ...concept.paragraphs])
+        .join(' ')
+    }
+
+    // exam-heuristics가 서버리스를 풀이 없이 처음 쓰고 있었다. 자리를 lambda로 옮긴
+    // 이유는 그 개념이 이 방식의 뜻을 이미 설명하고 있고, 배열에서 앞이라 이 주제에서
+    // 처음 나오는 자리가 되기 때문이다. ADR-029가 이 낱말의 근거로 지목한 개념이다.
+    it('서버리스의 뜻이 이 주제 안에서 풀린다', () => {
+      expect(body('aws-core-services.lambda')).toContain(
+        '서버를 직접 만들어 관리하지 않고 코드만 올려 실행하는 방식을 **서버리스**라고 한다',
+      )
+    })
+
+    // blob-offload-to-s3이 메타데이터를 풀이 없이 쓰고 있었다. 이 주제에서 처음 나오는
+    // 자리이자 유일한 자리다.
+    it('메타데이터의 뜻이 이 주제 안에서 풀린다', () => {
+      expect(body('aws-core-services.blob-offload-to-s3')).toContain(
+        '메타데이터는 파일의 내용 자체가 아니라 그 파일에 딸려 있는 정보를 뜻한다',
+      )
+    })
+
+    // `객체 키`는 출처(dump-gaps)의 말이라 살리되, 같은 주제의 s3 개념이 세운 `객체 이름`에
+    // 잇는다. 같은 것을 두 이름으로 부르면 어느 쪽이 무엇인지 학습자가 알 수 없다.
+    it('객체 키가 같은 주제의 객체·객체 이름에 이어져 쓰인다', () => {
+      expect(body('aws-core-services.s3')).toContain('객체 이름의 앞부분은 **접두사**라 하며')
+      expect(body('aws-core-services.blob-offload-to-s3')).toContain(
+        '그 객체를 가리키는 이름인 객체 키',
+      )
+    })
+
+    // 제목이 `큰 바이너리는 …에 둔다`였고 본문·해설은 같은 것을 `문서`·`파일 본체`라 불렀다.
+    // 제목을 명사구로 내리면서 이름을 본문이 쓰는 말 하나로 모았다 — 네 출처 어디에도
+    // `바이너리`가 무엇인지 말하는 문장이 없어 풀이를 세울 근거도 없다.
+    it('큰 파일 본체를 바이너리라 부르지 않는다', () => {
+      expect(topicText()).not.toContain('바이너리')
+      expect(
+        questions
+          .filter((question) => question.topicId === topicId)
+          .filter((question) => question.explanation.includes('바이너리'))
+          .map(({ id }) => id),
+      ).toEqual([])
+    })
+
+    // 형태는 ADR-010과 같다 — 풀이는 summary가 아니라 paragraphs에만 들어간다.
+    it('이 주제의 풀이가 개념 요약이나 제목으로 새지 않는다', () => {
+      const topic = topics.find((candidate) => candidate.id === topicId)
+      const glosses = [
+        '방식을 **서버리스**라고 한다',
+        '메타데이터는 파일의 내용 자체가 아니라',
+        '그 객체를 가리키는 이름인 객체 키',
+      ]
+
+      topic?.concepts.forEach((concept) => {
+        glosses.forEach((gloss) => {
+          expect(concept.summary).not.toContain(gloss)
+          expect(concept.name).not.toContain(gloss)
+        })
+      })
+    })
+  })
+
   it('S3 접근 제어 주제가 접근 경로 여섯 다음에 갈림길 둘과 한계 다섯을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-access-control')
 
