@@ -78,9 +78,28 @@ const REPLACEMENTS = TERMS.flatMap((t) => t.variants.map((v) => [v, `⟨${t.key}
   (a, b) => b[0].length - a[0].length,
 )
 
+/**
+ * 자리표 바로 뒤에 오는 **조사**. 낱말을 바꾸면 받침이 달라져 조사가 함께 바뀌는데,
+ * 그것은 한국어 문법이 강제하는 것이지 문장을 손댄 것이 아니다.
+ * `토픽`(받침 ㄱ) → `주제`(받침 없음)이면 `토픽이` → `주제가`가 **되어야 맞다.**
+ * 그래서 자리표 뒤의 조사도 한 자리표로 눌러 대조한다.
+ *
+ * 긴 것부터 적어야 `이라는`이 `이`에 먼저 걸리지 않는다.
+ */
+const PARTICLES = [
+  // 계사(-이다)의 활용도 받침에 따라 갈린다. `토픽이어야` → `주제여야`가 그 자리다.
+  '이어야', '여야', '이어서', '여서', '이에요', '예요', '이었', '였',
+  '이라는', '라는', '이라고', '라고', '이라야', '라야', '이라도', '라도',
+  '이라서', '라서', '이라', '라', '이란', '란', '이나', '나', '이며', '며',
+  '으로', '로', '이야', '야', '와', '과', '이', '가', '을', '를', '은', '는',
+]
+const PARTICLE_AFTER = new RegExp(`(⟨[A-Z_]+⟩)(${PARTICLES.join('|')})`, 'g')
+
 const normalize = (text) => {
   let out = String(text)
   for (const [from, to] of REPLACEMENTS) out = out.split(from).join(to)
+  // 자리표 뒤의 조사를 한 자리로 누른다. 두 번 돌리는 이유는 자리표가 잇달아 나올 때다.
+  out = out.replace(PARTICLE_AFTER, '$1⟨J⟩').replace(PARTICLE_AFTER, '$1⟨J⟩')
   return out
 }
 
@@ -260,13 +279,17 @@ if (unexplained.length) {
   for (const u of unexplained.slice(0, 20)) {
     // 앞부분이 아니라 **처음 갈라지는 자리**를 보여 준다. 긴 해설에서 앞 110자만 찍으면
     // 두 줄이 똑같이 보여 무엇을 고쳐야 할지 알 수 없다.
+    // **정규화한 문자열**에서 갈리는 자리를 보여 준다. 원문에서 처음 갈리는 자리는
+    // 대개 정당한 표기 치환이라, 그것을 찍으면 무엇이 위반인지 알 수 없다.
+    const nb = normalize(u.before)
+    const na = normalize(u.after)
     let i = 0
-    while (i < u.before.length && i < u.after.length && u.before[i] === u.after[i]) i++
+    while (i < nb.length && i < na.length && nb[i] === na[i]) i++
     const from = Math.max(0, i - 40)
     const cut = (t) => `${from > 0 ? '…' : ''}${t.slice(from, i + 70)}${i + 70 < t.length ? '…' : ''}`
-    console.log(`  ✗ ${u.field} ${u.id} — ${i}번째 글자부터 갈린다`)
-    console.log(`      이전: ${cut(u.before)}`)
-    console.log(`      이후: ${cut(u.after)}`)
+    console.log(`  ✗ ${u.field} ${u.id} — 표기를 눌러 대조하면 ${i}번째부터 갈린다`)
+    console.log(`      이전: ${cut(nb)}`)
+    console.log(`      이후: ${cut(na)}`)
   }
   if (unexplained.length > 20) console.log(`  …외 ${unexplained.length - 20}건`)
 }
