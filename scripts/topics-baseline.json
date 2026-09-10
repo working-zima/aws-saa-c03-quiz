@@ -1270,7 +1270,7 @@
     },
     {
      "id": "lambda.lambda-container-image",
-     "name": "Lambda를 컨테이너 이미지로 배포한다"
+     "name": "Lambda의 컨테이너 이미지 패키징"
     },
     {
      "id": "lambda.lambda-invocation-types",
@@ -1278,23 +1278,23 @@
     },
     {
      "id": "lambda.lambda-memory-cpu-proportional",
-     "name": "Lambda는 메모리를 올리면 CPU가 함께 올라간다"
+     "name": "메모리에 비례하는 Lambda의 CPU 배정"
     },
     {
      "id": "lambda.lambda-reserved-concurrency",
-     "name": "예약된 동시성은 콜드 스타트를 줄이지 않는다"
+     "name": "예약된 동시성과 프로비저닝된 동시성"
     },
     {
      "id": "lambda.lambda-provisioned-concurrency-autoscaling",
-     "name": "프로비저닝된 동시성은 고정값으로 두지 않는다"
+     "name": "프로비저닝된 동시성의 Application Auto Scaling 조정"
     },
     {
      "id": "lambda.lambda-concurrency-limit-throttling",
-     "name": "동시 실행 한도를 넘으면 호출이 거절된다"
+     "name": "동시 실행 한도 초과와 TooManyRequestsException"
     },
     {
      "id": "lambda.lambda-kinesis-event-source",
-     "name": "Lambda가 스트림 레코드를 직접 처리한다"
+     "name": "Lambda의 Kinesis 스트림 레코드 처리"
     },
     {
      "id": "lambda.lambda-snapstart",
@@ -1310,19 +1310,19 @@
     },
     {
      "id": "lambda.lambda-efs-mount",
-     "name": "Lambda 함수에 EFS를 마운트한다"
+     "name": "Lambda 함수의 EFS 마운트"
     },
     {
      "id": "lambda.lambda-version-alias-config-freeze",
-     "name": "환경 변수는 버전과 함께 굳는다"
+     "name": "Lambda 버전에 고정되는 환경 변수"
     },
     {
      "id": "lambda.lambda-execution-role-logs",
-     "name": "로그를 남기려면 실행 역할에 로그 권한이 있어야 한다"
+     "name": "실행 역할의 CloudWatch Logs 쓰기 권한"
     },
     {
      "id": "lambda.serverless-runtime-no-os-access",
-     "name": "관리형 런타임에는 들어갈 운영 체제가 없다"
+     "name": "관리형 런타임의 운영 체제 접근 제약"
     }
    ]
   },
