@@ -2432,15 +2432,15 @@
     },
     {
      "id": "waf-shield.waf-body-inspection-size-limit",
-     "name": "WAF가 검사하는 요청 본문에는 크기 한도가 있다"
+     "name": "WAF가 검사하는 요청 본문의 크기 한도"
     },
     {
      "id": "waf-shield.waf-web-acl-region-must-match-rest-api",
-     "name": "REST API에 붙일 Web ACL은 같은 리전에 만든다"
+     "name": "REST API에 붙일 Web ACL의 리전 조건"
     },
     {
      "id": "waf-shield.waf-logging-to-firehose",
-     "name": "WAF 로그는 Firehose를 거쳐 S3로 간다"
+     "name": "Firehose를 거쳐 S3로 가는 WAF 로그"
     }
    ]
   },
@@ -2487,15 +2487,15 @@
     },
     {
      "id": "guardduty-macie-inspector.macie-delegated-administrator",
-     "name": "Macie는 위임 관리자 계정에서 조직 전체를 본다"
+     "name": "조직 전체를 보는 Macie 위임 관리자 계정"
     },
     {
      "id": "guardduty-macie-inspector.guardduty-finding-to-eventbridge",
-     "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는다"
+     "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는 EventBridge"
     },
     {
      "id": "guardduty-macie-inspector.macie-finding-to-eventbridge",
-     "name": "Macie의 탐지 결과에 알림을 붙인다"
+     "name": "Macie 탐지 결과를 알림으로 잇는 EventBridge"
     }
    ]
   },

@@ -2819,6 +2819,8 @@ describe('학습 데이터 무결성', () => {
     'redshift-opensearch-quicksight',
     'cloudwatch-xray',
     'secrets-encryption',
+    'waf-shield',
+    'guardduty-macie-inspector',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
