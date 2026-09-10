@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "74bc440b8d1b11fbd7f9142cc895476802db93d0204909a0766ebadedaf1bb06",
+ "questionsSha256": "cf60bcd0f8b39ebdf1c7adfd5d6f03e190bb382d549e10fbce952d28bd4b4cda",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1627,15 +1627,15 @@
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
-     "name": "FIFO 큐의 순서 보장 단위인 메시지 그룹 ID"
+     "name": "FIFO 대기열의 순서 보장 단위인 메시지 그룹 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
-     "name": "5분 동안 적용되는 FIFO 큐의 중복 제거 ID"
+     "name": "5분 동안 적용되는 FIFO 대기열의 중복 제거 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
-     "name": "FIFO 큐의 콘텐츠 기반 중복 제거"
+     "name": "FIFO 대기열의 콘텐츠 기반 중복 제거"
     },
     {
      "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
