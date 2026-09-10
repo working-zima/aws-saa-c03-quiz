@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "fdf86af086d5ab7a10f32214a621a56072308f313a30c1782a42491f2a2e0a0f",
+ "questionsSha256": "0871b85569c59d2ab37af19b12264ad948b577c01ec09af1f522a38d6aa9cf43",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1080,7 +1080,7 @@
     },
     {
      "id": "elastic-load-balancing.alb-l7-vs-nlb-l4",
-     "name": "계층으로 갈리는 ALB와 NLB"
+     "name": "계층으로 나뉘는 ALB와 NLB"
     },
     {
      "id": "elastic-load-balancing.alb-routing-conditions",
@@ -1088,19 +1088,19 @@
     },
     {
      "id": "elastic-load-balancing.nlb-tls-listener",
-     "name": "NLB도 TLS 연결을 받는다"
+     "name": "NLB의 TLS 리스너"
     },
     {
      "id": "elastic-load-balancing.nlb-udp-listener",
-     "name": "UDP를 받는 것은 NLB뿐이다"
+     "name": "NLB의 UDP 리스너"
     },
     {
      "id": "elastic-load-balancing.nlb-ip-targets",
-     "name": "NLB는 VPC 밖의 IP도 대상으로 받는다"
+     "name": "NLB 대상 그룹의 IP 주소 등록"
     },
     {
      "id": "elastic-load-balancing.alb-cookie-stickiness",
-     "name": "스티키 세션은 ALB의 기능이다"
+     "name": "ALB의 쿠키 기반 스티키 세션"
     },
     {
      "id": "elastic-load-balancing.internal-load-balancer",
@@ -1116,23 +1116,23 @@
     },
     {
      "id": "elastic-load-balancing.alb-target-group-independent-scaling",
-     "name": "경로마다 타깃 그룹과 조정 단위를 나눈다"
+     "name": "경로별 타깃 그룹과 독립 확장"
     },
     {
      "id": "elastic-load-balancing.alb-listener-rule-fixed-response",
-     "name": "대상에 보내지 않고 규칙이 직접 답한다"
+     "name": "ALB 리스너 규칙의 사용자 지정 응답"
     },
     {
      "id": "elastic-load-balancing.load-balancer-idle-timeout",
-     "name": "유휴 타임아웃은 경로 전체를 맞춘다"
+     "name": "연결 경로 전체의 유휴 타임아웃"
     },
     {
      "id": "elastic-load-balancing.end-to-end-encryption-behind-alb",
-     "name": "종단 간 암호화는 로드 밸런서 뒤까지다"
+     "name": "로드 밸런서 뒤 구간까지의 종단 간 암호화"
     },
     {
      "id": "elastic-load-balancing.gwlb-endpoint-cross-account-inspection",
-     "name": "게이트웨이 로드 밸런서 엔드포인트가 계정 경계를 넘는다"
+     "name": "게이트웨이 로드 밸런서 엔드포인트와 계정 간 트래픽 검사"
     }
    ]
   },
