@@ -2769,77 +2769,34 @@ describe('학습 데이터 무결성', () => {
   // 「배치 작업이 객체마다 Lambda를 부른다」처럼 문장이 제목 자리에 오면 무엇의 이름인지
   // 알 수 없고, 읽고 나서 다시 찾아올 이름도 되지 못한다. 주어가 되는 대상을 제목으로
   // 올리고 주장은 summary·paragraphs로 내린다 — 사용자가 직접 정한 기준이고 phase 29가
-  // 이 주제 하나에서 세운다. 한국어 평서형 종결어미는 모두 `-다`로 끝나므로 그것으로 잰다.
+  // 시범 주제 하나에서 세운 뒤 phase 31·32가 39개 주제 전부로 넓혔다. 한국어 평서형
+  // 종결어미는 모두 `-다`로 끝나므로 그것으로 잰다.
   //
-  // 범위를 이 주제로 한정하는 이유: 나머지 38개 주제에 문장형 제목이 아직 남아 있다.
-  // 넓히는 것은 다음 phase의 몫이고, 통과시키려고 예외 목록을 만들지 마라 — 목록이
-  // 생기는 순간 거기에 개념이 추가되어 사각지대가 되살아난다(ADR-026의 경고와 같다).
-  it('S3 암호화 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
-    const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
-
-    expect(topic?.concepts).toHaveLength(13)
-    topic?.concepts.forEach((concept) => {
-      expect(concept.name, `${concept.id}의 name이 문장이다: "${concept.name}"`).not.toMatch(/다$/)
-    })
-  })
-
-  // phase 31이 위 기준을 나머지 38개 주제로 넓히는 동안, 끝낸 주제가 되돌아가지 않게
-  // 붙잡는 래칫이다. step 하나가 주제 하나를 끝내면 이 목록에 그 주제 id를 더한다.
-  // 목록이 39개를 다 채우면 마지막 step이 이 단언을 전 주제 검사로 갈아치운다 —
-  // 그때까지는 아직 안 고친 주제가 남아 있어 전체에 걸면 곧바로 실패한다.
-  // **통과시키려고 예외 목록을 만들지 마라**(ADR-026의 경고와 같다). 여기 적히는 것은
-  // "고쳤다"는 기록이고, 고치지 않은 주제를 넘기는 목록이 아니다.
-  const nounPhraseRatchet = [
-    'aws-core-services',
-    's3-storage-classes',
-    's3-versioning-lifecycle',
-    's3-access-control',
-    'ebs-instance-store',
-    'efs-fsx',
-    'data-transfer-services',
-    'storage-gateway-migration',
-    'rds-storage-features',
-    'aurora',
-    'dynamodb',
-    'elasticache-purpose-built-db',
-    'ec2-autoscaling',
-    'elastic-load-balancing',
-    'cloudfront-global-accelerator',
-    'lambda',
-    'ecs-eks-fargate',
-    'api-gateway-step-functions',
-    'sqs-sns-eventbridge',
-    'backup-disaster-recovery',
-    'vpc-networking',
-    'security-groups-nacl',
-    'hybrid-connectivity',
-    'route53',
-    'emr-glue-athena',
-    'kinesis-streaming',
-    'redshift-opensearch-quicksight',
-    'cloudwatch-xray',
-    'secrets-encryption',
-    'waf-shield',
-    'guardduty-macie-inspector',
-    'iam-permissions',
-    'identity-federation',
-    'organizations-cloudtrail-config',
-    'cost-management',
-    'governance-iac',
-    'systems-manager',
-    'ai-ml-services',
-  ]
-
-  it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
-    nounPhraseRatchet.forEach((topicId) => {
-      const topic = topics.find((candidate) => candidate.id === topicId)
-
-      expect(topic, `${topicId} 주제가 없다`).toBeDefined()
-      topic?.concepts.forEach((concept) => {
+  // **통과시키려고 예외 목록을 만들지 마라**(ADR-026의 경고와 같다). 목록이 생기는 순간
+  // 거기에 개념이 추가되어 사각지대가 되살아난다. 이 단언이 실패하면 그 개념의 제목을
+  // 명사구로 고쳐라 — 넘기는 것이 아니다.
+  it('개념 제목이 모두 문장이 아니라 명사구다', () => {
+    topics.forEach((topic) => {
+      topic.concepts.forEach((concept) => {
         expect(concept.name, `${concept.id}의 name이 문장이다: "${concept.name}"`).not.toMatch(
           /다$/,
         )
       })
+    })
+  })
+
+  // 위 기준으로 제목을 줄이다 보면 한 주제 안에 같은 제목이 둘 생길 수 있다 — 그러면
+  // 개념 목록에서 둘을 구분할 수 없어, 이름표로서의 구실을 제목이 잃는다. phase 32가
+  // 개념 제목 다수를 명사구로 줄이면서 새로 만들 수 있던 유일한 종류의 회귀이고,
+  // 착수 시점에 0건이었던 것을 그대로 붙잡는다.
+  //
+  // **주제를 넘는 중복은 검사하지 않는다.** 같은 서비스가 두 주제에 나오면 제목이 같은
+  // 것이 자연스럽고(착수 시점에도 3건 있었다), 그것을 좁히는 것은 목적이 아니다.
+  it('한 주제 안에서 개념 제목이 겹치지 않는다', () => {
+    topics.forEach((topic) => {
+      const names = topic.concepts.map((concept) => concept.name)
+
+      expect(new Set(names).size, `${topic.id}에 같은 제목이 둘 있다`).toBe(names.length)
     })
   })
 
