@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "e6f45bd1e7829805d1ca88377fff61d8c6df367ac278c22cd157e485312eae9d",
+ "questionsSha256": "b7e8de345d38ba1d2ceefb3a16e773dc3c9b91bad09787d9ab5d3c8d802fde10",
  "topics": [
   {
    "id": "aws-core-services",
@@ -2246,7 +2246,7 @@
     },
     {
      "id": "cloudwatch-xray.performance-insight",
-     "name": "Performance Insight"
+     "name": "Performance Insights"
     },
     {
      "id": "cloudwatch-xray.amazon-managed-grafana",
