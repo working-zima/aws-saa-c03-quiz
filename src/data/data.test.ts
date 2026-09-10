@@ -2821,6 +2821,8 @@ describe('학습 데이터 무결성', () => {
     'secrets-encryption',
     'waf-shield',
     'guardduty-macie-inspector',
+    'iam-permissions',
+    'identity-federation',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {

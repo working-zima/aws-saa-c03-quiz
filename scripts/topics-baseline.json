@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "92026a2e34c79599059492db845b14bf24e455a9b3389d0f80cc5364648d144f",
+ "questionsSha256": "a36f73492ab0fe3767e999e3fb0d57b65c51ce59a99ec5e524ff23415058a216",
  "topics": [
   {
    "id": "aws-core-services",
@@ -2518,7 +2518,7 @@
     },
     {
      "id": "iam-permissions.iam-group-policy-attachment",
-     "name": "권한은 사용자가 아니라 그룹에 붙인다"
+     "name": "IAM 그룹에 붙이는 정책"
     },
     {
      "id": "iam-permissions.iam-roles-anywhere",
@@ -2550,35 +2550,35 @@
     },
     {
      "id": "iam-permissions.iam-group-users-only",
-     "name": "IAM 그룹에는 EC2를 넣을 수 없다"
+     "name": "사용자 집합인 IAM 그룹"
     },
     {
      "id": "iam-permissions.iam-user-is-account-scoped",
-     "name": "IAM 사용자는 계정 밖으로 나가지 않는다"
+     "name": "계정 안에서만 존재하는 IAM 사용자"
     },
     {
      "id": "iam-permissions.iam-explicit-deny-precedence",
-     "name": "명시적 거부가 허용을 이긴다"
+     "name": "정책 평가 순서와 명시적 거부"
     },
     {
      "id": "iam-permissions.iam-notaction-deny",
-     "name": "NotAction을 쓴 Deny로 한 서비스만 남긴다"
+     "name": "NotAction을 쓴 Deny 문"
     },
     {
      "id": "iam-permissions.iam-requested-region-condition",
-     "name": "요청이 향한 리전을 조건으로 건다"
+     "name": "aws:RequestedRegion 조건 키"
     },
     {
      "id": "iam-permissions.access-analyzer-delegated-administrator",
-     "name": "조직 전체 결과는 위임 관리자 계정에 모인다"
+     "name": "Access Analyzer의 위임 관리자 계정"
     },
     {
      "id": "iam-permissions.root-user-multiple-mfa",
-     "name": "루트 사용자에게 MFA 장치를 여러 개 붙인다"
+     "name": "루트 사용자에 여러 개 등록하는 MFA 장치"
     },
     {
      "id": "iam-permissions.root-user-cannot-be-disabled",
-     "name": "루트 사용자는 없앨 수 없다"
+     "name": "비활성화할 수 없는 루트 사용자"
     }
    ]
   },
@@ -2625,7 +2625,7 @@
     },
     {
      "id": "identity-federation.custom-identity-broker-for-non-saml",
-     "name": "SAML을 못 쓰는 디렉터리는 브로커로 잇는다"
+     "name": "사용자 지정 ID 브로커"
     },
     {
      "id": "identity-federation.identity-center-permission-set",
@@ -2633,7 +2633,7 @@
     },
     {
      "id": "identity-federation.saml-federation-role-to-ad-group-mapping",
-     "name": "사내 디렉터리를 SAML 2.0으로 붙이고 역할을 그룹에 맵핑한다"
+     "name": "SAML 2.0 페더레이션과 IAM 역할의 AD 그룹 매핑"
     }
    ]
   },
