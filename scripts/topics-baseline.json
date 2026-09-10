@@ -1895,7 +1895,7 @@
     },
     {
      "id": "hybrid-connectivity.region-attached-edge-options",
-     "name": "Local Zone·Outposts·Wavelength Zone은 리전 연결이 전제다"
+     "name": "Local Zone·Outposts·Wavelength Zone의 리전 연결 전제"
     },
     {
      "id": "hybrid-connectivity.onprem-connectivity-heuristic",
@@ -1907,7 +1907,7 @@
     },
     {
      "id": "hybrid-connectivity.per-vpc-vpn-for-isolation",
-     "name": "VPC끼리 막아야 하면 연결을 VPC마다 따로 건다"
+     "name": "VPC마다 따로 맺는 Site-to-Site VPN"
     },
     {
      "id": "hybrid-connectivity.transit-gateway-cross-region-peering",
@@ -1915,7 +1915,7 @@
     },
     {
      "id": "hybrid-connectivity.onprem-access-via-interface-endpoint",
-     "name": "온프레미스에서 인터페이스 엔드포인트로 들어간다"
+     "name": "온프레미스에서 쓰는 인터페이스 엔드포인트"
     },
     {
      "id": "hybrid-connectivity.data-locality-cost",
@@ -1923,7 +1923,7 @@
     },
     {
      "id": "hybrid-connectivity.outposts-data-residency",
-     "name": "데이터를 옮기지 않고 관리형 서비스를 데이터 쪽으로 옮긴다"
+     "name": "Outposts로 지키는 데이터 상주 요건"
     },
     {
      "id": "hybrid-connectivity.direct-connect-caveats",
@@ -1939,7 +1939,7 @@
     },
     {
      "id": "hybrid-connectivity.centralized-onprem-egress",
-     "name": "아웃바운드 인터넷을 온프레미스로 되돌린다"
+     "name": "온프레미스로 모으는 아웃바운드 인터넷 트래픽"
     }
    ]
   },
@@ -1954,15 +1954,15 @@
    "concepts": [
     {
      "id": "route53.route53",
-     "name": "Route53"
+     "name": "Route 53"
     },
     {
      "id": "route53.routing-policies",
-     "name": "Route53 라우팅 정책"
+     "name": "Route 53 라우팅 정책"
     },
     {
      "id": "route53.resolver",
-     "name": "Route53 Resolver"
+     "name": "Route 53 Resolver"
     },
     {
      "id": "route53.private-hosted-zone",
@@ -1978,11 +1978,11 @@
     },
     {
      "id": "route53.multi-region-failover-for-region-outage",
-     "name": "리전 장애는 가용 영역으로 막지 못한다"
+     "name": "리전 장애에 대비하는 다중 리전 장애 조치"
     },
     {
      "id": "route53.latency-record-for-non-aws-endpoint",
-     "name": "온프레미스 엔드포인트에도 지연 시간 레코드를 만든다"
+     "name": "AWS 밖 엔드포인트의 지연 시간 레코드"
     },
     {
      "id": "route53.route53-alias-record",
@@ -1990,7 +1990,7 @@
     },
     {
      "id": "route53.private-hosted-zone-vpc-only",
-     "name": "프라이빗 호스팅 영역은 VPC에만 연결한다"
+     "name": "프라이빗 호스팅 영역의 연결 대상"
     },
     {
      "id": "route53.route53-resolver-forward-rule",
