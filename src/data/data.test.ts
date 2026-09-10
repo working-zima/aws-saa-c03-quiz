@@ -2795,6 +2795,7 @@ describe('학습 데이터 무결성', () => {
     's3-versioning-lifecycle',
     's3-access-control',
     'ebs-instance-store',
+    'efs-fsx',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {

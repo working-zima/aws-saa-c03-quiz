@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "d0e7634e9af2843bf5b4617000f2c8c49d06a5750d0bfa73a3dd86908550bf21",
+ "questionsSha256": "e18a43dc35984eeebc773d264c5259aa78e3afcee9c72c044ec924b644fdad25",
  "topics": [
   {
    "id": "aws-core-services",
@@ -456,7 +456,7 @@
     },
     {
      "id": "efs-fsx.efs-performance-modes",
-     "name": "EFS의 성능 모드는 처리량 모드와 다른 축이다"
+     "name": "EFS의 범용 성능 모드와 최대 I/O 성능 모드"
     },
     {
      "id": "efs-fsx.efs-one-zone",
@@ -464,15 +464,15 @@
     },
     {
      "id": "efs-fsx.efs-posix-permissions",
-     "name": "파일 권한 모델이 그대로 따라온다"
+     "name": "EFS의 POSIX 권한 모델"
     },
     {
      "id": "efs-fsx.fsx-lustre-sub-millisecond-latency",
-     "name": "1ms 이내라는 조건이 붙으면 Lustre다"
+     "name": "FSx for Lustre의 1ms 이내 액세스 지연"
     },
     {
      "id": "efs-fsx.fsx-lustre-persistent-deployment",
-     "name": "영구 파일 시스템이 내구성과 가용성을 맡는다"
+     "name": "FSx for Lustre의 영구 배포 유형"
     },
     {
      "id": "efs-fsx.fsx-ontap-multi-az",
@@ -480,11 +480,11 @@
     },
     {
      "id": "efs-fsx.fsx-ontap-multi-protocol-tiering",
-     "name": "ONTAP은 NFS와 SMB를 함께 받고 계층을 자동으로 나눈다"
+     "name": "FSx for NetApp ONTAP의 NFS·SMB 동시 지원과 자동 계층화"
     },
     {
      "id": "efs-fsx.fsx-ontap-iscsi-block",
-     "name": "ONTAP은 iSCSI로 블록 스토리지를 내준다"
+     "name": "FSx for NetApp ONTAP의 iSCSI 블록 스토리지"
     },
     {
      "id": "efs-fsx.fsx-ontap-snapmirror",
@@ -492,35 +492,35 @@
     },
     {
      "id": "efs-fsx.sql-server-always-on-shared-storage",
-     "name": "SQL Server 클러스터에는 공유 스토리지가 필요하다"
+     "name": "SQL Server Always On 가용성 그룹의 공유 스토리지"
     },
     {
      "id": "efs-fsx.efs-ia-file-size-threshold",
-     "name": "EFS IA는 작은 파일에는 해당하지 않는다"
+     "name": "EFS IA의 128KB 파일 크기 기준"
     },
     {
      "id": "efs-fsx.efs-lifecycle-transition-to-primary",
-     "name": "IA로 내려간 파일을 읽으면 다시 올려 보낼 수 있다"
+     "name": "EFS 수명 주기의 기본 스토리지 되돌리기 설정"
     },
     {
      "id": "efs-fsx.efs-mount-target-per-az",
-     "name": "마운트 대상은 가용 영역마다 하나씩 만든다"
+     "name": "가용 영역마다 두는 EFS 마운트 대상"
     },
     {
      "id": "efs-fsx.efs-cross-account-mount",
-     "name": "계정을 넘어 EFS를 마운트한다"
+     "name": "계정 간 EFS 마운트"
     },
     {
      "id": "efs-fsx.efs-replication-one-way",
-     "name": "EFS 복제는 한 방향이다"
+     "name": "EFS 복제의 단방향 제약"
     },
     {
      "id": "efs-fsx.fsx-windows-storage-auto-scaling",
-     "name": "FSx for Windows는 용량을 자동으로 늘린다"
+     "name": "FSx for Windows File Server의 자동 스토리지 확장"
     },
     {
      "id": "efs-fsx.fsx-lustre-s3-data-repository-association",
-     "name": "데이터 리포지토리 연결로 S3와 잇는다"
+     "name": "FSx for Lustre의 데이터 리포지토리 연결"
     }
    ]
   },
