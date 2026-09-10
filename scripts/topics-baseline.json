@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "beccd21f3deb0f5d5b0a18b773a4bd9c9473989419e5176e85153d002f1111b1",
+ "questionsSha256": "542eb82cba620eb3764a19edbde80d69bfab12335a86648c79c2ed2bb7fd635d",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1686,7 +1686,7 @@
     },
     {
      "id": "backup-disaster-recovery.warm-standby-for-low-rto",
-     "name": "짧은 RTO는 미리 떠 있는 환경을 요구한다"
+     "name": "짧은 RTO가 요구하는 대기 리전 구성"
     },
     {
      "id": "backup-disaster-recovery.backup-long-term-retention",
@@ -1694,7 +1694,7 @@
     },
     {
      "id": "backup-disaster-recovery.backup-ec2-resource-assignment",
-     "name": "EC2를 백업 대상으로 지정하면 볼륨과 구성이 함께 들어간다"
+     "name": "백업 계획의 리소스로 지정하는 EC2 인스턴스"
     },
     {
      "id": "backup-disaster-recovery.organizations-backup-policy",
@@ -1702,7 +1702,7 @@
     },
     {
      "id": "backup-disaster-recovery.backup-cross-account-copy",
-     "name": "백업 사본을 다른 계정에 둔다"
+     "name": "다른 계정에 두는 백업 사본"
     },
     {
      "id": "backup-disaster-recovery.backup-s3-continuous-backup",
@@ -1710,7 +1710,7 @@
     },
     {
      "id": "backup-disaster-recovery.backup-restore-testing-plan",
-     "name": "복원 테스트 계획으로 백업을 검증한다"
+     "name": "AWS Backup의 복원 테스트 계획"
     },
     {
      "id": "backup-disaster-recovery.backup-audit-manager",
