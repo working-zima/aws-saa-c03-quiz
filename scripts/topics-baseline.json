@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "1dccb5ce55900bfcfdd12822bb7e39268c26b0c0b9f76c1811dca04693d511f7",
+ "questionsSha256": "fdf86af086d5ab7a10f32214a621a56072308f313a30c1782a42491f2a2e0a0f",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1005,7 +1005,7 @@
     },
     {
      "id": "ec2-autoscaling.gpu-instance-family",
-     "name": "GPU가 필요하면 서비스 자체가 갈린다"
+     "name": "GPU 인스턴스 제품군과 컴퓨팅 서비스 선택"
     },
     {
      "id": "ec2-autoscaling.reserved-instance-types",
@@ -1037,7 +1037,7 @@
     },
     {
      "id": "ec2-autoscaling.asg-on-demand-base-capacity",
-     "name": "스팟 그룹에 온디맨드 기반 용량을 섞는다"
+     "name": "Auto Scaling 그룹의 온디맨드 기반 용량"
     },
     {
      "id": "ec2-autoscaling.warm-pool",
@@ -1045,11 +1045,11 @@
     },
     {
      "id": "ec2-autoscaling.asg-single-instance-self-healing",
-     "name": "인스턴스가 하나여도 오토 스케일링 그룹에 넣는다"
+     "name": "용량을 1로 고정한 오토 스케일링 그룹의 인스턴스 교체"
     },
     {
      "id": "ec2-autoscaling.elb-health-check-drives-asg-replacement",
-     "name": "상태 검사를 어디서 하느냐가 교체를 가른다"
+     "name": "로드 밸런서 상태 검사와 인스턴스 교체"
     },
     {
      "id": "ec2-autoscaling.enhanced-networking",
