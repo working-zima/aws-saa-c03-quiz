@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "0871b85569c59d2ab37af19b12264ad948b577c01ec09af1f522a38d6aa9cf43",
+ "questionsSha256": "abdc79eba77f6c444898f3ef8eb263e4d0fd6f9cda519d5b6ebbda5f04382cbb",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1151,15 +1151,15 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-alb-origin",
-     "name": "CloudFront의 오리진은 버킷만이 아니다"
+     "name": "CloudFront의 ALB 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-multiple-origins",
-     "name": "배포 하나에 오리진을 여럿 둔다"
+     "name": "배포 하나에 등록하는 여러 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-onprem-origin",
-     "name": "오리진이 AWS 밖에 있어도 된다"
+     "name": "CloudFront의 온프레미스 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator",
@@ -1191,11 +1191,11 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost",
-     "name": "엣지 캐시는 지연만이 아니라 비용도 줄인다"
+     "name": "엣지 캐시가 줄이는 데이터 전송 비용"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator-vs-dns-failover",
-     "name": "DNS 캐시에 발목 잡히지 않는 장애 조치"
+     "name": "DNS 캐시에 영향받지 않는 장애 조치"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-signed-url",
@@ -1215,11 +1215,11 @@
     },
     {
      "id": "cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location",
-     "name": "뷰어 위치로 오리진을 고르는 일은 엣지 함수가 한다"
+     "name": "뷰어 위치에 따른 Lambda@Edge의 오리진 선택"
     },
     {
      "id": "cloudfront-global-accelerator.lambda-at-edge-response-compression",
-     "name": "엣지에서 응답을 압축해 전송량을 줄인다"
+     "name": "Lambda@Edge의 응답 압축"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-price-class",
@@ -1235,11 +1235,11 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction",
-     "name": "ALB 오리진은 보안 그룹으로 CloudFront만 들이게 한다"
+     "name": "ALB 오리진 접근을 CloudFront로 좁히는 보안 그룹"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-functions-no-external-calls",
-     "name": "CloudFront Functions는 다른 서비스를 부르지 못한다"
+     "name": "CloudFront Functions의 외부 서비스 호출 제약"
     }
    ]
   },
