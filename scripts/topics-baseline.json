@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "e18a43dc35984eeebc773d264c5259aa78e3afcee9c72c044ec924b644fdad25",
+ "questionsSha256": "999fbca19fa58fe2b361ac3b28ecf092bf8cf182ad2eb31bf77c61156db61171",
  "topics": [
   {
    "id": "aws-core-services",
@@ -543,7 +543,7 @@
     },
     {
      "id": "data-transfer-services.snowball-edge-compute",
-     "name": "Snowball Edge는 전송 장비만이 아니다"
+     "name": "Snowball Edge의 현장 컴퓨팅 기능"
     },
     {
      "id": "data-transfer-services.transfer-family",
@@ -559,7 +559,7 @@
     },
     {
      "id": "data-transfer-services.transfer-deadline-vs-bandwidth",
-     "name": "기한과 대역폭을 먼저 곱해 본다"
+     "name": "전송 수단을 정하는 기한과 대역폭 계산"
     },
     {
      "id": "data-transfer-services.file-gateway-vs-datasync-continuous",
@@ -567,15 +567,15 @@
     },
     {
      "id": "data-transfer-services.transfer-family-custom-hostname",
-     "name": "기존 호스트 이름과 인증 체계를 그대로 옮긴다"
+     "name": "Transfer Family의 사용자 지정 DNS 이름"
     },
     {
      "id": "data-transfer-services.transfer-family-directory-service-identity-provider",
-     "name": "ID 공급자로 기존 Active Directory를 쓴다"
+     "name": "Transfer Family의 Directory Service ID 공급자"
     },
     {
      "id": "data-transfer-services.transfer-family-service-managed-users",
-     "name": "사용자와 SSH 키를 서비스가 들고 있는 방식"
+     "name": "Transfer Family의 서비스 관리형 사용자"
     },
     {
      "id": "data-transfer-services.datasync-scope-limits",
@@ -583,23 +583,23 @@
     },
     {
      "id": "data-transfer-services.datasync-in-transit-encryption",
-     "name": "DataSync는 전송 중에 암호화한다"
+     "name": "DataSync의 전송 중 암호화"
     },
     {
      "id": "data-transfer-services.datasync-manifest",
-     "name": "매니페스트로 전송 대상을 좁힌다"
+     "name": "전송 대상을 좁히는 DataSync 매니페스트"
     },
     {
      "id": "data-transfer-services.datasync-transfer-mode",
-     "name": "전송 모드로 바뀐 것만 보낸다"
+     "name": "DataSync 태스크의 전송 모드"
     },
     {
      "id": "data-transfer-services.datasync-task-status-event",
-     "name": "작업 실행 상태는 EventBridge 이벤트로 나온다"
+     "name": "DataSync 작업 실행 상태의 EventBridge 이벤트"
     },
     {
      "id": "data-transfer-services.transfer-family-workflow-actions",
-     "name": "워크플로에 이미 들어 있는 액션들"
+     "name": "업로드 후 워크플로의 미리 정의된 액션"
     },
     {
      "id": "data-transfer-services.transfer-family-structured-logging",
@@ -646,7 +646,7 @@
     },
     {
      "id": "storage-gateway-migration.dms-full-load-and-cdc-task",
-     "name": "전체 로드와 CDC를 한 태스크로 건다"
+     "name": "전체 로드와 변경 데이터 캡처를 함께 하는 복제 태스크"
     }
    ]
   },
