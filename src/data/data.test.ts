@@ -2815,6 +2815,8 @@ describe('학습 데이터 무결성', () => {
     'hybrid-connectivity',
     'route53',
     'emr-glue-athena',
+    'kinesis-streaming',
+    'redshift-opensearch-quicksight',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
@@ -4229,7 +4231,7 @@ describe('학습 데이터 무결성', () => {
 
     // 1단 Redshift·Spectrum·OpenSearch·QuickSight가 각각 무엇인가
     // → 2단 트랜잭션과 분석, 임시 쿼리와 반복되는 고성능 쿼리, 핫·콜드 분리, 내장 예측
-    // → 3단 동시성 확장·COPY 병렬 적재·운영 테이블의 과거 데이터를 흘려보내는 자리.
+    // → 3단 동시성 확장·COPY 병렬 적재·운영 테이블의 과거 데이터를 S3에 남기는 자리.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'redshift-opensearch-quicksight.redshift',
       'redshift-opensearch-quicksight.redshift-spectrum',

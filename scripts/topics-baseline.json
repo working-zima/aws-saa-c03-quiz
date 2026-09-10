@@ -2132,15 +2132,15 @@
     },
     {
      "id": "kinesis-streaming.flink-kinesis-source-sink",
-     "name": "Flink는 스트림 사이에 끼워 넣는다"
+     "name": "Flink의 Kinesis 스트림 소스와 싱크"
     },
     {
      "id": "kinesis-streaming.firehose-lambda-transformation",
-     "name": "Firehose가 적재 전에 Lambda로 데이터를 고친다"
+     "name": "Firehose의 적재 전 Lambda 변환"
     },
     {
      "id": "kinesis-streaming.firehose-format-conversion",
-     "name": "Firehose가 적재하면서 형식을 바꾼다"
+     "name": "Firehose의 형식 변환"
     },
     {
      "id": "kinesis-streaming.kinesis-retention-and-fanout",
@@ -2160,7 +2160,7 @@
     },
     {
      "id": "kinesis-streaming.kinesis-partition-key-hot-shard",
-     "name": "파티션 키가 쏠리면 핫 샤드가 생긴다"
+     "name": "파티션 키 쏠림으로 생기는 핫 샤드"
     },
     {
      "id": "kinesis-streaming.kinesis-capacity-mode",
@@ -2168,7 +2168,7 @@
     },
     {
      "id": "kinesis-streaming.firehose-buffering",
-     "name": "Firehose는 모아서 보낸다"
+     "name": "Firehose의 버퍼링 지연"
     }
    ]
   },
@@ -2183,7 +2183,7 @@
    "concepts": [
     {
      "id": "redshift-opensearch-quicksight.redshift",
-     "name": "RedShift"
+     "name": "Redshift"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-spectrum",
@@ -2207,11 +2207,11 @@
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-hot-cold-split",
-     "name": "자주 쓰는 데이터만 웨어하우스에 넣는다"
+     "name": "조회 빈도에 따른 Redshift 적재와 S3 보관"
     },
     {
      "id": "redshift-opensearch-quicksight.quicksight-ml-forecast",
-     "name": "QuickSight에 들어 있는 ML 예측"
+     "name": "QuickSight에 내장된 머신러닝 예측"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-concurrency-scaling",
@@ -2219,11 +2219,11 @@
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-copy-from-s3",
-     "name": "Redshift는 S3에서 COPY로 병렬 적재한다"
+     "name": "S3에서 COPY 명령으로 하는 Redshift 병렬 적재"
     },
     {
      "id": "redshift-opensearch-quicksight.dynamodb-to-s3-analytics",
-     "name": "운영 테이블의 과거 데이터는 S3로 흘려보낸다"
+     "name": "S3에 남기는 운영 테이블의 과거 데이터"
     }
    ]
   },
