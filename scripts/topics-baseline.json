@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "abdc79eba77f6c444898f3ef8eb263e4d0fd6f9cda519d5b6ebbda5f04382cbb",
+ "questionsSha256": "d112aa6c82a55dfe31940df570b2f6aefe9c5a3bc1e718e9aad5d730481fa776",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1361,11 +1361,11 @@
     },
     {
      "id": "ecs-eks-fargate.eks-compute-options",
-     "name": "EKS의 컴퓨팅은 세 갈래이고 관리 책임이 다르다"
+     "name": "EKS의 세 가지 컴퓨팅 방식과 관리 책임"
     },
     {
      "id": "ecs-eks-fargate.fargate-no-time-limit",
-     "name": "Fargate에는 실행 시간 제한이 없다"
+     "name": "실행 시간 제한이 없는 Fargate"
     },
     {
      "id": "ecs-eks-fargate.fargate-spot",
@@ -1377,11 +1377,11 @@
     },
     {
      "id": "ecs-eks-fargate.eks-fargate-pod-isolation",
-     "name": "Fargate는 파드마다 환경을 격리한다"
+     "name": "Fargate의 파드 단위 환경 격리"
     },
     {
      "id": "ecs-eks-fargate.eks-cluster-autoscaler",
-     "name": "파드를 늘리는 것과 노드를 늘리는 것은 다르다"
+     "name": "Horizontal Pod Autoscaler와 Cluster Autoscaler"
     },
     {
      "id": "ecs-eks-fargate.eks-aws-load-balancer-controller",
@@ -1401,7 +1401,7 @@
     },
     {
      "id": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
-     "name": "태스크 역할과 태스크 실행 역할은 다른 자리다"
+     "name": "태스크 역할과 태스크 실행 역할"
     },
     {
      "id": "ecs-eks-fargate.eks-irsa",
@@ -1421,7 +1421,7 @@
     },
     {
      "id": "ecs-eks-fargate.fargate-efs-mount",
-     "name": "Fargate 태스크에 EFS를 마운트한다"
+     "name": "Fargate 태스크의 EFS 마운트"
     },
     {
      "id": "ecs-eks-fargate.eks-secrets-kms-encryption",
