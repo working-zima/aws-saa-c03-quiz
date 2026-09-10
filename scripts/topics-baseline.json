@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "542eb82cba620eb3764a19edbde80d69bfab12335a86648c79c2ed2bb7fd635d",
+ "questionsSha256": "695131805a28b1de41beec10c06a2b9eb4b975584f26e05fa7aad90b027731f0",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1765,7 +1765,7 @@
     },
     {
      "id": "vpc-networking.nat-gateway-traffic-uses-public-endpoints",
-     "name": "NAT를 거친 AWS 서비스 접근은 공용 엔드포인트를 지난다"
+     "name": "NAT 게이트웨이 경로의 목적지인 공용 엔드포인트"
     },
     {
      "id": "vpc-networking.endpoint-pricing",
@@ -1781,19 +1781,19 @@
     },
     {
      "id": "vpc-networking.nat-gateway-per-az",
-     "name": "NAT 게이트웨이는 가용 영역마다 둔다"
+     "name": "가용 영역마다 두는 NAT 게이트웨이"
     },
     {
      "id": "vpc-networking.internet-gateway-is-not-per-az",
-     "name": "인터넷 게이트웨이는 가용 영역마다 두지 않는다"
+     "name": "리전 수준 리소스인 인터넷 게이트웨이"
     },
     {
      "id": "vpc-networking.nat-gateway-count-by-environment",
-     "name": "NAT 게이트웨이 수는 환경마다 다르게 잡는다"
+     "name": "환경에 따라 달라지는 NAT 게이트웨이 수"
     },
     {
      "id": "vpc-networking.nat-gateway-elastic-ip",
-     "name": "NAT 게이트웨이에는 엘라스틱 IP를 붙인다"
+     "name": "NAT 게이트웨이에 붙이는 엘라스틱 IP"
     },
     {
      "id": "vpc-networking.vpc-endpoint-policy",
@@ -1805,7 +1805,7 @@
     },
     {
      "id": "vpc-networking.s3-is-regional",
-     "name": "S3는 리전 수준 서비스다"
+     "name": "리전 수준 서비스인 S3"
     }
    ]
   },
@@ -1832,7 +1832,7 @@
     },
     {
      "id": "security-groups-nacl.web-acl-vs-nacl",
-     "name": "Web ACL과 네트워크 ACL은 다른 것"
+     "name": "Web ACL과 네트워크 ACL의 차이"
     },
     {
      "id": "security-groups-nacl.security-group-referencing",
@@ -1844,15 +1844,15 @@
     },
     {
      "id": "security-groups-nacl.nacl-deny-at-source-subnet",
-     "name": "거부 규칙은 보내는 쪽 서브넷에 건다"
+     "name": "보내는 쪽 서브넷에 거는 거부 규칙"
     },
     {
      "id": "security-groups-nacl.alb-security-group-outbound-and-health-check-port",
-     "name": "로드 밸런서 보안 그룹은 나가는 쪽도 열어야 한다"
+     "name": "로드 밸런서 보안 그룹의 아웃바운드와 상태 검사 포트"
     },
     {
      "id": "security-groups-nacl.nlb-security-group",
-     "name": "NLB에도 보안 그룹을 붙인다"
+     "name": "NLB에 붙이는 보안 그룹"
     }
    ]
   },

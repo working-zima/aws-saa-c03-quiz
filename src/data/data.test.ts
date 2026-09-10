@@ -2810,6 +2810,8 @@ describe('학습 데이터 무결성', () => {
     'api-gateway-step-functions',
     'sqs-sns-eventbridge',
     'backup-disaster-recovery',
+    'vpc-networking',
+    'security-groups-nacl',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
@@ -3976,7 +3978,7 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'security-groups-nacl')
 
     // 1단 보안 그룹과 NACL이 각각 무엇인가 → 2단 상태 저장과 상태 비저장, Web ACL과
-    // 네트워크 ACL은 다른 것 → 3단 규칙 수 제한, 거부 규칙을 어느 서브넷에 거는가,
+    // 네트워크 ACL의 차이 → 3단 규칙 수 제한, 거부 규칙을 어느 서브넷에 거는가,
     // 로드 밸런서 보안 그룹의 아웃바운드.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'security-groups-nacl.security-group',
