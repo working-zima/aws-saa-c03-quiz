@@ -2798,6 +2798,7 @@ describe('학습 데이터 무결성', () => {
     'efs-fsx',
     'data-transfer-services',
     'storage-gateway-migration',
+    'rds-storage-features',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
@@ -3261,8 +3262,8 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'rds-storage-features')
 
     // 1단 RDS와 스토리지 유형·기능(블루/그린·Custom·IAM 인증·암호화 범위) → 2단 볼륨
-    // 유형의 갈림길, 다중 AZ ↔ 읽기 전용 복제본 ↔ 다중 AZ DB 클러스터, 캐시가 듣지
-    // 않는 조건, 연결 문제와 프록시, 리전 간 스냅샷 복사 → 3단 백업 보존 한계·수동
+    // 유형의 갈림길, 다중 AZ ↔ 읽기 전용 복제본 ↔ 다중 AZ DB 클러스터, 캐시가 효과를
+    // 내지 못하는 조건, 연결 문제와 프록시, 리전 간 스냅샷 복사 → 3단 백업 보존 한계·수동
     // 스냅샷·특정 시점 복구의 정밀도·장애 조치 시간·7일 자동 재시작·나중에 켤 수 없는
     // 암호화·보유 라이선스.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([

@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "999fbca19fa58fe2b361ac3b28ecf092bf8cf182ad2eb31bf77c61156db61171",
+ "questionsSha256": "74f786133e3a99d04266dfbbd21aa23d73277156d0ab3a5f5798f9dc76ffac6e",
  "topics": [
   {
    "id": "aws-core-services",
@@ -689,7 +689,7 @@
     },
     {
      "id": "rds-storage-features.storage-type-names",
-     "name": "RDS 스토리지 유형의 실제 이름"
+     "name": "RDS 스토리지 유형의 약칭"
     },
     {
      "id": "rds-storage-features.multi-az-standby-limits",
@@ -697,11 +697,11 @@
     },
     {
      "id": "rds-storage-features.rds-multi-az-db-cluster",
-     "name": "다중 AZ DB 인스턴스와 다중 AZ DB 클러스터는 다르다"
+     "name": "다중 AZ DB 인스턴스 배포와 다중 AZ DB 클러스터 배포"
     },
     {
      "id": "rds-storage-features.read-replica-vs-cache",
-     "name": "캐시가 듣지 않는 조건"
+     "name": "캐시가 효과를 내지 못하는 조건"
     },
     {
      "id": "rds-storage-features.connection-issue-heuristic",
@@ -709,11 +709,11 @@
     },
     {
      "id": "rds-storage-features.rds-proxy-failover",
-     "name": "RDS Proxy가 장애 조치에도 관여한다"
+     "name": "RDS Proxy의 장애 조치 시간 단축"
     },
     {
      "id": "rds-storage-features.rds-snapshot-cross-region-copy",
-     "name": "스냅샷을 다른 리전으로 복사해 재해에 대비한다"
+     "name": "리전 간 RDS 스냅샷 복사"
     },
     {
      "id": "rds-storage-features.automated-backup-retention",
@@ -721,11 +721,11 @@
     },
     {
      "id": "rds-storage-features.rds-manual-snapshot-retention",
-     "name": "수동 스냅샷은 지울 때까지 남는다"
+     "name": "만료가 없는 수동 스냅샷"
     },
     {
      "id": "rds-storage-features.rds-pitr-transaction-log-interval",
-     "name": "특정 시점 복구의 정밀도는 5분이다"
+     "name": "특정 시점 복구와 5분 간격 트랜잭션 로그"
     },
     {
      "id": "rds-storage-features.rds-multi-az-failover-rto",
@@ -733,15 +733,15 @@
     },
     {
      "id": "rds-storage-features.rds-stop-instance-restart",
-     "name": "RDS 인스턴스는 멈춰 둘 수 있고, 7일 뒤 저절로 켜진다"
+     "name": "RDS 인스턴스 중지와 7일 뒤 자동 재시작"
     },
     {
      "id": "rds-storage-features.rds-encrypt-existing-instance",
-     "name": "이미 만든 인스턴스는 그 자리에서 암호화하지 못한다"
+     "name": "기존 RDS 인스턴스의 저장 중 암호화 절차"
     },
     {
      "id": "rds-storage-features.rds-custom-byol",
-     "name": "RDS Custom에는 보유 라이선스를 가져다 쓴다"
+     "name": "RDS Custom의 보유 라이선스 모델"
     }
    ]
   },
