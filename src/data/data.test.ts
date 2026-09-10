@@ -6397,7 +6397,7 @@ describe('학습 데이터 무결성', () => {
     ['guardduty-macie-inspector.amazon-inspector', 'Inspector는', 'security'],
     ['guardduty-macie-inspector.security-hub', 'Security Hub는', 'security'],
     ['iam-permissions.iam', 'IAM은', 'security'],
-    ['identity-federation.identity-center', 'Identity Center는', 'security'],
+    ['identity-federation.identity-center', 'AWS IAM Identity Center는', 'security'],
     ['identity-federation.sts', 'STS는', 'security'],
     ['identity-federation.cognito', 'Cognito는', 'security'],
     // phase 26 step 17. Directory Service는 AD Connector와 함께 한 개념에서 소개된다.
