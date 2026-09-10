@@ -764,7 +764,7 @@
     },
     {
      "id": "aurora.aurora-reader-endpoint",
-     "name": "Reader Endpoint는 Aurora 전용"
+     "name": "Aurora 전용 Reader Endpoint"
     },
     {
      "id": "aurora.aurora-endpoint-types",
@@ -772,7 +772,7 @@
     },
     {
      "id": "aurora.aurora-replica-auto-scaling",
-     "name": "Aurora Auto Scaling은 레플리카를 늘린다"
+     "name": "Aurora Auto Scaling의 레플리카 수 조정"
     },
     {
      "id": "aurora.babelfish",
@@ -796,11 +796,11 @@
     },
     {
      "id": "aurora.aurora-continuous-backup-rpo",
-     "name": "Aurora의 지속적 증분 백업이 RPO를 좁힌다"
+     "name": "Aurora의 지속적 증분 백업"
     },
     {
      "id": "aurora.aurora-clone",
-     "name": "Aurora 클론은 Aurora에만 있다"
+     "name": "Aurora 클론의 적용 범위"
     },
     {
      "id": "aurora.aurora-storage-configurations",
@@ -808,7 +808,7 @@
     },
     {
      "id": "aurora.sql-server-license-cost",
-     "name": "SQL Server를 그대로 옮기면 라이선스 비용이 따라온다"
+     "name": "SQL Server를 그대로 옮길 때의 라이선스 비용"
     },
     {
      "id": "aurora.aurora-zdr-and-activity-streams",
@@ -816,15 +816,15 @@
     },
     {
      "id": "aurora.aurora-global-database-write-region",
-     "name": "Aurora Global Database는 액티브-액티브가 아니다"
+     "name": "Aurora Global Database에서 쓰기를 받는 리전"
     },
     {
      "id": "aurora.aurora-serverless-max-acu",
-     "name": "Aurora Serverless의 용량 상한은 ACU로 정한다"
+     "name": "Aurora Serverless의 최대 ACU 설정"
     },
     {
      "id": "aurora.read-replica-no-schema-change",
-     "name": "읽기 전용 복제본에서는 스키마를 바꿀 수 없다"
+     "name": "읽기 전용 복제본의 스키마 변경 제약"
     }
    ]
   },
