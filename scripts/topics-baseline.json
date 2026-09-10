@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "695131805a28b1de41beec10c06a2b9eb4b975584f26e05fa7aad90b027731f0",
+ "questionsSha256": "7a6c33bd45325dac503e7c11d08a79801813fe7cff0f95220dd81cfcd5fd9a0b",
  "topics": [
   {
    "id": "aws-core-services",
@@ -2057,7 +2057,7 @@
     },
     {
      "id": "emr-glue-athena.glue-etl-with-per-customer-kms-key",
-     "name": "고객마다 키가 다른 변환 작업은 관리형 ETL로"
+     "name": "고객마다 다른 키로 암호화하는 Glue ETL 작업"
     },
     {
      "id": "emr-glue-athena.athena-encrypted-and-pay-per-query",
@@ -2069,19 +2069,19 @@
     },
     {
      "id": "emr-glue-athena.log-storage-s3-athena",
-     "name": "가끔 조회하는 로그는 S3에 쌓고 Athena로 읽는다"
+     "name": "조회 빈도로 나뉘는 로그 저장 위치"
     },
     {
      "id": "emr-glue-athena.lake-formation-blueprint-and-athena",
-     "name": "블루프린트로 모으고 Athena로 권한을 적용한다"
+     "name": "Lake Formation 블루프린트와 Athena의 열 수준 권한"
     },
     {
      "id": "emr-glue-athena.lake-formation-lf-tags",
-     "name": "LF 태그로 테이블과 열 권한을 준다"
+     "name": "LF 태그 기반 액세스 제어"
     },
     {
      "id": "emr-glue-athena.emr-node-instance-family-choice",
-     "name": "노드 역할에 따라 인스턴스 제품군이 갈린다"
+     "name": "노드 역할에 따른 인스턴스 제품군 선택"
     },
     {
      "id": "emr-glue-athena.emr-runtime-role",
