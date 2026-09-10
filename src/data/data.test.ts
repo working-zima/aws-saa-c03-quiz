@@ -2817,6 +2817,8 @@ describe('학습 데이터 무결성', () => {
     'emr-glue-athena',
     'kinesis-streaming',
     'redshift-opensearch-quicksight',
+    'cloudwatch-xray',
+    'secrets-encryption',
   ]
 
   it('phase 31이 끝낸 주제의 개념 제목이 모두 문장이 아니라 명사구다', () => {
@@ -4364,7 +4366,7 @@ describe('학습 데이터 무결성', () => {
     // 1단 CloudWatch·X-Ray·Performance Insights·Managed Grafana가 각각 무엇이고
     //   하이브리드 연결의 품질은 무엇이 재는가
     // → 2단 관측이 어디까지인가, 로그를 어디서 분석하는가, 규모 조정의 근거는 무엇인가
-    // → 3단 기본 지표에 없는 값·상세 모니터링의 간격·경보가 흘러가는 자리.
+    // → 3단 기본 지표에 없는 값·상세 모니터링의 간격·알람의 상태 변경 이벤트.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cloudwatch-xray.cloudwatch',
       'cloudwatch-xray.x-ray',

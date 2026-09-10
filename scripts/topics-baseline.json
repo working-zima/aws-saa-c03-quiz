@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "7a6c33bd45325dac503e7c11d08a79801813fe7cff0f95220dd81cfcd5fd9a0b",
+ "questionsSha256": "92026a2e34c79599059492db845b14bf24e455a9b3389d0f80cc5364648d144f",
  "topics": [
   {
    "id": "aws-core-services",
@@ -2270,15 +2270,15 @@
     },
     {
      "id": "cloudwatch-xray.cloudwatch-agent-memory-metric",
-     "name": "메모리 사용률은 기본 지표가 아니다"
+     "name": "CloudWatch 에이전트의 메모리 사용률 지표"
     },
     {
      "id": "cloudwatch-xray.ec2-detailed-monitoring",
-     "name": "상세 모니터링은 1분 간격이다"
+     "name": "EC2 상세 모니터링의 1분 간격 지표"
     },
     {
      "id": "cloudwatch-xray.cloudwatch-alarm-state-change-event",
-     "name": "알람 상태 변경은 이벤트로 흘러간다"
+     "name": "CloudWatch 알람의 상태 변경 이벤트"
     }
    ]
   },
@@ -2317,7 +2317,7 @@
     },
     {
      "id": "secrets-encryption.rotation-heuristic",
-     "name": "자동 순환이 나오면 Secrets Manager"
+     "name": "자동 순환을 가리키는 신호"
     },
     {
      "id": "secrets-encryption.kms-key-types-by-management",
@@ -2337,7 +2337,7 @@
     },
     {
      "id": "secrets-encryption.kms-key-per-tenant",
-     "name": "KMS 키를 테넌트마다 따로 만든다"
+     "name": "고객마다 따로 만드는 KMS 키"
     },
     {
      "id": "secrets-encryption.acm-dns-validation",
@@ -2349,7 +2349,7 @@
     },
     {
      "id": "secrets-encryption.kms-automatic-key-rotation",
-     "name": "KMS 자동 키 교체는 해마다 돈다"
+     "name": "해마다 이뤄지는 KMS 자동 키 교체"
     },
     {
      "id": "secrets-encryption.kms-symmetric-vs-asymmetric-rotation",
@@ -2365,7 +2365,7 @@
     },
     {
      "id": "secrets-encryption.acm-cloudfront-region",
-     "name": "CloudFront에 붙일 인증서는 us-east-1에서 발급한다"
+     "name": "CloudFront용 인증서의 us-east-1 발급 제약"
     },
     {
      "id": "secrets-encryption.acm-expiration-event",
