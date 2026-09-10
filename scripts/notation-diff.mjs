@@ -93,13 +93,18 @@ const PARTICLES = [
   '이라서', '라서', '이라', '라', '이란', '란', '이나', '나', '이며', '며',
   '으로', '로', '이야', '야', '와', '과', '이', '가', '을', '를', '은', '는',
 ]
-const PARTICLE_AFTER = new RegExp(`(⟨[A-Z_]+⟩)(${PARTICLES.join('|')})`, 'g')
+/**
+ * 자리표와 조사 사이에 마크다운 강조가 낀다. 본문이 용어를 `**권한 세트**`로 굵게 쓰기
+ * 때문이다. `**Permission Set**을` → `**권한 세트**를`도 받침이 강제하는 교체이므로
+ * 강조 기호를 사이에 허용한다.
+ */
+const PARTICLE_AFTER = new RegExp(`(⟨[A-Z_]+⟩)([*\`]{0,2})(${PARTICLES.join('|')})`, 'g')
 
 const normalize = (text) => {
   let out = String(text)
   for (const [from, to] of REPLACEMENTS) out = out.split(from).join(to)
   // 자리표 뒤의 조사를 한 자리로 누른다. 두 번 돌리는 이유는 자리표가 잇달아 나올 때다.
-  out = out.replace(PARTICLE_AFTER, '$1⟨J⟩').replace(PARTICLE_AFTER, '$1⟨J⟩')
+  out = out.replace(PARTICLE_AFTER, '$1$2⟨J⟩').replace(PARTICLE_AFTER, '$1$2⟨J⟩')
   return out
 }
 
