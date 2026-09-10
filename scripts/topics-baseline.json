@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "74f786133e3a99d04266dfbbd21aa23d73277156d0ab3a5f5798f9dc76ffac6e",
+ "questionsSha256": "1dccb5ce55900bfcfdd12822bb7e39268c26b0c0b9f76c1811dca04693d511f7",
  "topics": [
   {
    "id": "aws-core-services",
@@ -875,15 +875,15 @@
     },
     {
      "id": "dynamodb.dynamodb-s3-export-vs-streams",
-     "name": "분석용 적재는 기본 내보내기가 먼저다"
+     "name": "분석용 적재의 S3 내보내기와 스트림 경로"
     },
     {
      "id": "dynamodb.dynamodb-incremental-export",
-     "name": "S3 내보내기에는 증분 형태가 있다"
+     "name": "S3 내보내기의 증분 형태"
     },
     {
      "id": "dynamodb.dynamodb-export-no-read-capacity",
-     "name": "S3 내보내기는 테이블의 읽기 용량을 쓰지 않는다"
+     "name": "S3 내보내기와 테이블 읽기 용량"
     },
     {
      "id": "dynamodb.dynamodb-pitr",
@@ -891,7 +891,7 @@
     },
     {
      "id": "dynamodb.dynamodb-export-requires-pitr",
-     "name": "S3로 내보내려면 PITR이 켜져 있어야 한다"
+     "name": "S3 내보내기의 전제 조건인 PITR"
     },
     {
      "id": "dynamodb.dynamodb-item-size-limit",
@@ -899,15 +899,15 @@
     },
     {
      "id": "dynamodb.dynamodb-ttl-deletion-delay",
-     "name": "TTL 삭제는 만료 시각에 딱 맞춰 일어나지 않는다"
+     "name": "TTL 삭제의 48시간 지연"
     },
     {
      "id": "dynamodb.dynamodb-streams-retention-24h",
-     "name": "DynamoDB Streams는 24시간만 보존한다"
+     "name": "DynamoDB Streams의 24시간 보존 한계"
     },
     {
      "id": "dynamodb.dynamodb-streams-batch-size",
-     "name": "DynamoDB Streams 소비의 배치 크기를 조정한다"
+     "name": "DynamoDB Streams 소비의 배치 크기"
     }
    ]
   },
@@ -950,7 +950,7 @@
     },
     {
      "id": "elasticache-purpose-built-db.dax-dynamodb-only",
-     "name": "DAX는 DynamoDB 전용"
+     "name": "DynamoDB 전용 캐시 DAX"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-multi-az-failover",
@@ -966,15 +966,15 @@
     },
     {
      "id": "elasticache-purpose-built-db.cache-requires-application-change",
-     "name": "캐시를 넣으면 애플리케이션을 고쳐야 한다"
+     "name": "캐시 도입에 필요한 애플리케이션 코드 변경"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-not-a-durable-store",
-     "name": "캐시는 처리 결과를 두는 자리가 아니다"
+     "name": "영구 저장소가 아닌 캐시"
     },
     {
      "id": "elasticache-purpose-built-db.dax-encryption-at-rest",
-     "name": "DAX의 저장 중 암호화는 만들 때만 켠다"
+     "name": "DAX 저장 중 암호화의 설정 시점"
     }
    ]
   },
