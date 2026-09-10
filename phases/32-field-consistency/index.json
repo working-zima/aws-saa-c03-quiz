@@ -1,0 +1,131 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "32-field-consistency",
+  "steps": [
+    {
+      "step": 0,
+      "name": "aws-core-and-s3-storage-and-versioning",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "s3-encryption-and-access-control-and-ebs",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "efs-fsx",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "data-transfer-and-storage-gateway",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "rds-storage-features",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "aurora",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "dynamodb-and-elasticache",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "ec2-autoscaling",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "elastic-load-balancing",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "cloudfront-global-accelerator",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "lambda",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "ecs-eks-fargate",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "api-gateway-step-functions",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "sqs-sns-eventbridge-concepts",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "sqs-sns-eventbridge-questions-and-backup-dr",
+      "status": "pending"
+    },
+    {
+      "step": 15,
+      "name": "vpc-networking-and-security-groups",
+      "status": "pending"
+    },
+    {
+      "step": 16,
+      "name": "hybrid-connectivity-and-route53",
+      "status": "pending"
+    },
+    {
+      "step": 17,
+      "name": "emr-glue-athena",
+      "status": "pending"
+    },
+    {
+      "step": 18,
+      "name": "kinesis-and-redshift-opensearch",
+      "status": "pending"
+    },
+    {
+      "step": 19,
+      "name": "cloudwatch-xray-and-secrets-encryption",
+      "status": "pending"
+    },
+    {
+      "step": 20,
+      "name": "waf-shield-and-guardduty-macie-inspector",
+      "status": "pending"
+    },
+    {
+      "step": 21,
+      "name": "iam-permissions-and-identity-federation",
+      "status": "pending"
+    },
+    {
+      "step": 22,
+      "name": "organizations-cloudtrail-and-cost-management",
+      "status": "pending"
+    },
+    {
+      "step": 23,
+      "name": "governance-iac-and-systems-manager-and-ai-ml",
+      "status": "pending"
+    },
+    {
+      "step": 24,
+      "name": "ratchet-closeout-and-report",
+      "status": "pending"
+    }
+  ]
+}
