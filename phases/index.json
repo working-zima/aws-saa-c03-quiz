@@ -163,6 +163,10 @@
       "dir": "32-field-consistency",
       "status": "completed",
       "completed_at": "2026-09-11T04:58:52+0900"
+    },
+    {
+      "dir": "33-notation-standardization",
+      "status": "pending"
     }
   ]
 }

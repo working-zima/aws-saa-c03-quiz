@@ -1,0 +1,66 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "33-notation-standardization",
+  "steps": [
+    {
+      "step": 0,
+      "name": "sns-topic",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "fifo-queue",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "network-acl",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "identity-center-a-permission-set",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "identity-center-b-access-key",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "identity-center-c-service-name",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "performance-insights",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "cloudhsm-module",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "emr-primary-node",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "small-notation-pairs",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "abbreviation-introduction-rules",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "notation-report",
+      "status": "pending"
+    }
+  ]
+}
