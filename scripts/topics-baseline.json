@@ -1559,11 +1559,11 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-is-not-a-queue",
-     "name": "SNS는 큐가 아니다"
+     "name": "SQS 대기열과 SNS 발행-구독"
     },
     {
      "id": "sqs-sns-eventbridge.sns-sqs-fanout-per-consumer",
-     "name": "팬아웃은 소비자마다 큐를 둔다"
+     "name": "소비자마다 큐를 두는 팬아웃"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
@@ -1575,7 +1575,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling",
-     "name": "이벤트 패턴으로 걸면 폴링이 없다"
+     "name": "이벤트 패턴 규칙과 주기적 폴링"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-bus-types",
@@ -1595,7 +1595,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-resource-change-rule",
-     "name": "리소스가 바뀌는 순간을 규칙으로 잡는다"
+     "name": "리소스 구성 변경에 거는 EventBridge 규칙"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-details",
@@ -1607,7 +1607,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.ses-inbound-email-receiving",
-     "name": "SES는 이메일을 받기도 한다"
+     "name": "SES의 이메일 수신 규칙"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-queue-depth-scaling",
@@ -1619,7 +1619,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time",
-     "name": "가시성 타임아웃은 처리 시간보다 길어야 한다"
+     "name": "가시성 타임아웃과 소비자의 처리 시간"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-message-size-limit",
@@ -1627,19 +1627,19 @@
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
-     "name": "FIFO 큐의 순서는 메시지 그룹 단위다"
+     "name": "FIFO 큐의 순서 보장 단위인 메시지 그룹 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
-     "name": "중복 제거는 5분 창 안에서 일어난다"
+     "name": "5분 동안 적용되는 FIFO 큐의 중복 제거 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
-     "name": "본문이 같으면 알아서 걸러 낸다"
+     "name": "FIFO 큐의 콘텐츠 기반 중복 제거"
     },
     {
      "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
-     "name": "SNS는 메시지 본문을 고쳐 보내지 못한다"
+     "name": "SNS의 메시지 본문 재작성 제약"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-queue-policy",
@@ -1647,19 +1647,19 @@
     },
     {
      "id": "sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy",
-     "name": "계정을 넘는 발행은 큐 정책에 토픽 ARN을 적는다"
+     "name": "계정 간 SNS 발행과 큐 정책의 토픽 ARN"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission",
-     "name": "큐를 암호화하면 소비자에게 복호화 권한이 필요하다"
+     "name": "SQS 큐 암호화와 소비자의 복호화 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions",
-     "name": "암호화된 SNS 토픽에 게시하려면 권한이 세 군데다"
+     "name": "암호화된 SNS 토픽 게시에 필요한 세 가지 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy",
-     "name": "큐로 가는 길을 사설 경로로 묶는다"
+     "name": "SQS 인터페이스 VPC 엔드포인트와 큐 정책"
     }
    ]
   },
