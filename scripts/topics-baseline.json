@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256":"145f5f7d0df82dcab02b6fcfa178aed2cdc27fbe690c611405cd2a3336f1c815",
+ "questionsSha256":"d0e7634e9af2843bf5b4617000f2c8c49d06a5750d0bfa73a3dd86908550bf21",
  "topics": [
   {
    "id": "aws-core-services",
@@ -82,7 +82,7 @@
     },
     {
      "id": "aws-core-services.blob-offload-to-s3",
-     "name": "큰 바이너리는 데이터베이스가 아니라 S3에 둔다"
+     "name": "큰 파일 본체의 저장 위치"
     }
    ]
   },
@@ -204,7 +204,7 @@
     },
     {
      "id": "s3-versioning-lifecycle.s3-replication-cross-account-kms",
-     "name": "복제는 다른 계정 버킷으로도 간다"
+     "name": "계정을 넘는 복제와 SSE-KMS 키 권한"
     },
     {
      "id": "s3-versioning-lifecycle.object-lock-prerequisites",
@@ -212,7 +212,7 @@
     },
     {
      "id": "s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter",
-     "name": "수명 주기 구성은 버킷에 하나, 규칙은 여럿"
+     "name": "수명 주기 구성의 개수 제한과 규칙의 크기 필터"
     }
    ]
   },

@@ -156,7 +156,8 @@
     },
     {
       "dir": "31-content-quality-rollout",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-10T03:20:00+0900"
     }
   ]
 }
