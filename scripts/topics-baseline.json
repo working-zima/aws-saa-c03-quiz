@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256":"d0e7634e9af2843bf5b4617000f2c8c49d06a5750d0bfa73a3dd86908550bf21",
+ "questionsSha256": "d0e7634e9af2843bf5b4617000f2c8c49d06a5750d0bfa73a3dd86908550bf21",
  "topics": [
   {
    "id": "aws-core-services",
@@ -157,7 +157,7 @@
     },
     {
      "id": "s3-storage-classes.s3-retrieval-fee-by-class",
-     "name": "스토리지 클래스마다 갈리는 검색 요금"
+     "name": "스토리지 클래스마다 다른 검색 요금"
     },
     {
      "id": "s3-storage-classes.intelligent-tiering-monitoring-fee",
