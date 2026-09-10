@@ -2672,7 +2672,7 @@
     },
     {
      "id": "organizations-cloudtrail-config.organizations-tag-policy",
-     "name": "태그 정책과 SCP는 하는 일이 다르다"
+     "name": "태그 정책과 SCP"
     },
     {
      "id": "organizations-cloudtrail-config.organizations-consolidated-billing",
@@ -2704,7 +2704,7 @@
     },
     {
      "id": "organizations-cloudtrail-config.config-custom-rule",
-     "name": "관리형 규칙에 없는 값은 사용자 지정 규칙으로 본다"
+     "name": "AWS Config 사용자 지정 규칙"
     },
     {
      "id": "organizations-cloudtrail-config.config-rule-remediation",
@@ -2759,11 +2759,11 @@
     },
     {
      "id": "cost-management.savings-plan-baseline-vs-spike",
-     "name": "약정은 기준 용량까지만 건다"
+     "name": "기본 부하와 일시적 증가분의 약정 크기"
     },
     {
      "id": "cost-management.rds-reserved-instance",
-     "name": "예약 인스턴스는 RDS에도 있다"
+     "name": "RDS 예약 인스턴스"
     },
     {
      "id": "cost-management.on-demand-capacity-reservation",
@@ -2771,11 +2771,11 @@
     },
     {
      "id": "cost-management.cost-allocation-tag-activation",
-     "name": "비용 할당 태그는 활성화해야 보인다"
+     "name": "결제 콘솔에서 하는 비용 할당 태그 활성화"
     },
     {
      "id": "cost-management.cost-allocation-tag-activation-in-management-account",
-     "name": "통합 청구에서는 관리 계정에서 활성화한다"
+     "name": "통합 청구에서 비용 할당 태그를 활성화하는 계정"
     },
     {
      "id": "cost-management.budget-actions",
@@ -2783,11 +2783,11 @@
     },
     {
      "id": "cost-management.budget-forecasted-alert",
-     "name": "예산 알림은 예측값에도 걸 수 있다"
+     "name": "예상 지출에 거는 예산 알림"
     },
     {
      "id": "cost-management.compute-optimizer-ebs-recommendations",
-     "name": "권장 대상에는 EBS 볼륨도 있다"
+     "name": "Compute Optimizer의 EBS 볼륨 권장 사항"
     }
    ]
   },
