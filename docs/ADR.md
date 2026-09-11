@@ -1371,10 +1371,12 @@ Accelerator를 비용으로 가르므로 두 블록 뒤에 선다. 규칙 5는 �
 
 **트레이드오프 — 주제의 서비스를 먼저 한 번씩 훑는 효과를 잃는다**: ADR-023은 1단을 몰아 두어
 앞의 몇 개만 읽어도 그 주제의 서비스를 모두 한 번씩 만나게 했다. 서비스 블록으로 묶으면 그 효과가
-없어진다. 대가를 쟀다 — 앞 블록의 개념이 뒤 블록의 서비스를 먼저 언급하는 자리가 **6개 주제에
-9곳** 남는다(`ebs-instance-store` 1, `sqs-sns-eventbridge` 2, `secrets-encryption` 1,
-`waf-shield` 3, `organizations-cloudtrail-config` 1, `cost-management` 1). 모두 "X는 이 일을 하지
-않는다" 식의 대비 문장이고, 같은 문장 안에서 X가 무엇인지 말한다. `waf-shield`는 WAF와 Shield가
+없어진다. 대가를 쟀다 — 재정렬을 마친 뒤 영문 이름과 한국어 표기를 모두 찾아 세면, 앞 블록의 개념이
+뒤 블록의 서비스나 기능을 먼저 언급하는 자리가 **12개 주제에 16곳** 남는다(`ebs-instance-store` 1,
+`data-transfer-services` 1, `rds-storage-features` 1, `dynamodb` 1, `sqs-sns-eventbridge` 2,
+`vpc-networking` 1, `security-groups-nacl` 1, `secrets-encryption` 2, `waf-shield` 3,
+`iam-permissions` 1, `organizations-cloudtrail-config` 1, `cost-management` 1). 대개 "X는 이 일을
+하지 않는다" 식의 대비 문장이고, 같은 문장 안에서 X가 무엇인지 말한다. `waf-shield`는 WAF와 Shield가
 서로를 대비로 부르는 짝이라 어느 쪽을 앞에 두어도 남는다. 본문을 고쳐 없앨 수는 있지만 이 결정의
 범위(배열 순서) 밖이다.
 
