@@ -1677,18 +1677,6 @@
      "name": "AWS Backup"
     },
     {
-     "id": "backup-disaster-recovery.elastic-disaster-recovery",
-     "name": "AWS Elastic Disaster Recovery(AWS DRS)"
-    },
-    {
-     "id": "backup-disaster-recovery.backup-and-restore-dr",
-     "name": "백업 및 복원"
-    },
-    {
-     "id": "backup-disaster-recovery.warm-standby-for-low-rto",
-     "name": "짧은 RTO가 요구하는 대기 리전 구성"
-    },
-    {
      "id": "backup-disaster-recovery.backup-long-term-retention",
      "name": "AWS Backup으로 넘어가야 하는 순간"
     },
@@ -1715,6 +1703,18 @@
     {
      "id": "backup-disaster-recovery.backup-audit-manager",
      "name": "AWS Backup Audit Manager"
+    },
+    {
+     "id": "backup-disaster-recovery.backup-and-restore-dr",
+     "name": "백업 및 복원"
+    },
+    {
+     "id": "backup-disaster-recovery.warm-standby-for-low-rto",
+     "name": "짧은 RTO가 요구하는 대기 리전 구성"
+    },
+    {
+     "id": "backup-disaster-recovery.elastic-disaster-recovery",
+     "name": "AWS Elastic Disaster Recovery(AWS DRS)"
     }
    ]
   },
@@ -1961,18 +1961,6 @@
      "name": "Route 53 라우팅 정책"
     },
     {
-     "id": "route53.resolver",
-     "name": "Route 53 Resolver"
-    },
-    {
-     "id": "route53.private-hosted-zone",
-     "name": "프라이빗 호스팅 영역과 퍼블릭 호스팅 영역"
-    },
-    {
-     "id": "route53.route53-zone-file-import",
-     "name": "DNS 호스팅을 Route 53으로 옮기는 절차"
-    },
-    {
      "id": "route53.route53-failover-routing",
      "name": "페일오버 라우팅 정책"
     },
@@ -1985,20 +1973,32 @@
      "name": "AWS 밖 엔드포인트의 지연 시간 레코드"
     },
     {
-     "id": "route53.route53-alias-record",
-     "name": "별칭 레코드"
+     "id": "route53.multivalue-answer-details",
+     "name": "다중값 응답 라우팅의 세부 동작"
     },
     {
-     "id": "route53.private-hosted-zone-vpc-only",
-     "name": "프라이빗 호스팅 영역의 연결 대상"
+     "id": "route53.resolver",
+     "name": "Route 53 Resolver"
     },
     {
      "id": "route53.route53-resolver-forward-rule",
      "name": "전달 규칙과 VPC 연결"
     },
     {
-     "id": "route53.multivalue-answer-details",
-     "name": "다중값 응답 라우팅의 세부 동작"
+     "id": "route53.private-hosted-zone",
+     "name": "프라이빗 호스팅 영역과 퍼블릭 호스팅 영역"
+    },
+    {
+     "id": "route53.route53-zone-file-import",
+     "name": "DNS 호스팅을 Route 53으로 옮기는 절차"
+    },
+    {
+     "id": "route53.route53-alias-record",
+     "name": "별칭 레코드"
+    },
+    {
+     "id": "route53.private-hosted-zone-vpc-only",
+     "name": "프라이빗 호스팅 영역의 연결 대상"
     },
     {
      "id": "route53.route53-query-logging",
@@ -2513,24 +2513,28 @@
      "name": "IAM (Identity And Access Management)"
     },
     {
-     "id": "iam-permissions.instance-profile",
-     "name": "IAM 인스턴스 프로파일"
-    },
-    {
      "id": "iam-permissions.iam-group-policy-attachment",
      "name": "IAM 그룹에 붙이는 정책"
+    },
+    {
+     "id": "iam-permissions.iam-group-users-only",
+     "name": "사용자 집합인 IAM 그룹"
+    },
+    {
+     "id": "iam-permissions.iam-user-is-account-scoped",
+     "name": "계정 안에서만 존재하는 IAM 사용자"
+    },
+    {
+     "id": "iam-permissions.instance-profile",
+     "name": "IAM 인스턴스 프로파일"
     },
     {
      "id": "iam-permissions.iam-roles-anywhere",
      "name": "IAM Roles Anywhere"
     },
     {
-     "id": "iam-permissions.iam-access-analyzer",
-     "name": "IAM Access Analyzer"
-    },
-    {
-     "id": "iam-permissions.network-access-analyzer",
-     "name": "Network Access Analyzer"
+     "id": "iam-permissions.cross-account-iam-role",
+     "name": "계정 간 IAM 역할과 신뢰 정책"
     },
     {
      "id": "iam-permissions.least-privilege",
@@ -2545,18 +2549,6 @@
      "name": "권한 경계"
     },
     {
-     "id": "iam-permissions.cross-account-iam-role",
-     "name": "계정 간 IAM 역할과 신뢰 정책"
-    },
-    {
-     "id": "iam-permissions.iam-group-users-only",
-     "name": "사용자 집합인 IAM 그룹"
-    },
-    {
-     "id": "iam-permissions.iam-user-is-account-scoped",
-     "name": "계정 안에서만 존재하는 IAM 사용자"
-    },
-    {
      "id": "iam-permissions.iam-explicit-deny-precedence",
      "name": "정책 평가 순서와 명시적 거부"
     },
@@ -2567,6 +2559,14 @@
     {
      "id": "iam-permissions.iam-requested-region-condition",
      "name": "aws:RequestedRegion 조건 키"
+    },
+    {
+     "id": "iam-permissions.iam-access-analyzer",
+     "name": "IAM Access Analyzer"
+    },
+    {
+     "id": "iam-permissions.network-access-analyzer",
+     "name": "Network Access Analyzer"
     },
     {
      "id": "iam-permissions.access-analyzer-delegated-administrator",
@@ -2805,6 +2805,10 @@
      "name": "AWS CloudFormation"
     },
     {
+     "id": "governance-iac.cloudformation-drift-detection",
+     "name": "CloudFormation 드리프트 감지"
+    },
+    {
      "id": "governance-iac.service-catalog",
      "name": "AWS Service Catalog"
     },
@@ -2813,20 +2817,16 @@
      "name": "Control Tower의 랜딩 존"
     },
     {
+     "id": "governance-iac.control-tower-controls",
+     "name": "Control Tower의 사전 예방적 제어와 탐지 제어"
+    },
+    {
      "id": "governance-iac.resource-access-manager",
      "name": "AWS Resource Access Manager(AWS RAM)"
     },
     {
      "id": "governance-iac.workload-discovery",
      "name": "Workload Discovery on AWS"
-    },
-    {
-     "id": "governance-iac.control-tower-controls",
-     "name": "Control Tower의 사전 예방적 제어와 탐지 제어"
-    },
-    {
-     "id": "governance-iac.cloudformation-drift-detection",
-     "name": "CloudFormation 드리프트 감지"
     }
    ]
   },
@@ -2844,16 +2844,8 @@
      "name": "Systems Manager Run Command"
     },
     {
-     "id": "systems-manager.appconfig",
-     "name": "AWS AppConfig"
-    },
-    {
      "id": "systems-manager.ssm-session-manager",
      "name": "Systems Manager Session Manager"
-    },
-    {
-     "id": "systems-manager.ec2-instance-connect-endpoint",
-     "name": "EC2 Instance Connect 엔드포인트"
     },
     {
      "id": "systems-manager.ssm-patch-manager",
@@ -2866,6 +2858,14 @@
     {
      "id": "systems-manager.ssm-inventory",
      "name": "Systems Manager Inventory"
+    },
+    {
+     "id": "systems-manager.ec2-instance-connect-endpoint",
+     "name": "EC2 Instance Connect 엔드포인트"
+    },
+    {
+     "id": "systems-manager.appconfig",
+     "name": "AWS AppConfig"
     }
    ]
   },
@@ -2883,6 +2883,10 @@
      "name": "Amazon SageMaker AI"
     },
     {
+     "id": "ai-ml-services.sagemaker-autopilot",
+     "name": "SageMaker Autopilot"
+    },
+    {
      "id": "ai-ml-services.media-ai-service-lineup",
      "name": "음성·이미지·번역·문서를 나눠 맡는 AI 서비스 넷"
     },
@@ -2893,10 +2897,6 @@
     {
      "id": "ai-ml-services.amazon-lex",
      "name": "Amazon Lex"
-    },
-    {
-     "id": "ai-ml-services.sagemaker-autopilot",
-     "name": "SageMaker Autopilot"
     },
     {
      "id": "ai-ml-services.rekognition-content-moderation",

@@ -3892,18 +3892,13 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('백업·재해 복구 주제가 서비스와 전략 넷 다음에 갈림길과 검증을 둔다', () => {
+  it('백업·재해 복구 주제가 AWS Backup·재해 복구 전략·Elastic Disaster Recovery 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'backup-disaster-recovery')
 
-    // 1단 AWS Backup·DRS와 재해 복구 전략 둘이 각각 무엇인가
-    // → 2단 서비스 자체 백업에서 AWS Backup으로 넘어가는 순간, 무엇을 리소스로 지정하고
-    //   어디서 정하고 사본을 어디에 두고 얼마나 촘촘히 뜨는가
-    // → 3단 그 백업이 실제로 복원되는지와 규정을 지키는지 확인하는 설정 항목.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: AWS Backup(8) → 재해 복구 전략(2) → Elastic Disaster Recovery(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'backup-disaster-recovery.backup',
-      'backup-disaster-recovery.elastic-disaster-recovery',
-      'backup-disaster-recovery.backup-and-restore-dr',
-      'backup-disaster-recovery.warm-standby-for-low-rto',
       'backup-disaster-recovery.backup-long-term-retention',
       'backup-disaster-recovery.backup-ec2-resource-assignment',
       'backup-disaster-recovery.organizations-backup-policy',
@@ -3911,6 +3906,9 @@ describe('학습 데이터 무결성', () => {
       'backup-disaster-recovery.backup-s3-continuous-backup',
       'backup-disaster-recovery.backup-restore-testing-plan',
       'backup-disaster-recovery.backup-audit-manager',
+      'backup-disaster-recovery.backup-and-restore-dr',
+      'backup-disaster-recovery.warm-standby-for-low-rto',
+      'backup-disaster-recovery.elastic-disaster-recovery',
     ])
   })
 
@@ -4346,26 +4344,25 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('Route 53 주제가 서비스와 정책 소개 다음에 갈림길과 세부 동작을 둔다', () => {
+  it('Route 53 주제가 라우팅 정책·Resolver·호스팅 영역·쿼리 로깅 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'route53')
 
-    // 1단 Route 53과 라우팅 정책·Resolver·호스팅 영역이 각각 무엇이고 호스팅을 어떻게 옮기는가
-    // → 2단 정책들 사이의 갈림길(장애 조치·리전 장애·지연 시간 레코드)과 레코드가
-    //   무엇을 가리키는가
-    // → 3단 호스팅 영역과 Resolver의 경계·다중값 응답의 세부 동작·쿼리 로깅.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: Route 53(1) → 라우팅 정책(5) → Resolver(2) → 호스팅 영역과 레코드(4) → 쿼리 로깅(1).
+    // 프라이빗 호스팅 영역이 Resolver 아웃바운드 엔드포인트를 언급하므로 Resolver를 호스팅 영역 앞에 둔다(규칙 5).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'route53.route53',
       'route53.routing-policies',
-      'route53.resolver',
-      'route53.private-hosted-zone',
-      'route53.route53-zone-file-import',
       'route53.route53-failover-routing',
       'route53.multi-region-failover-for-region-outage',
       'route53.latency-record-for-non-aws-endpoint',
+      'route53.multivalue-answer-details',
+      'route53.resolver',
+      'route53.route53-resolver-forward-rule',
+      'route53.private-hosted-zone',
+      'route53.route53-zone-file-import',
       'route53.route53-alias-record',
       'route53.private-hosted-zone-vpc-only',
-      'route53.route53-resolver-forward-rule',
-      'route53.multivalue-answer-details',
       'route53.route53-query-logging',
     ])
   })
@@ -4463,30 +4460,27 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('IAM 권한 주제가 구성 요소 다음에 권한을 좁히는 장치와 평가 규칙을 둔다', () => {
+  it('IAM 권한 주제가 사용자와 그룹·역할·정책·분석 도구·루트 사용자 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'iam-permissions')
 
-    // 1단 IAM의 구성 요소(사용자·역할·인스턴스 프로파일·그룹·Roles Anywhere)와
-    //   Access Analyzer가 각각 무엇인가
-    // → 2단 이름이 닮은 분석 도구의 구분, 권한을 좁히는 장치들(최소 권한·ABAC·권한 경계)과
-    //   계정을 넘는 접근을 여는 방법
-    // → 3단 그룹과 사용자의 경계·정책 평가 규칙과 조건 키·루트 사용자의 제약.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: IAM(1) → 사용자와 그룹(3) → 역할(3) → 정책 — 권한을 좁히는 장치와 평가 규칙(6) → 분석 도구(3) → 루트 사용자(2).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'iam-permissions.iam',
-      'iam-permissions.instance-profile',
       'iam-permissions.iam-group-policy-attachment',
+      'iam-permissions.iam-group-users-only',
+      'iam-permissions.iam-user-is-account-scoped',
+      'iam-permissions.instance-profile',
       'iam-permissions.iam-roles-anywhere',
-      'iam-permissions.iam-access-analyzer',
-      'iam-permissions.network-access-analyzer',
+      'iam-permissions.cross-account-iam-role',
       'iam-permissions.least-privilege',
       'iam-permissions.abac',
       'iam-permissions.permissions-boundary',
-      'iam-permissions.cross-account-iam-role',
-      'iam-permissions.iam-group-users-only',
-      'iam-permissions.iam-user-is-account-scoped',
       'iam-permissions.iam-explicit-deny-precedence',
       'iam-permissions.iam-notaction-deny',
       'iam-permissions.iam-requested-region-condition',
+      'iam-permissions.iam-access-analyzer',
+      'iam-permissions.network-access-analyzer',
       'iam-permissions.access-analyzer-delegated-administrator',
       'iam-permissions.root-user-multiple-mfa',
       'iam-permissions.root-user-cannot-be-disabled',
@@ -4927,53 +4921,50 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('거버넌스·IaC 주제가 서비스 넷 다음에 제어의 시점과 감지 범위를 둔다', () => {
+  it('거버넌스·IaC 주제가 CloudFormation·Service Catalog·Control Tower·RAM·Workload Discovery 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'governance-iac')
 
-    // 1단 CloudFormation·Service Catalog·Control Tower·RAM·Workload Discovery가
-    //   각각 무엇인가
-    // → 2단 제어가 배포 시점에 막는가 만들어진 뒤에 찾는가
-    // → 3단 드리프트 감지가 보는 범위.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: CloudFormation(2) → Service Catalog(1) → Control Tower(2) → RAM(1) → Workload Discovery(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'governance-iac.cloudformation',
+      'governance-iac.cloudformation-drift-detection',
       'governance-iac.service-catalog',
       'governance-iac.control-tower-landing-zone',
+      'governance-iac.control-tower-controls',
       'governance-iac.resource-access-manager',
       'governance-iac.workload-discovery',
-      'governance-iac.control-tower-controls',
-      'governance-iac.cloudformation-drift-detection',
     ])
   })
 
-  it('Systems Manager 주제가 기능 둘 다음에 접속하는 두 길과 등록 조건을 둔다', () => {
+  it('Systems Manager 주제가 Systems Manager·EC2 Instance Connect·AppConfig 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'systems-manager')
 
-    // 1단 명령을 보내는 기능과 구성을 배포하는 서비스가 각각 무엇인가
-    // → 2단 배스천 없이 붙는 두 길, 패치를 어디서 도는가
-    // → 3단 관리형 인스턴스를 만드는 정책, 인벤토리가 모으는 것.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Systems Manager(5) → EC2 Instance Connect 엔드포인트(1) → AppConfig(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'systems-manager.ssm-run-command',
-      'systems-manager.appconfig',
       'systems-manager.ssm-session-manager',
-      'systems-manager.ec2-instance-connect-endpoint',
       'systems-manager.ssm-patch-manager',
       'systems-manager.ssm-managed-instance-core-policy',
       'systems-manager.ssm-inventory',
+      'systems-manager.ec2-instance-connect-endpoint',
+      'systems-manager.appconfig',
     ])
   })
 
-  it('AI·ML 주제가 서비스 소개 다음에 훈련이 필요한가와 검토의 쓰임을 둔다', () => {
+  it('AI·ML 주제가 SageMaker·API로 부르는 AI 서비스 블록 다음에 훈련 없이 쓰는 검토를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ai-ml-services')
 
-    // 1단 SageMaker AI와 API로 부르는 AI 서비스들이 각각 무엇인가
-    // → 2단 모델을 직접 만드는 자리와 이미 만들어진 기능을 부르는 자리가 갈린다
-    // → 3단 콘텐츠 검토가 어디에 쓰이는가.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: SageMaker AI(2) → 음성·이미지·번역·문서 AI 서비스(1) → Comprehend(1) → Lex(1) → 비교 — 훈련 없이 쓰는 콘텐츠 검토(1).
+    // Rekognition의 콘텐츠 검토는 SageMaker·Comprehend와 대비하므로 맨 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ai-ml-services.sagemaker',
+      'ai-ml-services.sagemaker-autopilot',
       'ai-ml-services.media-ai-service-lineup',
       'ai-ml-services.comprehend',
       'ai-ml-services.amazon-lex',
-      'ai-ml-services.sagemaker-autopilot',
       'ai-ml-services.rekognition-content-moderation',
     ])
   })
