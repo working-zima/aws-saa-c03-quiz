@@ -171,7 +171,8 @@
     },
     {
       "dir": "34-service-block-order",
-      "status": "pending"
+      "status": "blocked",
+      "blocked_at": "2026-09-11T19:14:05+0900"
     }
   ]
 }
