@@ -6,11 +6,14 @@ import { useProgress } from '../hooks/useProgress'
 import { adjacentTopics } from '../lib/navigation'
 import { shuffleQuestions } from '../lib/shuffle'
 import type { Question, Topic } from '../types/content'
+import type { Progress } from '../types/progress'
 
 interface QuizPageProps {
   questions?: Question[]
   topics?: Topic[]
+  progress?: Progress
   answer?: (questionId: string, correct: boolean) => void
+  setInReview?: (questionId: string, marked: boolean) => void
   shuffle?: (questions: Question[]) => Question[]
 }
 
@@ -19,10 +22,19 @@ const defaultShuffle = (items: Question[]) => shuffleQuestions(items, Math.rando
 const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
 
-export function QuizPage({ questions = defaultQuestions, topics = defaultTopics, answer: providedAnswer, shuffle = defaultShuffle }: QuizPageProps) {
+export function QuizPage({
+  questions = defaultQuestions,
+  topics = defaultTopics,
+  progress: providedProgress,
+  answer: providedAnswer,
+  setInReview: providedSetInReview,
+  shuffle = defaultShuffle,
+}: QuizPageProps) {
   const { topicId } = useParams()
-  const { answer: storedAnswer } = useProgress()
+  const { progress: storedProgress, answer: storedAnswer, setInReview: storedSetInReview } = useProgress()
+  const progress = providedProgress ?? storedProgress
   const answer = providedAnswer ?? storedAnswer
+  const setInReview = providedSetInReview ?? storedSetInReview
   const topicQuestions = useMemo(
     () => shuffle(questions.filter((question) => question.topicId === topicId)),
     [questions, shuffle, topicId],
@@ -47,7 +59,8 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
       answer={answer}
       questions={topicQuestions}
       renderComplete={(correctCount, total) => {
-        const hasIncorrectAnswer = correctCount < total
+        // 정오답이 아니라 복습 목록을 따른다. 이 세트에 복습할 문항이 있을 때만 복습으로 안내한다 (ADR-032).
+        const hasReviewQuestion = topicQuestions.some((question) => question.id in progress.review)
         return (
           <section className="max-w-2xl space-y-8 break-keep break-anywhere">
             <div className="space-y-3">
@@ -55,9 +68,9 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
               <p className="text-[15px] leading-7 text-neutral-300">맞힌 개수 {correctCount} / {total}</p>
             </div>
             <nav className="flex flex-wrap gap-3" aria-label="퀴즈 완료 후 이동">
-              {hasIncorrectAnswer && <Link className={primaryButtonClass} to="/review">틀린 문제 복습하기</Link>}
+              {hasReviewQuestion && <Link className={primaryButtonClass} to="/review">복습하기</Link>}
               {next && (
-                <Link className={hasIncorrectAnswer ? ghostLinkClass : primaryButtonClass} to={`/topic/${next.id}`}>
+                <Link className={hasReviewQuestion ? ghostLinkClass : primaryButtonClass} to={`/topic/${next.id}`}>
                   다음 주제 이어가기
                 </Link>
               )}
@@ -66,6 +79,8 @@ export function QuizPage({ questions = defaultQuestions, topics = defaultTopics,
           </section>
         )
       }}
+      review={progress.review}
+      setInReview={setInReview}
       title="확인 문제"
     />
   )

@@ -14,28 +14,30 @@ const testQuestions: Question[] = [
 
 const noShuffle = (items: Question[]) => items
 
-const allWrong: Progress = {
-  version: 2,
+const twoInReview: Progress = {
+  version: 3,
   read: {},
-  answers: { q001: false, q003: false },
-  wrong: { q001: true, q003: true },
+  answers: { q001: false, q003: true },
+  review: { q001: true, q003: true },
 }
 
-function renderPage(path: string, progress: Progress = allWrong) {
-  return render(
+function renderPage(path: string, progress: Progress = twoInReview) {
+  const setInReview = vi.fn()
+  const view = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route
-          element={<ReviewQuizPage answer={vi.fn()} progress={progress} questions={testQuestions} shuffle={noShuffle} />}
+          element={<ReviewQuizPage answer={vi.fn()} progress={progress} questions={testQuestions} setInReview={setInReview} shuffle={noShuffle} />}
           path="/review/quiz"
         />
         <Route
-          element={<ReviewQuizPage answer={vi.fn()} progress={progress} questions={testQuestions} shuffle={noShuffle} />}
+          element={<ReviewQuizPage answer={vi.fn()} progress={progress} questions={testQuestions} setInReview={setInReview} shuffle={noShuffle} />}
           path="/review/quiz/:topicId"
         />
       </Routes>
     </MemoryRouter>,
   )
+  return { ...view, setInReview }
 }
 
 async function answerCorrectly(label: string) {
@@ -45,23 +47,23 @@ async function answerCorrectly(label: string) {
 }
 
 describe('ReviewQuizPage', () => {
-  it('오답노트에 있는 문항만 낸다', () => {
+  it('복습 목록에 있는 문항만 낸다', () => {
     renderPage('/review/quiz')
 
-    expect(screen.getByRole('heading', { name: '오답 다시 풀기' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '복습 문제 풀기' })).toBeInTheDocument()
     expect(screen.getByText('1 / 2')).toBeInTheDocument()
     expect(screen.getByText('질문 1')).toBeInTheDocument()
   })
 
-  it('주제가 붙으면 그 주제의 오답만 낸다', () => {
+  it('주제가 붙으면 그 주제의 복습 문항만 낸다', () => {
     renderPage('/review/quiz/database')
 
     expect(screen.getByText('1 / 1')).toBeInTheDocument()
     expect(screen.getByText('질문 3')).toBeInTheDocument()
   })
 
-  // 푸는 도중 오답노트가 바뀌어도 세트가 흔들리면 안 된다. 진입 시점에 한 번만 고른다.
-  it('푸는 도중 오답노트가 비어도 세트를 그대로 유지한다', () => {
+  // 푸는 도중 복습 목록이 바뀌어도 세트가 흔들리면 안 된다. 진입 시점에 한 번만 고른다.
+  it('푸는 도중 복습 목록이 비어도 세트를 그대로 유지한다', () => {
     const { rerender } = renderPage('/review/quiz')
     expect(screen.getByText('1 / 2')).toBeInTheDocument()
 
@@ -72,8 +74,9 @@ describe('ReviewQuizPage', () => {
             element={(
               <ReviewQuizPage
                 answer={vi.fn()}
-                progress={{ version: 2, read: {}, answers: {}, wrong: {} }}
+                progress={{ version: 3, read: {}, answers: {}, review: {} }}
                 questions={testQuestions}
+                setInReview={vi.fn()}
                 shuffle={noShuffle}
               />
             )}
@@ -86,22 +89,36 @@ describe('ReviewQuizPage', () => {
     expect(screen.getByText('1 / 2')).toBeInTheDocument()
   })
 
-  it('세트를 끝내면 완료 화면과 오답노트로 가는 링크를 준다', async () => {
+  // 복습 목록에서 다시 푼 문항은 눌린 채로 나온다. 익혔다고 판단하면 그 자리에서 뺀다.
+  it('다시 풀면서 복습에 넣기를 눌러 그 문항을 뺄 수 있다', async () => {
+    const user = userEvent.setup()
+    const { setInReview } = renderPage('/review/quiz')
+
+    await user.click(screen.getByRole('button', { name: '정답 1' }))
+    const toggle = screen.getByRole('button', { name: '복습에 넣기' })
+    expect(toggle).toHaveAttribute('aria-pressed', 'true')
+
+    await user.click(toggle)
+
+    expect(setInReview).toHaveBeenCalledWith('q001', false)
+  })
+
+  it('세트를 끝내면 완료 화면과 복습으로 돌아가는 링크를 준다', async () => {
     renderPage('/review/quiz')
 
     await answerCorrectly('정답 1')
     await answerCorrectly('정답 3')
 
-    expect(screen.getByRole('heading', { name: '오답 다시 풀기 완료' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '복습 문제 풀기 완료' })).toBeInTheDocument()
     expect(screen.getByText('맞힌 개수 2 / 2')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '오답노트로 돌아가기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: '복습으로 돌아가기' })).toHaveAttribute('href', '/review')
   })
 
-  it('다시 풀 오답이 없으면 안내와 오답노트 링크를 보여준다', () => {
-    renderPage('/review/quiz', { version: 2, read: {}, answers: { q001: true }, wrong: {} })
+  it('다시 풀 문항이 없으면 안내와 복습 링크를 보여준다', () => {
+    renderPage('/review/quiz', { version: 3, read: {}, answers: { q001: false }, review: {} })
 
-    expect(screen.getByRole('heading', { name: '오답 다시 풀기' })).toBeInTheDocument()
-    expect(screen.getByText('다시 풀 오답이 없습니다.')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '오답노트로 돌아가기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('heading', { name: '복습 문제 풀기' })).toBeInTheDocument()
+    expect(screen.getByText('다시 풀 문항이 없습니다.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '복습으로 돌아가기' })).toHaveAttribute('href', '/review')
   })
 })

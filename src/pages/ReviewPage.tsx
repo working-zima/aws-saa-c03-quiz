@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { BackButton } from '../components/BackButton'
 import { questions as defaultQuestions, topics as defaultTopics } from '../data'
 import { useProgress } from '../hooks/useProgress'
-import { wrongQuestions } from '../lib/stats'
+import { reviewQuestions } from '../lib/stats'
 import type { Question, Topic } from '../types/content'
 import type { Progress } from '../types/progress'
 
@@ -10,7 +10,7 @@ interface ReviewPageProps {
   topics?: Topic[]
   questions?: Question[]
   progress?: Progress
-  forget?: (questionId: string) => void
+  setInReview?: (questionId: string, marked: boolean) => void
 }
 
 const ghostLinkClass = 'inline-flex min-h-[44px] shrink-0 items-center rounded-md px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100'
@@ -19,22 +19,21 @@ export function ReviewPage({
   topics = defaultTopics,
   questions = defaultQuestions,
   progress: providedProgress,
-  forget: providedForget,
+  setInReview: providedSetInReview,
 }: ReviewPageProps) {
-  const { progress: storedProgress, forget: storedForget } = useProgress()
+  const { progress: storedProgress, setInReview: storedSetInReview } = useProgress()
   const progress = providedProgress ?? storedProgress
-  const forget = providedForget ?? storedForget
-  const wrong = wrongQuestions(questions, progress)
+  const setInReview = providedSetInReview ?? storedSetInReview
+  const reviewList = reviewQuestions(questions, progress)
   const conceptNames = new Map(
     topics.flatMap((topic) => topic.concepts.map((concept) => [concept.id, concept.name] as const)),
   )
   const reviewGroups = topics
     .map((topic) => ({
       topic,
-      groupQuestions: wrong.filter((question) => question.topicId === topic.id),
+      groupQuestions: reviewList.filter((question) => question.topicId === topic.id),
     }))
     .filter((group) => group.groupQuestions.length > 0)
-  const hasAnswered = questions.some((question) => question.id in progress.answers)
 
   return (
     <section className="max-w-3xl space-y-8 break-keep break-anywhere">
@@ -44,22 +43,19 @@ export function ReviewPage({
       </div>
 
       {reviewGroups.length === 0 ? (
-        hasAnswered ? (
-          <p className="text-[15px] leading-7 text-body">오답노트가 비어 있습니다.</p>
-        ) : (
-          <div className="space-y-3">
-            <p className="text-[15px] leading-7 text-body">
-              확인 문제를 풀면 여기에 틀린 문항이 모입니다.
-            </p>
-            <Link className="inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100" to="/">
-              주제 목록으로 가기
-            </Link>
-          </div>
-        )
+        // 문제를 풀었어도 복습에 넣지 않았으면 목록은 비어 있다. 그때도 넣는 방법을 알린다 (ADR-032).
+        <div className="space-y-3">
+          <p className="text-[15px] leading-7 text-body">
+            문제를 푼 뒤 복습에 넣은 문항이 여기에 모입니다.
+          </p>
+          <Link className="inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100" to="/">
+            주제 목록으로 가기
+          </Link>
+        </div>
       ) : (
         <div className="space-y-8">
           <div className="flex items-start justify-between gap-3">
-            <p className="text-[15px] leading-7 text-body">틀린 문항 {wrong.length}개</p>
+            <p className="text-[15px] leading-7 text-body">복습할 문항 {reviewList.length}개</p>
             <Link className={ghostLinkClass} to="/review/quiz">전체 다시 풀기</Link>
           </div>
 
@@ -77,7 +73,7 @@ export function ReviewPage({
                     {topic.title}
                   </h2>
                   <Link className={ghostLinkClass} to={`/review/quiz/${topic.id}`}>
-                    오답 다시 풀기
+                    다시 풀기
                   </Link>
                 </div>
 
@@ -92,11 +88,11 @@ export function ReviewPage({
                         >
                           근거 개념: {conceptNames.get(question.conceptId)}
                         </Link>
-                        {/* 오답노트가 줄어드는 경로는 이 버튼 하나뿐이다. 다시 맞혔다고 빠지지 않는다 (ADR-017). */}
+                        {/* 다시 맞혔다고 저절로 빠지지 않는다. 빼는 길은 이 버튼과 문제 화면의 복습에 넣기 스위치다 (ADR-017·ADR-032). */}
                         <button
-                          aria-label={`오답노트에서 지우기: ${question.prompt}`}
+                          aria-label={`복습 목록에서 지우기: ${question.prompt}`}
                           className={ghostLinkClass}
-                          onClick={() => forget(question.id)}
+                          onClick={() => setInReview(question.id, false)}
                           type="button"
                         >
                           지우기
