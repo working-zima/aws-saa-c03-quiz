@@ -17,10 +17,10 @@ describe('useProgress', () => {
 
   it('저장된 진행 상태로 초기화한다', () => {
     vi.mocked(loadProgress).mockReturnValue({
-      version: 2,
+      version: 3,
       read: { ec2: true },
       answers: {},
-      wrong: {},
+      review: {},
     })
 
     const { result } = renderHook(() => useProgress())
@@ -40,14 +40,23 @@ describe('useProgress', () => {
     expect(saveProgress).toHaveBeenLastCalledWith(result.current.progress)
   })
 
-  it('오답노트에서 문항을 지우고 저장한다', () => {
+  it('답을 틀려도 복습 목록에 넣지 않는다', () => {
     const { result } = renderHook(() => useProgress())
 
     act(() => result.current.answer('q001', false))
-    expect(result.current.progress.wrong.q001).toBe(true)
 
-    act(() => result.current.forget('q001'))
-    expect(result.current.progress.wrong).toEqual({})
+    expect(result.current.progress.review).toEqual({})
+  })
+
+  it('복습 목록에 문항을 넣고 빼면서 저장한다', () => {
+    const { result } = renderHook(() => useProgress())
+
+    act(() => result.current.setInReview('q001', true))
+    expect(result.current.progress.review).toEqual({ q001: true })
+    expect(saveProgress).toHaveBeenLastCalledWith(result.current.progress)
+
+    act(() => result.current.setInReview('q001', false))
+    expect(result.current.progress.review).toEqual({})
     expect(saveProgress).toHaveBeenLastCalledWith(result.current.progress)
   })
 })

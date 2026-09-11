@@ -1,11 +1,11 @@
 // @vitest-environment node
 
 import { describe, expect, it } from 'vitest'
-import { emptyProgress, forgetWrong, markTopicRead, recordAnswer } from './progress'
+import { emptyProgress, markForReview, markTopicRead, recordAnswer } from './progress'
 
 describe('progress', () => {
   it('빈 진행 상태를 만든다', () => {
-    expect(emptyProgress()).toEqual({ version: 2, read: {}, answers: {}, wrong: {} })
+    expect(emptyProgress()).toEqual({ version: 3, read: {}, answers: {}, review: {} })
   })
 
   it('주제를 읽음 처리하면서 원본을 변경하지 않는다', () => {
@@ -30,41 +30,44 @@ describe('progress', () => {
     expect(corrected.answers).not.toBe(incorrect.answers)
   })
 
-  it('틀린 문항을 오답노트에 넣는다', () => {
+  // 무엇을 복습할지는 사용자가 정한다. 채점 결과로 복습 목록을 채우지도 비우지도 않는다 (ADR-032).
+  it('틀린 문항을 복습 목록에 넣지 않는다', () => {
     const progress = recordAnswer(emptyProgress(), 'q001', false)
 
-    expect(progress.wrong).toEqual({ q001: true })
+    expect(progress.review).toEqual({})
   })
 
-  it('맞힌 문항은 오답노트에 넣지 않는다', () => {
-    const progress = recordAnswer(emptyProgress(), 'q001', true)
+  it('복습 목록에 든 문항을 다시 풀어 맞혀도 빼지 않는다', () => {
+    const marked = markForReview(emptyProgress(), 'q001', true)
 
-    expect(progress.wrong).toEqual({})
-  })
-
-  // 오답노트가 줄어드는 경로는 사용자가 지우는 것 하나뿐이다 (ADR-017).
-  it('다시 풀어서 맞혀도 오답노트에서 빼지 않는다', () => {
-    const incorrect = recordAnswer(emptyProgress(), 'q001', false)
-
-    const corrected = recordAnswer(incorrect, 'q001', true)
+    const corrected = recordAnswer(marked, 'q001', true)
 
     expect(corrected.answers.q001).toBe(true)
-    expect(corrected.wrong).toEqual({ q001: true })
+    expect(corrected.review).toEqual({ q001: true })
   })
 
-  it('오답노트에서 문항을 지우면서 원본과 다른 문항을 건드리지 않는다', () => {
-    const progress = recordAnswer(recordAnswer(emptyProgress(), 'q001', false), 'q002', false)
+  it('문항을 복습 목록에 넣으면서 원본을 변경하지 않는다', () => {
+    const progress = recordAnswer(emptyProgress(), 'q001', true)
 
-    const next = forgetWrong(progress, 'q001')
+    const next = markForReview(progress, 'q001', true)
 
-    expect(next.wrong).toEqual({ q002: true })
-    expect(progress.wrong).toEqual({ q001: true, q002: true })
+    expect(next.review).toEqual({ q001: true })
+    expect(progress.review).toEqual({})
     expect(next.answers).toEqual(progress.answers)
   })
 
-  it('오답노트에 없는 문항을 지워도 그대로 둔다', () => {
-    const progress = recordAnswer(emptyProgress(), 'q001', false)
+  it('복습 목록에서 문항을 빼면서 원본과 다른 문항을 건드리지 않는다', () => {
+    const progress = markForReview(markForReview(emptyProgress(), 'q001', true), 'q002', true)
 
-    expect(forgetWrong(progress, 'q999').wrong).toEqual({ q001: true })
+    const next = markForReview(progress, 'q001', false)
+
+    expect(next.review).toEqual({ q002: true })
+    expect(progress.review).toEqual({ q001: true, q002: true })
+  })
+
+  it('복습 목록에 없는 문항을 빼도 그대로 둔다', () => {
+    const progress = markForReview(emptyProgress(), 'q001', true)
+
+    expect(markForReview(progress, 'q999', false).review).toEqual({ q001: true })
   })
 })

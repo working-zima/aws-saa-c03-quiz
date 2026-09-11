@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import type { Question } from '../types/content'
+import type { Progress } from '../types/progress'
 import { RandomQuizPage } from './RandomQuizPage'
 
 function makeQuestions(count: number): Question[] {
@@ -19,15 +20,17 @@ function makeQuestions(count: number): Question[] {
 
 const noShuffle = (items: Question[]) => items
 
+const noReview: Progress = { version: 3, read: {}, answers: {}, review: {} }
+
 function CurrentPath() {
   return <output aria-label="현재 경로">{useLocation().pathname}</output>
 }
 
-function renderPage(path: string, questions = makeQuestions(25)) {
+function renderPage(path: string, questions = makeQuestions(25), progress = noReview) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/random/:count" element={<RandomQuizPage answer={vi.fn()} questions={questions} shuffle={noShuffle} />} />
+        <Route path="/random/:count" element={<RandomQuizPage answer={vi.fn()} progress={progress} questions={questions} setInReview={vi.fn()} shuffle={noShuffle} />} />
         <Route path="/random" element={<><h1>랜덤 시작</h1><CurrentPath /></>} />
       </Routes>
     </MemoryRouter>,
@@ -80,11 +83,19 @@ describe('RandomQuizPage', () => {
     expect(screen.getByText('맞힌 개수 10 / 10')).toBeInTheDocument()
   })
 
-  it('오답이 있으면 복습과 다시 뽑기 링크를 제공한다', async () => {
-    renderPage('/random/10')
-    await finishSet(10, true)
-    expect(screen.getByRole('link', { name: '틀린 문제 복습하기' })).toHaveAttribute('href', '/review')
+  it('세트에 복습 목록의 문항이 있으면 복습과 다시 뽑기 링크를 제공한다', async () => {
+    renderPage('/random/10', makeQuestions(25), { ...noReview, review: { q0: true } })
+    await finishSet(10)
+    expect(screen.getByRole('link', { name: '복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.getByRole('link', { name: '다시 뽑기' })).toHaveAttribute('href', '/random')
+  })
+
+  // 복습 목록에 문항이 있어도 이 세트 밖이면 이번 풀이와 무관하다. 틀린 문항도 저절로 들어가지 않는다 (ADR-032).
+  it('복습 목록에 이 세트의 문항이 없으면 틀린 문항이 있어도 복습 링크를 두지 않는다', async () => {
+    renderPage('/random/10', makeQuestions(25), { ...noReview, review: { q24: true } })
+    await finishSet(10, true)
+    expect(screen.queryByRole('link', { name: '복습하기' })).toBeNull()
+    expect(screen.getByRole('link', { name: '다시 뽑기' })).toHaveClass('bg-neutral-100')
   })
 
   it('완료 화면에 다음 주제 링크를 두지 않는다', async () => {

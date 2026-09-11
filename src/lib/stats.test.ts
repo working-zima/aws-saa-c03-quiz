@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Question, Topic } from '../types/content'
 import type { Progress } from '../types/progress'
-import { overallPercent, topicStats, wrongQuestions } from './stats'
+import { overallPercent, reviewQuestions, topicStats } from './stats'
 
 const topics: Topic[] = [
   {
@@ -47,10 +47,10 @@ const questions = [
 describe('stats', () => {
   it('주제별 읽기 및 답안 통계를 계산한다', () => {
     const progress: Progress = {
-      version: 2,
+      version: 3,
       read: { 'topic-a': true },
       answers: { q001: true, q002: false, q004: true },
-      wrong: { q002: true },
+      review: { q002: true },
     }
 
     expect(topicStats(topics, questions, progress)).toEqual([
@@ -72,20 +72,20 @@ describe('stats', () => {
     ])).toBe(0)
   })
 
-  it('오답노트에 담긴 문항만 문제 은행 순서로 반환한다', () => {
+  it('복습 목록에 담긴 문항만 문제 은행 순서로 반환한다', () => {
     const progress: Progress = {
-      version: 2,
+      version: 3,
       read: {},
       answers: {},
-      wrong: { q003: true, q001: true },
+      review: { q003: true, q001: true },
     }
 
-    expect(wrongQuestions(questions, progress)).toEqual([questions[0], questions[2]])
+    expect(reviewQuestions(questions, progress)).toEqual([questions[0], questions[2]])
   })
 
-  it('오답노트가 비어 있으면 빈 배열을 반환한다', () => {
-    const progress: Progress = { version: 2, read: {}, answers: { q001: false }, wrong: {} }
+  it('복습 목록이 비어 있으면 틀린 문항이 있어도 빈 배열을 반환한다', () => {
+    const progress: Progress = { version: 3, read: {}, answers: { q001: false }, review: {} }
 
-    expect(wrongQuestions(questions, progress)).toEqual([])
+    expect(reviewQuestions(questions, progress)).toEqual([])
   })
 })

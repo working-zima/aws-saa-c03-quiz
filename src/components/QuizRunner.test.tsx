@@ -63,20 +63,27 @@ const testTopics: Topic[] = [
   },
 ]
 
-function renderRunner(renderComplete = vi.fn(() => <section>완료</section>), topics = testTopics) {
+function renderRunner(
+  renderComplete = vi.fn(() => <section>완료</section>),
+  topics = testTopics,
+  review: Record<string, true> = {},
+) {
+  const setInReview = vi.fn()
   const result = render(
     <MemoryRouter>
       <QuizRunner
         answer={vi.fn()}
         questions={testQuestions}
         renderComplete={renderComplete}
+        review={review}
+        setInReview={setInReview}
         title="사용자 지정 제목"
         topics={topics}
       />
     </MemoryRouter>,
   )
 
-  return { ...result, renderComplete }
+  return { ...result, renderComplete, setInReview }
 }
 
 describe('QuizRunner', () => {
@@ -207,5 +214,72 @@ describe('QuizRunner', () => {
     renderRunner(vi.fn(() => <section>완료</section>), [])
 
     expect(screen.queryByRole('button', { name: '개념 보기' })).toBeNull()
+  })
+
+  describe('복습에 넣기', () => {
+    it('답을 고르기 전에는 렌더하지 않는다', () => {
+      renderRunner()
+
+      expect(screen.queryByRole('button', { name: '복습에 넣기' })).toBeNull()
+    })
+
+    // 틀렸다고 저절로 넣지 않는다. 무엇을 복습할지는 해설을 읽은 학습자가 정한다 (ADR-032).
+    it('틀려도 눌리지 않은 채로 나온다', async () => {
+      const user = userEvent.setup()
+      const { setInReview } = renderRunner()
+
+      await user.click(screen.getByRole('button', { name: '오답 보기 1' }))
+
+      expect(screen.getByRole('button', { name: '복습에 넣기' })).toHaveAttribute('aria-pressed', 'false')
+      expect(setInReview).not.toHaveBeenCalled()
+    })
+
+    it('누르면 그 문항을 복습 목록에 넣는다', async () => {
+      const user = userEvent.setup()
+      const { setInReview } = renderRunner()
+
+      await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
+      await user.click(screen.getByRole('button', { name: '복습에 넣기' }))
+
+      expect(setInReview).toHaveBeenCalledWith('q001', true)
+    })
+
+    // 라벨은 켜져 있어도 그대로다. 상태는 체크 표시와 aria-pressed가 전한다 — 개념 보기 토글과 같은 규칙.
+    it('복습 목록에 든 문항은 같은 라벨로 눌린 채 나오고, 누르면 뺀다', async () => {
+      const user = userEvent.setup()
+      const { setInReview } = renderRunner(undefined, testTopics, { q001: true })
+
+      await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
+      const toggle = screen.getByRole('button', { name: '복습에 넣기' })
+      expect(toggle).toHaveAttribute('aria-pressed', 'true')
+
+      await user.click(toggle)
+
+      expect(setInReview).toHaveBeenCalledWith('q001', false)
+    })
+
+    it('문항마다 그 문항의 복습 여부를 보여준다', async () => {
+      const user = userEvent.setup()
+      renderRunner(undefined, testTopics, { q002: true })
+
+      await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
+      expect(screen.getByRole('button', { name: '복습에 넣기' })).toHaveAttribute('aria-pressed', 'false')
+
+      await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
+      await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+      expect(screen.getByRole('button', { name: '복습에 넣기' })).toHaveAttribute('aria-pressed', 'true')
+    })
+
+    it('되돌아간 문항에서도 복습에 넣을 수 있다', async () => {
+      const user = userEvent.setup()
+      const { setInReview } = renderRunner()
+
+      await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
+      await user.click(screen.getByRole('button', { name: '첫 번째 정답' }))
+      await user.click(screen.getByRole('button', { name: '이전 문제' }))
+      await user.click(screen.getByRole('button', { name: '복습에 넣기' }))
+
+      expect(setInReview).toHaveBeenCalledWith('q001', true)
+    })
   })
 })
