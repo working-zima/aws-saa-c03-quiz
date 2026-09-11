@@ -36,7 +36,7 @@ interface Concept {
   summary: string;                     // 한 줄 요약
   paragraphs: string[];                // 설명 본문. 문단 단위 평문.
 }
-// concepts 배열의 순서가 학습 순서다: 1단(기본) → 2단(갈림길) → 3단(한계). 아래 절을 봐라.
+// concepts 배열의 순서가 학습 순서다: 서비스 블록마다 기본 → 갈림길 → 한계. 아래 절을 봐라.
 
 interface Question {
   id: string;                          // "q001"
@@ -49,17 +49,32 @@ interface Question {
 }
 ```
 
-**주제 안의 개념 배열은 1단 → 2단 → 3단 순서다.** 근거는 ADR-023.
+**주제 안의 개념 배열은 서비스 블록 순서다.** 근거는 ADR-033이고, ADR-023의 3단 정렬을 개정한 것이다.
 
-| 단 | 무엇 | 예 |
+1. 서비스별 블록을 먼저 만든다.
+2. 각 서비스 블록 안에서 `기본 개념 → 주요 기능/갈림길 → 세부 기능·설정·한계` 순으로 배치한다.
+3. 같은 하위 기능에 속한 개념은 가능한 한 연속해서 둔다.
+4. 둘 이상의 서비스를 비교하는 개념은 비교 대상 서비스 블록이 모두 나온 뒤에 둔다.
+5. 어떤 개념이 다른 개념을 이해의 전제로 삼는다면 전제 개념을 먼저 둔다. 이 규칙은 위 규칙보다
+   우선한다.
+
+| 블록 안의 자리 | 무엇 | 예 (`data-transfer-services`의 DataSync 블록) |
 |---|---|---|
-| 1단 | 그 서비스가 무엇인가 — 지도 | `lambda.lambda`, `ecs-eks-fargate.ecs` |
-| 2단 | 헷갈리는 것과 무엇으로 갈리는가 | `ecs-eks-fargate.eks-compute-options` |
-| 3단 | 한계값·설정·세부 동작 | `lambda.lambda-layer-size-limit` |
+| 기본 | 그 서비스가 무엇인가 | `data-transfer-services.datasync` |
+| 주요 기능·갈림길 | 헷갈리는 것과 무엇으로 갈리는가 | `data-transfer-services.file-gateway-vs-datasync-continuous` |
+| 세부 기능·설정·한계 | 한계값·설정·세부 동작 | `data-transfer-services.datasync-manifest` |
 
-**`Concept`에 층 필드를 두지 마라.** 순서 자체가 층이고, 필드를 더하면 배열 순서와
-필드가 어긋날 수 있는 두 번째 진실이 생긴다. 층을 화면에 표시하는 것은 별개의 판단이고
-지금은 하지 않는다 (ADR-023).
+서비스가 하나뿐인 주제는 하위 기능을 블록으로 삼는다. 주요 기능에 세부가 딸려 있으면 그 기능을
+가운데 층의 끝, 자기 세부 바로 앞에 둔다 — 층 순서(규칙 2)와 연속성(규칙 3)이 함께 지켜진다.
+주제마다 어떤 블록을 어떤 순서로 두었는지는 `src/data/data.test.ts`의 주제별 순서 단언이 개념 id
+전부로 못박고, 그 주석이 블록과 예외를 적는다.
+
+**`Concept`에 층·블록 필드를 두지 마라.** 순서 자체가 블록과 층이고, 필드를 더하면 배열 순서와
+필드가 어긋날 수 있는 두 번째 진실이 생긴다. 블록이나 층을 화면에 표시하는 것은 별개의 판단이고
+지금은 하지 않는다 (ADR-023·ADR-033).
+
+개념 순서를 바꾸면 `scripts/topics-baseline.json`의 개념 항목 순서도 같은 커밋에서 옮긴다 —
+`scripts/check-structure.mjs`가 순서를 대조하고, `scripts/sync-baseline.mjs`는 순서 변경을 거부한다.
 
 `src/types/progress.ts`:
 

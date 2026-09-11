@@ -2724,44 +2724,46 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('S3 버전 관리 주제가 기능 다섯 다음에 복제의 갈래와 구성 한계를 둔다', () => {
+  it('S3 버전 관리 주제가 버전 관리·객체 잠금·수명 주기·이벤트 알림·복제 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-versioning-lifecycle')
 
-    // 1단 각각 무엇인가 → 2단 리전을 넘는 복제와 같은 리전 복제 → 3단 전제 조건과 구성 한계.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 버전 관리(1) → 객체 잠금(2) → 수명 주기 정책(2) → 이벤트 알림(1) → 복제(4).
+    // 기능 하나가 블록 하나다. 객체 잠금의 전제 조건(버전 관리 필요)은 버전 관리 뒤, 객체 잠금 블록 안.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       's3-versioning-lifecycle.versioning',
       's3-versioning-lifecycle.object-lock',
+      's3-versioning-lifecycle.object-lock-prerequisites',
       's3-versioning-lifecycle.lifecycle-policy',
+      's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
       's3-versioning-lifecycle.event-notification',
       's3-versioning-lifecycle.s3-replication',
       's3-versioning-lifecycle.s3-same-region-replication',
       's3-versioning-lifecycle.s3-replication-time-control',
       's3-versioning-lifecycle.s3-replication-cross-account-kms',
-      's3-versioning-lifecycle.object-lock-prerequisites',
-      's3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter',
     ])
   })
 
-  it('S3 암호화 주제가 암호화·배치·인벤토리 다음에 갈림길과 한계를 둔다', () => {
+  it('S3 암호화 주제가 암호화·Batch Operations와 인벤토리·Object Lambda 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
 
-    // 1단 SSE와 배치·인벤토리·Object Lambda가 각각 무엇인가 → 2단 어느 SSE를 고르는가와
-    // 일회성 복사 대 지속 복제 → 3단 비용 구조·SSE-C에 없는 것·전송 구간 강제.
-    // SSE-S3 ↔ SSE-KMS ↔ SSE-C가 한 주제 안에 있어야 한다(PRD "사용자").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 서버 측·클라이언트 측 암호화(8) → Batch Operations와 인벤토리(4) → S3 Object Lambda(1).
+    // Batch Operations 블록은 일회성 복사와 지속 복제의 갈림길이 Lambda 호출(세부)보다 앞선다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       's3-encryption-batch.sse',
       's3-encryption-batch.sse-types',
       's3-encryption-batch.client-side-encryption',
-      's3-encryption-batch.batch-operations',
-      's3-encryption-batch.s3-inventory-report',
-      's3-encryption-batch.s3-object-lambda',
       's3-encryption-batch.envelope-encryption',
       's3-encryption-batch.sse-kms-audit-trail',
-      's3-encryption-batch.batch-copy-vs-replication',
-      's3-encryption-batch.s3-batch-operations-lambda-invoke',
       's3-encryption-batch.sse-kms-cost',
       's3-encryption-batch.sse-c-no-rotation-or-audit',
       's3-encryption-batch.s3-secure-transport-condition',
+      's3-encryption-batch.batch-operations',
+      's3-encryption-batch.s3-inventory-report',
+      's3-encryption-batch.batch-copy-vs-replication',
+      's3-encryption-batch.s3-batch-operations-lambda-invoke',
+      's3-encryption-batch.s3-object-lambda',
     ])
   })
 
@@ -3096,44 +3098,42 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('S3 접근 제어 주제가 접근 경로 여섯 다음에 갈림길 둘과 한계 다섯을 둔다', () => {
+  it('S3 접근 제어 주제가 버킷 정책과 공개 차단부터 Storage Lens까지 접근 경로 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-access-control')
 
-    // 1단 버킷 정책·사전 서명된 URL·액세스 권한·액세스 포인트·Storage Lens가 각각
-    // 무엇인가 → 2단 CORS와 요청자 부담이 무엇을 맡는가 → 3단 설정 항목과 제약.
-    // 버킷 정책 ↔ 액세스 포인트 ↔ 퍼블릭 액세스 차단은 서로 갈림길이라 흩지 않는다.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 버킷 정책(2) → 공개 액세스 차단(2) → 사전 서명된 URL(1) → S3 액세스 권한(1) → 액세스 포인트(2) → CORS(1) → 요청자 부담(1) →
+    //   정적 웹사이트 엔드포인트(1) → Storage Lens(2).
+    // 공개 액세스 차단 둘은 따로 기본 개념이 없고 버킷 정책을 재정의하거나 그 허용을 통과시키는 관계라
+    // 버킷 정책 블록 바로 뒤에 둔다. 접근 수단이 아닌 Storage Lens는 맨 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       's3-access-control.s3-cross-account-bucket-policy',
+      's3-access-control.s3-bucket-policy-source-vpc-condition',
+      's3-access-control.s3-account-level-public-access-block',
+      's3-access-control.block-public-access-allows-explicit-grants',
       's3-access-control.s3-presigned-url',
       's3-access-control.s3-access-grants',
       's3-access-control.s3-access-point',
       's3-access-control.s3-multi-region-access-point',
-      's3-access-control.s3-storage-lens',
       's3-access-control.s3-cors-not-authorization',
       's3-access-control.s3-requester-pays',
-      's3-access-control.s3-storage-lens-advanced-activity-metrics',
-      's3-access-control.s3-account-level-public-access-block',
-      's3-access-control.block-public-access-allows-explicit-grants',
-      's3-access-control.s3-bucket-policy-source-vpc-condition',
       's3-access-control.s3-website-endpoint-no-https',
+      's3-access-control.s3-storage-lens',
+      's3-access-control.s3-storage-lens-advanced-activity-metrics',
     ])
   })
 
-  it('EBS 주제가 기본 다섯 다음에 볼륨 유형의 갈림길과 스냅샷 운영을 둔다', () => {
+  it('EBS 주제가 EBS 볼륨·스냅샷·인스턴스 스토어·배치 그룹·EFA 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ebs-instance-store')
 
-    // 1단 EBS·인스턴스 스토어·배치 그룹이 무엇인가 → 2단 볼륨 유형끼리의 갈림길과
-    // 클러스터 ↔ 분산 배치 그룹 → 3단 IOPS 상한·계정 속성인 기본 암호화·스냅샷 운영.
-    // gp2 ↔ gp3 ↔ io1 ↔ io2는 서로 갈림길이라 한 주제 안에 둔다(PRD "사용자").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: EBS 볼륨(7) → EBS 스냅샷(4) → 인스턴스 스토어(1) → 배치 그룹(2) → EFA(1).
+    // EFA 본문이 클러스터 배치 그룹과 분산 배치 그룹을 둘 다 전제로 쓰므로 배치 그룹 블록 뒤에 둔다(규칙 5).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ebs-instance-store.ebs',
       'ebs-instance-store.ebs-elastic-volumes',
-      'ebs-instance-store.instance-store',
-      'ebs-instance-store.cluster-placement-group',
-      'ebs-instance-store.elastic-fabric-adapter',
       'ebs-instance-store.ebs-volume-type-names',
       'ebs-instance-store.gp3-iops-independent-of-size',
-      'ebs-instance-store.spread-placement-group',
       'ebs-instance-store.io2-block-express-iops-ceiling',
       'ebs-instance-store.ebs-encryption-by-default',
       'ebs-instance-store.ebs-encryption-performance',
@@ -3141,86 +3141,101 @@ describe('학습 데이터 무결성', () => {
       'ebs-instance-store.ebs-snapshot-block-public-access',
       'ebs-instance-store.data-lifecycle-manager',
       'ebs-instance-store.ebs-fast-snapshot-restore',
+      'ebs-instance-store.instance-store',
+      'ebs-instance-store.cluster-placement-group',
+      'ebs-instance-store.spread-placement-group',
+      'ebs-instance-store.elastic-fabric-adapter',
     ])
   })
 
-  it('EFS·FSx 주제가 파일 시스템 여섯 다음에 선택 기준과 구성 한계를 둔다', () => {
+  it('EFS·FSx 주제가 EFS·FSx 개요·Windows·Lustre·ONTAP·File Gateway 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'efs-fsx')
 
-    // 1단 EFS와 FSx 네 갈래가 각각 무엇인가 → 2단 어느 프로토콜·어느 지연 시간에
-    // 무엇을 고르는가 → 3단 IA 전환 조건·마운트 대상·복제가 한 방향이라는 것.
-    // EFS ↔ FSx(Windows·Lustre·ONTAP)는 공유 파일 스토리지 선택 그 자체라 흩지 않는다.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // EFS: 기본 → 처리량 모드 둘·성능 모드·One Zone·POSIX 권한 → 수명 주기 관리와 그 세부 둘 →
+    //   마운트 대상·계정 간 마운트·단방향 복제. 수명 주기 관리는 주요 기능이지만 자기 세부와
+    //   붙이려고 갈림길 뒤에 둔다.
+    // FSx 개요: Windows·Lustre·ONTAP·OpenZFS를 한 번에 소개한다. ONTAP은 따로 기본 개념이 없어
+    //   이 개요가 그 자리를 맡는다.
+    // FSx for Windows File Server → FSx for Lustre → FSx for NetApp ONTAP.
+    // FSx File Gateway: FSx 파일 시스템이 아니라 온프레미스 쪽 접점이라 FSx 종류를 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'efs-fsx.efs',
-      'efs-fsx.efs-lifecycle-management',
-      'efs-fsx.fsx',
-      'efs-fsx.fsx-windows-file-server',
-      'efs-fsx.fsx-for-lustre',
-      'efs-fsx.fsx-file-gateway',
       'efs-fsx.efs-throughput-modes',
       'efs-fsx.efs-elastic-throughput',
       'efs-fsx.efs-performance-modes',
       'efs-fsx.efs-one-zone',
       'efs-fsx.efs-posix-permissions',
-      'efs-fsx.fsx-lustre-sub-millisecond-latency',
-      'efs-fsx.fsx-lustre-persistent-deployment',
-      'efs-fsx.fsx-ontap-multi-az',
-      'efs-fsx.fsx-ontap-multi-protocol-tiering',
-      'efs-fsx.fsx-ontap-iscsi-block',
-      'efs-fsx.fsx-ontap-snapmirror',
-      'efs-fsx.sql-server-always-on-shared-storage',
+      'efs-fsx.efs-lifecycle-management',
       'efs-fsx.efs-ia-file-size-threshold',
       'efs-fsx.efs-lifecycle-transition-to-primary',
       'efs-fsx.efs-mount-target-per-az',
       'efs-fsx.efs-cross-account-mount',
       'efs-fsx.efs-replication-one-way',
+      'efs-fsx.fsx',
+      'efs-fsx.fsx-windows-file-server',
+      'efs-fsx.sql-server-always-on-shared-storage',
       'efs-fsx.fsx-windows-storage-auto-scaling',
+      'efs-fsx.fsx-for-lustre',
+      'efs-fsx.fsx-lustre-sub-millisecond-latency',
+      'efs-fsx.fsx-lustre-persistent-deployment',
       'efs-fsx.fsx-lustre-s3-data-repository-association',
+      'efs-fsx.fsx-ontap-multi-az',
+      'efs-fsx.fsx-ontap-multi-protocol-tiering',
+      'efs-fsx.fsx-ontap-iscsi-block',
+      'efs-fsx.fsx-ontap-snapmirror',
+      'efs-fsx.fsx-file-gateway',
     ])
   })
 
-  it('데이터 전송 주제가 전송 도구 넷 다음에 선택 기준과 설정 항목을 둔다', () => {
+  it('데이터 전송 주제가 DataSync·Snowball Edge·Transfer Family·S3 직접 전송 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'data-transfer-services')
 
-    // 1단 DataSync·Snowball Edge·Transfer Family·S3 전송이 각각 무엇인가 → 2단 기한과
-    // 대역폭을 먼저 곱해 보기, 지속 수집 ↔ 예약 전송, 어느 ID 공급자를 쓰는가 →
-    // 3단 DataSync가 맡지 않는 일·워크플로 기본 액션·멀티파트 업로드의 조건.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // DataSync: 기본 → 지속 수집과 예약 전송의 갈림길 → 맡지 않는 일 → 전송 중 암호화·매니페스트·
+    //   전송 모드·상태 이벤트.
+    // Snowball Edge: 기본 → 현장 컴퓨팅 → 기한과 대역폭 계산(회선을 타는 수단이 전부 탈락한 뒤
+    //   Snowball Edge가 남는다는 조건이라 이 블록 끝).
+    // Transfer Family: 기본 → 사용자 지정 DNS 이름·Directory Service ID 공급자·서비스 관리형 사용자 →
+    //   업로드 후 워크플로와 그 미리 정의된 액션 → 구조화된 로깅. 워크플로는 주요 기능이지만 자기
+    //   세부와 붙이려고 갈림길 셋 뒤에 둔다.
+    // S3 직접 전송: 전송 가속 → 멀티파트 업로드.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'data-transfer-services.datasync',
-      'data-transfer-services.snowball-edge',
-      'data-transfer-services.snowball-edge-compute',
-      'data-transfer-services.transfer-family',
-      'data-transfer-services.transfer-family-workflow',
-      'data-transfer-services.s3-transfer-acceleration',
-      'data-transfer-services.transfer-deadline-vs-bandwidth',
       'data-transfer-services.file-gateway-vs-datasync-continuous',
-      'data-transfer-services.transfer-family-custom-hostname',
-      'data-transfer-services.transfer-family-directory-service-identity-provider',
-      'data-transfer-services.transfer-family-service-managed-users',
       'data-transfer-services.datasync-scope-limits',
       'data-transfer-services.datasync-in-transit-encryption',
       'data-transfer-services.datasync-manifest',
       'data-transfer-services.datasync-transfer-mode',
       'data-transfer-services.datasync-task-status-event',
+      'data-transfer-services.snowball-edge',
+      'data-transfer-services.snowball-edge-compute',
+      'data-transfer-services.transfer-deadline-vs-bandwidth',
+      'data-transfer-services.transfer-family',
+      'data-transfer-services.transfer-family-custom-hostname',
+      'data-transfer-services.transfer-family-directory-service-identity-provider',
+      'data-transfer-services.transfer-family-service-managed-users',
+      'data-transfer-services.transfer-family-workflow',
       'data-transfer-services.transfer-family-workflow-actions',
       'data-transfer-services.transfer-family-structured-logging',
+      'data-transfer-services.s3-transfer-acceleration',
       'data-transfer-services.s3-multipart-upload',
     ])
   })
 
-  it('Storage Gateway·마이그레이션 주제가 서비스 셋 다음에 유형 선택과 설정을 둔다', () => {
+  it('Storage Gateway·마이그레이션 주제가 Storage Gateway·DMS·Application Migration Service 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'storage-gateway-migration')
 
-    // 1단 Storage Gateway·DMS·SCT·MGN이 각각 무엇인가 → 2단 게이트웨이 유형 셋과
-    // 저장 볼륨 ↔ 캐시된 볼륨 → 3단 가상 테이프의 아카이브 계층·전체 로드와 CDC.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Storage Gateway(4) → DMS와 SCT(2) → Application Migration Service(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'storage-gateway-migration.storage-gateway',
-      'storage-gateway-migration.dms-sct',
-      'storage-gateway-migration.application-migration-service',
       'storage-gateway-migration.storage-gateway-gateway-types',
       'storage-gateway-migration.storage-gateway-volume-modes',
       'storage-gateway-migration.tape-gateway-archive-tiers',
+      'storage-gateway-migration.dms-sct',
       'storage-gateway-migration.dms-full-load-and-cdc-task',
+      'storage-gateway-migration.application-migration-service',
     ])
   })
 
@@ -3244,35 +3259,35 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('storage-gateway-migration.dms-full-load-and-cdc-task')).toContain('DataSync')
   })
 
-  it('RDS 주제가 서비스와 기능 다음에 선택 기준과 한계값을 둔다', () => {
+  it('RDS 주제가 스토리지부터 RDS Custom까지 하위 기능 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'rds-storage-features')
 
-    // 1단 RDS와 스토리지 유형·기능(블루/그린·Custom·IAM 인증·암호화 범위) → 2단 볼륨
-    // 유형의 갈림길, 다중 AZ ↔ 읽기 전용 복제본 ↔ 다중 AZ DB 클러스터, 캐시가 효과를
-    // 내지 못하는 조건, 연결 문제와 프록시, 리전 간 스냅샷 복사 → 3단 백업 보존 한계·수동
-    // 스냅샷·특정 시점 복구의 정밀도·장애 조치 시간·7일 자동 재시작·나중에 켤 수 없는
-    // 암호화·보유 라이선스.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: RDS(1) → 스토리지 유형(2) → 기능 개요(1) → 다중 AZ(3) → 읽기 전용 복제본(1) → RDS Proxy(2) → 블루/그린 배포(1) → 백업과
+    //   스냅샷(4) → 인증과 암호화(3) → 인스턴스 중지(1) → RDS Custom(2).
+    // 기능 개요(features)가 다중 AZ → 읽기 전용 복제본 → RDS Proxy → 블루/그린 순으로 소개하므로 그 순서로
+    // 블록을 둔다. 백업 블록은 리전 간 스냅샷 복사(갈림길) → 자동 백업 보존·특정 시점 복구·수동 스냅샷(세부).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'rds-storage-features.rds',
       'rds-storage-features.storage-types',
-      'rds-storage-features.features',
-      'rds-storage-features.rds-blue-green-deployment',
-      'rds-storage-features.rds-custom',
-      'rds-storage-features.rds-iam-database-authentication',
-      'rds-storage-features.rds-encryption-scope-and-in-transit',
       'rds-storage-features.storage-type-names',
+      'rds-storage-features.features',
       'rds-storage-features.multi-az-standby-limits',
       'rds-storage-features.rds-multi-az-db-cluster',
+      'rds-storage-features.rds-multi-az-failover-rto',
       'rds-storage-features.read-replica-vs-cache',
       'rds-storage-features.connection-issue-heuristic',
       'rds-storage-features.rds-proxy-failover',
+      'rds-storage-features.rds-blue-green-deployment',
       'rds-storage-features.rds-snapshot-cross-region-copy',
       'rds-storage-features.automated-backup-retention',
-      'rds-storage-features.rds-manual-snapshot-retention',
       'rds-storage-features.rds-pitr-transaction-log-interval',
-      'rds-storage-features.rds-multi-az-failover-rto',
-      'rds-storage-features.rds-stop-instance-restart',
+      'rds-storage-features.rds-manual-snapshot-retention',
+      'rds-storage-features.rds-iam-database-authentication',
+      'rds-storage-features.rds-encryption-scope-and-in-transit',
       'rds-storage-features.rds-encrypt-existing-instance',
+      'rds-storage-features.rds-stop-instance-restart',
+      'rds-storage-features.rds-custom',
       'rds-storage-features.rds-custom-byol',
     ])
   })
@@ -3312,45 +3327,50 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('rds-storage-features.read-replica-vs-cache')).toContain('ElastiCache')
   })
 
-  it('Aurora 주제가 서비스와 기능 다음에 선택 기준과 한계를 둔다', () => {
+  it('Aurora 주제가 Serverless부터 스토리지 구성까지 하위 기능 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'aurora')
 
-    // 1단 Aurora와 Serverless v2·엔드포인트·오토 스케일링·Babelfish·pgvector·S3 내보내기
-    // → 2단 글로벌 데이터베이스와 리전 간 복제본, 지속적 백업과 스냅샷 주기, 클론,
-    // 스토리지 구성, 어느 엔진으로 가는가 → 3단 쓰기 리전 하나·ACU 상한·복제본의 제약.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: Aurora(1) → Aurora Serverless(2) → 복제본과 엔드포인트(4) → SQL Server에서 옮기기(2) → pgvector(1) → S3로
+    //   내보내기(1) → 글로벌 데이터베이스와 리전 간 복제본(3) → 백업과 클론(2) → 스토리지 구성(1) → 확장 수단이 아닌 기능(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'aurora.aurora',
       'aurora.aurora-serverless-v2',
+      'aurora.aurora-serverless-max-acu',
       'aurora.aurora-reader-endpoint',
       'aurora.aurora-endpoint-types',
       'aurora.aurora-replica-auto-scaling',
+      'aurora.read-replica-no-schema-change',
       'aurora.babelfish',
+      'aurora.sql-server-license-cost',
       'aurora.aurora-pgvector',
       'aurora.aurora-select-into-outfile-s3',
       'aurora.aurora-global-database-dr-targets',
       'aurora.aurora-cross-region-read-replica',
+      'aurora.aurora-global-database-write-region',
       'aurora.aurora-continuous-backup-rpo',
       'aurora.aurora-clone',
       'aurora.aurora-storage-configurations',
-      'aurora.sql-server-license-cost',
       'aurora.aurora-zdr-and-activity-streams',
-      'aurora.aurora-global-database-write-region',
-      'aurora.aurora-serverless-max-acu',
-      'aurora.read-replica-no-schema-change',
     ])
   })
 
-  it('DynamoDB 주제가 서비스와 기능 다음에 선택 기준과 한계값을 둔다', () => {
+  it('DynamoDB 주제가 Streams부터 항목 크기 제한까지 하위 기능 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'dynamodb')
 
-    // 1단 DynamoDB와 응답 시간·스트림·글로벌 테이블·TTL·GSI → 2단 용량 모드와 오토
-    // 스케일링, 읽기 일관성, 적재 경로 → 3단 보존 한계·전제 조건·크기 제한·설정 항목.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: DynamoDB와 응답 시간(2) → Streams(3) → 글로벌 테이블(1) → TTL(2) → 전역 보조 인덱스(1) → 용량 모드와 오토 스케일링(2) →
+    //   읽기 일관성(1) → S3 내보내기와 PITR(5) → 항목 크기 제한(1).
+    // S3 내보내기 블록이 스트림 경로와 대비하므로 Streams 블록 뒤. PITR은 내보내기의 전제 조건과 붙인다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'dynamodb.dynamodb',
       'dynamodb.dynamodb-single-digit-latency',
       'dynamodb.dynamodb-streams',
+      'dynamodb.dynamodb-streams-retention-24h',
+      'dynamodb.dynamodb-streams-batch-size',
       'dynamodb.dynamodb-global-tables',
       'dynamodb.dynamodb-ttl',
+      'dynamodb.dynamodb-ttl-deletion-delay',
       'dynamodb.dynamodb-global-secondary-index',
       'dynamodb.dynamodb-capacity-modes',
       'dynamodb.dynamodb-auto-scaling-target-utilization',
@@ -3361,32 +3381,31 @@ describe('학습 데이터 무결성', () => {
       'dynamodb.dynamodb-pitr',
       'dynamodb.dynamodb-export-requires-pitr',
       'dynamodb.dynamodb-item-size-limit',
-      'dynamodb.dynamodb-ttl-deletion-delay',
-      'dynamodb.dynamodb-streams-retention-24h',
-      'dynamodb.dynamodb-streams-batch-size',
     ])
   })
 
-  it('캐시·목적별 DB 주제가 서비스 여섯 다음에 갈림길 다섯과 한계 셋을 둔다', () => {
+  it('캐시·목적별 DB 주제가 ElastiCache·DAX·DocumentDB·Neptune·QLDB·Timestream 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'elasticache-purpose-built-db')
 
-    // 1단 캐시와 목적별 데이터베이스 넷이 각각 무엇인가 → 2단 캐시 엔진과 리전 간
-    // 구성의 갈림길 → 3단 캐시로 풀리지 않는 것과 설정 시점의 제약.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: ElastiCache(6) → DAX(2) → DocumentDB(2) → Neptune(2) → QLDB(1) → Timestream(1).
+    // DAX는 따로 기본 개념이 없어 DynamoDB 전용 캐시라는 갈림길이 블록 머리다.
+    // Timestream은 기록의 불변성을 보장하지 않는다는 대비로 QLDB를 부르므로 QLDB 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'elasticache-purpose-built-db.elasticache',
+      'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
+      'elasticache-purpose-built-db.elasticache-multi-az-failover',
+      'elasticache-purpose-built-db.elasticache-global-datastore',
+      'elasticache-purpose-built-db.cache-requires-application-change',
+      'elasticache-purpose-built-db.elasticache-not-a-durable-store',
+      'elasticache-purpose-built-db.dax-dynamodb-only',
+      'elasticache-purpose-built-db.dax-encryption-at-rest',
       'elasticache-purpose-built-db.documentdb',
+      'elasticache-purpose-built-db.documentdb-global-cluster',
       'elasticache-purpose-built-db.neptune',
       'elasticache-purpose-built-db.neptune-streams',
       'elasticache-purpose-built-db.qldb',
       'elasticache-purpose-built-db.timestream',
-      'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
-      'elasticache-purpose-built-db.dax-dynamodb-only',
-      'elasticache-purpose-built-db.elasticache-multi-az-failover',
-      'elasticache-purpose-built-db.elasticache-global-datastore',
-      'elasticache-purpose-built-db.documentdb-global-cluster',
-      'elasticache-purpose-built-db.cache-requires-application-change',
-      'elasticache-purpose-built-db.elasticache-not-a-durable-store',
-      'elasticache-purpose-built-db.dax-encryption-at-rest',
     ])
   })
 
@@ -3404,18 +3423,22 @@ describe('학습 데이터 무결성', () => {
     expect(ownerOf('elasticache-purpose-built-db.dax-encryption-at-rest')).toBe(engines)
   })
 
-  it('EC2·Auto Scaling 주제가 서비스와 재료 다음에 선택 기준과 설정 항목을 둔다', () => {
+  it('EC2·Auto Scaling 주제가 인스턴스 재료·제품군·구매 옵션·조정 정책·혼합 구성·운영 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
 
-    // 1단 EC2와 Auto Scaling, 인스턴스를 띄우는 재료 → 2단 어느 제품군·어느 구매
-    // 옵션·어느 조정 방식인가 → 3단 설정 항목과 주의점, 이름이 닮았지만 대상이
-    // 정해져 있는 도구.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(3) → 구매 옵션(2) → 조정 정책(3) → 스팟과 혼합 구성(3) → Auto Scaling 운영(3) →
+    //   ParallelCluster(1).
+    // 향상된 네트워킹은 인스턴스 유형이 지원해야 켜지는 기능이라 인스턴스 제품군 블록 끝에 둔다.
+    // 스팟에 올릴 워크로드는 예약 인스턴스 유형과 함께 어떤 구매 옵션을 고를지의 갈림길이라 구매 옵션 블록에 둔다.
+    // 스팟과 혼합 구성의 인스턴스 유형 재정의가 예약된 조정을 전제로 쓰므로 조정 정책 블록을 그 앞에 둔다(규칙 5).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ec2-autoscaling.ec2',
       'ec2-autoscaling.ami-and-launch-template',
       'ec2-autoscaling.ec2-image-builder',
       'ec2-autoscaling.memory-optimized-instance-family',
       'ec2-autoscaling.gpu-instance-family',
+      'ec2-autoscaling.enhanced-networking',
       'ec2-autoscaling.reserved-instance-types',
       'ec2-autoscaling.spot-workload-fit',
       'ec2-autoscaling.scheduled-scaling',
@@ -3427,69 +3450,74 @@ describe('학습 데이터 무결성', () => {
       'ec2-autoscaling.warm-pool',
       'ec2-autoscaling.asg-single-instance-self-healing',
       'ec2-autoscaling.elb-health-check-drives-asg-replacement',
-      'ec2-autoscaling.enhanced-networking',
       'ec2-autoscaling.parallelcluster',
     ])
   })
 
-  it('로드 밸런서 주제가 세 로드 밸런서 다음에 선택 기준과 한계를 둔다', () => {
+  it('로드 밸런서 주제가 ELB 개요·ALB·NLB·Gateway Load Balancer·공통 설정 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'elastic-load-balancing')
 
-    // 1단 ELB와 세 로드 밸런서가 각각 무엇인가 → 2단 계층·프로토콜·대상·공개
-    // 범위로 갈린다 → 3단 분산 알고리즘·규칙·타임아웃·암호화 구간.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: ELB 개요와 ALB·NLB의 계층 갈림길(2) → ALB(6) → NLB(3) → Gateway Load Balancer(2) → 공통 설정(3).
+    // alb-l7-vs-nlb-l4는 비교 개념이지만 첫 개념 elb가 ALB·NLB를 이미 소개했고 ALB 블록의
+    // alb-routing-conditions가 이 비교를 전제로 쓰므로 ALB 블록 앞에 둔다(규칙 5가 규칙 4보다 앞선다).
+    // 공통 설정의 유휴 타임아웃이 Gateway Load Balancer를 언급하므로 공통 설정을 맨 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'elastic-load-balancing.elb',
-      'elastic-load-balancing.gateway-load-balancer',
       'elastic-load-balancing.alb-l7-vs-nlb-l4',
       'elastic-load-balancing.alb-routing-conditions',
-      'elastic-load-balancing.nlb-tls-listener',
-      'elastic-load-balancing.nlb-udp-listener',
-      'elastic-load-balancing.nlb-ip-targets',
       'elastic-load-balancing.alb-cookie-stickiness',
-      'elastic-load-balancing.internal-load-balancer',
       'elastic-load-balancing.sticky-session-tradeoff',
       'elastic-load-balancing.alb-least-outstanding-requests',
       'elastic-load-balancing.alb-target-group-independent-scaling',
       'elastic-load-balancing.alb-listener-rule-fixed-response',
+      'elastic-load-balancing.nlb-tls-listener',
+      'elastic-load-balancing.nlb-udp-listener',
+      'elastic-load-balancing.nlb-ip-targets',
+      'elastic-load-balancing.gateway-load-balancer',
+      'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+      'elastic-load-balancing.internal-load-balancer',
       'elastic-load-balancing.load-balancer-idle-timeout',
       'elastic-load-balancing.end-to-end-encryption-behind-alb',
-      'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
     ])
   })
 
-  it('CloudFront·Global Accelerator 주제가 두 서비스와 오리진 다음에 갈림길과 한계를 둔다', () => {
+  it('CloudFront·Global Accelerator 주제가 CloudFront·엣지 함수·Global Accelerator 블록 다음에 둘의 비용 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cloudfront-global-accelerator')
 
-    // 1단 CloudFront와 그 오리진, Global Accelerator와 그 진입점, 'Edge'의 뜻,
-    // 엣지에서 도는 함수 둘 → 2단 캐싱할 사본이 있느냐·비용·DNS 캐시·접근 통제
-    // 장치 넷·엣지 함수로 할 수 있는 일의 갈림길 → 3단 가격 등급, 무효화와 TTL,
-    // 오리진 접근 제한, 엣지 함수의 한계.
-    // step 10이 lambda-at-edge·cloudfront-functions·응답 압축 셋을 옮겨 왔다.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // CloudFront: 기본과 오리진 셋 → 서명된 URL·서명된 쿠키·지리적 제한·필드 수준 암호화 →
+    //   가격 등급·TTL과 무효화·OAC로 받는 업로드·ALB 오리진 접근 제한. ALB 오리진 접근 제한은
+    //   OAC를 전제로 쓰므로 OAC 업로드 뒤.
+    // 엣지 함수: 'Edge'의 뜻 → Lambda@Edge와 그 쓰임 둘(오리진 선택·응답 압축) → CloudFront Functions와
+    //   그 제약.
+    // Global Accelerator: 기본 → 고정 IP·엔드포인트 → 프로토콜·DNS 캐시와 무관한 장애 조치.
+    // 비교: CloudFront와 Global Accelerator를 비용으로 가르므로 두 블록 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cloudfront-global-accelerator.cloudfront',
       'cloudfront-global-accelerator.cloudfront-alb-origin',
       'cloudfront-global-accelerator.cloudfront-multiple-origins',
       'cloudfront-global-accelerator.cloudfront-onprem-origin',
-      'cloudfront-global-accelerator.global-accelerator',
-      'cloudfront-global-accelerator.global-accelerator-static-ip',
-      'cloudfront-global-accelerator.global-accelerator-endpoints',
-      'cloudfront-global-accelerator.edge-keyword',
-      'cloudfront-global-accelerator.lambda-at-edge',
-      'cloudfront-global-accelerator.cloudfront-functions',
-      'cloudfront-global-accelerator.global-accelerator-protocols',
-      'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
-      'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
       'cloudfront-global-accelerator.cloudfront-signed-url',
       'cloudfront-global-accelerator.cloudfront-signed-cookie',
       'cloudfront-global-accelerator.cloudfront-geo-restriction',
       'cloudfront-global-accelerator.cloudfront-field-level-encryption',
-      'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
-      'cloudfront-global-accelerator.lambda-at-edge-response-compression',
       'cloudfront-global-accelerator.cloudfront-price-class',
       'cloudfront-global-accelerator.cloudfront-ttl',
       'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
       'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
+      'cloudfront-global-accelerator.edge-keyword',
+      'cloudfront-global-accelerator.lambda-at-edge',
+      'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+      'cloudfront-global-accelerator.lambda-at-edge-response-compression',
+      'cloudfront-global-accelerator.cloudfront-functions',
       'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+      'cloudfront-global-accelerator.global-accelerator',
+      'cloudfront-global-accelerator.global-accelerator-static-ip',
+      'cloudfront-global-accelerator.global-accelerator-endpoints',
+      'cloudfront-global-accelerator.global-accelerator-protocols',
+      'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
+      'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
     ])
   })
 
@@ -3572,82 +3600,80 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('ec2-autoscaling.predictive-scaling')).toContain('예약된 조정과 대상 추적')
   })
 
-  it('Lambda 주제가 함수를 만드는 이야기 다음에 갈림길과 한계를 둔다', () => {
+  it('Lambda 주제가 호출부터 실행 역할까지 하위 기능 블록 다음에 운영 체제 접근 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'lambda')
 
-    // 1단 Lambda가 무엇이고 어떻게 부르고 어디에 붙이고 어떻게 배포하는가
-    // → 2단 호출 방식, 크기를 정하는 값, 동시성 세 갈래
-    // → 3단 콜드 스타트를 줄이는 다른 길, 메모리·레이어 상한, 굳는 설정, 실행 역할.
-    // Lambda가 무엇인지 모르는 사람에게 lambda-layer-size-limit은 아무것도 주지 않는다
-    // (topic-plan "주제 안의 개념 순서").
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: Lambda(1) → 호출(4) → VPC 연결(1) → 패키징과 종속성(3) → 메모리(2) → 동시성과 콜드 스타트(4) → 버전(1) → 실행 역할(1) →
+    //   비교 — 관리형 런타임의 운영 체제 접근(1).
+    // SnapStart는 게시된 버전에서만 동작하므로 동시성 블록 끝, 버전 블록 바로 앞에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'lambda.lambda',
       'lambda.lambda-function-url',
       'lambda.lambda-function-url-iam-auth',
+      'lambda.lambda-invocation-types',
+      'lambda.lambda-kinesis-event-source',
       'lambda.lambda-vpc-access',
       'lambda.lambda-container-image',
-      'lambda.lambda-invocation-types',
+      'lambda.lambda-layer-size-limit',
+      'lambda.lambda-efs-mount',
       'lambda.lambda-memory-cpu-proportional',
+      'lambda.lambda-memory-ceiling',
       'lambda.lambda-reserved-concurrency',
       'lambda.lambda-provisioned-concurrency-autoscaling',
       'lambda.lambda-concurrency-limit-throttling',
-      'lambda.lambda-kinesis-event-source',
       'lambda.lambda-snapstart',
-      'lambda.lambda-memory-ceiling',
-      'lambda.lambda-layer-size-limit',
-      'lambda.lambda-efs-mount',
       'lambda.lambda-version-alias-config-freeze',
       'lambda.lambda-execution-role-logs',
       'lambda.serverless-runtime-no-os-access',
     ])
   })
 
-  it('컨테이너 주제가 서비스 소개 다음에 실행 방식 갈림길과 설정을 둔다', () => {
+  it('컨테이너 주제가 ECS·Fargate·EKS·ECR·Batch·Elastic Beanstalk·App2Container 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')
 
-    // 1단 컨테이너를 돌리고 담고 옮기는 서비스 여섯이 각각 무엇인가
-    // → 2단 세 실행 방식의 관리 책임, 파드와 노드, 클러스터 가시성, 권한을 어디에 붙이나
-    // → 3단 네트워크 모드·배치 전략·과금 단위·저장소·시크릿 암호화.
-    // ECS가 무엇인지 모르는 사람에게 ecs-task-placement-strategy는 아무것도 주지 않는다
-    // (topic-plan "주제 안의 개념 순서").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: ECS(5) → Fargate(4) → EKS(9) → ECR(1) → AWS Batch(2) → Elastic Beanstalk(1) →
+    //   App2Container(1).
+    // Fargate는 따로 기본 개념이 없고 ECS 첫 개념이 Fargate 기반 ECS를 소개하므로 ECS 바로 뒤에 둔다.
+    // EKS의 Fargate 파드 격리와 Batch의 Fargate 컴퓨팅 환경이 Fargate를 전제로 쓰므로 둘 다 Fargate 블록 뒤.
+    // App2Container는 본문이 Elastic Beanstalk와 대비하므로 그 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ecs-eks-fargate.ecs',
-      'ecs-eks-fargate.eks',
-      'ecs-eks-fargate.ecr-image-scan-on-push',
-      'ecs-eks-fargate.aws-batch',
-      'ecs-eks-fargate.elastic-beanstalk',
-      'ecs-eks-fargate.app2container',
-      'ecs-eks-fargate.eks-compute-options',
+      'ecs-eks-fargate.ecs-task-role',
+      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'ecs-eks-fargate.ecs-awsvpc-mode',
+      'ecs-eks-fargate.ecs-task-placement-strategy',
       'ecs-eks-fargate.fargate-no-time-limit',
       'ecs-eks-fargate.fargate-spot',
-      'ecs-eks-fargate.batch-fargate-compute-environment',
+      'ecs-eks-fargate.fargate-per-second-billing',
+      'ecs-eks-fargate.fargate-efs-mount',
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.eks-compute-options',
       'ecs-eks-fargate.eks-fargate-pod-isolation',
       'ecs-eks-fargate.eks-cluster-autoscaler',
       'ecs-eks-fargate.eks-aws-load-balancer-controller',
       'ecs-eks-fargate.eks-connector',
       'ecs-eks-fargate.eks-anywhere',
-      'ecs-eks-fargate.ecs-task-role',
-      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
       'ecs-eks-fargate.eks-irsa',
-      'ecs-eks-fargate.ecs-awsvpc-mode',
-      'ecs-eks-fargate.ecs-task-placement-strategy',
-      'ecs-eks-fargate.fargate-per-second-billing',
-      'ecs-eks-fargate.fargate-efs-mount',
       'ecs-eks-fargate.eks-secrets-kms-encryption',
+      'ecs-eks-fargate.ecr-image-scan-on-push',
+      'ecs-eks-fargate.aws-batch',
+      'ecs-eks-fargate.batch-fargate-compute-environment',
+      'ecs-eks-fargate.elastic-beanstalk',
+      'ecs-eks-fargate.app2container',
     ])
   })
 
-  it('API Gateway·Step Functions 주제가 두 서비스 다음에 갈림길과 한계를 둔다', () => {
+  it('API Gateway·Step Functions 주제가 API Gateway·Step Functions·Amplify 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'api-gateway-step-functions')
 
-    // 1단 API Gateway와 Step Functions가 무엇이고 무엇을 주는가, Amplify가 무엇인가
-    // → 2단 API 유형 셋, API 키의 한계, 접근 통제, 노출 위치, 통합 방식, 워크플로 두 유형
-    // → 3단 인증서 리전·매핑 템플릿의 한계·보안 그룹을 붙일 수 없다는 것.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: API Gateway(14) → Step Functions(5) → Amplify(1).
+    // API Gateway 블록은 기본 → API 유형·API 키·접근 통제·엔드포인트·통합 방식(갈림길) →
+    // 인증서 리전·매핑 템플릿·IP 제한(세부) 순이다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'api-gateway-step-functions.api-gateway',
-      'api-gateway-step-functions.step-functions',
-      'api-gateway-step-functions.step-functions-features',
-      'api-gateway-step-functions.amplify',
       'api-gateway-step-functions.api-gateway-jwt-authorizer',
       'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
       'api-gateway-step-functions.api-gateway-rest-only-features',
@@ -3658,12 +3684,15 @@ describe('학습 데이터 무결성', () => {
       'api-gateway-step-functions.api-gateway-behind-cloudfront',
       'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
       'api-gateway-step-functions.api-gateway-aws-service-integration',
-      'api-gateway-step-functions.step-functions-long-running-workflow',
-      'api-gateway-step-functions.step-functions-express-workflow',
-      'api-gateway-step-functions.step-functions-map-state',
       'api-gateway-step-functions.api-gateway-custom-domain-name',
       'api-gateway-step-functions.api-gateway-mapping-template-limits',
       'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+      'api-gateway-step-functions.step-functions',
+      'api-gateway-step-functions.step-functions-features',
+      'api-gateway-step-functions.step-functions-long-running-workflow',
+      'api-gateway-step-functions.step-functions-express-workflow',
+      'api-gateway-step-functions.step-functions-map-state',
+      'api-gateway-step-functions.amplify',
     ])
   })
 
@@ -3738,22 +3767,41 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('메시징 주제가 서비스 다섯과 데드레터 큐 다음에 갈림길과 한계를 둔다', () => {
+  it('메시징 주제가 SQS·SNS·SQS와 SNS의 조합·EventBridge·Amazon MQ·SES 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'sqs-sns-eventbridge')
 
-    // 1단 SQS·SNS·EventBridge·Amazon MQ·SES가 무엇이고 큐에 실패한 메시지가 어디로 가는가
-    // → 2단 세 갈래 중 언제 무엇을 고르는가(버퍼·팬아웃·라우팅·순서·이벤트 통로·수신)
-    // → 3단 배치와 가시성 타임아웃, 크기·중복 제거 창 같은 한계값, 큐·토픽에 필요한 권한.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // SQS: 기본 → 데드레터 큐 → 보존 기간과 표준 대기열의 약점 → 대기열 깊이 확장·배치·가시성 타임아웃·
+    //   크기 한계 → FIFO 셋 → 큐 정책·암호화·VPC 엔드포인트.
+    // SNS: 기본 → FIFO 주제 → 본문 재작성 제약 → 암호화된 주제의 게시 권한.
+    // SQS와 SNS의 조합: 버퍼인가 발행-구독인가, 소비자마다 큐를 두는 팬아웃, 계정 간 발행. 두 서비스를
+    //   가르거나 함께 쓰는 개념이라 두 블록 뒤에 둔다.
+    // EventBridge: 기본 → Scheduler → Step Functions와의 갈림길 → 보장하지 않는 것·이벤트 패턴·
+    //   버스·파이프·대상·리소스 변경 규칙.
+    // Amazon MQ. SES: 기본 → 수신 규칙.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'sqs-sns-eventbridge.sqs',
-      'sqs-sns-eventbridge.sns',
-      'sqs-sns-eventbridge.eventbridge',
-      'sqs-sns-eventbridge.eventbridge-scheduler',
-      'sqs-sns-eventbridge.amazon-mq',
-      'sqs-sns-eventbridge.ses',
       'sqs-sns-eventbridge.dead-letter-queue',
+      'sqs-sns-eventbridge.sqs-details',
+      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
+      'sqs-sns-eventbridge.sqs-batch-and-polling',
+      'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+      'sqs-sns-eventbridge.sqs-message-size-limit',
+      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+      'sqs-sns-eventbridge.sqs-content-based-deduplication',
+      'sqs-sns-eventbridge.sqs-queue-policy',
+      'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+      'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+      'sqs-sns-eventbridge.sns',
+      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+      'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
       'sqs-sns-eventbridge.sns-is-not-a-queue',
       'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+      'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+      'sqs-sns-eventbridge.eventbridge',
+      'sqs-sns-eventbridge.eventbridge-scheduler',
       'sqs-sns-eventbridge.eventbridge-vs-step-functions',
       'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
       'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
@@ -3762,22 +3810,9 @@ describe('학습 데이터 무결성', () => {
       'sqs-sns-eventbridge.eventbridge-api-destination',
       'sqs-sns-eventbridge.eventbridge-private-api-target',
       'sqs-sns-eventbridge.eventbridge-resource-change-rule',
-      'sqs-sns-eventbridge.sqs-details',
-      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.amazon-mq',
+      'sqs-sns-eventbridge.ses',
       'sqs-sns-eventbridge.ses-inbound-email-receiving',
-      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
-      'sqs-sns-eventbridge.sqs-batch-and-polling',
-      'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
-      'sqs-sns-eventbridge.sqs-message-size-limit',
-      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
-      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
-      'sqs-sns-eventbridge.sqs-content-based-deduplication',
-      'sqs-sns-eventbridge.sns-no-message-body-rewrite',
-      'sqs-sns-eventbridge.sqs-queue-policy',
-      'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
-      'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
-      'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
-      'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
     ])
   })
 
@@ -3857,18 +3892,13 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('백업·재해 복구 주제가 서비스와 전략 넷 다음에 갈림길과 검증을 둔다', () => {
+  it('백업·재해 복구 주제가 AWS Backup·재해 복구 전략·Elastic Disaster Recovery 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'backup-disaster-recovery')
 
-    // 1단 AWS Backup·DRS와 재해 복구 전략 둘이 각각 무엇인가
-    // → 2단 서비스 자체 백업에서 AWS Backup으로 넘어가는 순간, 무엇을 리소스로 지정하고
-    //   어디서 정하고 사본을 어디에 두고 얼마나 촘촘히 뜨는가
-    // → 3단 그 백업이 실제로 복원되는지와 규정을 지키는지 확인하는 설정 항목.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: AWS Backup(8) → 재해 복구 전략(2) → Elastic Disaster Recovery(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'backup-disaster-recovery.backup',
-      'backup-disaster-recovery.elastic-disaster-recovery',
-      'backup-disaster-recovery.backup-and-restore-dr',
-      'backup-disaster-recovery.warm-standby-for-low-rto',
       'backup-disaster-recovery.backup-long-term-retention',
       'backup-disaster-recovery.backup-ec2-resource-assignment',
       'backup-disaster-recovery.organizations-backup-policy',
@@ -3876,6 +3906,9 @@ describe('학습 데이터 무결성', () => {
       'backup-disaster-recovery.backup-s3-continuous-backup',
       'backup-disaster-recovery.backup-restore-testing-plan',
       'backup-disaster-recovery.backup-audit-manager',
+      'backup-disaster-recovery.backup-and-restore-dr',
+      'backup-disaster-recovery.warm-standby-for-low-rto',
+      'backup-disaster-recovery.elastic-disaster-recovery',
     ])
   })
 
@@ -3917,81 +3950,89 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('VPC 주제가 구성 요소 여덟 다음에 갈림길과 한계를 둔다', () => {
+  it('VPC 주제가 NAT·엔드포인트 블록 뒤에 둘의 비교를 두고 네 연결 방식의 비교와 플로우 로그로 끝낸다', () => {
     const topic = topics.find((candidate) => candidate.id === 'vpc-networking')
 
-    // 1단 VPC 구성 요소가 각각 무엇인가
-    // → 2단 NAT Gateway ↔ VPC Endpoint ↔ PrivateLink ↔ 피어링 중 언제 무엇을 고르는가
-    // → 3단 가용 영역마다 두는 것과 그렇지 않은 것, 엘라스틱 IP, 엔드포인트 정책, 확장 한계.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: VPC와 서브넷(1) → 인터넷 게이트웨이(2) → NAT 게이트웨이(5) → VPC 엔드포인트(4) → 비교 — NAT 경로와 엔드포인트(2) → VPC
+    //   피어링(2) → PrivateLink(2) → 비교 — NAT·엔드포인트·PrivateLink·피어링(1) → VPC 플로우 로그(1).
+    // internet-gateway-is-not-per-az는 인터넷 게이트웨이 개념이지만 본문이 바로 앞의 nat-gateway-per-az
+    // 규칙을 전제로 대비하므로 NAT 블록 안에 둔다(규칙 5). nat-gateway-traffic-uses-public-endpoints와
+    // nat-instance는 NAT 개념이지만 본문이 인터페이스 엔드포인트·게이트웨이 엔드포인트를 대안으로 쓰므로
+    // NAT·엔드포인트 두 블록 뒤에 비교로 둔다(규칙 4·5). PrivateLink 엔드포인트 서비스가 피어링과
+    // 대비하므로 피어링 블록을 PrivateLink 앞에 둔다. 네 연결 방식의 비교는 네 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'vpc-networking.vpc-subnet',
       'vpc-networking.internet-gateway',
       'vpc-networking.egress-only-igw',
       'vpc-networking.nat-gateway',
-      'vpc-networking.vpc-endpoint',
-      'vpc-networking.privatelink',
-      'vpc-networking.vpc-peering',
-      'vpc-networking.vpc-flow-logs',
-      'vpc-networking.comparison',
-      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
-      'vpc-networking.endpoint-pricing',
-      'vpc-networking.privatelink-endpoint-service',
-      'vpc-networking.nat-instance',
       'vpc-networking.nat-gateway-per-az',
       'vpc-networking.internet-gateway-is-not-per-az',
       'vpc-networking.nat-gateway-count-by-environment',
       'vpc-networking.nat-gateway-elastic-ip',
+      'vpc-networking.vpc-endpoint',
+      'vpc-networking.endpoint-pricing',
       'vpc-networking.vpc-endpoint-policy',
-      'vpc-networking.vpc-peering-scaling-limit',
       'vpc-networking.s3-is-regional',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+      'vpc-networking.nat-instance',
+      'vpc-networking.vpc-peering',
+      'vpc-networking.vpc-peering-scaling-limit',
+      'vpc-networking.privatelink',
+      'vpc-networking.privatelink-endpoint-service',
+      'vpc-networking.comparison',
+      'vpc-networking.vpc-flow-logs',
     ])
   })
 
-  it('보안 그룹·NACL 주제가 둘의 소개 다음에 상태 저장 갈림길과 설정을 둔다', () => {
+  it('보안 그룹·NACL 주제가 보안 그룹·NACL 블록 다음에 둘의 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'security-groups-nacl')
 
-    // 1단 보안 그룹과 NACL이 각각 무엇인가 → 2단 상태 저장과 상태 비저장, Web ACL과
-    // 네트워크 ACL의 차이 → 3단 규칙 수 제한, 거부 규칙을 어느 서브넷에 거는가,
-    // 로드 밸런서 보안 그룹의 아웃바운드.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 보안 그룹(4) → NACL(3) → 비교 — 상태 저장과 Web ACL(2).
+    // 상태 저장 ↔ 상태 비저장과 Web ACL ↔ 네트워크 ACL은 두 블록을 가르는 비교라 두 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'security-groups-nacl.security-group',
-      'security-groups-nacl.nacl',
-      'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
-      'security-groups-nacl.web-acl-vs-nacl',
       'security-groups-nacl.security-group-referencing',
-      'security-groups-nacl.nacl-rule-limit',
-      'security-groups-nacl.nacl-deny-at-source-subnet',
       'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
       'security-groups-nacl.nlb-security-group',
+      'security-groups-nacl.nacl',
+      'security-groups-nacl.nacl-rule-limit',
+      'security-groups-nacl.nacl-deny-at-source-subnet',
+      'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+      'security-groups-nacl.web-acl-vs-nacl',
     ])
   })
 
-  it('하이브리드 연결 주제가 연결 수단 여덟 다음에 갈림길과 한계를 둔다', () => {
+  it('하이브리드 연결 주제가 연결 수단 블록 다음에 선택 기준·트래픽 설계·엣지 옵션을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'hybrid-connectivity')
 
-    // 1단 연결 수단들이 각각 무엇인가 → 2단 VPN과 Direct Connect의 갈림길, VPC마다
-    // 따로 걸 것인가 Transit Gateway로 모을 것인가, 데이터 지역성으로 비용 줄이기
-    // → 3단 Direct Connect의 함정과 복원력 구성, VIF 유형, 온프레미스로 되돌리는 아웃바운드.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Site-to-Site VPN(2) → Client VPN(1) → Transit Gateway(2) → Direct Connect(6) → 비교 — VPN과
+    //   Direct Connect(3) → 온프레미스와 오가는 트래픽(3) → 리전에 붙는 엣지 옵션(2).
+    // Direct Connect 블록의 가상 프라이빗 게이트웨이·Direct Connect Gateway·VIF 유형이 Transit Gateway를
+    // 전제로 쓰므로 Transit Gateway를 Direct Connect 앞에 둔다. VPN과 Direct Connect의 비교·출발점·
+    // VPC마다 따로 맺는 VPN은 두 수단과 Transit Gateway를 함께 부르므로 연결 수단 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'hybrid-connectivity.site-to-site-vpn',
+      'hybrid-connectivity.access-terms',
       'hybrid-connectivity.client-vpn',
+      'hybrid-connectivity.transit-gateway',
+      'hybrid-connectivity.transit-gateway-cross-region-peering',
       'hybrid-connectivity.direct-connect',
       'hybrid-connectivity.virtual-private-gateway',
-      'hybrid-connectivity.access-terms',
-      'hybrid-connectivity.transit-gateway',
       'hybrid-connectivity.direct-connect-gateway',
-      'hybrid-connectivity.region-attached-edge-options',
-      'hybrid-connectivity.onprem-connectivity-heuristic',
-      'hybrid-connectivity.vpn-vs-direct-connect',
-      'hybrid-connectivity.per-vpc-vpn-for-isolation',
-      'hybrid-connectivity.transit-gateway-cross-region-peering',
-      'hybrid-connectivity.onprem-access-via-interface-endpoint',
-      'hybrid-connectivity.data-locality-cost',
-      'hybrid-connectivity.outposts-data-residency',
       'hybrid-connectivity.direct-connect-caveats',
       'hybrid-connectivity.direct-connect-resiliency',
       'hybrid-connectivity.direct-connect-vif-types',
+      'hybrid-connectivity.vpn-vs-direct-connect',
+      'hybrid-connectivity.onprem-connectivity-heuristic',
+      'hybrid-connectivity.per-vpc-vpn-for-isolation',
+      'hybrid-connectivity.onprem-access-via-interface-endpoint',
+      'hybrid-connectivity.data-locality-cost',
       'hybrid-connectivity.centralized-onprem-egress',
+      'hybrid-connectivity.region-attached-edge-options',
+      'hybrid-connectivity.outposts-data-residency',
     ])
   })
 
@@ -4134,83 +4175,84 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toContain('전달 직전에 응답을 압축한다')
   })
 
-  it('EMR·Glue·Athena 주제가 서비스 소개 다음에 갈림길과 클러스터 설정을 둔다', () => {
+  it('EMR·Glue·Athena 주제가 EMR·Spark·Glue·Athena·Lake Formation·Parquet 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'emr-glue-athena')
 
-    // 1단 EMR·Spark·Glue·Athena·Lake Formation이 각각 무엇인가
-    // → 2단 클러스터를 얼마나 띄워 두는가, 변환을 어디서 돌리는가, 조회 비용은 어떻게
-    //   붙는가, 로그를 어디에 쌓는가, 데이터 레이크의 권한은 어느 경로로 걸리는가
-    // → 3단 노드 역할별 인스턴스 제품군·작업별 권한·암호화 설정·열 지향 형식.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: EMR(7) → Spark(1) → Glue(4) → Athena(4) → Lake Formation(3) → Apache Parquet(1).
+    // EMR 블록: 관리형 스케일링이 코어 노드를 언급하므로 노드 세 가지가 그 앞(규칙 5), 노드 역할별
+    // 제품군은 세부라 갈림길 뒤. Glue의 고객별 키 ETL은 EMR과 대비하므로 EMR 블록 뒤, Lake Formation
+    // 블루프린트는 Athena를 거친 열 권한을 쓰므로 Athena 블록 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'emr-glue-athena.emr',
       'emr-glue-athena.emr-node-types',
+      'emr-glue-athena.emr-transient-cluster',
+      'emr-glue-athena.emr-managed-scaling',
+      'emr-glue-athena.emr-node-instance-family-choice',
+      'emr-glue-athena.emr-runtime-role',
+      'emr-glue-athena.emr-security-configuration',
       'emr-glue-athena.spark',
       'emr-glue-athena.glue',
       'emr-glue-athena.glue-crawler',
       'emr-glue-athena.glue-databrew',
-      'emr-glue-athena.athena',
-      'emr-glue-athena.lake-formation',
-      'emr-glue-athena.emr-transient-cluster',
-      'emr-glue-athena.emr-managed-scaling',
       'emr-glue-athena.glue-etl-with-per-customer-kms-key',
+      'emr-glue-athena.athena',
       'emr-glue-athena.athena-encrypted-and-pay-per-query',
       'emr-glue-athena.athena-federated-query',
       'emr-glue-athena.log-storage-s3-athena',
+      'emr-glue-athena.lake-formation',
       'emr-glue-athena.lake-formation-blueprint-and-athena',
       'emr-glue-athena.lake-formation-lf-tags',
-      'emr-glue-athena.emr-node-instance-family-choice',
-      'emr-glue-athena.emr-runtime-role',
-      'emr-glue-athena.emr-security-configuration',
       'emr-glue-athena.parquet-columnar-format',
     ])
   })
 
-  it('스트리밍 주제가 서비스 다섯 다음에 갈림길과 한계값을 둔다', () => {
+  it('스트리밍 주제가 Data Streams·Firehose·Flink 블록과 그 비교 다음에 Video Streams·MSK를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'kinesis-streaming')
 
-    // 1단 스트리밍 서비스 다섯이 각각 무엇인가
-    // → 2단 담당 단계의 비교, 스트림 사이에 무엇을 끼울 수 있는가, 큐 계열과 갈리는 축,
-    //   소비자를 직접 만들 때와 맡길 때, Kafka 생태계로 얻는 것
-    // → 3단 레코드 크기·파티션 키 쏠림·용량 모드·버퍼링 지연.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Kinesis Data Streams(6) → Data Firehose(4) → Managed Service for Apache Flink(2) → 비교 — 세
+    //   서비스의 담당 단계(1) → Kinesis Video Streams(1) → Amazon MSK(2).
+    // Flink의 Kinesis 소스·싱크가 Data Streams를 전제로 쓰므로 Flink가 Data Streams 뒤. 세 서비스의
+    // 담당 단계 비교는 세 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'kinesis-streaming.kinesis-data-streams',
-      'kinesis-streaming.data-firehose',
-      'kinesis-streaming.managed-service-apache-flink',
-      'kinesis-streaming.kinesis-video-streams',
-      'kinesis-streaming.msk',
-      'kinesis-streaming.streaming-services-comparison',
-      'kinesis-streaming.flink-kinesis-source-sink',
-      'kinesis-streaming.firehose-lambda-transformation',
-      'kinesis-streaming.firehose-format-conversion',
       'kinesis-streaming.kinesis-retention-and-fanout',
       'kinesis-streaming.kinesis-client-library',
-      'kinesis-streaming.msk-kafka-connect',
       'kinesis-streaming.kinesis-record-size-limit',
       'kinesis-streaming.kinesis-partition-key-hot-shard',
       'kinesis-streaming.kinesis-capacity-mode',
+      'kinesis-streaming.data-firehose',
+      'kinesis-streaming.firehose-lambda-transformation',
+      'kinesis-streaming.firehose-format-conversion',
       'kinesis-streaming.firehose-buffering',
+      'kinesis-streaming.managed-service-apache-flink',
+      'kinesis-streaming.flink-kinesis-source-sink',
+      'kinesis-streaming.streaming-services-comparison',
+      'kinesis-streaming.kinesis-video-streams',
+      'kinesis-streaming.msk',
+      'kinesis-streaming.msk-kafka-connect',
     ])
   })
 
-  it('웨어하우스·검색·시각화 주제가 서비스 넷 다음에 갈림길과 적재 경로를 둔다', () => {
-    const topic = topics.find(
-      (candidate) => candidate.id === 'redshift-opensearch-quicksight',
-    )
+  it('웨어하우스·검색·시각화 주제가 Redshift·OpenSearch·QuickSight 블록 다음에 적재 경로를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'redshift-opensearch-quicksight')
 
-    // 1단 Redshift·Spectrum·OpenSearch·QuickSight가 각각 무엇인가
-    // → 2단 트랜잭션과 분석, 임시 쿼리와 반복되는 고성능 쿼리, 핫·콜드 분리, 내장 예측
-    // → 3단 동시성 확장·COPY 병렬 적재·운영 테이블의 과거 데이터를 S3에 남기는 자리.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Redshift와 Spectrum(7) → OpenSearch(1) → QuickSight(2) → 운영 데이터를 S3에 남기는 경로(1).
+    // Redshift 블록: 기본·Spectrum → OLTP와 OLAP·Athena와의 갈림길·핫 콜드 분리 → 동시성 확장·COPY.
+    // 운영 테이블의 과거 데이터를 S3에 남기는 경로는 조회를 Athena·QuickSight에 맡기므로 QuickSight 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'redshift-opensearch-quicksight.redshift',
       'redshift-opensearch-quicksight.redshift-spectrum',
-      'redshift-opensearch-quicksight.opensearch-text-search',
-      'redshift-opensearch-quicksight.quicksight',
       'redshift-opensearch-quicksight.oltp-vs-olap',
       'redshift-opensearch-quicksight.athena-vs-redshift-workload',
       'redshift-opensearch-quicksight.redshift-hot-cold-split',
-      'redshift-opensearch-quicksight.quicksight-ml-forecast',
       'redshift-opensearch-quicksight.redshift-concurrency-scaling',
       'redshift-opensearch-quicksight.redshift-copy-from-s3',
+      'redshift-opensearch-quicksight.opensearch-text-search',
+      'redshift-opensearch-quicksight.quicksight',
+      'redshift-opensearch-quicksight.quicksight-ml-forecast',
       'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
     ])
   })
@@ -4302,49 +4344,46 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('Route 53 주제가 서비스와 정책 소개 다음에 갈림길과 세부 동작을 둔다', () => {
+  it('Route 53 주제가 라우팅 정책·Resolver·호스팅 영역·쿼리 로깅 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'route53')
 
-    // 1단 Route 53과 라우팅 정책·Resolver·호스팅 영역이 각각 무엇이고 호스팅을 어떻게 옮기는가
-    // → 2단 정책들 사이의 갈림길(장애 조치·리전 장애·지연 시간 레코드)과 레코드가
-    //   무엇을 가리키는가
-    // → 3단 호스팅 영역과 Resolver의 경계·다중값 응답의 세부 동작·쿼리 로깅.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: Route 53(1) → 라우팅 정책(5) → Resolver(2) → 호스팅 영역과 레코드(4) → 쿼리 로깅(1).
+    // 프라이빗 호스팅 영역이 Resolver 아웃바운드 엔드포인트를 언급하므로 Resolver를 호스팅 영역 앞에 둔다(규칙 5).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'route53.route53',
       'route53.routing-policies',
-      'route53.resolver',
-      'route53.private-hosted-zone',
-      'route53.route53-zone-file-import',
       'route53.route53-failover-routing',
       'route53.multi-region-failover-for-region-outage',
       'route53.latency-record-for-non-aws-endpoint',
+      'route53.multivalue-answer-details',
+      'route53.resolver',
+      'route53.route53-resolver-forward-rule',
+      'route53.private-hosted-zone',
+      'route53.route53-zone-file-import',
       'route53.route53-alias-record',
       'route53.private-hosted-zone-vpc-only',
-      'route53.route53-resolver-forward-rule',
-      'route53.multivalue-answer-details',
       'route53.route53-query-logging',
     ])
   })
 
-  it('CloudWatch·X-Ray 주제가 서비스 넷 다음에 관측의 경계와 지표 설정을 둔다', () => {
+  it('CloudWatch·X-Ray 주제가 CloudWatch·X-Ray·Performance Insights·Managed Grafana 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cloudwatch-xray')
 
-    // 1단 CloudWatch·X-Ray·Performance Insights·Managed Grafana가 각각 무엇이고
-    //   하이브리드 연결의 품질은 무엇이 재는가
-    // → 2단 관측이 어디까지인가, 로그를 어디서 분석하는가, 규모 조정의 근거는 무엇인가
-    // → 3단 기본 지표에 없는 값·상세 모니터링의 간격·알람의 상태 변경 이벤트.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: CloudWatch(7) → X-Ray(1) → Performance Insights(2) → Managed Grafana(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cloudwatch-xray.cloudwatch',
-      'cloudwatch-xray.x-ray',
-      'cloudwatch-xray.performance-insight',
-      'cloudwatch-xray.amazon-managed-grafana',
       'cloudwatch-xray.cloudwatch-network-monitor',
       'cloudwatch-xray.cloudwatch-container-insights',
       'cloudwatch-xray.log-analysis-options',
-      'cloudwatch-xray.performance-insights-rightsizing',
       'cloudwatch-xray.cloudwatch-agent-memory-metric',
       'cloudwatch-xray.ec2-detailed-monitoring',
       'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+      'cloudwatch-xray.x-ray',
+      'cloudwatch-xray.performance-insight',
+      'cloudwatch-xray.performance-insights-rightsizing',
+      'cloudwatch-xray.amazon-managed-grafana',
     ])
   })
 
@@ -4421,84 +4460,81 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('IAM 권한 주제가 구성 요소 다음에 권한을 좁히는 장치와 평가 규칙을 둔다', () => {
+  it('IAM 권한 주제가 사용자와 그룹·역할·정책·분석 도구·루트 사용자 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'iam-permissions')
 
-    // 1단 IAM의 구성 요소(사용자·역할·인스턴스 프로파일·그룹·Roles Anywhere)와
-    //   Access Analyzer가 각각 무엇인가
-    // → 2단 이름이 닮은 분석 도구의 구분, 권한을 좁히는 장치들(최소 권한·ABAC·권한 경계)과
-    //   계정을 넘는 접근을 여는 방법
-    // → 3단 그룹과 사용자의 경계·정책 평가 규칙과 조건 키·루트 사용자의 제약.
+    // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+    // 블록: IAM(1) → 사용자와 그룹(3) → 역할(3) → 정책 — 권한을 좁히는 장치와 평가 규칙(6) → 분석 도구(3) → 루트 사용자(2).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'iam-permissions.iam',
-      'iam-permissions.instance-profile',
       'iam-permissions.iam-group-policy-attachment',
+      'iam-permissions.iam-group-users-only',
+      'iam-permissions.iam-user-is-account-scoped',
+      'iam-permissions.instance-profile',
       'iam-permissions.iam-roles-anywhere',
-      'iam-permissions.iam-access-analyzer',
-      'iam-permissions.network-access-analyzer',
+      'iam-permissions.cross-account-iam-role',
       'iam-permissions.least-privilege',
       'iam-permissions.abac',
       'iam-permissions.permissions-boundary',
-      'iam-permissions.cross-account-iam-role',
-      'iam-permissions.iam-group-users-only',
-      'iam-permissions.iam-user-is-account-scoped',
       'iam-permissions.iam-explicit-deny-precedence',
       'iam-permissions.iam-notaction-deny',
       'iam-permissions.iam-requested-region-condition',
+      'iam-permissions.iam-access-analyzer',
+      'iam-permissions.network-access-analyzer',
       'iam-permissions.access-analyzer-delegated-administrator',
       'iam-permissions.root-user-multiple-mfa',
       'iam-permissions.root-user-cannot-be-disabled',
     ])
   })
 
-  it('자격 증명 페더레이션 주제가 서비스 넷 다음에 누구를 어떻게 들이는가를 둔다', () => {
+  it('자격 증명 페더레이션 주제가 Identity Center·STS·Directory Service·페더레이션·Cognito 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'identity-federation')
 
-    // 1단 Identity Center·STS·Cognito·Directory Service가 각각 무엇인가
-    // → 2단 사내 디렉터리와 앱 사용자 중 어느 쪽인가, 사용자 풀과 자격 증명 풀,
-    //   SAML을 못 쓰는 디렉터리는 어떻게 잇는가
-    // → 3단 권한 세트가 계정에 배포되는 방식과 역할을 그룹에 매핑하는 방법.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: IAM Identity Center(3) → STS(2) → Directory Service(1) → 페더레이션 — ID 브로커와 SAML 2.0(2) →
+    //   Cognito(3).
+    // 페더레이션 블록은 사내 디렉터리를 STS와 SAML로 잇는 두 방식이라 STS·Directory Service 뒤.
+    // 앱 사용자를 다루는 Cognito는 사내 사용자 쪽 블록을 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'identity-federation.identity-center',
-      'identity-federation.sts',
-      'identity-federation.cognito',
-      'identity-federation.aws-directory-service',
-      'identity-federation.sts-assume-role',
       'identity-federation.identity-center-external-idp',
+      'identity-federation.identity-center-permission-set',
+      'identity-federation.sts',
+      'identity-federation.sts-assume-role',
+      'identity-federation.aws-directory-service',
+      'identity-federation.custom-identity-broker-for-non-saml',
+      'identity-federation.saml-federation-role-to-ad-group-mapping',
+      'identity-federation.cognito',
       'identity-federation.cognito-pools',
       'identity-federation.cognito-social-idp-federation',
-      'identity-federation.custom-identity-broker-for-non-saml',
-      'identity-federation.identity-center-permission-set',
-      'identity-federation.saml-federation-role-to-ad-group-mapping',
     ])
   })
 
-  it('조직·감사 주제가 서비스 다섯 다음에 무엇을 기록하는가와 설정 항목을 둔다', () => {
+  it('조직·감사 주제가 Organizations·Config·CloudTrail·Audit Manager 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'organizations-cloudtrail-config')
 
-    // 1단 Organizations·SCP·CloudTrail(과 Lake)·Config·Audit Manager가 각각 무엇인가
-    // → 2단 정책을 어디에 붙이는가, 태그 정책과 SCP가 하는 일의 차이, 계정을 나누는
-    //   또 하나의 이유, CloudTrail과 Config가 각각 무엇을 기록하는가
-    // → 3단 SCP를 붙일 자리와 예외를 두는 방법, 로그를 믿을 수 있게 하는 설정,
-    //   준수 팩과 사용자 지정 규칙, 규칙에 자동 수정을 붙이는 방법.
-    // 마지막 하나는 step 19가 (주제 미정)에서 옮겨 왔다(topic-plan "step 경계를 넘는 개념").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Organizations와 SCP(6) → AWS Config(5) → CloudTrail(4) → Audit Manager(1).
+    // Organizations 블록: 태그 정책·통합 청구 다음에 조직 단위를 두어 SCP를 붙이는 자리·예외(세부)와
+    // 붙인다(주요 기능을 가운데 층의 끝에). CloudTrail 로그 파일 유효성 검사가 Config 규칙을 쓰므로
+    // Config를 CloudTrail 앞에 둔다. Audit Manager는 구성 변경 추적 도구가 아니라는 대비로 Config 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'organizations-cloudtrail-config.organizations-scp',
-      'organizations-cloudtrail-config.cloudtrail',
-      'organizations-cloudtrail-config.cloudtrail-lake',
-      'organizations-cloudtrail-config.aws-config',
-      'organizations-cloudtrail-config.audit-manager',
-      'organizations-cloudtrail-config.organizational-unit',
       'organizations-cloudtrail-config.organizations-tag-policy',
       'organizations-cloudtrail-config.organizations-consolidated-billing',
-      'organizations-cloudtrail-config.cloudtrail-data-events',
-      'organizations-cloudtrail-config.config-configuration-recorder',
+      'organizations-cloudtrail-config.organizational-unit',
       'organizations-cloudtrail-config.scp-attachment-targets',
       'organizations-cloudtrail-config.scp-condition-exception',
-      'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+      'organizations-cloudtrail-config.aws-config',
+      'organizations-cloudtrail-config.config-configuration-recorder',
       'organizations-cloudtrail-config.config-conformance-pack',
       'organizations-cloudtrail-config.config-custom-rule',
       'organizations-cloudtrail-config.config-rule-remediation',
+      'organizations-cloudtrail-config.cloudtrail',
+      'organizations-cloudtrail-config.cloudtrail-lake',
+      'organizations-cloudtrail-config.cloudtrail-data-events',
+      'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+      'organizations-cloudtrail-config.audit-manager',
     ])
   })
 
@@ -4642,84 +4678,86 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('비밀·키 주제가 서비스 다섯 다음에 무엇을 어디에 두는가와 한계를 둔다', () => {
+  it('비밀·키 주제가 Secrets Manager·Parameter Store·KMS·CloudHSM·ACM 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'secrets-encryption')
 
-    // 1단 Secrets Manager·Parameter Store·KMS·ACM·CloudHSM이 각각 무엇인가
-    // → 2단 비밀값을 어디에 두는가, 키를 누가 관리하는가, 리전을 넘는 키와 밖에서
-    //   가져온 키, 전용 하드웨어와 KMS를 함께 쓰는 자리, 도메인 검증 방식
-    // → 3단 한 번에 여러 비밀값을 읽는 API, 자동 교체의 주기와 키 유형 제약,
-    //   가져온 키 자료의 교체, 환경 변수 암호화, CloudFront 인증서의 리전과 만료 이벤트.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // Secrets Manager: 기본 → BatchGetSecretValue. Parameter Store: 기본.
+    // 두 저장소의 갈림길: Secrets Manager와 Parameter Store의 차이, 자동 순환을 가리키는 신호. 두
+    //   서비스를 가르므로 두 블록 뒤에 둔다.
+    // KMS: 기본 → 키 관리 주체·다중 리전 키·고객별 키·가져온 키 자료 → 자동 교체·대칭과 비대칭의
+    //   교체 → 가져온 키 자료의 교체 → Lambda 환경 변수 암호화. 가져온 키 자료의 교체는 자동 교체를
+    //   전제로 쓰므로 그 뒤에 두고, 가져온 키 자료는 자기 세부와 가깝게 갈림길의 끝에 둔다.
+    // CloudHSM: 기본 → CloudHSM이 뒷받침하는 KMS 키(KMS를 먼저 읽어야 하므로 KMS 블록 뒤).
+    // ACM: 기본 → DNS 검증 → CloudFront용 인증서의 리전 → 만료 임박 이벤트.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'secrets-encryption.secrets-manager',
+      'secrets-encryption.secrets-manager-batch-get-secret-value',
       'secrets-encryption.parameter-store',
-      'secrets-encryption.kms',
-      'secrets-encryption.acm',
-      'secrets-encryption.cloudhsm',
       'secrets-encryption.secrets-manager-vs-parameter-store',
       'secrets-encryption.rotation-heuristic',
+      'secrets-encryption.kms',
       'secrets-encryption.kms-key-types-by-management',
       'secrets-encryption.kms-multi-region-key',
-      'secrets-encryption.kms-imported-key-material',
-      'secrets-encryption.kms-cloudhsm-key-store',
       'secrets-encryption.kms-key-per-tenant',
-      'secrets-encryption.acm-dns-validation',
-      'secrets-encryption.secrets-manager-batch-get-secret-value',
+      'secrets-encryption.kms-imported-key-material',
       'secrets-encryption.kms-automatic-key-rotation',
       'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
       'secrets-encryption.imported-key-material-rotation',
       'secrets-encryption.lambda-env-var-kms',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.kms-cloudhsm-key-store',
+      'secrets-encryption.acm',
+      'secrets-encryption.acm-dns-validation',
       'secrets-encryption.acm-cloudfront-region',
       'secrets-encryption.acm-expiration-event',
     ])
   })
 
-  it('WAF·Shield 주제가 서비스 넷 다음에 규칙의 축과 검사의 한계를 둔다', () => {
+  it('WAF·Shield 주제가 WAF·Shield·Firewall Manager 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'waf-shield')
 
-    // 1단 WAF·Shield·CloudFront·Firewall Manager가 각각 무엇인가
-    // → 2단 WAF를 어디에 붙이는가, 규칙을 무엇으로 거르고 누가 쓰는가, 빈도로 거르는
-    //   규칙과 봇, Shield Standard의 범위와 Shield Advanced
-    // → 3단 보호 그룹, 본문 검사 크기 한도, Web ACL의 리전 조건, 로그가 가는 길.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: WAF(10) → Shield(4) → Firewall Manager(1).
+    // CloudFront 재소개는 WAF를 붙이는 자리(waf-attach-targets)가 멀티 오리진 CloudFront를 전제로 쓰므로
+    // WAF 블록 안, 그 앞에 둔다(규칙 5). Firewall Manager는 WAF 규칙을 중앙에서 배포하므로 두 블록 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'waf-shield.waf',
-      'waf-shield.shield',
       'waf-shield.cloudfront',
-      'waf-shield.firewall-manager',
       'waf-shield.waf-attach-targets',
       'waf-shield.waf-rule-types',
       'waf-shield.waf-managed-rule-groups',
       'waf-shield.waf-rate-based-rule',
       'waf-shield.waf-bot-control',
-      'waf-shield.shield-standard-network-layer',
-      'waf-shield.shield-advanced-drt',
-      'waf-shield.shield-advanced-protection-group',
       'waf-shield.waf-body-inspection-size-limit',
       'waf-shield.waf-web-acl-region-must-match-rest-api',
       'waf-shield.waf-logging-to-firehose',
+      'waf-shield.shield',
+      'waf-shield.shield-standard-network-layer',
+      'waf-shield.shield-advanced-drt',
+      'waf-shield.shield-advanced-protection-group',
+      'waf-shield.firewall-manager',
     ])
   })
 
-  it('탐지 주제가 서비스 넷 다음에 각각 무엇을 찾는가와 조직 설정을 둔다', () => {
+  it('탐지 주제가 GuardDuty·Macie·Inspector·Security Hub 블록 다음에 넷의 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'guardduty-macie-inspector')
 
-    // 1단 GuardDuty·Macie·Inspector·Security Hub가 각각 무엇인가
-    // → 2단 헷갈리는 넷이 각각 무엇을 찾는가, DB 로그인 이상은 어디가 잡는가,
-    //   검색 작업과 자동 탐지, 컨테이너 이미지의 취약점 스캔은 어디인가
-    // → 3단 위임 관리자 계정에서 조직 전체를 보는 방법, 탐지 결과를 이벤트로 이어
-    //   자동 대응과 알림을 붙이는 방법.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: GuardDuty(3) → Macie(4) → Inspector(2) → Security Hub(1) → 비교 — 헷갈리는 보안 서비스 넷(1).
+    // 헷갈리는 보안 서비스 넷은 네 블록을 가르는 비교라 네 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'guardduty-macie-inspector.guardduty',
+      'guardduty-macie-inspector.guardduty-db-login',
+      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
       'guardduty-macie-inspector.macie',
+      'guardduty-macie-inspector.macie-automated-discovery',
+      'guardduty-macie-inspector.macie-delegated-administrator',
+      'guardduty-macie-inspector.macie-finding-to-eventbridge',
       'guardduty-macie-inspector.amazon-inspector',
+      'guardduty-macie-inspector.inspector-scans-ecr-images',
       'guardduty-macie-inspector.security-hub',
       'guardduty-macie-inspector.security-service-lineup',
-      'guardduty-macie-inspector.guardduty-db-login',
-      'guardduty-macie-inspector.macie-automated-discovery',
-      'guardduty-macie-inspector.inspector-scans-ecr-images',
-      'guardduty-macie-inspector.macie-delegated-administrator',
-      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
-      'guardduty-macie-inspector.macie-finding-to-eventbridge',
     ])
   })
 
@@ -4854,81 +4892,79 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('비용 관리 주제가 도구 여덟 다음에 약정의 크기와 설정 항목을 둔다', () => {
+  it('비용 관리 주제가 약정·비용 조회·예산·이상 탐지·보고서·권장 도구 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cost-management')
 
-    // 1단 비용 도구들이 각각 무엇인가
-    // → 2단 무엇을 얼마만큼 약정하는가, 용량 예약은 왜 할인이 아닌가
-    // → 3단 태그를 어디서 활성화하는가, 예산에 걸 수 있는 조치와 알림 기준,
-    //   권장 대상에 무엇이 들어가는가.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 약정 할인(5) → Cost Explorer·결제 콘솔·비용 할당 태그(4) → AWS Budgets(3) → Cost Anomaly Detection(1) → 비용
+    //   및 사용량 보고서(1) → 권장 도구 — Trusted Advisor·Compute Optimizer(3).
+    // Cost Anomaly Detection은 '예산 초과가 아닌'으로 정의되므로 Budgets 뒤. 비용 및 사용량 보고서는
+    // Cost Explorer·Budgets와 대비하므로 둘 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cost-management.savings-plan',
-      'cost-management.aws-budgets',
-      'cost-management.cost-explorer',
-      'cost-management.cost-anomaly-detection',
-      'cost-management.cost-and-usage-report',
-      'cost-management.billing-and-cost-management',
-      'cost-management.trusted-advisor',
-      'cost-management.compute-optimizer',
       'cost-management.savings-plan-details',
       'cost-management.savings-plan-baseline-vs-spike',
       'cost-management.rds-reserved-instance',
       'cost-management.on-demand-capacity-reservation',
+      'cost-management.cost-explorer',
+      'cost-management.billing-and-cost-management',
       'cost-management.cost-allocation-tag-activation',
       'cost-management.cost-allocation-tag-activation-in-management-account',
+      'cost-management.aws-budgets',
       'cost-management.budget-actions',
       'cost-management.budget-forecasted-alert',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.cost-and-usage-report',
+      'cost-management.trusted-advisor',
+      'cost-management.compute-optimizer',
       'cost-management.compute-optimizer-ebs-recommendations',
     ])
   })
 
-  it('거버넌스·IaC 주제가 서비스 넷 다음에 제어의 시점과 감지 범위를 둔다', () => {
+  it('거버넌스·IaC 주제가 CloudFormation·Service Catalog·Control Tower·RAM·Workload Discovery 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'governance-iac')
 
-    // 1단 CloudFormation·Service Catalog·Control Tower·RAM·Workload Discovery가
-    //   각각 무엇인가
-    // → 2단 제어가 배포 시점에 막는가 만들어진 뒤에 찾는가
-    // → 3단 드리프트 감지가 보는 범위.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: CloudFormation(2) → Service Catalog(1) → Control Tower(2) → RAM(1) → Workload Discovery(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'governance-iac.cloudformation',
+      'governance-iac.cloudformation-drift-detection',
       'governance-iac.service-catalog',
       'governance-iac.control-tower-landing-zone',
+      'governance-iac.control-tower-controls',
       'governance-iac.resource-access-manager',
       'governance-iac.workload-discovery',
-      'governance-iac.control-tower-controls',
-      'governance-iac.cloudformation-drift-detection',
     ])
   })
 
-  it('Systems Manager 주제가 기능 둘 다음에 접속하는 두 길과 등록 조건을 둔다', () => {
+  it('Systems Manager 주제가 Systems Manager·EC2 Instance Connect·AppConfig 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'systems-manager')
 
-    // 1단 명령을 보내는 기능과 구성을 배포하는 서비스가 각각 무엇인가
-    // → 2단 배스천 없이 붙는 두 길, 패치를 어디서 도는가
-    // → 3단 관리형 인스턴스를 만드는 정책, 인벤토리가 모으는 것.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Systems Manager(5) → EC2 Instance Connect 엔드포인트(1) → AppConfig(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'systems-manager.ssm-run-command',
-      'systems-manager.appconfig',
       'systems-manager.ssm-session-manager',
-      'systems-manager.ec2-instance-connect-endpoint',
       'systems-manager.ssm-patch-manager',
       'systems-manager.ssm-managed-instance-core-policy',
       'systems-manager.ssm-inventory',
+      'systems-manager.ec2-instance-connect-endpoint',
+      'systems-manager.appconfig',
     ])
   })
 
-  it('AI·ML 주제가 서비스 소개 다음에 훈련이 필요한가와 검토의 쓰임을 둔다', () => {
+  it('AI·ML 주제가 SageMaker·API로 부르는 AI 서비스 블록 다음에 훈련 없이 쓰는 검토를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ai-ml-services')
 
-    // 1단 SageMaker AI와 API로 부르는 AI 서비스들이 각각 무엇인가
-    // → 2단 모델을 직접 만드는 자리와 이미 만들어진 기능을 부르는 자리가 갈린다
-    // → 3단 콘텐츠 검토가 어디에 쓰이는가.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: SageMaker AI(2) → 음성·이미지·번역·문서 AI 서비스(1) → Comprehend(1) → Lex(1) → 비교 — 훈련 없이 쓰는 콘텐츠 검토(1).
+    // Rekognition의 콘텐츠 검토는 SageMaker·Comprehend와 대비하므로 맨 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ai-ml-services.sagemaker',
+      'ai-ml-services.sagemaker-autopilot',
       'ai-ml-services.media-ai-service-lineup',
       'ai-ml-services.comprehend',
       'ai-ml-services.amazon-lex',
-      'ai-ml-services.sagemaker-autopilot',
       'ai-ml-services.rekognition-content-moderation',
     ])
   })

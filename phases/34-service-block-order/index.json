@@ -1,0 +1,72 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "34-service-block-order",
+  "steps": [
+    {
+      "step": 0,
+      "name": "order-rule-docs",
+      "status": "completed",
+      "summary": "ADR-023 제목·개정 안내 문단 추가, ADR-033 신설, ARCHITECTURE 주석·개념 배열 절을 승인 문구 그대로 변경; lint·build·512개 테스트·구조 검사·verify-order 0·문서 AC 모두 통과.",
+      "started_at": "2026-09-11T16:57:42+0900",
+      "completed_at": "2026-09-11T17:10:06+0900"
+    },
+    {
+      "step": 1,
+      "name": "sample-reorder",
+      "status": "completed",
+      "started_at": "2026-09-11T17:10:06+0900",
+      "summary": "표본 5개 주제의 개념·baseline을 승인된 서비스 블록 순서로 재배열하고 기존 순서 단언 5개를 명세대로 갱신; efs-fsx 자리 바뀐 개념 24/25 왕복 6 → 0; data-transfer-services 자리 바뀐 개념 17/19 왕복 6 → 0; cloudfront-global-accelerator 자리 바뀐 개념 20/24 왕복 5 → 0; sqs-sns-eventbridge 자리 바뀐 개념 32/33 왕복 12 → 0; secrets-encryption 자리 바뀐 개념 16/20 왕복 7 → 0; 선행 충돌 없음; TDD에서 지정 5개 실패·507개 통과 확인 후 lint·build·512개 테스트·구조 검사·verify-order 1 모두 통과, 테스트 5개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-11T17:12:18+0900"
+    },
+    {
+      "step": 2,
+      "name": "compute-db-reorder",
+      "status": "completed",
+      "started_at": "2026-09-11T17:48:13+0900",
+      "summary": "지정된 6개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 6개를 명세 코드로 갱신; s3-encryption-batch 자리 바뀐 개념 10/13 왕복 3 → 0; ebs-instance-store 자리 바뀐 개념 13/15 왕복 3 → 0; elasticache-purpose-built-db 자리 바뀐 개념 13/14 왕복 5 → 0; elastic-load-balancing 자리 바뀐 개념 15/16 왕복 4 → 0; ecs-eks-fargate 자리 바뀐 개념 22/23 왕복 8 → 0; api-gateway-step-functions 자리 바뀐 개념 19/20 왕복 3 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 6개 실패·506개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 2 모두 통과; 테스트 6개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-11T17:53:32+0900"
+    },
+    {
+      "step": 3,
+      "name": "network-analytics-reorder",
+      "status": "completed",
+      "started_at": "2026-09-11T23:36:34+0900",
+      "summary": "지정된 7개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 7개를 명세 코드로 갱신; vpc-networking 자리 바뀐 개념 16/20 왕복 6 → 0; security-groups-nacl 자리 바뀐 개념 6/9 왕복 3 → 0; hybrid-connectivity 자리 바뀐 개념 18/19 왕복 6 → 0; emr-glue-athena 자리 바뀐 개념 17/20 왕복 5 → 0; kinesis-streaming 자리 바뀐 개념 13/16 왕복 6 → 0; redshift-opensearch-quicksight 자리 바뀐 개념 8/11 왕복 3 → 0; cloudwatch-xray 자리 바뀐 개념 10/11 왕복 3 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 7개 실패·505개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 3 모두 통과; 테스트 7개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-11T23:41:42+0900"
+    },
+    {
+      "step": 4,
+      "name": "security-cost-reorder",
+      "status": "completed",
+      "started_at": "2026-09-11T23:41:50+0900",
+      "summary": "지정된 5개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 5개를 명세 코드로 갱신; waf-shield 자리 바뀐 개념 14/15 왕복 4 → 0; guardduty-macie-inspector 자리 바뀐 개념 10/11 왕복 6 → 0; identity-federation 자리 바뀐 개념 9/11 왕복 5 → 0; organizations-cloudtrail-config 자리 바뀐 개념 15/16 왕복 6 → 0; cost-management 자리 바뀐 개념 15/17 왕복 5 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 5개 실패·507개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 4 모두 통과; 테스트 5개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-11T23:47:20+0900"
+    },
+    {
+      "step": 5,
+      "name": "minor-data-compute-reorder",
+      "status": "completed",
+      "started_at": "2026-09-12T00:17:52+0900",
+      "summary": "지정된 8개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 8개를 명세 코드로 갱신; s3-versioning-lifecycle 자리 바뀐 개념 8/10 왕복 2 → 0; s3-access-control 자리 바뀐 개념 12/13 왕복 2 → 0; storage-gateway-migration 자리 바뀐 개념 6/7 왕복 2 → 0; rds-storage-features 자리 바뀐 개념 17/21 왕복 4 → 0; aurora 자리 바뀐 개념 16/18 왕복 4 → 0; dynamodb 자리 바뀐 개념 15/18 왕복 2 → 0; ec2-autoscaling 자리 바뀐 개념 12/18 왕복 1 → 0; lambda 자리 바뀐 개념 12/18 왕복 5 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 8개 실패·504개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 5 모두 통과; 테스트 8개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-12T00:22:40+0900"
+    },
+    {
+      "step": 6,
+      "name": "minor-ops-reorder",
+      "status": "completed",
+      "started_at": "2026-09-12T00:22:48+0900",
+      "summary": "지정된 6개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 6개를 명세 코드로 갱신; backup-disaster-recovery 자리 바뀐 개념 10/11 왕복 1 → 0; route53 자리 바뀐 개념 10/13 왕복 4 → 0; iam-permissions 자리 바뀐 개념 14/18 왕복 5 → 0; governance-iac 자리 바뀐 개념 6/7 왕복 2 → 0; systems-manager 자리 바뀐 개념 6/7 왕복 2 → 0; ai-ml-services 자리 바뀐 개념 4/6 왕복 1 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 6개 실패·506개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 6 모두 통과; 테스트 6개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-12T00:27:48+0900"
+    },
+    {
+      "step": 7,
+      "name": "residual-docs",
+      "status": "completed",
+      "summary": "ADR-033 「트레이드오프」 잔여 수치 6개 주제 9곳 → 12개 주제 16곳을 지정 문구·줄바꿈 그대로 갱신; Node 18.17.1에서 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 7·문서 AC 모두 통과; ADR의 지정 네 줄 외 변경 없음·데이터/테스트/코드/다른 문서 불변 확인.",
+      "started_at": "2026-09-12T00:27:56+0900",
+      "completed_at": "2026-09-12T00:30:03+0900"
+    }
+  ],
+  "created_at": "2026-09-11T16:57:42+0900",
+  "completed_at": "2026-09-12T00:30:03+0900"
+}
