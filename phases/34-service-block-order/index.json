@@ -45,7 +45,10 @@
     {
       "step": 5,
       "name": "minor-data-compute-reorder",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T00:17:52+0900",
+      "summary": "지정된 8개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 8개를 명세 코드로 갱신; s3-versioning-lifecycle 자리 바뀐 개념 8/10 왕복 2 → 0; s3-access-control 자리 바뀐 개념 12/13 왕복 2 → 0; storage-gateway-migration 자리 바뀐 개념 6/7 왕복 2 → 0; rds-storage-features 자리 바뀐 개념 17/21 왕복 4 → 0; aurora 자리 바뀐 개념 16/18 왕복 4 → 0; dynamodb 자리 바뀐 개념 15/18 왕복 2 → 0; ec2-autoscaling 자리 바뀐 개념 12/18 왕복 1 → 0; lambda 자리 바뀐 개념 12/18 왕복 5 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 8개 실패·504개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 5 모두 통과; 테스트 8개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-12T00:22:40+0900"
     },
     {
       "step": 6,
