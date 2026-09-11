@@ -183,8 +183,16 @@
      "name": "S3 객체 잠금"
     },
     {
+     "id": "s3-versioning-lifecycle.object-lock-prerequisites",
+     "name": "객체 잠금의 전제 조건과 MFA 삭제의 한계"
+    },
+    {
      "id": "s3-versioning-lifecycle.lifecycle-policy",
      "name": "S3 수명 주기 정책"
+    },
+    {
+     "id": "s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter",
+     "name": "수명 주기 구성의 개수 제한과 규칙의 크기 필터"
     },
     {
      "id": "s3-versioning-lifecycle.event-notification",
@@ -205,14 +213,6 @@
     {
      "id": "s3-versioning-lifecycle.s3-replication-cross-account-kms",
      "name": "계정을 넘는 복제와 SSE-KMS 키 권한"
-    },
-    {
-     "id": "s3-versioning-lifecycle.object-lock-prerequisites",
-     "name": "객체 잠금의 전제 조건과 MFA 삭제의 한계"
-    },
-    {
-     "id": "s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter",
-     "name": "수명 주기 구성의 개수 제한과 규칙의 크기 필터"
     }
    ]
   },
@@ -293,6 +293,18 @@
      "name": "계정 간 버킷 접근과 버킷 정책"
     },
     {
+     "id": "s3-access-control.s3-bucket-policy-source-vpc-condition",
+     "name": "버킷을 특정 VPC에서만 열기"
+    },
+    {
+     "id": "s3-access-control.s3-account-level-public-access-block",
+     "name": "계정 수준 공개 액세스 차단"
+    },
+    {
+     "id": "s3-access-control.block-public-access-allows-explicit-grants",
+     "name": "공개 액세스 차단과 명시적 허용"
+    },
+    {
      "id": "s3-access-control.s3-presigned-url",
      "name": "S3 사전 서명된 URL"
     },
@@ -309,10 +321,6 @@
      "name": "S3 멀티 리전 액세스 포인트"
     },
     {
-     "id": "s3-access-control.s3-storage-lens",
-     "name": "S3 Storage Lens"
-    },
-    {
      "id": "s3-access-control.s3-cors-not-authorization",
      "name": "CORS의 권한 부여 한계"
     },
@@ -321,24 +329,16 @@
      "name": "요청자 부담 버킷"
     },
     {
-     "id": "s3-access-control.s3-storage-lens-advanced-activity-metrics",
-     "name": "S3 Storage Lens의 고급 활동 메트릭"
-    },
-    {
-     "id": "s3-access-control.s3-account-level-public-access-block",
-     "name": "계정 수준 공개 액세스 차단"
-    },
-    {
-     "id": "s3-access-control.block-public-access-allows-explicit-grants",
-     "name": "공개 액세스 차단과 명시적 허용"
-    },
-    {
-     "id": "s3-access-control.s3-bucket-policy-source-vpc-condition",
-     "name": "버킷을 특정 VPC에서만 열기"
-    },
-    {
      "id": "s3-access-control.s3-website-endpoint-no-https",
      "name": "정적 웹사이트 엔드포인트와 HTTPS"
+    },
+    {
+     "id": "s3-access-control.s3-storage-lens",
+     "name": "S3 Storage Lens"
+    },
+    {
+     "id": "s3-access-control.s3-storage-lens-advanced-activity-metrics",
+     "name": "S3 Storage Lens의 고급 활동 메트릭"
     }
    ]
   },
@@ -625,14 +625,6 @@
      "name": "Storage Gateway"
     },
     {
-     "id": "storage-gateway-migration.dms-sct",
-     "name": "DMS와 SCT"
-    },
-    {
-     "id": "storage-gateway-migration.application-migration-service",
-     "name": "Application Migration Service"
-    },
-    {
      "id": "storage-gateway-migration.storage-gateway-gateway-types",
      "name": "Storage Gateway의 게이트웨이 유형"
     },
@@ -645,8 +637,16 @@
      "name": "가상 테이프가 내려가는 아카이브 계층"
     },
     {
+     "id": "storage-gateway-migration.dms-sct",
+     "name": "DMS와 SCT"
+    },
+    {
      "id": "storage-gateway-migration.dms-full-load-and-cdc-task",
      "name": "전체 로드와 변경 데이터 캡처를 함께 하는 복제 태스크"
+    },
+    {
+     "id": "storage-gateway-migration.application-migration-service",
+     "name": "Application Migration Service"
     }
    ]
   },
@@ -668,28 +668,12 @@
      "name": "RDS 스토리지 유형"
     },
     {
-     "id": "rds-storage-features.features",
-     "name": "RDS 기능"
-    },
-    {
-     "id": "rds-storage-features.rds-blue-green-deployment",
-     "name": "RDS 블루/그린 배포"
-    },
-    {
-     "id": "rds-storage-features.rds-custom",
-     "name": "RDS Custom"
-    },
-    {
-     "id": "rds-storage-features.rds-iam-database-authentication",
-     "name": "RDS의 IAM 데이터베이스 인증"
-    },
-    {
-     "id": "rds-storage-features.rds-encryption-scope-and-in-transit",
-     "name": "저장 중 암호화가 미치는 범위와 전송 중 암호화"
-    },
-    {
      "id": "rds-storage-features.storage-type-names",
      "name": "RDS 스토리지 유형의 약칭"
+    },
+    {
+     "id": "rds-storage-features.features",
+     "name": "RDS 기능"
     },
     {
      "id": "rds-storage-features.multi-az-standby-limits",
@@ -698,6 +682,10 @@
     {
      "id": "rds-storage-features.rds-multi-az-db-cluster",
      "name": "다중 AZ DB 인스턴스 배포와 다중 AZ DB 클러스터 배포"
+    },
+    {
+     "id": "rds-storage-features.rds-multi-az-failover-rto",
+     "name": "다중 AZ 장애 조치에 걸리는 시간"
     },
     {
      "id": "rds-storage-features.read-replica-vs-cache",
@@ -712,6 +700,10 @@
      "name": "RDS Proxy의 장애 조치 시간 단축"
     },
     {
+     "id": "rds-storage-features.rds-blue-green-deployment",
+     "name": "RDS 블루/그린 배포"
+    },
+    {
      "id": "rds-storage-features.rds-snapshot-cross-region-copy",
      "name": "리전 간 RDS 스냅샷 복사"
     },
@@ -720,24 +712,32 @@
      "name": "RDS 자동 백업의 보존 한계"
     },
     {
-     "id": "rds-storage-features.rds-manual-snapshot-retention",
-     "name": "만료가 없는 수동 스냅샷"
-    },
-    {
      "id": "rds-storage-features.rds-pitr-transaction-log-interval",
      "name": "특정 시점 복구와 5분 간격 트랜잭션 로그"
     },
     {
-     "id": "rds-storage-features.rds-multi-az-failover-rto",
-     "name": "다중 AZ 장애 조치에 걸리는 시간"
+     "id": "rds-storage-features.rds-manual-snapshot-retention",
+     "name": "만료가 없는 수동 스냅샷"
+    },
+    {
+     "id": "rds-storage-features.rds-iam-database-authentication",
+     "name": "RDS의 IAM 데이터베이스 인증"
+    },
+    {
+     "id": "rds-storage-features.rds-encryption-scope-and-in-transit",
+     "name": "저장 중 암호화가 미치는 범위와 전송 중 암호화"
+    },
+    {
+     "id": "rds-storage-features.rds-encrypt-existing-instance",
+     "name": "기존 RDS 인스턴스의 저장 중 암호화 절차"
     },
     {
      "id": "rds-storage-features.rds-stop-instance-restart",
      "name": "RDS 인스턴스 중지와 7일 뒤 자동 재시작"
     },
     {
-     "id": "rds-storage-features.rds-encrypt-existing-instance",
-     "name": "기존 RDS 인스턴스의 저장 중 암호화 절차"
+     "id": "rds-storage-features.rds-custom",
+     "name": "RDS Custom"
     },
     {
      "id": "rds-storage-features.rds-custom-byol",
@@ -763,6 +763,10 @@
      "name": "Aurora Serverless v2"
     },
     {
+     "id": "aurora.aurora-serverless-max-acu",
+     "name": "Aurora Serverless의 최대 ACU 설정"
+    },
+    {
      "id": "aurora.aurora-reader-endpoint",
      "name": "Aurora 전용 Reader Endpoint"
     },
@@ -775,8 +779,16 @@
      "name": "Aurora Auto Scaling의 레플리카 수 조정"
     },
     {
+     "id": "aurora.read-replica-no-schema-change",
+     "name": "읽기 전용 복제본의 스키마 변경 제약"
+    },
+    {
      "id": "aurora.babelfish",
      "name": "Babelfish for Aurora PostgreSQL"
+    },
+    {
+     "id": "aurora.sql-server-license-cost",
+     "name": "SQL Server를 그대로 옮길 때의 라이선스 비용"
     },
     {
      "id": "aurora.aurora-pgvector",
@@ -795,6 +807,10 @@
      "name": "리전 간 Aurora 복제본"
     },
     {
+     "id": "aurora.aurora-global-database-write-region",
+     "name": "Aurora Global Database에서 쓰기를 받는 리전"
+    },
+    {
      "id": "aurora.aurora-continuous-backup-rpo",
      "name": "Aurora의 지속적 증분 백업"
     },
@@ -807,24 +823,8 @@
      "name": "Aurora Standard와 Aurora I/O-Optimized"
     },
     {
-     "id": "aurora.sql-server-license-cost",
-     "name": "SQL Server를 그대로 옮길 때의 라이선스 비용"
-    },
-    {
      "id": "aurora.aurora-zdr-and-activity-streams",
      "name": "확장 수단이 아닌 Aurora 기능 둘"
-    },
-    {
-     "id": "aurora.aurora-global-database-write-region",
-     "name": "Aurora Global Database에서 쓰기를 받는 리전"
-    },
-    {
-     "id": "aurora.aurora-serverless-max-acu",
-     "name": "Aurora Serverless의 최대 ACU 설정"
-    },
-    {
-     "id": "aurora.read-replica-no-schema-change",
-     "name": "읽기 전용 복제본의 스키마 변경 제약"
     }
    ]
   },
@@ -850,12 +850,24 @@
      "name": "DynamoDB Streams"
     },
     {
+     "id": "dynamodb.dynamodb-streams-retention-24h",
+     "name": "DynamoDB Streams의 24시간 보존 한계"
+    },
+    {
+     "id": "dynamodb.dynamodb-streams-batch-size",
+     "name": "DynamoDB Streams 소비의 배치 크기"
+    },
+    {
      "id": "dynamodb.dynamodb-global-tables",
      "name": "DynamoDB 글로벌 테이블"
     },
     {
      "id": "dynamodb.dynamodb-ttl",
      "name": "DynamoDB TTL"
+    },
+    {
+     "id": "dynamodb.dynamodb-ttl-deletion-delay",
+     "name": "TTL 삭제의 48시간 지연"
     },
     {
      "id": "dynamodb.dynamodb-global-secondary-index",
@@ -896,18 +908,6 @@
     {
      "id": "dynamodb.dynamodb-item-size-limit",
      "name": "DynamoDB 항목 크기 제한"
-    },
-    {
-     "id": "dynamodb.dynamodb-ttl-deletion-delay",
-     "name": "TTL 삭제의 48시간 지연"
-    },
-    {
-     "id": "dynamodb.dynamodb-streams-retention-24h",
-     "name": "DynamoDB Streams의 24시간 보존 한계"
-    },
-    {
-     "id": "dynamodb.dynamodb-streams-batch-size",
-     "name": "DynamoDB Streams 소비의 배치 크기"
     }
    ]
   },
@@ -1008,6 +1008,10 @@
      "name": "GPU 인스턴스 제품군과 컴퓨팅 서비스 선택"
     },
     {
+     "id": "ec2-autoscaling.enhanced-networking",
+     "name": "향상된 네트워킹"
+    },
+    {
      "id": "ec2-autoscaling.reserved-instance-types",
      "name": "표준 예약 인스턴스와 전환 가능 예약 인스턴스"
     },
@@ -1050,10 +1054,6 @@
     {
      "id": "ec2-autoscaling.elb-health-check-drives-asg-replacement",
      "name": "로드 밸런서 상태 검사와 인스턴스 교체"
-    },
-    {
-     "id": "ec2-autoscaling.enhanced-networking",
-     "name": "향상된 네트워킹"
     },
     {
      "id": "ec2-autoscaling.parallelcluster",
@@ -1265,6 +1265,14 @@
      "name": "함수 URL의 AWS_IAM 인증 유형"
     },
     {
+     "id": "lambda.lambda-invocation-types",
+     "name": "이벤트 호출과 요청-응답 호출"
+    },
+    {
+     "id": "lambda.lambda-kinesis-event-source",
+     "name": "Lambda의 Kinesis 스트림 레코드 처리"
+    },
+    {
      "id": "lambda.lambda-vpc-access",
      "name": "Lambda의 VPC 연결"
     },
@@ -1273,12 +1281,20 @@
      "name": "Lambda의 컨테이너 이미지 패키징"
     },
     {
-     "id": "lambda.lambda-invocation-types",
-     "name": "이벤트 호출과 요청-응답 호출"
+     "id": "lambda.lambda-layer-size-limit",
+     "name": "Lambda 레이어의 크기 제한"
+    },
+    {
+     "id": "lambda.lambda-efs-mount",
+     "name": "Lambda 함수의 EFS 마운트"
     },
     {
      "id": "lambda.lambda-memory-cpu-proportional",
      "name": "메모리에 비례하는 Lambda의 CPU 배정"
+    },
+    {
+     "id": "lambda.lambda-memory-ceiling",
+     "name": "Lambda 한 번 실행의 메모리 상한"
     },
     {
      "id": "lambda.lambda-reserved-concurrency",
@@ -1293,24 +1309,8 @@
      "name": "동시 실행 한도 초과와 TooManyRequestsException"
     },
     {
-     "id": "lambda.lambda-kinesis-event-source",
-     "name": "Lambda의 Kinesis 스트림 레코드 처리"
-    },
-    {
      "id": "lambda.lambda-snapstart",
      "name": "Lambda SnapStart"
-    },
-    {
-     "id": "lambda.lambda-memory-ceiling",
-     "name": "Lambda 한 번 실행의 메모리 상한"
-    },
-    {
-     "id": "lambda.lambda-layer-size-limit",
-     "name": "Lambda 레이어의 크기 제한"
-    },
-    {
-     "id": "lambda.lambda-efs-mount",
-     "name": "Lambda 함수의 EFS 마운트"
     },
     {
      "id": "lambda.lambda-version-alias-config-freeze",
