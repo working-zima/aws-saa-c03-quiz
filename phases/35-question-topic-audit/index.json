@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "sample-verdicts",
-      "status": "pending"
+      "status": "completed",
+      "summary": "표본 40문항 판정: keep 35·ambiguous 2(q284·q364)·move-recommended 3(q154·q223 high, q355 medium), 이동 신뢰도 high 2·medium 1·low 0; 판단 경계 q284·q355·q364, q223 커버리지 충돌·needs-design 기록. Node 18.17.1에서 lint·build·npm test·구조 검사·판정 검사·표본 목록/순서·제품 데이터 4종 해시 검증 통과; wc 문자열 비교는 macOS 앞쪽 공백으로 실패해 -eq 숫자 비교로 40줄 확인. 사용자 검토 전 전체 판정으로 확대하지 않음.",
+      "started_at": "2026-09-12T08:36:35+0900",
+      "completed_at": "2026-09-12T08:47:19+0900"
     },
     {
       "step": 3,
