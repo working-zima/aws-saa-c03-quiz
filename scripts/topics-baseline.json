@@ -427,26 +427,6 @@
      "name": "EFS (Elastic File System)"
     },
     {
-     "id": "efs-fsx.efs-lifecycle-management",
-     "name": "EFS 수명 주기 관리"
-    },
-    {
-     "id": "efs-fsx.fsx",
-     "name": "FSx (File System for Extended use)"
-    },
-    {
-     "id": "efs-fsx.fsx-windows-file-server",
-     "name": "Amazon FSx for Windows File Server"
-    },
-    {
-     "id": "efs-fsx.fsx-for-lustre",
-     "name": "Amazon FSx for Lustre"
-    },
-    {
-     "id": "efs-fsx.fsx-file-gateway",
-     "name": "Amazon FSx File Gateway"
-    },
-    {
      "id": "efs-fsx.efs-throughput-modes",
      "name": "EFS의 버스팅 처리량과 프로비저닝된 처리량"
     },
@@ -467,32 +447,8 @@
      "name": "EFS의 POSIX 권한 모델"
     },
     {
-     "id": "efs-fsx.fsx-lustre-sub-millisecond-latency",
-     "name": "FSx for Lustre의 1ms 이내 액세스 지연"
-    },
-    {
-     "id": "efs-fsx.fsx-lustre-persistent-deployment",
-     "name": "FSx for Lustre의 영구 배포 유형"
-    },
-    {
-     "id": "efs-fsx.fsx-ontap-multi-az",
-     "name": "FSx for NetApp ONTAP의 다중 AZ 배포"
-    },
-    {
-     "id": "efs-fsx.fsx-ontap-multi-protocol-tiering",
-     "name": "FSx for NetApp ONTAP의 NFS·SMB 동시 지원과 자동 계층화"
-    },
-    {
-     "id": "efs-fsx.fsx-ontap-iscsi-block",
-     "name": "FSx for NetApp ONTAP의 iSCSI 블록 스토리지"
-    },
-    {
-     "id": "efs-fsx.fsx-ontap-snapmirror",
-     "name": "FSx for NetApp ONTAP과 SnapMirror"
-    },
-    {
-     "id": "efs-fsx.sql-server-always-on-shared-storage",
-     "name": "SQL Server Always On 가용성 그룹의 공유 스토리지"
+     "id": "efs-fsx.efs-lifecycle-management",
+     "name": "EFS 수명 주기 관리"
     },
     {
      "id": "efs-fsx.efs-ia-file-size-threshold",
@@ -515,12 +471,56 @@
      "name": "EFS 복제의 단방향 제약"
     },
     {
+     "id": "efs-fsx.fsx",
+     "name": "FSx (File System for Extended use)"
+    },
+    {
+     "id": "efs-fsx.fsx-windows-file-server",
+     "name": "Amazon FSx for Windows File Server"
+    },
+    {
+     "id": "efs-fsx.sql-server-always-on-shared-storage",
+     "name": "SQL Server Always On 가용성 그룹의 공유 스토리지"
+    },
+    {
      "id": "efs-fsx.fsx-windows-storage-auto-scaling",
      "name": "FSx for Windows File Server의 자동 스토리지 확장"
     },
     {
+     "id": "efs-fsx.fsx-for-lustre",
+     "name": "Amazon FSx for Lustre"
+    },
+    {
+     "id": "efs-fsx.fsx-lustre-sub-millisecond-latency",
+     "name": "FSx for Lustre의 1ms 이내 액세스 지연"
+    },
+    {
+     "id": "efs-fsx.fsx-lustre-persistent-deployment",
+     "name": "FSx for Lustre의 영구 배포 유형"
+    },
+    {
      "id": "efs-fsx.fsx-lustre-s3-data-repository-association",
      "name": "FSx for Lustre의 데이터 리포지토리 연결"
+    },
+    {
+     "id": "efs-fsx.fsx-ontap-multi-az",
+     "name": "FSx for NetApp ONTAP의 다중 AZ 배포"
+    },
+    {
+     "id": "efs-fsx.fsx-ontap-multi-protocol-tiering",
+     "name": "FSx for NetApp ONTAP의 NFS·SMB 동시 지원과 자동 계층화"
+    },
+    {
+     "id": "efs-fsx.fsx-ontap-iscsi-block",
+     "name": "FSx for NetApp ONTAP의 iSCSI 블록 스토리지"
+    },
+    {
+     "id": "efs-fsx.fsx-ontap-snapmirror",
+     "name": "FSx for NetApp ONTAP과 SnapMirror"
+    },
+    {
+     "id": "efs-fsx.fsx-file-gateway",
+     "name": "Amazon FSx File Gateway"
     }
    ]
   },
@@ -538,44 +538,8 @@
      "name": "DataSync"
     },
     {
-     "id": "data-transfer-services.snowball-edge",
-     "name": "Snowball Edge"
-    },
-    {
-     "id": "data-transfer-services.snowball-edge-compute",
-     "name": "Snowball Edge의 현장 컴퓨팅 기능"
-    },
-    {
-     "id": "data-transfer-services.transfer-family",
-     "name": "Transfer Family"
-    },
-    {
-     "id": "data-transfer-services.transfer-family-workflow",
-     "name": "Transfer Family의 업로드 후 워크플로"
-    },
-    {
-     "id": "data-transfer-services.s3-transfer-acceleration",
-     "name": "S3 전송 가속"
-    },
-    {
-     "id": "data-transfer-services.transfer-deadline-vs-bandwidth",
-     "name": "전송 수단을 정하는 기한과 대역폭 계산"
-    },
-    {
      "id": "data-transfer-services.file-gateway-vs-datasync-continuous",
      "name": "지속 수집과 예약 전송의 갈림길"
-    },
-    {
-     "id": "data-transfer-services.transfer-family-custom-hostname",
-     "name": "Transfer Family의 사용자 지정 DNS 이름"
-    },
-    {
-     "id": "data-transfer-services.transfer-family-directory-service-identity-provider",
-     "name": "Transfer Family의 Directory Service ID 공급자"
-    },
-    {
-     "id": "data-transfer-services.transfer-family-service-managed-users",
-     "name": "Transfer Family의 서비스 관리형 사용자"
     },
     {
      "id": "data-transfer-services.datasync-scope-limits",
@@ -598,12 +562,48 @@
      "name": "DataSync 작업 실행 상태의 EventBridge 이벤트"
     },
     {
+     "id": "data-transfer-services.snowball-edge",
+     "name": "Snowball Edge"
+    },
+    {
+     "id": "data-transfer-services.snowball-edge-compute",
+     "name": "Snowball Edge의 현장 컴퓨팅 기능"
+    },
+    {
+     "id": "data-transfer-services.transfer-deadline-vs-bandwidth",
+     "name": "전송 수단을 정하는 기한과 대역폭 계산"
+    },
+    {
+     "id": "data-transfer-services.transfer-family",
+     "name": "Transfer Family"
+    },
+    {
+     "id": "data-transfer-services.transfer-family-custom-hostname",
+     "name": "Transfer Family의 사용자 지정 DNS 이름"
+    },
+    {
+     "id": "data-transfer-services.transfer-family-directory-service-identity-provider",
+     "name": "Transfer Family의 Directory Service ID 공급자"
+    },
+    {
+     "id": "data-transfer-services.transfer-family-service-managed-users",
+     "name": "Transfer Family의 서비스 관리형 사용자"
+    },
+    {
+     "id": "data-transfer-services.transfer-family-workflow",
+     "name": "Transfer Family의 업로드 후 워크플로"
+    },
+    {
      "id": "data-transfer-services.transfer-family-workflow-actions",
      "name": "업로드 후 워크플로의 미리 정의된 액션"
     },
     {
      "id": "data-transfer-services.transfer-family-structured-logging",
      "name": "Transfer Family의 구조화된 로깅"
+    },
+    {
+     "id": "data-transfer-services.s3-transfer-acceleration",
+     "name": "S3 전송 가속"
     },
     {
      "id": "data-transfer-services.s3-multipart-upload",
@@ -1162,42 +1162,6 @@
      "name": "CloudFront의 온프레미스 오리진"
     },
     {
-     "id": "cloudfront-global-accelerator.global-accelerator",
-     "name": "Global Accelerator"
-    },
-    {
-     "id": "cloudfront-global-accelerator.global-accelerator-static-ip",
-     "name": "Global Accelerator의 고정 IP"
-    },
-    {
-     "id": "cloudfront-global-accelerator.global-accelerator-endpoints",
-     "name": "Global Accelerator가 앞에 붙는 대상"
-    },
-    {
-     "id": "cloudfront-global-accelerator.edge-keyword",
-     "name": "'Edge'라는 키워드"
-    },
-    {
-     "id": "cloudfront-global-accelerator.lambda-at-edge",
-     "name": "Lambda@Edge"
-    },
-    {
-     "id": "cloudfront-global-accelerator.cloudfront-functions",
-     "name": "CloudFront Functions"
-    },
-    {
-     "id": "cloudfront-global-accelerator.global-accelerator-protocols",
-     "name": "Global Accelerator가 처리하는 것"
-    },
-    {
-     "id": "cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost",
-     "name": "엣지 캐시가 줄이는 데이터 전송 비용"
-    },
-    {
-     "id": "cloudfront-global-accelerator.global-accelerator-vs-dns-failover",
-     "name": "DNS 캐시에 영향받지 않는 장애 조치"
-    },
-    {
      "id": "cloudfront-global-accelerator.cloudfront-signed-url",
      "name": "CloudFront 서명된 URL"
     },
@@ -1212,14 +1176,6 @@
     {
      "id": "cloudfront-global-accelerator.cloudfront-field-level-encryption",
      "name": "CloudFront 필드 수준 암호화"
-    },
-    {
-     "id": "cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location",
-     "name": "뷰어 위치에 따른 Lambda@Edge의 오리진 선택"
-    },
-    {
-     "id": "cloudfront-global-accelerator.lambda-at-edge-response-compression",
-     "name": "Lambda@Edge의 응답 압축"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-price-class",
@@ -1238,8 +1194,52 @@
      "name": "ALB 오리진 접근을 CloudFront로 좁히는 보안 그룹"
     },
     {
+     "id": "cloudfront-global-accelerator.edge-keyword",
+     "name": "'Edge'라는 키워드"
+    },
+    {
+     "id": "cloudfront-global-accelerator.lambda-at-edge",
+     "name": "Lambda@Edge"
+    },
+    {
+     "id": "cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location",
+     "name": "뷰어 위치에 따른 Lambda@Edge의 오리진 선택"
+    },
+    {
+     "id": "cloudfront-global-accelerator.lambda-at-edge-response-compression",
+     "name": "Lambda@Edge의 응답 압축"
+    },
+    {
+     "id": "cloudfront-global-accelerator.cloudfront-functions",
+     "name": "CloudFront Functions"
+    },
+    {
      "id": "cloudfront-global-accelerator.cloudfront-functions-no-external-calls",
      "name": "CloudFront Functions의 외부 서비스 호출 제약"
+    },
+    {
+     "id": "cloudfront-global-accelerator.global-accelerator",
+     "name": "Global Accelerator"
+    },
+    {
+     "id": "cloudfront-global-accelerator.global-accelerator-static-ip",
+     "name": "Global Accelerator의 고정 IP"
+    },
+    {
+     "id": "cloudfront-global-accelerator.global-accelerator-endpoints",
+     "name": "Global Accelerator가 앞에 붙는 대상"
+    },
+    {
+     "id": "cloudfront-global-accelerator.global-accelerator-protocols",
+     "name": "Global Accelerator가 처리하는 것"
+    },
+    {
+     "id": "cloudfront-global-accelerator.global-accelerator-vs-dns-failover",
+     "name": "DNS 캐시에 영향받지 않는 장애 조치"
+    },
+    {
+     "id": "cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost",
+     "name": "엣지 캐시가 줄이는 데이터 전송 비용"
     }
    ]
   },
@@ -1534,28 +1534,68 @@
      "name": "SQS (Simple Queue Service)"
     },
     {
+     "id": "sqs-sns-eventbridge.dead-letter-queue",
+     "name": "데드레터 큐(DLQ)"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-details",
+     "name": "SQS의 보존 기간과 표준 대기열의 약점"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-queue-depth-scaling",
+     "name": "대기열 깊이 기반 오토 스케일링"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-batch-and-polling",
+     "name": "SQS의 배치·가시성 타임아웃·롱 폴링"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time",
+     "name": "가시성 타임아웃과 소비자의 처리 시간"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-message-size-limit",
+     "name": "SQS 메시지의 크기 한계"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
+     "name": "FIFO 대기열의 순서 보장 단위인 메시지 그룹 ID"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
+     "name": "5분 동안 적용되는 FIFO 대기열의 중복 제거 ID"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
+     "name": "FIFO 대기열의 콘텐츠 기반 중복 제거"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-queue-policy",
+     "name": "큐에 직접 붙이는 리소스 기반 정책"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission",
+     "name": "SQS 큐 암호화와 소비자의 복호화 권한"
+    },
+    {
+     "id": "sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy",
+     "name": "SQS 인터페이스 VPC 엔드포인트와 큐 정책"
+    },
+    {
      "id": "sqs-sns-eventbridge.sns",
      "name": "SNS (Simple Notification Service)"
     },
     {
-     "id": "sqs-sns-eventbridge.eventbridge",
-     "name": "EventBridge"
+     "id": "sqs-sns-eventbridge.sns-fifo-topic",
+     "name": "SNS FIFO 주제"
     },
     {
-     "id": "sqs-sns-eventbridge.eventbridge-scheduler",
-     "name": "EventBridge Scheduler"
+     "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
+     "name": "SNS의 메시지 본문 재작성 제약"
     },
     {
-     "id": "sqs-sns-eventbridge.amazon-mq",
-     "name": "Amazon MQ"
-    },
-    {
-     "id": "sqs-sns-eventbridge.ses",
-     "name": "Amazon SES (Simple Email Service)"
-    },
-    {
-     "id": "sqs-sns-eventbridge.dead-letter-queue",
-     "name": "데드레터 큐(DLQ)"
+     "id": "sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions",
+     "name": "암호화된 SNS 주제 게시에 필요한 세 가지 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sns-is-not-a-queue",
@@ -1564,6 +1604,18 @@
     {
      "id": "sqs-sns-eventbridge.sns-sqs-fanout-per-consumer",
      "name": "소비자마다 큐를 두는 팬아웃"
+    },
+    {
+     "id": "sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy",
+     "name": "계정 간 SNS 발행과 큐 정책의 주제 ARN"
+    },
+    {
+     "id": "sqs-sns-eventbridge.eventbridge",
+     "name": "EventBridge"
+    },
+    {
+     "id": "sqs-sns-eventbridge.eventbridge-scheduler",
+     "name": "EventBridge Scheduler"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
@@ -1598,68 +1650,16 @@
      "name": "리소스 구성 변경에 거는 EventBridge 규칙"
     },
     {
-     "id": "sqs-sns-eventbridge.sqs-details",
-     "name": "SQS의 보존 기간과 표준 대기열의 약점"
+     "id": "sqs-sns-eventbridge.amazon-mq",
+     "name": "Amazon MQ"
     },
     {
-     "id": "sqs-sns-eventbridge.sns-fifo-topic",
-     "name": "SNS FIFO 주제"
+     "id": "sqs-sns-eventbridge.ses",
+     "name": "Amazon SES (Simple Email Service)"
     },
     {
      "id": "sqs-sns-eventbridge.ses-inbound-email-receiving",
      "name": "SES의 이메일 수신 규칙"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-queue-depth-scaling",
-     "name": "대기열 깊이 기반 오토 스케일링"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-batch-and-polling",
-     "name": "SQS의 배치·가시성 타임아웃·롱 폴링"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time",
-     "name": "가시성 타임아웃과 소비자의 처리 시간"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-message-size-limit",
-     "name": "SQS 메시지의 크기 한계"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
-     "name": "FIFO 대기열의 순서 보장 단위인 메시지 그룹 ID"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
-     "name": "5분 동안 적용되는 FIFO 대기열의 중복 제거 ID"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
-     "name": "FIFO 대기열의 콘텐츠 기반 중복 제거"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
-     "name": "SNS의 메시지 본문 재작성 제약"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-queue-policy",
-     "name": "큐에 직접 붙이는 리소스 기반 정책"
-    },
-    {
-     "id": "sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy",
-     "name": "계정 간 SNS 발행과 큐 정책의 주제 ARN"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission",
-     "name": "SQS 큐 암호화와 소비자의 복호화 권한"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions",
-     "name": "암호화된 SNS 주제 게시에 필요한 세 가지 권한"
-    },
-    {
-     "id": "sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy",
-     "name": "SQS 인터페이스 VPC 엔드포인트와 큐 정책"
     }
    ]
   },
@@ -2296,20 +2296,12 @@
      "name": "Secrets Manager"
     },
     {
+     "id": "secrets-encryption.secrets-manager-batch-get-secret-value",
+     "name": "Secrets Manager의 BatchGetSecretValue API"
+    },
+    {
      "id": "secrets-encryption.parameter-store",
      "name": "Systems Manager Parameter Store"
-    },
-    {
-     "id": "secrets-encryption.kms",
-     "name": "KMS (Key Management Service)"
-    },
-    {
-     "id": "secrets-encryption.acm",
-     "name": "ACM (AWS Certificate Manager)"
-    },
-    {
-     "id": "secrets-encryption.cloudhsm",
-     "name": "AWS CloudHSM"
     },
     {
      "id": "secrets-encryption.secrets-manager-vs-parameter-store",
@@ -2320,6 +2312,10 @@
      "name": "자동 순환을 가리키는 신호"
     },
     {
+     "id": "secrets-encryption.kms",
+     "name": "KMS (Key Management Service)"
+    },
+    {
      "id": "secrets-encryption.kms-key-types-by-management",
      "name": "KMS 키의 관리 주체: 고객 관리 키·AWS 관리 키·AWS 소유 키"
     },
@@ -2328,24 +2324,12 @@
      "name": "KMS 다중 리전 키"
     },
     {
-     "id": "secrets-encryption.kms-imported-key-material",
-     "name": "KMS의 가져온 키 자료"
-    },
-    {
-     "id": "secrets-encryption.kms-cloudhsm-key-store",
-     "name": "CloudHSM이 뒷받침하는 KMS 키"
-    },
-    {
      "id": "secrets-encryption.kms-key-per-tenant",
      "name": "고객마다 따로 만드는 KMS 키"
     },
     {
-     "id": "secrets-encryption.acm-dns-validation",
-     "name": "ACM의 도메인 검증 방식"
-    },
-    {
-     "id": "secrets-encryption.secrets-manager-batch-get-secret-value",
-     "name": "Secrets Manager의 BatchGetSecretValue API"
+     "id": "secrets-encryption.kms-imported-key-material",
+     "name": "KMS의 가져온 키 자료"
     },
     {
      "id": "secrets-encryption.kms-automatic-key-rotation",
@@ -2362,6 +2346,22 @@
     {
      "id": "secrets-encryption.lambda-env-var-kms",
      "name": "Lambda 환경 변수의 KMS 암호화"
+    },
+    {
+     "id": "secrets-encryption.cloudhsm",
+     "name": "AWS CloudHSM"
+    },
+    {
+     "id": "secrets-encryption.kms-cloudhsm-key-store",
+     "name": "CloudHSM이 뒷받침하는 KMS 키"
+    },
+    {
+     "id": "secrets-encryption.acm",
+     "name": "ACM (AWS Certificate Manager)"
+    },
+    {
+     "id": "secrets-encryption.acm-dns-validation",
+     "name": "ACM의 도메인 검증 방식"
     },
     {
      "id": "secrets-encryption.acm-cloudfront-region",

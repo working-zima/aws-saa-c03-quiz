@@ -3144,66 +3144,77 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('EFS·FSx 주제가 파일 시스템 여섯 다음에 선택 기준과 구성 한계를 둔다', () => {
+  it('EFS·FSx 주제가 EFS·FSx 개요·Windows·Lustre·ONTAP·File Gateway 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'efs-fsx')
 
-    // 1단 EFS와 FSx 네 갈래가 각각 무엇인가 → 2단 어느 프로토콜·어느 지연 시간에
-    // 무엇을 고르는가 → 3단 IA 전환 조건·마운트 대상·복제가 한 방향이라는 것.
-    // EFS ↔ FSx(Windows·Lustre·ONTAP)는 공유 파일 스토리지 선택 그 자체라 흩지 않는다.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // EFS: 기본 → 처리량 모드 둘·성능 모드·One Zone·POSIX 권한 → 수명 주기 관리와 그 세부 둘 →
+    //   마운트 대상·계정 간 마운트·단방향 복제. 수명 주기 관리는 주요 기능이지만 자기 세부와
+    //   붙이려고 갈림길 뒤에 둔다.
+    // FSx 개요: Windows·Lustre·ONTAP·OpenZFS를 한 번에 소개한다. ONTAP은 따로 기본 개념이 없어
+    //   이 개요가 그 자리를 맡는다.
+    // FSx for Windows File Server → FSx for Lustre → FSx for NetApp ONTAP.
+    // FSx File Gateway: FSx 파일 시스템이 아니라 온프레미스 쪽 접점이라 FSx 종류를 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'efs-fsx.efs',
-      'efs-fsx.efs-lifecycle-management',
-      'efs-fsx.fsx',
-      'efs-fsx.fsx-windows-file-server',
-      'efs-fsx.fsx-for-lustre',
-      'efs-fsx.fsx-file-gateway',
       'efs-fsx.efs-throughput-modes',
       'efs-fsx.efs-elastic-throughput',
       'efs-fsx.efs-performance-modes',
       'efs-fsx.efs-one-zone',
       'efs-fsx.efs-posix-permissions',
-      'efs-fsx.fsx-lustre-sub-millisecond-latency',
-      'efs-fsx.fsx-lustre-persistent-deployment',
-      'efs-fsx.fsx-ontap-multi-az',
-      'efs-fsx.fsx-ontap-multi-protocol-tiering',
-      'efs-fsx.fsx-ontap-iscsi-block',
-      'efs-fsx.fsx-ontap-snapmirror',
-      'efs-fsx.sql-server-always-on-shared-storage',
+      'efs-fsx.efs-lifecycle-management',
       'efs-fsx.efs-ia-file-size-threshold',
       'efs-fsx.efs-lifecycle-transition-to-primary',
       'efs-fsx.efs-mount-target-per-az',
       'efs-fsx.efs-cross-account-mount',
       'efs-fsx.efs-replication-one-way',
+      'efs-fsx.fsx',
+      'efs-fsx.fsx-windows-file-server',
+      'efs-fsx.sql-server-always-on-shared-storage',
       'efs-fsx.fsx-windows-storage-auto-scaling',
+      'efs-fsx.fsx-for-lustre',
+      'efs-fsx.fsx-lustre-sub-millisecond-latency',
+      'efs-fsx.fsx-lustre-persistent-deployment',
       'efs-fsx.fsx-lustre-s3-data-repository-association',
+      'efs-fsx.fsx-ontap-multi-az',
+      'efs-fsx.fsx-ontap-multi-protocol-tiering',
+      'efs-fsx.fsx-ontap-iscsi-block',
+      'efs-fsx.fsx-ontap-snapmirror',
+      'efs-fsx.fsx-file-gateway',
     ])
   })
 
-  it('데이터 전송 주제가 전송 도구 넷 다음에 선택 기준과 설정 항목을 둔다', () => {
+  it('데이터 전송 주제가 DataSync·Snowball Edge·Transfer Family·S3 직접 전송 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'data-transfer-services')
 
-    // 1단 DataSync·Snowball Edge·Transfer Family·S3 전송이 각각 무엇인가 → 2단 기한과
-    // 대역폭을 먼저 곱해 보기, 지속 수집 ↔ 예약 전송, 어느 ID 공급자를 쓰는가 →
-    // 3단 DataSync가 맡지 않는 일·워크플로 기본 액션·멀티파트 업로드의 조건.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // DataSync: 기본 → 지속 수집과 예약 전송의 갈림길 → 맡지 않는 일 → 전송 중 암호화·매니페스트·
+    //   전송 모드·상태 이벤트.
+    // Snowball Edge: 기본 → 현장 컴퓨팅 → 기한과 대역폭 계산(회선을 타는 수단이 전부 탈락한 뒤
+    //   Snowball Edge가 남는다는 조건이라 이 블록 끝).
+    // Transfer Family: 기본 → 사용자 지정 DNS 이름·Directory Service ID 공급자·서비스 관리형 사용자 →
+    //   업로드 후 워크플로와 그 미리 정의된 액션 → 구조화된 로깅. 워크플로는 주요 기능이지만 자기
+    //   세부와 붙이려고 갈림길 셋 뒤에 둔다.
+    // S3 직접 전송: 전송 가속 → 멀티파트 업로드.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'data-transfer-services.datasync',
-      'data-transfer-services.snowball-edge',
-      'data-transfer-services.snowball-edge-compute',
-      'data-transfer-services.transfer-family',
-      'data-transfer-services.transfer-family-workflow',
-      'data-transfer-services.s3-transfer-acceleration',
-      'data-transfer-services.transfer-deadline-vs-bandwidth',
       'data-transfer-services.file-gateway-vs-datasync-continuous',
-      'data-transfer-services.transfer-family-custom-hostname',
-      'data-transfer-services.transfer-family-directory-service-identity-provider',
-      'data-transfer-services.transfer-family-service-managed-users',
       'data-transfer-services.datasync-scope-limits',
       'data-transfer-services.datasync-in-transit-encryption',
       'data-transfer-services.datasync-manifest',
       'data-transfer-services.datasync-transfer-mode',
       'data-transfer-services.datasync-task-status-event',
+      'data-transfer-services.snowball-edge',
+      'data-transfer-services.snowball-edge-compute',
+      'data-transfer-services.transfer-deadline-vs-bandwidth',
+      'data-transfer-services.transfer-family',
+      'data-transfer-services.transfer-family-custom-hostname',
+      'data-transfer-services.transfer-family-directory-service-identity-provider',
+      'data-transfer-services.transfer-family-service-managed-users',
+      'data-transfer-services.transfer-family-workflow',
       'data-transfer-services.transfer-family-workflow-actions',
       'data-transfer-services.transfer-family-structured-logging',
+      'data-transfer-services.s3-transfer-acceleration',
       'data-transfer-services.s3-multipart-upload',
     ])
   })
@@ -3457,39 +3468,42 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('CloudFront·Global Accelerator 주제가 두 서비스와 오리진 다음에 갈림길과 한계를 둔다', () => {
+  it('CloudFront·Global Accelerator 주제가 CloudFront·엣지 함수·Global Accelerator 블록 다음에 둘의 비용 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cloudfront-global-accelerator')
 
-    // 1단 CloudFront와 그 오리진, Global Accelerator와 그 진입점, 'Edge'의 뜻,
-    // 엣지에서 도는 함수 둘 → 2단 캐싱할 사본이 있느냐·비용·DNS 캐시·접근 통제
-    // 장치 넷·엣지 함수로 할 수 있는 일의 갈림길 → 3단 가격 등급, 무효화와 TTL,
-    // 오리진 접근 제한, 엣지 함수의 한계.
-    // step 10이 lambda-at-edge·cloudfront-functions·응답 압축 셋을 옮겨 왔다.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // CloudFront: 기본과 오리진 셋 → 서명된 URL·서명된 쿠키·지리적 제한·필드 수준 암호화 →
+    //   가격 등급·TTL과 무효화·OAC로 받는 업로드·ALB 오리진 접근 제한. ALB 오리진 접근 제한은
+    //   OAC를 전제로 쓰므로 OAC 업로드 뒤.
+    // 엣지 함수: 'Edge'의 뜻 → Lambda@Edge와 그 쓰임 둘(오리진 선택·응답 압축) → CloudFront Functions와
+    //   그 제약.
+    // Global Accelerator: 기본 → 고정 IP·엔드포인트 → 프로토콜·DNS 캐시와 무관한 장애 조치.
+    // 비교: CloudFront와 Global Accelerator를 비용으로 가르므로 두 블록 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cloudfront-global-accelerator.cloudfront',
       'cloudfront-global-accelerator.cloudfront-alb-origin',
       'cloudfront-global-accelerator.cloudfront-multiple-origins',
       'cloudfront-global-accelerator.cloudfront-onprem-origin',
-      'cloudfront-global-accelerator.global-accelerator',
-      'cloudfront-global-accelerator.global-accelerator-static-ip',
-      'cloudfront-global-accelerator.global-accelerator-endpoints',
-      'cloudfront-global-accelerator.edge-keyword',
-      'cloudfront-global-accelerator.lambda-at-edge',
-      'cloudfront-global-accelerator.cloudfront-functions',
-      'cloudfront-global-accelerator.global-accelerator-protocols',
-      'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
-      'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
       'cloudfront-global-accelerator.cloudfront-signed-url',
       'cloudfront-global-accelerator.cloudfront-signed-cookie',
       'cloudfront-global-accelerator.cloudfront-geo-restriction',
       'cloudfront-global-accelerator.cloudfront-field-level-encryption',
-      'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
-      'cloudfront-global-accelerator.lambda-at-edge-response-compression',
       'cloudfront-global-accelerator.cloudfront-price-class',
       'cloudfront-global-accelerator.cloudfront-ttl',
       'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
       'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
+      'cloudfront-global-accelerator.edge-keyword',
+      'cloudfront-global-accelerator.lambda-at-edge',
+      'cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location',
+      'cloudfront-global-accelerator.lambda-at-edge-response-compression',
+      'cloudfront-global-accelerator.cloudfront-functions',
       'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+      'cloudfront-global-accelerator.global-accelerator',
+      'cloudfront-global-accelerator.global-accelerator-static-ip',
+      'cloudfront-global-accelerator.global-accelerator-endpoints',
+      'cloudfront-global-accelerator.global-accelerator-protocols',
+      'cloudfront-global-accelerator.global-accelerator-vs-dns-failover',
+      'cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost',
     ])
   })
 
@@ -3738,22 +3752,41 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('메시징 주제가 서비스 다섯과 데드레터 큐 다음에 갈림길과 한계를 둔다', () => {
+  it('메시징 주제가 SQS·SNS·SQS와 SNS의 조합·EventBridge·Amazon MQ·SES 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'sqs-sns-eventbridge')
 
-    // 1단 SQS·SNS·EventBridge·Amazon MQ·SES가 무엇이고 큐에 실패한 메시지가 어디로 가는가
-    // → 2단 세 갈래 중 언제 무엇을 고르는가(버퍼·팬아웃·라우팅·순서·이벤트 통로·수신)
-    // → 3단 배치와 가시성 타임아웃, 크기·중복 제거 창 같은 한계값, 큐·토픽에 필요한 권한.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // SQS: 기본 → 데드레터 큐 → 보존 기간과 표준 대기열의 약점 → 대기열 깊이 확장·배치·가시성 타임아웃·
+    //   크기 한계 → FIFO 셋 → 큐 정책·암호화·VPC 엔드포인트.
+    // SNS: 기본 → FIFO 주제 → 본문 재작성 제약 → 암호화된 주제의 게시 권한.
+    // SQS와 SNS의 조합: 버퍼인가 발행-구독인가, 소비자마다 큐를 두는 팬아웃, 계정 간 발행. 두 서비스를
+    //   가르거나 함께 쓰는 개념이라 두 블록 뒤에 둔다.
+    // EventBridge: 기본 → Scheduler → Step Functions와의 갈림길 → 보장하지 않는 것·이벤트 패턴·
+    //   버스·파이프·대상·리소스 변경 규칙.
+    // Amazon MQ. SES: 기본 → 수신 규칙.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'sqs-sns-eventbridge.sqs',
-      'sqs-sns-eventbridge.sns',
-      'sqs-sns-eventbridge.eventbridge',
-      'sqs-sns-eventbridge.eventbridge-scheduler',
-      'sqs-sns-eventbridge.amazon-mq',
-      'sqs-sns-eventbridge.ses',
       'sqs-sns-eventbridge.dead-letter-queue',
+      'sqs-sns-eventbridge.sqs-details',
+      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
+      'sqs-sns-eventbridge.sqs-batch-and-polling',
+      'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
+      'sqs-sns-eventbridge.sqs-message-size-limit',
+      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
+      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
+      'sqs-sns-eventbridge.sqs-content-based-deduplication',
+      'sqs-sns-eventbridge.sqs-queue-policy',
+      'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
+      'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
+      'sqs-sns-eventbridge.sns',
+      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.sns-no-message-body-rewrite',
+      'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
       'sqs-sns-eventbridge.sns-is-not-a-queue',
       'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer',
+      'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
+      'sqs-sns-eventbridge.eventbridge',
+      'sqs-sns-eventbridge.eventbridge-scheduler',
       'sqs-sns-eventbridge.eventbridge-vs-step-functions',
       'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
       'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
@@ -3762,22 +3795,9 @@ describe('학습 데이터 무결성', () => {
       'sqs-sns-eventbridge.eventbridge-api-destination',
       'sqs-sns-eventbridge.eventbridge-private-api-target',
       'sqs-sns-eventbridge.eventbridge-resource-change-rule',
-      'sqs-sns-eventbridge.sqs-details',
-      'sqs-sns-eventbridge.sns-fifo-topic',
+      'sqs-sns-eventbridge.amazon-mq',
+      'sqs-sns-eventbridge.ses',
       'sqs-sns-eventbridge.ses-inbound-email-receiving',
-      'sqs-sns-eventbridge.sqs-queue-depth-scaling',
-      'sqs-sns-eventbridge.sqs-batch-and-polling',
-      'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time',
-      'sqs-sns-eventbridge.sqs-message-size-limit',
-      'sqs-sns-eventbridge.sqs-fifo-message-group-id',
-      'sqs-sns-eventbridge.sqs-fifo-deduplication-id',
-      'sqs-sns-eventbridge.sqs-content-based-deduplication',
-      'sqs-sns-eventbridge.sns-no-message-body-rewrite',
-      'sqs-sns-eventbridge.sqs-queue-policy',
-      'sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy',
-      'sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission',
-      'sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions',
-      'sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy',
     ])
   })
 
@@ -4642,33 +4662,37 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('비밀·키 주제가 서비스 다섯 다음에 무엇을 어디에 두는가와 한계를 둔다', () => {
+  it('비밀·키 주제가 Secrets Manager·Parameter Store·KMS·CloudHSM·ACM 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'secrets-encryption')
 
-    // 1단 Secrets Manager·Parameter Store·KMS·ACM·CloudHSM이 각각 무엇인가
-    // → 2단 비밀값을 어디에 두는가, 키를 누가 관리하는가, 리전을 넘는 키와 밖에서
-    //   가져온 키, 전용 하드웨어와 KMS를 함께 쓰는 자리, 도메인 검증 방식
-    // → 3단 한 번에 여러 비밀값을 읽는 API, 자동 교체의 주기와 키 유형 제약,
-    //   가져온 키 자료의 교체, 환경 변수 암호화, CloudFront 인증서의 리전과 만료 이벤트.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // Secrets Manager: 기본 → BatchGetSecretValue. Parameter Store: 기본.
+    // 두 저장소의 갈림길: Secrets Manager와 Parameter Store의 차이, 자동 순환을 가리키는 신호. 두
+    //   서비스를 가르므로 두 블록 뒤에 둔다.
+    // KMS: 기본 → 키 관리 주체·다중 리전 키·고객별 키·가져온 키 자료 → 자동 교체·대칭과 비대칭의
+    //   교체 → 가져온 키 자료의 교체 → Lambda 환경 변수 암호화. 가져온 키 자료의 교체는 자동 교체를
+    //   전제로 쓰므로 그 뒤에 두고, 가져온 키 자료는 자기 세부와 가깝게 갈림길의 끝에 둔다.
+    // CloudHSM: 기본 → CloudHSM이 뒷받침하는 KMS 키(KMS를 먼저 읽어야 하므로 KMS 블록 뒤).
+    // ACM: 기본 → DNS 검증 → CloudFront용 인증서의 리전 → 만료 임박 이벤트.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'secrets-encryption.secrets-manager',
+      'secrets-encryption.secrets-manager-batch-get-secret-value',
       'secrets-encryption.parameter-store',
-      'secrets-encryption.kms',
-      'secrets-encryption.acm',
-      'secrets-encryption.cloudhsm',
       'secrets-encryption.secrets-manager-vs-parameter-store',
       'secrets-encryption.rotation-heuristic',
+      'secrets-encryption.kms',
       'secrets-encryption.kms-key-types-by-management',
       'secrets-encryption.kms-multi-region-key',
-      'secrets-encryption.kms-imported-key-material',
-      'secrets-encryption.kms-cloudhsm-key-store',
       'secrets-encryption.kms-key-per-tenant',
-      'secrets-encryption.acm-dns-validation',
-      'secrets-encryption.secrets-manager-batch-get-secret-value',
+      'secrets-encryption.kms-imported-key-material',
       'secrets-encryption.kms-automatic-key-rotation',
       'secrets-encryption.kms-symmetric-vs-asymmetric-rotation',
       'secrets-encryption.imported-key-material-rotation',
       'secrets-encryption.lambda-env-var-kms',
+      'secrets-encryption.cloudhsm',
+      'secrets-encryption.kms-cloudhsm-key-store',
+      'secrets-encryption.acm',
+      'secrets-encryption.acm-dns-validation',
       'secrets-encryption.acm-cloudfront-region',
       'secrets-encryption.acm-expiration-event',
     ])
