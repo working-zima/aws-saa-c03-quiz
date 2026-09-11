@@ -102,6 +102,17 @@ ADR-034의 순서를 그대로 따른다. 앞 칸을 채우지 못하면 뒤 칸
 교체 가능성 시험 하나로 결론내지 말고, 오답 넷이 무엇을 오해한 것인지와 해설이 실제로 어떤 지식을
 정답 근거로 쓰는지를 함께 보고 판정해라. 결론이 한쪽으로 서지 않으면 `ambiguous`가 맞는 답이다.
 
+## 이미 판정이 있으면 — 다시 만들지 말고 고친다
+
+`audit/verdicts.jsonl`이 이미 있고 40줄이면 **판정 내용을 새로 만들지 마라.** 검사에 걸린 줄만
+고친다. 앞선 실행에서 문항을 읽고 내린 판단을 재생성으로 날리지 않기 위해서다.
+
+- `secondaryTopics`는 **최대 2개**다(step 1이 정한 스키마). 세 개 이상 적었으면 정답을 결정하는 데
+  가장 가까운 둘만 남긴다. primary가 아닌 주제를 모아 두는 칸이 아니다.
+- `tools/validate-verdicts.mjs`가 이 상한을 검사하지 않으면 **검사기에 그 규칙을 더한다.** 남은
+  692문항이 같은 실수를 반복하지 않게 막는 것이 이 검사기의 목적이다.
+- 그 밖의 판정 필드(`verdict`·`decidingKnowledge`·`rationale` 등)는 그대로 둔다.
+
 ## Acceptance Criteria
 
 ```bash
@@ -112,8 +123,12 @@ node scripts/check-structure.mjs
 test "$(wc -l < phases/35-question-topic-audit/audit/verdicts.jsonl)" = 40
 node phases/35-question-topic-audit/tools/validate-verdicts.mjs --expect 40
 node -e "const f=require('fs');const want=['q001','q035','q044','q054','q068','q079','q087','q108','q114','q125','q128','q129','q154','q170','q174','q177','q188','q202','q206','q209','q211','q223','q226','q231','q248','q249','q256','q272','q284','q323','q327','q355','q364','q366','q377','q467','q630','q705','q722','q724'];const got=f.readFileSync('phases/35-question-topic-audit/audit/verdicts.jsonl','utf8').trim().split('\n').map((l)=>JSON.parse(l).id);if(JSON.stringify(got)!==JSON.stringify(want))throw new Error('표본 목록이나 순서가 다르다');console.log('표본 40문항 판정 완료')"
+node -e "const f=require('fs');const rows=f.readFileSync('phases/35-question-topic-audit/audit/verdicts.jsonl','utf8').trim().split('\n').map(JSON.parse);const bad=rows.filter((r)=>r.secondaryTopics.length>2).map((r)=>r.id);if(bad.length)throw new Error('secondaryTopics가 2개를 넘는다: '+bad.join(', '));console.log('secondaryTopics 상한 확인')"
 node -e "const c=require('crypto'),f=require('fs');const want={'src/data/questions.json':'aadc1894b3eb2d92','src/data/topics.json':'5a227aea172ca391','src/data/data.test.ts':'4f83435d7479cad8','scripts/topics-baseline.json':'aade58a88000ca6c'};for(const[p,h]of Object.entries(want)){const g=c.createHash('sha256').update(f.readFileSync(p)).digest('hex');if(!g.startsWith(h))throw new Error('제품 데이터가 바뀌었다: '+p)}console.log('제품 데이터 4종 그대로')"
 ```
+
+마지막에서 두 번째 줄은 에이전트가 만든 검사기와 **무관하게** 상한을 본다. 검사기가 그 규칙을
+빠뜨려도 여기서 걸린다.
 
 ## 검증 절차
 
