@@ -1,4 +1,5 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { Layout } from './components/Layout'
 import { ConceptReadPage } from './pages/ConceptReadPage'
 import { QuizPage } from './pages/QuizPage'
@@ -29,7 +30,13 @@ export function AppRoutes() {
 }
 
 function App() {
-  return <HashRouter><AppRoutes /></HashRouter>
+  return (
+    <ErrorBoundary>
+      <HashRouter>
+        <AppRoutes />
+      </HashRouter>
+    </ErrorBoundary>
+  )
 }
 
 export default App
