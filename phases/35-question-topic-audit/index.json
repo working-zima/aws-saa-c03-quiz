@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "audit-tooling",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T08:27:31+0900",
+      "summary": "워크시트 생성·판정 검사 도구 2개와 worksheet.jsonl 732줄(유일 문항 540건) 작성; Node 18.17.1에서 lint·build·기존 테스트 512개·도구 테스트 12개·구조 검사·제품 데이터 4종 해시·문항 전문 보존·CLI 검증 통과. AC의 wc 문자열 비교는 macOS 앞쪽 공백으로 실패하여 동등한 -eq 숫자 비교로 732줄 확인; verdicts.jsonl 미생성, phase 밖 파일 변경 없음.",
+      "completed_at": "2026-09-12T08:36:13+0900"
     },
     {
       "step": 2,
