@@ -56,7 +56,10 @@ const QUESTIONS = 'src/data/questions.json'
  * 설명하는 서술어라서, 사용자가 작업 대상에서 뺐다.
  */
 const TERMS = [
-  { key: 'SNS_TOPIC', standard: '주제', variants: ['토픽', '주제'] },
+  // 첫 등장에서 일반명사와 구분하려고 서비스 이름을 붙인 `SNS 주제`도 같은 대상이다.
+  // 착수 시점에 있던 `SNS 토픽` 17곳과 짝이 맞아야 하므로 그 형태도 함께 넣는다.
+  // `알림 주제`는 sqs-fifo-deduplication-id가 쓰던 또 다른 이름이다.
+  { key: 'SNS_TOPIC', standard: 'SNS 주제(첫 등장)·주제(이후)', variants: ['SNS 주제', 'SNS 토픽', '알림 주제', '토픽', '주제'] },
   // ADR-015가 약어를 처음 쓸 때 풀어 주므로 `FIFO(First In First Out) 큐` 꼴이 따로 있다.
   // 삽입형을 짝으로 넣지 않으면 그 자리를 고칠 때 위반으로 잡힌다.
   { key: 'FIFO_QUEUE', standard: 'FIFO 대기열', variants: ['FIFO(First In First Out) 대기열', 'FIFO(First In First Out) 큐', 'FIFO 대기열', 'FIFO 큐'] },
