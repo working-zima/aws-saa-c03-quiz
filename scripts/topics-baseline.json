@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256":"3834f3103a2260d68532c2def05948d49b2a5915d5bbaa06fd9c20ed2ca12099",
+ "questionsSha256": "aadc1894b3eb2d9211159ef346057bf24510ba534b78ccade4d40bf018343f54",
  "topics": [
   {
    "id": "aws-core-services",
@@ -82,7 +82,7 @@
     },
     {
      "id": "aws-core-services.blob-offload-to-s3",
-     "name": "큰 바이너리는 데이터베이스가 아니라 S3에 둔다"
+     "name": "큰 파일 본체의 저장 위치"
     }
    ]
   },
@@ -157,7 +157,7 @@
     },
     {
      "id": "s3-storage-classes.s3-retrieval-fee-by-class",
-     "name": "스토리지 클래스마다 갈리는 검색 요금"
+     "name": "스토리지 클래스마다 다른 검색 요금"
     },
     {
      "id": "s3-storage-classes.intelligent-tiering-monitoring-fee",
@@ -204,7 +204,7 @@
     },
     {
      "id": "s3-versioning-lifecycle.s3-replication-cross-account-kms",
-     "name": "복제는 다른 계정 버킷으로도 간다"
+     "name": "계정을 넘는 복제와 SSE-KMS 키 권한"
     },
     {
      "id": "s3-versioning-lifecycle.object-lock-prerequisites",
@@ -212,7 +212,7 @@
     },
     {
      "id": "s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter",
-     "name": "수명 주기 구성은 버킷에 하나, 규칙은 여럿"
+     "name": "수명 주기 구성의 개수 제한과 규칙의 크기 필터"
     }
    ]
   },
@@ -290,7 +290,7 @@
    "concepts": [
     {
      "id": "s3-access-control.s3-cross-account-bucket-policy",
-     "name": "계정 간 버킷 접근은 버킷 정책으로 연다"
+     "name": "계정 간 버킷 접근과 버킷 정책"
     },
     {
      "id": "s3-access-control.s3-presigned-url",
@@ -314,7 +314,7 @@
     },
     {
      "id": "s3-access-control.s3-cors-not-authorization",
-     "name": "CORS는 권한을 주는 장치가 아니다"
+     "name": "CORS의 권한 부여 한계"
     },
     {
      "id": "s3-access-control.s3-requester-pays",
@@ -322,15 +322,15 @@
     },
     {
      "id": "s3-access-control.s3-storage-lens-advanced-activity-metrics",
-     "name": "고급 활동 메트릭으로 식은 버킷을 찾는다"
+     "name": "S3 Storage Lens의 고급 활동 메트릭"
     },
     {
      "id": "s3-access-control.s3-account-level-public-access-block",
-     "name": "공개 액세스 차단은 계정 수준에도 건다"
+     "name": "계정 수준 공개 액세스 차단"
     },
     {
      "id": "s3-access-control.block-public-access-allows-explicit-grants",
-     "name": "막는 것은 \"공개\"이지 \"허용\"이 아니다"
+     "name": "공개 액세스 차단과 명시적 허용"
     },
     {
      "id": "s3-access-control.s3-bucket-policy-source-vpc-condition",
@@ -338,7 +338,7 @@
     },
     {
      "id": "s3-access-control.s3-website-endpoint-no-https",
-     "name": "정적 웹사이트 엔드포인트는 HTTPS를 지원하지 않는다"
+     "name": "정적 웹사이트 엔드포인트와 HTTPS"
     }
    ]
   },
@@ -377,7 +377,7 @@
     },
     {
      "id": "ebs-instance-store.gp3-iops-independent-of-size",
-     "name": "gp3는 IOPS를 용량과 따로 정한다"
+     "name": "gp3의 IOPS와 용량 분리"
     },
     {
      "id": "ebs-instance-store.spread-placement-group",
@@ -389,11 +389,11 @@
     },
     {
      "id": "ebs-instance-store.ebs-encryption-by-default",
-     "name": "EBS 기본 암호화는 계정 속성이다"
+     "name": "계정 속성으로 켜는 EBS 기본 암호화"
     },
     {
      "id": "ebs-instance-store.ebs-encryption-performance",
-     "name": "EBS 암호화는 성능을 깎지 않는다"
+     "name": "EBS 암호화와 성능"
     },
     {
      "id": "ebs-instance-store.ebs-recycle-bin",
@@ -405,7 +405,7 @@
     },
     {
      "id": "ebs-instance-store.data-lifecycle-manager",
-     "name": "스냅샷의 생성·보존·삭제를 정책으로 돌린다"
+     "name": "Amazon Data Lifecycle Manager"
     },
     {
      "id": "ebs-instance-store.ebs-fast-snapshot-restore",
@@ -456,7 +456,7 @@
     },
     {
      "id": "efs-fsx.efs-performance-modes",
-     "name": "EFS의 성능 모드는 처리량 모드와 다른 축이다"
+     "name": "EFS의 범용 성능 모드와 최대 I/O 성능 모드"
     },
     {
      "id": "efs-fsx.efs-one-zone",
@@ -464,15 +464,15 @@
     },
     {
      "id": "efs-fsx.efs-posix-permissions",
-     "name": "파일 권한 모델이 그대로 따라온다"
+     "name": "EFS의 POSIX 권한 모델"
     },
     {
      "id": "efs-fsx.fsx-lustre-sub-millisecond-latency",
-     "name": "1ms 이내라는 조건이 붙으면 Lustre다"
+     "name": "FSx for Lustre의 1ms 이내 액세스 지연"
     },
     {
      "id": "efs-fsx.fsx-lustre-persistent-deployment",
-     "name": "영구 파일 시스템이 내구성과 가용성을 맡는다"
+     "name": "FSx for Lustre의 영구 배포 유형"
     },
     {
      "id": "efs-fsx.fsx-ontap-multi-az",
@@ -480,11 +480,11 @@
     },
     {
      "id": "efs-fsx.fsx-ontap-multi-protocol-tiering",
-     "name": "ONTAP은 NFS와 SMB를 함께 받고 계층을 자동으로 나눈다"
+     "name": "FSx for NetApp ONTAP의 NFS·SMB 동시 지원과 자동 계층화"
     },
     {
      "id": "efs-fsx.fsx-ontap-iscsi-block",
-     "name": "ONTAP은 iSCSI로 블록 스토리지를 내준다"
+     "name": "FSx for NetApp ONTAP의 iSCSI 블록 스토리지"
     },
     {
      "id": "efs-fsx.fsx-ontap-snapmirror",
@@ -492,35 +492,35 @@
     },
     {
      "id": "efs-fsx.sql-server-always-on-shared-storage",
-     "name": "SQL Server 클러스터에는 공유 스토리지가 필요하다"
+     "name": "SQL Server Always On 가용성 그룹의 공유 스토리지"
     },
     {
      "id": "efs-fsx.efs-ia-file-size-threshold",
-     "name": "EFS IA는 작은 파일에는 해당하지 않는다"
+     "name": "EFS IA의 128KB 파일 크기 기준"
     },
     {
      "id": "efs-fsx.efs-lifecycle-transition-to-primary",
-     "name": "IA로 내려간 파일을 읽으면 다시 올려 보낼 수 있다"
+     "name": "EFS 수명 주기의 기본 스토리지 되돌리기 설정"
     },
     {
      "id": "efs-fsx.efs-mount-target-per-az",
-     "name": "마운트 대상은 가용 영역마다 하나씩 만든다"
+     "name": "가용 영역마다 두는 EFS 마운트 대상"
     },
     {
      "id": "efs-fsx.efs-cross-account-mount",
-     "name": "계정을 넘어 EFS를 마운트한다"
+     "name": "계정 간 EFS 마운트"
     },
     {
      "id": "efs-fsx.efs-replication-one-way",
-     "name": "EFS 복제는 한 방향이다"
+     "name": "EFS 복제의 단방향 제약"
     },
     {
      "id": "efs-fsx.fsx-windows-storage-auto-scaling",
-     "name": "FSx for Windows는 용량을 자동으로 늘린다"
+     "name": "FSx for Windows File Server의 자동 스토리지 확장"
     },
     {
      "id": "efs-fsx.fsx-lustre-s3-data-repository-association",
-     "name": "데이터 리포지토리 연결로 S3와 잇는다"
+     "name": "FSx for Lustre의 데이터 리포지토리 연결"
     }
    ]
   },
@@ -543,7 +543,7 @@
     },
     {
      "id": "data-transfer-services.snowball-edge-compute",
-     "name": "Snowball Edge는 전송 장비만이 아니다"
+     "name": "Snowball Edge의 현장 컴퓨팅 기능"
     },
     {
      "id": "data-transfer-services.transfer-family",
@@ -559,7 +559,7 @@
     },
     {
      "id": "data-transfer-services.transfer-deadline-vs-bandwidth",
-     "name": "기한과 대역폭을 먼저 곱해 본다"
+     "name": "전송 수단을 정하는 기한과 대역폭 계산"
     },
     {
      "id": "data-transfer-services.file-gateway-vs-datasync-continuous",
@@ -567,15 +567,15 @@
     },
     {
      "id": "data-transfer-services.transfer-family-custom-hostname",
-     "name": "기존 호스트 이름과 인증 체계를 그대로 옮긴다"
+     "name": "Transfer Family의 사용자 지정 DNS 이름"
     },
     {
      "id": "data-transfer-services.transfer-family-directory-service-identity-provider",
-     "name": "ID 공급자로 기존 Active Directory를 쓴다"
+     "name": "Transfer Family의 Directory Service ID 공급자"
     },
     {
      "id": "data-transfer-services.transfer-family-service-managed-users",
-     "name": "사용자와 SSH 키를 서비스가 들고 있는 방식"
+     "name": "Transfer Family의 서비스 관리형 사용자"
     },
     {
      "id": "data-transfer-services.datasync-scope-limits",
@@ -583,23 +583,23 @@
     },
     {
      "id": "data-transfer-services.datasync-in-transit-encryption",
-     "name": "DataSync는 전송 중에 암호화한다"
+     "name": "DataSync의 전송 중 암호화"
     },
     {
      "id": "data-transfer-services.datasync-manifest",
-     "name": "매니페스트로 전송 대상을 좁힌다"
+     "name": "전송 대상을 좁히는 DataSync 매니페스트"
     },
     {
      "id": "data-transfer-services.datasync-transfer-mode",
-     "name": "전송 모드로 바뀐 것만 보낸다"
+     "name": "DataSync 태스크의 전송 모드"
     },
     {
      "id": "data-transfer-services.datasync-task-status-event",
-     "name": "작업 실행 상태는 EventBridge 이벤트로 나온다"
+     "name": "DataSync 작업 실행 상태의 EventBridge 이벤트"
     },
     {
      "id": "data-transfer-services.transfer-family-workflow-actions",
-     "name": "워크플로에 이미 들어 있는 액션들"
+     "name": "업로드 후 워크플로의 미리 정의된 액션"
     },
     {
      "id": "data-transfer-services.transfer-family-structured-logging",
@@ -646,7 +646,7 @@
     },
     {
      "id": "storage-gateway-migration.dms-full-load-and-cdc-task",
-     "name": "전체 로드와 CDC를 한 태스크로 건다"
+     "name": "전체 로드와 변경 데이터 캡처를 함께 하는 복제 태스크"
     }
    ]
   },
@@ -689,7 +689,7 @@
     },
     {
      "id": "rds-storage-features.storage-type-names",
-     "name": "RDS 스토리지 유형의 실제 이름"
+     "name": "RDS 스토리지 유형의 약칭"
     },
     {
      "id": "rds-storage-features.multi-az-standby-limits",
@@ -697,11 +697,11 @@
     },
     {
      "id": "rds-storage-features.rds-multi-az-db-cluster",
-     "name": "다중 AZ DB 인스턴스와 다중 AZ DB 클러스터는 다르다"
+     "name": "다중 AZ DB 인스턴스 배포와 다중 AZ DB 클러스터 배포"
     },
     {
      "id": "rds-storage-features.read-replica-vs-cache",
-     "name": "캐시가 듣지 않는 조건"
+     "name": "캐시가 효과를 내지 못하는 조건"
     },
     {
      "id": "rds-storage-features.connection-issue-heuristic",
@@ -709,11 +709,11 @@
     },
     {
      "id": "rds-storage-features.rds-proxy-failover",
-     "name": "RDS Proxy가 장애 조치에도 관여한다"
+     "name": "RDS Proxy의 장애 조치 시간 단축"
     },
     {
      "id": "rds-storage-features.rds-snapshot-cross-region-copy",
-     "name": "스냅샷을 다른 리전으로 복사해 재해에 대비한다"
+     "name": "리전 간 RDS 스냅샷 복사"
     },
     {
      "id": "rds-storage-features.automated-backup-retention",
@@ -721,11 +721,11 @@
     },
     {
      "id": "rds-storage-features.rds-manual-snapshot-retention",
-     "name": "수동 스냅샷은 지울 때까지 남는다"
+     "name": "만료가 없는 수동 스냅샷"
     },
     {
      "id": "rds-storage-features.rds-pitr-transaction-log-interval",
-     "name": "특정 시점 복구의 정밀도는 5분이다"
+     "name": "특정 시점 복구와 5분 간격 트랜잭션 로그"
     },
     {
      "id": "rds-storage-features.rds-multi-az-failover-rto",
@@ -733,15 +733,15 @@
     },
     {
      "id": "rds-storage-features.rds-stop-instance-restart",
-     "name": "RDS 인스턴스는 멈춰 둘 수 있고, 7일 뒤 저절로 켜진다"
+     "name": "RDS 인스턴스 중지와 7일 뒤 자동 재시작"
     },
     {
      "id": "rds-storage-features.rds-encrypt-existing-instance",
-     "name": "이미 만든 인스턴스는 그 자리에서 암호화하지 못한다"
+     "name": "기존 RDS 인스턴스의 저장 중 암호화 절차"
     },
     {
      "id": "rds-storage-features.rds-custom-byol",
-     "name": "RDS Custom에는 보유 라이선스를 가져다 쓴다"
+     "name": "RDS Custom의 보유 라이선스 모델"
     }
    ]
   },
@@ -764,7 +764,7 @@
     },
     {
      "id": "aurora.aurora-reader-endpoint",
-     "name": "Reader Endpoint는 Aurora 전용"
+     "name": "Aurora 전용 Reader Endpoint"
     },
     {
      "id": "aurora.aurora-endpoint-types",
@@ -772,7 +772,7 @@
     },
     {
      "id": "aurora.aurora-replica-auto-scaling",
-     "name": "Aurora Auto Scaling은 레플리카를 늘린다"
+     "name": "Aurora Auto Scaling의 레플리카 수 조정"
     },
     {
      "id": "aurora.babelfish",
@@ -796,11 +796,11 @@
     },
     {
      "id": "aurora.aurora-continuous-backup-rpo",
-     "name": "Aurora의 지속적 증분 백업이 RPO를 좁힌다"
+     "name": "Aurora의 지속적 증분 백업"
     },
     {
      "id": "aurora.aurora-clone",
-     "name": "Aurora 클론은 Aurora에만 있다"
+     "name": "Aurora 클론의 적용 범위"
     },
     {
      "id": "aurora.aurora-storage-configurations",
@@ -808,7 +808,7 @@
     },
     {
      "id": "aurora.sql-server-license-cost",
-     "name": "SQL Server를 그대로 옮기면 라이선스 비용이 따라온다"
+     "name": "SQL Server를 그대로 옮길 때의 라이선스 비용"
     },
     {
      "id": "aurora.aurora-zdr-and-activity-streams",
@@ -816,15 +816,15 @@
     },
     {
      "id": "aurora.aurora-global-database-write-region",
-     "name": "Aurora Global Database는 액티브-액티브가 아니다"
+     "name": "Aurora Global Database에서 쓰기를 받는 리전"
     },
     {
      "id": "aurora.aurora-serverless-max-acu",
-     "name": "Aurora Serverless의 용량 상한은 ACU로 정한다"
+     "name": "Aurora Serverless의 최대 ACU 설정"
     },
     {
      "id": "aurora.read-replica-no-schema-change",
-     "name": "읽기 전용 복제본에서는 스키마를 바꿀 수 없다"
+     "name": "읽기 전용 복제본의 스키마 변경 제약"
     }
    ]
   },
@@ -875,15 +875,15 @@
     },
     {
      "id": "dynamodb.dynamodb-s3-export-vs-streams",
-     "name": "분석용 적재는 기본 내보내기가 먼저다"
+     "name": "분석용 적재의 S3 내보내기와 스트림 경로"
     },
     {
      "id": "dynamodb.dynamodb-incremental-export",
-     "name": "S3 내보내기에는 증분 형태가 있다"
+     "name": "S3 내보내기의 증분 형태"
     },
     {
      "id": "dynamodb.dynamodb-export-no-read-capacity",
-     "name": "S3 내보내기는 테이블의 읽기 용량을 쓰지 않는다"
+     "name": "S3 내보내기와 테이블 읽기 용량"
     },
     {
      "id": "dynamodb.dynamodb-pitr",
@@ -891,7 +891,7 @@
     },
     {
      "id": "dynamodb.dynamodb-export-requires-pitr",
-     "name": "S3로 내보내려면 PITR이 켜져 있어야 한다"
+     "name": "S3 내보내기의 전제 조건인 PITR"
     },
     {
      "id": "dynamodb.dynamodb-item-size-limit",
@@ -899,15 +899,15 @@
     },
     {
      "id": "dynamodb.dynamodb-ttl-deletion-delay",
-     "name": "TTL 삭제는 만료 시각에 딱 맞춰 일어나지 않는다"
+     "name": "TTL 삭제의 48시간 지연"
     },
     {
      "id": "dynamodb.dynamodb-streams-retention-24h",
-     "name": "DynamoDB Streams는 24시간만 보존한다"
+     "name": "DynamoDB Streams의 24시간 보존 한계"
     },
     {
      "id": "dynamodb.dynamodb-streams-batch-size",
-     "name": "DynamoDB Streams 소비의 배치 크기를 조정한다"
+     "name": "DynamoDB Streams 소비의 배치 크기"
     }
    ]
   },
@@ -950,7 +950,7 @@
     },
     {
      "id": "elasticache-purpose-built-db.dax-dynamodb-only",
-     "name": "DAX는 DynamoDB 전용"
+     "name": "DynamoDB 전용 캐시 DAX"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-multi-az-failover",
@@ -966,15 +966,15 @@
     },
     {
      "id": "elasticache-purpose-built-db.cache-requires-application-change",
-     "name": "캐시를 넣으면 애플리케이션을 고쳐야 한다"
+     "name": "캐시 도입에 필요한 애플리케이션 코드 변경"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-not-a-durable-store",
-     "name": "캐시는 처리 결과를 두는 자리가 아니다"
+     "name": "영구 저장소가 아닌 캐시"
     },
     {
      "id": "elasticache-purpose-built-db.dax-encryption-at-rest",
-     "name": "DAX의 저장 중 암호화는 만들 때만 켠다"
+     "name": "DAX 저장 중 암호화의 설정 시점"
     }
    ]
   },
@@ -1005,7 +1005,7 @@
     },
     {
      "id": "ec2-autoscaling.gpu-instance-family",
-     "name": "GPU가 필요하면 서비스 자체가 갈린다"
+     "name": "GPU 인스턴스 제품군과 컴퓨팅 서비스 선택"
     },
     {
      "id": "ec2-autoscaling.reserved-instance-types",
@@ -1037,7 +1037,7 @@
     },
     {
      "id": "ec2-autoscaling.asg-on-demand-base-capacity",
-     "name": "스팟 그룹에 온디맨드 기반 용량을 섞는다"
+     "name": "Auto Scaling 그룹의 온디맨드 기반 용량"
     },
     {
      "id": "ec2-autoscaling.warm-pool",
@@ -1045,11 +1045,11 @@
     },
     {
      "id": "ec2-autoscaling.asg-single-instance-self-healing",
-     "name": "인스턴스가 하나여도 오토 스케일링 그룹에 넣는다"
+     "name": "용량을 1로 고정한 오토 스케일링 그룹의 인스턴스 교체"
     },
     {
      "id": "ec2-autoscaling.elb-health-check-drives-asg-replacement",
-     "name": "상태 검사를 어디서 하느냐가 교체를 가른다"
+     "name": "로드 밸런서 상태 검사와 인스턴스 교체"
     },
     {
      "id": "ec2-autoscaling.enhanced-networking",
@@ -1080,7 +1080,7 @@
     },
     {
      "id": "elastic-load-balancing.alb-l7-vs-nlb-l4",
-     "name": "계층으로 갈리는 ALB와 NLB"
+     "name": "계층으로 나뉘는 ALB와 NLB"
     },
     {
      "id": "elastic-load-balancing.alb-routing-conditions",
@@ -1088,19 +1088,19 @@
     },
     {
      "id": "elastic-load-balancing.nlb-tls-listener",
-     "name": "NLB도 TLS 연결을 받는다"
+     "name": "NLB의 TLS 리스너"
     },
     {
      "id": "elastic-load-balancing.nlb-udp-listener",
-     "name": "UDP를 받는 것은 NLB뿐이다"
+     "name": "NLB의 UDP 리스너"
     },
     {
      "id": "elastic-load-balancing.nlb-ip-targets",
-     "name": "NLB는 VPC 밖의 IP도 대상으로 받는다"
+     "name": "NLB 대상 그룹의 IP 주소 등록"
     },
     {
      "id": "elastic-load-balancing.alb-cookie-stickiness",
-     "name": "스티키 세션은 ALB의 기능이다"
+     "name": "ALB의 쿠키 기반 스티키 세션"
     },
     {
      "id": "elastic-load-balancing.internal-load-balancer",
@@ -1116,23 +1116,23 @@
     },
     {
      "id": "elastic-load-balancing.alb-target-group-independent-scaling",
-     "name": "경로마다 타깃 그룹과 조정 단위를 나눈다"
+     "name": "경로별 타깃 그룹과 독립 확장"
     },
     {
      "id": "elastic-load-balancing.alb-listener-rule-fixed-response",
-     "name": "대상에 보내지 않고 규칙이 직접 답한다"
+     "name": "ALB 리스너 규칙의 사용자 지정 응답"
     },
     {
      "id": "elastic-load-balancing.load-balancer-idle-timeout",
-     "name": "유휴 타임아웃은 경로 전체를 맞춘다"
+     "name": "연결 경로 전체의 유휴 타임아웃"
     },
     {
      "id": "elastic-load-balancing.end-to-end-encryption-behind-alb",
-     "name": "종단 간 암호화는 로드 밸런서 뒤까지다"
+     "name": "로드 밸런서 뒤 구간까지의 종단 간 암호화"
     },
     {
      "id": "elastic-load-balancing.gwlb-endpoint-cross-account-inspection",
-     "name": "게이트웨이 로드 밸런서 엔드포인트가 계정 경계를 넘는다"
+     "name": "게이트웨이 로드 밸런서 엔드포인트와 계정 간 트래픽 검사"
     }
    ]
   },
@@ -1151,15 +1151,15 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-alb-origin",
-     "name": "CloudFront의 오리진은 버킷만이 아니다"
+     "name": "CloudFront의 ALB 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-multiple-origins",
-     "name": "배포 하나에 오리진을 여럿 둔다"
+     "name": "배포 하나에 등록하는 여러 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-onprem-origin",
-     "name": "오리진이 AWS 밖에 있어도 된다"
+     "name": "CloudFront의 온프레미스 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator",
@@ -1191,11 +1191,11 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost",
-     "name": "엣지 캐시는 지연만이 아니라 비용도 줄인다"
+     "name": "엣지 캐시가 줄이는 데이터 전송 비용"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator-vs-dns-failover",
-     "name": "DNS 캐시에 발목 잡히지 않는 장애 조치"
+     "name": "DNS 캐시에 영향받지 않는 장애 조치"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-signed-url",
@@ -1215,11 +1215,11 @@
     },
     {
      "id": "cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location",
-     "name": "뷰어 위치로 오리진을 고르는 일은 엣지 함수가 한다"
+     "name": "뷰어 위치에 따른 Lambda@Edge의 오리진 선택"
     },
     {
      "id": "cloudfront-global-accelerator.lambda-at-edge-response-compression",
-     "name": "엣지에서 응답을 압축해 전송량을 줄인다"
+     "name": "Lambda@Edge의 응답 압축"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-price-class",
@@ -1235,11 +1235,11 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction",
-     "name": "ALB 오리진은 보안 그룹으로 CloudFront만 들이게 한다"
+     "name": "ALB 오리진 접근을 CloudFront로 좁히는 보안 그룹"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-functions-no-external-calls",
-     "name": "CloudFront Functions는 다른 서비스를 부르지 못한다"
+     "name": "CloudFront Functions의 외부 서비스 호출 제약"
     }
    ]
   },
@@ -1270,7 +1270,7 @@
     },
     {
      "id": "lambda.lambda-container-image",
-     "name": "Lambda를 컨테이너 이미지로 배포한다"
+     "name": "Lambda의 컨테이너 이미지 패키징"
     },
     {
      "id": "lambda.lambda-invocation-types",
@@ -1278,23 +1278,23 @@
     },
     {
      "id": "lambda.lambda-memory-cpu-proportional",
-     "name": "Lambda는 메모리를 올리면 CPU가 함께 올라간다"
+     "name": "메모리에 비례하는 Lambda의 CPU 배정"
     },
     {
      "id": "lambda.lambda-reserved-concurrency",
-     "name": "예약된 동시성은 콜드 스타트를 줄이지 않는다"
+     "name": "예약된 동시성과 프로비저닝된 동시성"
     },
     {
      "id": "lambda.lambda-provisioned-concurrency-autoscaling",
-     "name": "프로비저닝된 동시성은 고정값으로 두지 않는다"
+     "name": "프로비저닝된 동시성의 Application Auto Scaling 조정"
     },
     {
      "id": "lambda.lambda-concurrency-limit-throttling",
-     "name": "동시 실행 한도를 넘으면 호출이 거절된다"
+     "name": "동시 실행 한도 초과와 TooManyRequestsException"
     },
     {
      "id": "lambda.lambda-kinesis-event-source",
-     "name": "Lambda가 스트림 레코드를 직접 처리한다"
+     "name": "Lambda의 Kinesis 스트림 레코드 처리"
     },
     {
      "id": "lambda.lambda-snapstart",
@@ -1310,19 +1310,19 @@
     },
     {
      "id": "lambda.lambda-efs-mount",
-     "name": "Lambda 함수에 EFS를 마운트한다"
+     "name": "Lambda 함수의 EFS 마운트"
     },
     {
      "id": "lambda.lambda-version-alias-config-freeze",
-     "name": "환경 변수는 버전과 함께 굳는다"
+     "name": "Lambda 버전에 고정되는 환경 변수"
     },
     {
      "id": "lambda.lambda-execution-role-logs",
-     "name": "로그를 남기려면 실행 역할에 로그 권한이 있어야 한다"
+     "name": "실행 역할의 CloudWatch Logs 쓰기 권한"
     },
     {
      "id": "lambda.serverless-runtime-no-os-access",
-     "name": "관리형 런타임에는 들어갈 운영 체제가 없다"
+     "name": "관리형 런타임의 운영 체제 접근 제약"
     }
    ]
   },
@@ -1361,11 +1361,11 @@
     },
     {
      "id": "ecs-eks-fargate.eks-compute-options",
-     "name": "EKS의 컴퓨팅은 세 갈래이고 관리 책임이 다르다"
+     "name": "EKS의 세 가지 컴퓨팅 방식과 관리 책임"
     },
     {
      "id": "ecs-eks-fargate.fargate-no-time-limit",
-     "name": "Fargate에는 실행 시간 제한이 없다"
+     "name": "실행 시간 제한이 없는 Fargate"
     },
     {
      "id": "ecs-eks-fargate.fargate-spot",
@@ -1377,11 +1377,11 @@
     },
     {
      "id": "ecs-eks-fargate.eks-fargate-pod-isolation",
-     "name": "Fargate는 파드마다 환경을 격리한다"
+     "name": "Fargate의 파드 단위 환경 격리"
     },
     {
      "id": "ecs-eks-fargate.eks-cluster-autoscaler",
-     "name": "파드를 늘리는 것과 노드를 늘리는 것은 다르다"
+     "name": "Horizontal Pod Autoscaler와 Cluster Autoscaler"
     },
     {
      "id": "ecs-eks-fargate.eks-aws-load-balancer-controller",
@@ -1401,7 +1401,7 @@
     },
     {
      "id": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
-     "name": "태스크 역할과 태스크 실행 역할은 다른 자리다"
+     "name": "태스크 역할과 태스크 실행 역할"
     },
     {
      "id": "ecs-eks-fargate.eks-irsa",
@@ -1421,7 +1421,7 @@
     },
     {
      "id": "ecs-eks-fargate.fargate-efs-mount",
-     "name": "Fargate 태스크에 EFS를 마운트한다"
+     "name": "Fargate 태스크의 EFS 마운트"
     },
     {
      "id": "ecs-eks-fargate.eks-secrets-kms-encryption",
@@ -1460,11 +1460,11 @@
     },
     {
      "id": "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
-     "name": "REST API가 더 긴 통합 타임아웃을 견딘다"
+     "name": "REST API와 HTTP API의 통합 타임아웃"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-rest-only-features",
-     "name": "API 키·요청 검증·스로틀링은 REST API 쪽이다"
+     "name": "REST API의 API 키·요청 유효성 검사·스로틀링"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-websocket-api",
@@ -1472,7 +1472,7 @@
     },
     {
      "id": "api-gateway-step-functions.api-gateway-api-key-not-auth",
-     "name": "API 키는 인증 수단이 아니다"
+     "name": "식별 장치인 API 키"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-resource-policy",
@@ -1484,7 +1484,7 @@
     },
     {
      "id": "api-gateway-step-functions.api-gateway-behind-cloudfront",
-     "name": "API도 CloudFront 뒤에 둘 수 있다"
+     "name": "CloudFront의 HTTP API 오리진"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-lambda-proxy-integration",
@@ -1492,11 +1492,11 @@
     },
     {
      "id": "api-gateway-step-functions.api-gateway-aws-service-integration",
-     "name": "API Gateway에서 AWS 서비스를 직접 호출한다"
+     "name": "API Gateway의 AWS 서비스 통합"
     },
     {
      "id": "api-gateway-step-functions.step-functions-long-running-workflow",
-     "name": "Step Functions는 하루를 넘기는 작업도 맡는다"
+     "name": "최대 1년까지 이어지는 Step Functions 실행"
     },
     {
      "id": "api-gateway-step-functions.step-functions-express-workflow",
@@ -1504,7 +1504,7 @@
     },
     {
      "id": "api-gateway-step-functions.step-functions-map-state",
-     "name": "Map 상태로 목록의 항목마다 한 번씩 실행한다"
+     "name": "Map 상태의 항목별 반복 호출"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-custom-domain-name",
@@ -1516,7 +1516,7 @@
     },
     {
      "id": "api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy",
-     "name": "호출자를 IP로 거르는 자리도 리소스 정책이다"
+     "name": "리소스 정책의 IP 주소 제한"
     }
    ]
   },
@@ -1559,11 +1559,11 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-is-not-a-queue",
-     "name": "SNS는 큐가 아니다"
+     "name": "SQS 대기열과 SNS 발행-구독"
     },
     {
      "id": "sqs-sns-eventbridge.sns-sqs-fanout-per-consumer",
-     "name": "팬아웃은 소비자마다 큐를 둔다"
+     "name": "소비자마다 큐를 두는 팬아웃"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
@@ -1575,7 +1575,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling",
-     "name": "이벤트 패턴으로 걸면 폴링이 없다"
+     "name": "이벤트 패턴 규칙과 주기적 폴링"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-bus-types",
@@ -1595,7 +1595,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-resource-change-rule",
-     "name": "리소스가 바뀌는 순간을 규칙으로 잡는다"
+     "name": "리소스 구성 변경에 거는 EventBridge 규칙"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-details",
@@ -1603,11 +1603,11 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-fifo-topic",
-     "name": "SNS FIFO 토픽"
+     "name": "SNS FIFO 주제"
     },
     {
      "id": "sqs-sns-eventbridge.ses-inbound-email-receiving",
-     "name": "SES는 이메일을 받기도 한다"
+     "name": "SES의 이메일 수신 규칙"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-queue-depth-scaling",
@@ -1619,7 +1619,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time",
-     "name": "가시성 타임아웃은 처리 시간보다 길어야 한다"
+     "name": "가시성 타임아웃과 소비자의 처리 시간"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-message-size-limit",
@@ -1627,19 +1627,19 @@
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
-     "name": "FIFO 큐의 순서는 메시지 그룹 단위다"
+     "name": "FIFO 대기열의 순서 보장 단위인 메시지 그룹 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
-     "name": "중복 제거는 5분 창 안에서 일어난다"
+     "name": "5분 동안 적용되는 FIFO 대기열의 중복 제거 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
-     "name": "본문이 같으면 알아서 걸러 낸다"
+     "name": "FIFO 대기열의 콘텐츠 기반 중복 제거"
     },
     {
      "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
-     "name": "SNS는 메시지 본문을 고쳐 보내지 못한다"
+     "name": "SNS의 메시지 본문 재작성 제약"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-queue-policy",
@@ -1647,19 +1647,19 @@
     },
     {
      "id": "sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy",
-     "name": "계정을 넘는 발행은 큐 정책에 토픽 ARN을 적는다"
+     "name": "계정 간 SNS 발행과 큐 정책의 주제 ARN"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission",
-     "name": "큐를 암호화하면 소비자에게 복호화 권한이 필요하다"
+     "name": "SQS 큐 암호화와 소비자의 복호화 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions",
-     "name": "암호화된 SNS 토픽에 게시하려면 권한이 세 군데다"
+     "name": "암호화된 SNS 주제 게시에 필요한 세 가지 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy",
-     "name": "큐로 가는 길을 사설 경로로 묶는다"
+     "name": "SQS 인터페이스 VPC 엔드포인트와 큐 정책"
     }
    ]
   },
@@ -1686,7 +1686,7 @@
     },
     {
      "id": "backup-disaster-recovery.warm-standby-for-low-rto",
-     "name": "짧은 RTO는 미리 떠 있는 환경을 요구한다"
+     "name": "짧은 RTO가 요구하는 대기 리전 구성"
     },
     {
      "id": "backup-disaster-recovery.backup-long-term-retention",
@@ -1694,7 +1694,7 @@
     },
     {
      "id": "backup-disaster-recovery.backup-ec2-resource-assignment",
-     "name": "EC2를 백업 대상으로 지정하면 볼륨과 구성이 함께 들어간다"
+     "name": "백업 계획의 리소스로 지정하는 EC2 인스턴스"
     },
     {
      "id": "backup-disaster-recovery.organizations-backup-policy",
@@ -1702,7 +1702,7 @@
     },
     {
      "id": "backup-disaster-recovery.backup-cross-account-copy",
-     "name": "백업 사본을 다른 계정에 둔다"
+     "name": "다른 계정에 두는 백업 사본"
     },
     {
      "id": "backup-disaster-recovery.backup-s3-continuous-backup",
@@ -1710,7 +1710,7 @@
     },
     {
      "id": "backup-disaster-recovery.backup-restore-testing-plan",
-     "name": "복원 테스트 계획으로 백업을 검증한다"
+     "name": "AWS Backup의 복원 테스트 계획"
     },
     {
      "id": "backup-disaster-recovery.backup-audit-manager",
@@ -1765,7 +1765,7 @@
     },
     {
      "id": "vpc-networking.nat-gateway-traffic-uses-public-endpoints",
-     "name": "NAT를 거친 AWS 서비스 접근은 공용 엔드포인트를 지난다"
+     "name": "NAT 게이트웨이 경로의 목적지인 공용 엔드포인트"
     },
     {
      "id": "vpc-networking.endpoint-pricing",
@@ -1781,19 +1781,19 @@
     },
     {
      "id": "vpc-networking.nat-gateway-per-az",
-     "name": "NAT 게이트웨이는 가용 영역마다 둔다"
+     "name": "가용 영역마다 두는 NAT 게이트웨이"
     },
     {
      "id": "vpc-networking.internet-gateway-is-not-per-az",
-     "name": "인터넷 게이트웨이는 가용 영역마다 두지 않는다"
+     "name": "리전 수준 리소스인 인터넷 게이트웨이"
     },
     {
      "id": "vpc-networking.nat-gateway-count-by-environment",
-     "name": "NAT 게이트웨이 수는 환경마다 다르게 잡는다"
+     "name": "환경에 따라 달라지는 NAT 게이트웨이 수"
     },
     {
      "id": "vpc-networking.nat-gateway-elastic-ip",
-     "name": "NAT 게이트웨이에는 엘라스틱 IP를 붙인다"
+     "name": "NAT 게이트웨이에 붙이는 엘라스틱 IP"
     },
     {
      "id": "vpc-networking.vpc-endpoint-policy",
@@ -1805,7 +1805,7 @@
     },
     {
      "id": "vpc-networking.s3-is-regional",
-     "name": "S3는 리전 수준 서비스다"
+     "name": "리전 수준 서비스인 S3"
     }
    ]
   },
@@ -1832,7 +1832,7 @@
     },
     {
      "id": "security-groups-nacl.web-acl-vs-nacl",
-     "name": "Web ACL과 네트워크 ACL은 다른 것"
+     "name": "Web ACL과 네트워크 ACL의 차이"
     },
     {
      "id": "security-groups-nacl.security-group-referencing",
@@ -1844,15 +1844,15 @@
     },
     {
      "id": "security-groups-nacl.nacl-deny-at-source-subnet",
-     "name": "거부 규칙은 보내는 쪽 서브넷에 건다"
+     "name": "보내는 쪽 서브넷에 거는 거부 규칙"
     },
     {
      "id": "security-groups-nacl.alb-security-group-outbound-and-health-check-port",
-     "name": "로드 밸런서 보안 그룹은 나가는 쪽도 열어야 한다"
+     "name": "로드 밸런서 보안 그룹의 아웃바운드와 상태 검사 포트"
     },
     {
      "id": "security-groups-nacl.nlb-security-group",
-     "name": "NLB에도 보안 그룹을 붙인다"
+     "name": "NLB에 붙이는 보안 그룹"
     }
    ]
   },
@@ -1895,7 +1895,7 @@
     },
     {
      "id": "hybrid-connectivity.region-attached-edge-options",
-     "name": "Local Zone·Outposts·Wavelength Zone은 리전 연결이 전제다"
+     "name": "Local Zone·Outposts·Wavelength Zone의 리전 연결 전제"
     },
     {
      "id": "hybrid-connectivity.onprem-connectivity-heuristic",
@@ -1907,7 +1907,7 @@
     },
     {
      "id": "hybrid-connectivity.per-vpc-vpn-for-isolation",
-     "name": "VPC끼리 막아야 하면 연결을 VPC마다 따로 건다"
+     "name": "VPC마다 따로 맺는 Site-to-Site VPN"
     },
     {
      "id": "hybrid-connectivity.transit-gateway-cross-region-peering",
@@ -1915,7 +1915,7 @@
     },
     {
      "id": "hybrid-connectivity.onprem-access-via-interface-endpoint",
-     "name": "온프레미스에서 인터페이스 엔드포인트로 들어간다"
+     "name": "온프레미스에서 쓰는 인터페이스 엔드포인트"
     },
     {
      "id": "hybrid-connectivity.data-locality-cost",
@@ -1923,7 +1923,7 @@
     },
     {
      "id": "hybrid-connectivity.outposts-data-residency",
-     "name": "데이터를 옮기지 않고 관리형 서비스를 데이터 쪽으로 옮긴다"
+     "name": "Outposts로 지키는 데이터 상주 요건"
     },
     {
      "id": "hybrid-connectivity.direct-connect-caveats",
@@ -1939,7 +1939,7 @@
     },
     {
      "id": "hybrid-connectivity.centralized-onprem-egress",
-     "name": "아웃바운드 인터넷을 온프레미스로 되돌린다"
+     "name": "온프레미스로 모으는 아웃바운드 인터넷 트래픽"
     }
    ]
   },
@@ -1954,15 +1954,15 @@
    "concepts": [
     {
      "id": "route53.route53",
-     "name": "Route53"
+     "name": "Route 53"
     },
     {
      "id": "route53.routing-policies",
-     "name": "Route53 라우팅 정책"
+     "name": "Route 53 라우팅 정책"
     },
     {
      "id": "route53.resolver",
-     "name": "Route53 Resolver"
+     "name": "Route 53 Resolver"
     },
     {
      "id": "route53.private-hosted-zone",
@@ -1978,11 +1978,11 @@
     },
     {
      "id": "route53.multi-region-failover-for-region-outage",
-     "name": "리전 장애는 가용 영역으로 막지 못한다"
+     "name": "리전 장애에 대비하는 다중 리전 장애 조치"
     },
     {
      "id": "route53.latency-record-for-non-aws-endpoint",
-     "name": "온프레미스 엔드포인트에도 지연 시간 레코드를 만든다"
+     "name": "AWS 밖 엔드포인트의 지연 시간 레코드"
     },
     {
      "id": "route53.route53-alias-record",
@@ -1990,7 +1990,7 @@
     },
     {
      "id": "route53.private-hosted-zone-vpc-only",
-     "name": "프라이빗 호스팅 영역은 VPC에만 연결한다"
+     "name": "프라이빗 호스팅 영역의 연결 대상"
     },
     {
      "id": "route53.route53-resolver-forward-rule",
@@ -2057,7 +2057,7 @@
     },
     {
      "id": "emr-glue-athena.glue-etl-with-per-customer-kms-key",
-     "name": "고객마다 키가 다른 변환 작업은 관리형 ETL로"
+     "name": "고객마다 다른 키로 암호화하는 Glue ETL 작업"
     },
     {
      "id": "emr-glue-athena.athena-encrypted-and-pay-per-query",
@@ -2069,19 +2069,19 @@
     },
     {
      "id": "emr-glue-athena.log-storage-s3-athena",
-     "name": "가끔 조회하는 로그는 S3에 쌓고 Athena로 읽는다"
+     "name": "조회 빈도로 나뉘는 로그 저장 위치"
     },
     {
      "id": "emr-glue-athena.lake-formation-blueprint-and-athena",
-     "name": "블루프린트로 모으고 Athena로 권한을 적용한다"
+     "name": "Lake Formation 블루프린트와 Athena의 열 수준 권한"
     },
     {
      "id": "emr-glue-athena.lake-formation-lf-tags",
-     "name": "LF 태그로 테이블과 열 권한을 준다"
+     "name": "LF 태그 기반 액세스 제어"
     },
     {
      "id": "emr-glue-athena.emr-node-instance-family-choice",
-     "name": "노드 역할에 따라 인스턴스 제품군이 갈린다"
+     "name": "노드 역할에 따른 인스턴스 제품군 선택"
     },
     {
      "id": "emr-glue-athena.emr-runtime-role",
@@ -2132,15 +2132,15 @@
     },
     {
      "id": "kinesis-streaming.flink-kinesis-source-sink",
-     "name": "Flink는 스트림 사이에 끼워 넣는다"
+     "name": "Flink의 Kinesis 스트림 소스와 싱크"
     },
     {
      "id": "kinesis-streaming.firehose-lambda-transformation",
-     "name": "Firehose가 적재 전에 Lambda로 데이터를 고친다"
+     "name": "Firehose의 적재 전 Lambda 변환"
     },
     {
      "id": "kinesis-streaming.firehose-format-conversion",
-     "name": "Firehose가 적재하면서 형식을 바꾼다"
+     "name": "Firehose의 형식 변환"
     },
     {
      "id": "kinesis-streaming.kinesis-retention-and-fanout",
@@ -2160,7 +2160,7 @@
     },
     {
      "id": "kinesis-streaming.kinesis-partition-key-hot-shard",
-     "name": "파티션 키가 쏠리면 핫 샤드가 생긴다"
+     "name": "파티션 키 쏠림으로 생기는 핫 샤드"
     },
     {
      "id": "kinesis-streaming.kinesis-capacity-mode",
@@ -2168,7 +2168,7 @@
     },
     {
      "id": "kinesis-streaming.firehose-buffering",
-     "name": "Firehose는 모아서 보낸다"
+     "name": "Firehose의 버퍼링 지연"
     }
    ]
   },
@@ -2183,7 +2183,7 @@
    "concepts": [
     {
      "id": "redshift-opensearch-quicksight.redshift",
-     "name": "RedShift"
+     "name": "Redshift"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-spectrum",
@@ -2207,11 +2207,11 @@
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-hot-cold-split",
-     "name": "자주 쓰는 데이터만 웨어하우스에 넣는다"
+     "name": "조회 빈도에 따른 Redshift 적재와 S3 보관"
     },
     {
      "id": "redshift-opensearch-quicksight.quicksight-ml-forecast",
-     "name": "QuickSight에 들어 있는 ML 예측"
+     "name": "QuickSight에 내장된 머신러닝 예측"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-concurrency-scaling",
@@ -2219,11 +2219,11 @@
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-copy-from-s3",
-     "name": "Redshift는 S3에서 COPY로 병렬 적재한다"
+     "name": "S3에서 COPY 명령으로 하는 Redshift 병렬 적재"
     },
     {
      "id": "redshift-opensearch-quicksight.dynamodb-to-s3-analytics",
-     "name": "운영 테이블의 과거 데이터는 S3로 흘려보낸다"
+     "name": "S3에 남기는 운영 테이블의 과거 데이터"
     }
    ]
   },
@@ -2246,7 +2246,7 @@
     },
     {
      "id": "cloudwatch-xray.performance-insight",
-     "name": "Performance Insight"
+     "name": "Performance Insights"
     },
     {
      "id": "cloudwatch-xray.amazon-managed-grafana",
@@ -2270,15 +2270,15 @@
     },
     {
      "id": "cloudwatch-xray.cloudwatch-agent-memory-metric",
-     "name": "메모리 사용률은 기본 지표가 아니다"
+     "name": "CloudWatch 에이전트의 메모리 사용률 지표"
     },
     {
      "id": "cloudwatch-xray.ec2-detailed-monitoring",
-     "name": "상세 모니터링은 1분 간격이다"
+     "name": "EC2 상세 모니터링의 1분 간격 지표"
     },
     {
      "id": "cloudwatch-xray.cloudwatch-alarm-state-change-event",
-     "name": "알람 상태 변경은 이벤트로 흘러간다"
+     "name": "CloudWatch 알람의 상태 변경 이벤트"
     }
    ]
   },
@@ -2317,7 +2317,7 @@
     },
     {
      "id": "secrets-encryption.rotation-heuristic",
-     "name": "자동 순환이 나오면 Secrets Manager"
+     "name": "자동 순환을 가리키는 신호"
     },
     {
      "id": "secrets-encryption.kms-key-types-by-management",
@@ -2337,7 +2337,7 @@
     },
     {
      "id": "secrets-encryption.kms-key-per-tenant",
-     "name": "KMS 키를 테넌트마다 따로 만든다"
+     "name": "고객마다 따로 만드는 KMS 키"
     },
     {
      "id": "secrets-encryption.acm-dns-validation",
@@ -2349,7 +2349,7 @@
     },
     {
      "id": "secrets-encryption.kms-automatic-key-rotation",
-     "name": "KMS 자동 키 교체는 해마다 돈다"
+     "name": "해마다 이뤄지는 KMS 자동 키 교체"
     },
     {
      "id": "secrets-encryption.kms-symmetric-vs-asymmetric-rotation",
@@ -2365,7 +2365,7 @@
     },
     {
      "id": "secrets-encryption.acm-cloudfront-region",
-     "name": "CloudFront에 붙일 인증서는 us-east-1에서 발급한다"
+     "name": "CloudFront용 인증서의 us-east-1 발급 제약"
     },
     {
      "id": "secrets-encryption.acm-expiration-event",
@@ -2432,15 +2432,15 @@
     },
     {
      "id": "waf-shield.waf-body-inspection-size-limit",
-     "name": "WAF가 검사하는 요청 본문에는 크기 한도가 있다"
+     "name": "WAF가 검사하는 요청 본문의 크기 한도"
     },
     {
      "id": "waf-shield.waf-web-acl-region-must-match-rest-api",
-     "name": "REST API에 붙일 Web ACL은 같은 리전에 만든다"
+     "name": "REST API에 붙일 Web ACL의 리전 조건"
     },
     {
      "id": "waf-shield.waf-logging-to-firehose",
-     "name": "WAF 로그는 Firehose를 거쳐 S3로 간다"
+     "name": "Firehose를 거쳐 S3로 가는 WAF 로그"
     }
    ]
   },
@@ -2487,15 +2487,15 @@
     },
     {
      "id": "guardduty-macie-inspector.macie-delegated-administrator",
-     "name": "Macie는 위임 관리자 계정에서 조직 전체를 본다"
+     "name": "조직 전체를 보는 Macie 위임 관리자 계정"
     },
     {
      "id": "guardduty-macie-inspector.guardduty-finding-to-eventbridge",
-     "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는다"
+     "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는 EventBridge"
     },
     {
      "id": "guardduty-macie-inspector.macie-finding-to-eventbridge",
-     "name": "Macie의 탐지 결과에 알림을 붙인다"
+     "name": "Macie 탐지 결과를 알림으로 잇는 EventBridge"
     }
    ]
   },
@@ -2518,7 +2518,7 @@
     },
     {
      "id": "iam-permissions.iam-group-policy-attachment",
-     "name": "권한은 사용자가 아니라 그룹에 붙인다"
+     "name": "IAM 그룹에 붙이는 정책"
     },
     {
      "id": "iam-permissions.iam-roles-anywhere",
@@ -2550,35 +2550,35 @@
     },
     {
      "id": "iam-permissions.iam-group-users-only",
-     "name": "IAM 그룹에는 EC2를 넣을 수 없다"
+     "name": "사용자 집합인 IAM 그룹"
     },
     {
      "id": "iam-permissions.iam-user-is-account-scoped",
-     "name": "IAM 사용자는 계정 밖으로 나가지 않는다"
+     "name": "계정 안에서만 존재하는 IAM 사용자"
     },
     {
      "id": "iam-permissions.iam-explicit-deny-precedence",
-     "name": "명시적 거부가 허용을 이긴다"
+     "name": "정책 평가 순서와 명시적 거부"
     },
     {
      "id": "iam-permissions.iam-notaction-deny",
-     "name": "NotAction을 쓴 Deny로 한 서비스만 남긴다"
+     "name": "NotAction을 쓴 Deny 문"
     },
     {
      "id": "iam-permissions.iam-requested-region-condition",
-     "name": "요청이 향한 리전을 조건으로 건다"
+     "name": "aws:RequestedRegion 조건 키"
     },
     {
      "id": "iam-permissions.access-analyzer-delegated-administrator",
-     "name": "조직 전체 결과는 위임 관리자 계정에 모인다"
+     "name": "Access Analyzer의 위임 관리자 계정"
     },
     {
      "id": "iam-permissions.root-user-multiple-mfa",
-     "name": "루트 사용자에게 MFA 장치를 여러 개 붙인다"
+     "name": "루트 사용자에 여러 개 등록하는 MFA 장치"
     },
     {
      "id": "iam-permissions.root-user-cannot-be-disabled",
-     "name": "루트 사용자는 없앨 수 없다"
+     "name": "비활성화할 수 없는 루트 사용자"
     }
    ]
   },
@@ -2593,7 +2593,7 @@
    "concepts": [
     {
      "id": "identity-federation.identity-center",
-     "name": "Identity Center"
+     "name": "IAM Identity Center"
     },
     {
      "id": "identity-federation.sts",
@@ -2625,7 +2625,7 @@
     },
     {
      "id": "identity-federation.custom-identity-broker-for-non-saml",
-     "name": "SAML을 못 쓰는 디렉터리는 브로커로 잇는다"
+     "name": "사용자 지정 ID 브로커"
     },
     {
      "id": "identity-federation.identity-center-permission-set",
@@ -2633,7 +2633,7 @@
     },
     {
      "id": "identity-federation.saml-federation-role-to-ad-group-mapping",
-     "name": "사내 디렉터리를 SAML 2.0으로 붙이고 역할을 그룹에 맵핑한다"
+     "name": "SAML 2.0 페더레이션과 IAM 역할의 AD 그룹 매핑"
     }
    ]
   },
@@ -2672,7 +2672,7 @@
     },
     {
      "id": "organizations-cloudtrail-config.organizations-tag-policy",
-     "name": "태그 정책과 SCP는 하는 일이 다르다"
+     "name": "태그 정책과 SCP"
     },
     {
      "id": "organizations-cloudtrail-config.organizations-consolidated-billing",
@@ -2704,7 +2704,7 @@
     },
     {
      "id": "organizations-cloudtrail-config.config-custom-rule",
-     "name": "관리형 규칙에 없는 값은 사용자 지정 규칙으로 본다"
+     "name": "AWS Config 사용자 지정 규칙"
     },
     {
      "id": "organizations-cloudtrail-config.config-rule-remediation",
@@ -2759,11 +2759,11 @@
     },
     {
      "id": "cost-management.savings-plan-baseline-vs-spike",
-     "name": "약정은 기준 용량까지만 건다"
+     "name": "기본 부하와 일시적 증가분의 약정 크기"
     },
     {
      "id": "cost-management.rds-reserved-instance",
-     "name": "예약 인스턴스는 RDS에도 있다"
+     "name": "RDS 예약 인스턴스"
     },
     {
      "id": "cost-management.on-demand-capacity-reservation",
@@ -2771,11 +2771,11 @@
     },
     {
      "id": "cost-management.cost-allocation-tag-activation",
-     "name": "비용 할당 태그는 활성화해야 보인다"
+     "name": "결제 콘솔에서 하는 비용 할당 태그 활성화"
     },
     {
      "id": "cost-management.cost-allocation-tag-activation-in-management-account",
-     "name": "통합 청구에서는 관리 계정에서 활성화한다"
+     "name": "통합 청구에서 비용 할당 태그를 활성화하는 계정"
     },
     {
      "id": "cost-management.budget-actions",
@@ -2783,11 +2783,11 @@
     },
     {
      "id": "cost-management.budget-forecasted-alert",
-     "name": "예산 알림은 예측값에도 걸 수 있다"
+     "name": "예상 지출에 거는 예산 알림"
     },
     {
      "id": "cost-management.compute-optimizer-ebs-recommendations",
-     "name": "권장 대상에는 EBS 볼륨도 있다"
+     "name": "Compute Optimizer의 EBS 볼륨 권장 사항"
     }
    ]
   },

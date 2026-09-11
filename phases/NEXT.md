@@ -1,5 +1,691 @@
 # 다음에 할 일 — 이어받을 때 읽는 문서
 
+## phase 33 결과 보고 (2026-09-11) — 용어 표기 통일이 끝났다
+
+`feat-33-notation-standardization`에서 step 0~11을 전부 끝냈다. 같은 대상을 두 이름으로
+부르던 **표기 짝 15개**를 통일했고, phase 32와 달리 **`paragraphs`와 `explanation`을 열었다** —
+갈린 자리가 그 두 필드에 걸쳐 있어 열지 않으면 통일할 수 없었기 때문이다.
+그 대신 `scripts/notation-diff.mjs`가 매 step **「바뀐 것이 표기 치환으로 설명되나」**를 확인해,
+사실관계·정답 논리·수치·조건이 움직이지 않았음을 기계로 보장했다.
+아래 여섯 절은 사용자가 완료 후 정리해 달라고 한 항목이고, 그 순서 그대로다.
+**아직 push하지 않았다.**
+
+> 아래쪽의 「phase 32 결과 보고」와 그보다 앞선 절들은 이 절보다 먼저 쓰인 것이라 낡았다.
+> 당시 기록으로 그대로 둔다.
+
+### 1. 항목별 실제 수정 건수
+
+기준은 phase 착수 커밋 `7f46259`이고, 아래는 `node scripts/notation-diff.mjs 7f46259 --list`의
+**잔량 실측**이다(occurrence 기준). 각 step의 `summary`에 적힌 자기 보고 수치가 아니다.
+
+| 표기 짝 (**표준** / 비표준) | 착수 | 지금 | step |
+|---|---|---|---|
+| **주제** / 토픽 | 25 / **61** | **86** / 0 | 0 |
+| **FIFO 대기열** / FIFO 큐 | 4 / **14** | **18** / 0 | 1 |
+| **네트워크 ACL** / 네트워크 접근 제어 목록 | 21 / **9** | **30** / 0 | 2 |
+| **권한 세트** / Permission Set | 14 / **8** | **22** / 0 | 3 |
+| **액세스 키** / Access Key | 30 / **14** | **44** / 0 | 4 |
+| **IAM Identity Center** / Identity Center | 7 / **25** | **21**(+ AWS형 8) / 3 | 5 |
+| **가상 프라이빗 게이트웨이** / Virtual Private Gateway | 13 / **2** | **15** / 0 | 9 |
+| **프라이머리 노드** / 주 노드 | 9 / **14** | **17** / 6 | 8 |
+| **Performance Insights** / Performance Insight | 6 / **14** | **20** / 0 | 6 |
+| **전용 하드웨어 보안 모듈** / 전용 하드웨어 모듈 | 8 / **10** | **18** / 0 | 7 |
+| **음성** / 말소리 | 5 / **3** | **8** / 0 | 9 |
+| **퍼블릭 IP** / 퍼블릭 주소 | 3 / **2** | **5** / 0 | 9 |
+| **IP 세트** / IP Set | 19 / **3** | **22** / 0 | 9 |
+| **결제 콘솔** / 결제 대시보드 | 5 / **2** | **7** / 0 | 9 |
+| **기본 부하** / 기준이 되는 부하 | 4 / **2** | **6** / 0 | 9 |
+
+**열다섯 짝 중 열셋이 비표준 0이다.** 남은 둘은 실패가 아니라 판정이다 —
+`Identity Center` 3건과 `주 노드` 6건이며 이유는 6절에 있다.
+
+**낱말 총량이 한 줄도 어긋나지 않는다.** 각 줄에서 `착수 표준 + 착수 비표준 = 지금 표준 + 지금 비표준`이
+정확히 성립한다(주제 25+61=86, FIFO 4+14=18, ACL 21+9=30, 권한 세트 14+8=22, 액세스 키 30+14=44,
+Identity Center 계열 0+7+25=8+21+3=32, VGW 13+2=15, 노드 9+14=17+6=23, Insights 6+14=20,
+HSM 8+10=18, 음성 5+3=8, 퍼블릭 IP 3+2=5, IP 세트 19+3=22, 결제 콘솔 5+2=7, 기본 부하 4+2=6).
+**낱말이 사라지거나 새로 생긴 자리가 없다는 뜻이고**, 치환이 온전히 1:1이었음을
+잔량 집계만으로 독립 확인해 준다.
+
+### 2. 필드별 변경 건수 — `paragraphs`·`explanation`이 이번 phase의 핵심이다
+
+`notation-diff.mjs`가 찍는 필드별 표다. 도구는 **슬롯(필드 하나) 단위**로 센다.
+
+| 필드 | 바뀐 슬롯 | 모수 |
+|---|---|---|
+| 개념 `name` | 8 | 618 |
+| 개념 `summary` | 12 | 618 |
+| **개념 `paragraphs`** | **28** | 618개념의 전체 문단 |
+| 문항 `prompt` | 7 | 732 |
+| 문항 `choices` | 56 | 732×4 |
+| **문항 `explanation`** | **34** | 732 |
+| 합계 | **145** | |
+
+**이번에 연 두 필드에서 62건이 바뀌었다 — 전체 145건의 43%다.** phase 32가 그 둘을 얼려 둔 채로는
+손댈 수 없던 자리이고, 실제로 `explanation` 34건 중 상당수가 **보기·프롬프트는 새 표기인데 해설만
+옛 표기로 남아 같은 화면에서 두 이름을 가르치던 자리**였다(`q243`은 정답 보기가 「결제 콘솔」인데
+해설이 「결제 대시보드」였고, `q725`는 프롬프트·정답 보기가 「기본 부하」인데 해설이 「기준이 되는
+부하」였으며, `q229`·`q660`은 프롬프트가 「전용 하드웨어 보안 모듈」인데 해설이 아니었다).
+
+**`paragraphs` 28건 중 26건이 표기 치환이고 2건은 약칭 도입이다** — step 10이
+`virtual-private-gateway[0]`과 `scp-attachment-targets[0]`의 첫 등장에 정식 이름을 덧붙인 자리다.
+
+**자기 보고 합계 154와 도구의 145가 9 어긋나는 이유**: step별 실측은
+0=43 / 1=14 / 2=9 / 3=8 / 4=12 / 5=21 / 6=14 / 7=10 / 8=7 / 9=14 / 10=2 = **154자리**이고
+각 step의 `summary`와 정확히 일치한다. 도구는 **합집합**을 세므로 145다.
+**두 step 이상이 같은 슬롯을 건드린 자리가 7개**(겹침 9회)이기 때문이다.
+
+| 슬롯 | 건드린 step |
+|---|---|
+| 문항 `explanation` `q156` | 3, 4, 5 |
+| 문항 `explanation` `q157` | 3, 4, 5 |
+| 개념 `paragraphs` `identity-federation.identity-center[0]` | 3, 5 |
+| 문항 `explanation` `q158` | 3, 5 |
+| 문항 `explanation` `q159` | 3, 4 |
+| 문항 `explanation` `q160` | 4, 5 |
+| 문항 `explanation` `q562` | 0, 1 |
+
+`identity-federation` 주제를 세 step(권한 세트 → 액세스 키 → 서비스 이름)으로 쪼갠 결과이고,
+어긋난 것이 아니라 **세는 단위가 다르다.** 되짚을 때는 `notation-diff.mjs`가 유일한 기준이다.
+
+### 3. 정답 보기가 바뀐 문항 15건
+
+`notation-diff.mjs`가 `★`로 표시해 따로 찍는다. **문항마다 보기 넷을 한 벌로 읽고**
+「표기의 결이 정답을 가리키게 되지 않는가」를 판정했다.
+
+| 문항 | step | 정답 | 함께 바꾼 보기 | 판정 근거 |
+|---|---|---|---|---|
+| `q553` | 0 | c0★ | c3 | 같은 낱말을 쓰는 보기를 함께 바꿔 갈린 자리가 없다 |
+| `q562` | 0·1 | c3★ | c0·c1 | 〃 (c0은 step 1의 FIFO 몫) |
+| `q571` | 0 | c3★ | c1 | 〃 |
+| `q573` | 0 | c2★ | c1·c3 | 〃 |
+| `q575` | 0 | c1★ | c0·c2 | 〃 |
+| `q667` | 0 | c2★ | — | c2에만 「토픽」이 있었으나 다른 보기의 「SQS 큐」와 결이 같다 |
+| `q569` | 1 | c2★ | c3 | c0은 「표준 큐」라 대상 밖. c2★도 뒷부분에 「큐」를 품고, 넷을 가르는 축은 표준 ↔ FIFO다 |
+| `q594` | 2 | c0★ | c1·c3 | c2는 보안 그룹이라 대상 밖. 갈린 자리가 없다 |
+| `q595` | 2 | c1★ | — | 나머지 셋이 전부 보안 그룹이라 함께 바꿀 짝이 없었다. 치환 전에도 서브넷 ACL을 가리키는 보기는 c1 하나뿐이었고, **오히려 저장소에서 흔한 쪽(네트워크 ACL 30건)으로 맞춰 정답만 낯선 표기를 쓰던 상태가 해소됐다** |
+| `q596` | 2 | c2★ | c0 | c1 보안 그룹·c3 WAF는 대상 밖 |
+| `q159` | 3 | c2★ | c0 | step 3이 정답만 한글로 만들었으나 **step 4가 c0을 한글로 바꿔 2:2가 됐다**. 축은 「권한 템플릿 ↔ 자격 증명」이다 |
+| `q157` | 4 | c0★ | c2 | c2가 step 3에서 이미 한글이라 2:2. 프롬프트에 「키」가 없어 글자로 이어지지 않는다 |
+| `q158` | 5 | c1★ | — | 치환 전에도 c1★만 두 낱말짜리라 길이의 결이 새로 갈리지 않았고, 프롬프트에 `IAM`·`Identity`가 없다. **c0 「IAM」과 c1★ 「IAM Identity Center」가 둘 다 정식 이름이 되어 `q155`와 이루는 거울 쌍이 선명해졌다** |
+| `q649` | 6 | c0★ | — | **신호가 오히려 줄었다.** 치환 전에는 c0★만 단수 `Insight`, c2만 복수 `Insights`라 정답이 접미사로 도드라졌는데, 지금은 둘 다 `Insights`로 끝난다 |
+| `q629` | 8 | c0★ | c1·c2 | 넷 중 셋이 같은 표기라 정답만 결이 다르지 않다. 축은 「처리 노드에 제품군을 쓰는가」다 |
+
+**정답 보기만 바뀌고 함께 바꿀 짝이 없던 것은 넷이다**(`q667`·`q595`·`q158`·`q649`).
+넷 다 위 표의 근거로 「표기가 변별 신호가 되지 않는다」를 개별 판정했고,
+`q595`·`q649`는 **치환이 기존 신호를 없앤 쪽**이다.
+기계 지표로도 뒷받침된다 — `content-audit`의 **③ 정답 노출 후보가 62건에서 62건으로 변동이 없다.**
+
+### 4. `answerIndex`·id·문항 순서·수치·조건이 그대로인지
+
+**그대로다. 두 층으로 보장된다.**
+
+**(1) 구조 — `notation-diff.mjs`의 `structural` 검사가 0건이다.** 이 검사는 표기와 무관하게
+**어떤 경우에도 허용하지 않는** 항목을 본다. 아래 전부가 착수 시점과 같다.
+
+- 주제: 개수 · 배열 순서 · `id` · `title` · `importance` · `sourcePages`
+- 개념: 주제별 개수 · 배열 순서 · `id` · **문단 개수**
+- 문항: 개수 · 배열 순서 · `id` · `topicId` · `conceptId` · **`answerIndex`** · 보기 개수
+
+`scripts/check-structure.mjs`가 개념 `id`·`name`과 `questionsSha256`을 baseline과 따로 대조해
+같은 결론을 낸다(exit 0).
+
+**(2) 수치와 조건 — 구조 검사보다 강하게 보장된다.** `notation-diff.mjs`가 exit 0이라는 것은
+「바뀐 것이 전부 표기 치환으로 설명된다」는 뜻이고, 그 판정은 이렇게 이뤄진다.
+
+```
+표기 짝의 낱말을 전부 자리표(⟨KEY⟩)로 누르고, 받침 때문에 강제로 바뀌는 조사도 ⟨J⟩로 누른 뒤
+  normalize(착수 문자열) === normalize(지금 문자열)
+```
+
+**글자 단위 완전 일치다.** 그러므로 자리표로 눌린 표기 낱말과 그 뒤 조사를 뺀 나머지는
+**한 글자도 다를 수 없다.** 숫자(`35일`·`5분`·`12시간`·`최대 16개`), 한정어(`~만`·`~를 제외한`),
+부정형(`~이 아니다`·`~할 수 없다`), 비교 축, 정답 논리를 담은 문장은 애초에 바뀔 수가 없다 —
+바뀌었다면 정규화 후 문자열이 갈려 exit 1이 됐을 것이다. 145건 전부가 이 검사를 통과했다.
+
+이 보장이 미치지 못하는 곳은 하나다. **같은 짝 안에서 어느 방향으로 바꿨는지**는 정의상 통과하므로
+사람이 판정해야 하고, 그 판정이 1절의 「표준」 열이다.
+
+### 5. 테스트·build·lint·구조 검증 결과
+
+| 검사 | 결과 |
+|---|---|
+| `npm test` | **492 passed (492)** — 22개 파일, 실패 0 |
+| `npm run build` | exit 0 |
+| `npm run lint` | exit 0 (`--max-warnings 0`) |
+| `node scripts/check-structure.mjs` | exit 0 — 개념 `id`·`name`, 주제 메타데이터, 개념 개수·순서, 문항 파일 모두 기준과 같다 |
+| `node scripts/notation-diff.mjs 7f46259` | **exit 0** — 설명된 변경 145건, 위반 0건 |
+| `node scripts/coverage.mjs` | exit 0 — 개념 **618/618 (100%)**, 문항 732개, 문항 없는 주제 0 |
+| `node scripts/check-verbatim.mjs` | exit 0 — **원본과 실제로 대조했다**(이 기기에 `concepts-raw.md`가 있다). 넘긴 겹침 1건은 ADR-025가 허용한 서비스 이름 나열 |
+| `node scripts/content-audit.mjs` | ① 0 / ② 74 / ③ 62 / ④ 1 / ⑤ 3 / ⑥ 8 — **착수와 여섯 지표가 글자까지 같다** |
+| `node scripts/sync-baseline.mjs` | 「갱신할 것이 없다」 |
+
+`data.test.ts`의 단언은 phase 전체에서 **2건만 문구를 맞췄다**(step 4의 `q156`·`q160` 프롬프트,
+step 5의 `serviceCategories` 표 한 줄). 나머지 step은 한 글자도 고치지 않았고, 단언의 **뜻**을
+바꾼 자리는 없다.
+
+#### ⚠ 도구를 한 번 고쳤다 — `b0f13f4`
+
+step 10이 약칭의 첫 등장에 정식 이름을 덧붙여 `VIF` → `가상 인터페이스(VIF)`,
+`OU` → `조직 단위(OU)`가 됐는데, `notation-diff.mjs`의 `TERMS`에 그 짝이 없어
+**두 자리가 「문장을 손댔다」로 잡히며 exit 1이었다.** step 10이 처방을 적어 두고
+사용자 판단으로 남긴 자리인데, step 11의 AC가 exit 0을 요구하므로 그 처방을 적용했다.
+**콘텐츠는 한 글자도 건드리지 않았고 커밋을 따로 뒀으니 `git revert b0f13f4` 하나로 되돌아간다.**
+판단이 다르면 되돌린 뒤 위 예외를 6절 방식으로 남기면 된다.
+
+알아 둘 것 둘. **`key`를 `VIF`·`OU`로 지으면 안 된다** — 자리표 `⟨VIF⟩` 안의 글자를 variants가
+다시 쳐서 `⟨⟨VIF⟩⟩`가 되고 조사 정규화까지 깨진다(그래서 `VIRTUAL_IF`·`ORG_UNIT`이다).
+그리고 **잔량 표의 `OU 12`는 실제 OU 8 + `SELECT INTO OUTFILE S3` 4다** — 도구가 `split/join`이라
+단어 경계를 못 본다. 표시만 부풀고 대조에는 영향이 없다(실측으로 확인했다).
+
+### 6. 표기 통일 후에도 두 표기가 남은 경우와 그 이유
+
+**남은 것은 실패가 아니라 판정이다.** 네 갈래로 나뉜다.
+
+#### (가) 다른 대상을 가리켜 남긴 것
+
+| 남은 표기 | 건수 | 이유 |
+|---|---|---|
+| ElastiCache의 `주 노드` | 6 (4자리) | **EMR의 프라이머리 노드와 다른 대상이다.** AWS 한국어 문서도 ElastiCache는 primary/replica를 별개 개념으로 다룬다. **사용자가 작업 대상에서 뺐다.** `elasticache-multi-az-failover`의 `summary`·`p[0]`와 `q429`의 프롬프트·해설이다. step 8은 일괄 치환 대신 **JSON 줄 번호로 범위를 좁혀** EMR 두 줄에만 치환을 걸었다 |
+| `q210`의 `퍼블릭 IPv4` | 2 | NAT 게이트웨이가 IPv6에서 하는 일을 IPv4와 대비하는 자리라 `q305`(프라이빗 서브넷 SSH)와 대상이 다르다. 애초에 표준 낱말에 버전 접미사가 붙은 형태다. **명세가 「건드리지 마라」로 못 박았다** |
+| `SELECT INTO OUTFILE S3` | 4 | **MySQL 구문**이지 낱말이 아니다. `aurora-select-into-outfile-s3`와 `q395`(정답 보기 포함) |
+| `표준 큐` | 9 | FIFO의 반대쪽을 가리키는 말이라 이번 짝(`FIFO 큐` ↔ `FIFO 대기열`)의 대상이 아니다. `TERMS`에 짝이 없어 바꾸면 곧바로 위반이 된다 |
+
+#### (나) 약칭이라 남긴 것
+
+약칭은 **없애야 할 비표준 표기가 아니라 정식 이름을 도입한 뒤에 쓰는 짧은 이름**이다.
+step 10이 「약칭이 정식 이름을 도입한 뒤에 쓰이는가」를 개념·문항 단위로 전수 판정했고,
+**도입 없이 약칭만 쓰는 문항은 0건**이었다.
+
+| 약칭 | 건수 | 판정 |
+|---|---|---|
+| `NACL` | 41 | 정식 `네트워크 ACL` 30건과 공존한다. 아래 (다)를 봐라 |
+| `VIF` | 6 | 정식 `가상 인터페이스` 18건 + 도입형 `가상 인터페이스(VIF)` 3건이 앞선다. step 10이 `virtual-private-gateway[0]`에 도입을 하나 보탰다 |
+| `OU` | 8 | 정식 `조직 단위` 28건 + 도입형 `조직 단위(OU)` 2건. step 10이 `scp-attachment-targets[0]`에 도입을 보탰다 |
+| `Container Insights` | 4 | 정식 `CloudWatch Container Insights` 4건이 같은 문항·같은 개념 안에서 앞선다. **`Performance Insights`와 이름만 닮은 다른 서비스다** |
+
+#### (다) 사용자가 통일하지 말라고 정한 것
+
+- **`네트워크 ACL` 전면 통일을 하지 않기로 했다.** step 2는 **최소안**만 했다 — 긴 형태
+  `네트워크 접근 제어 목록` 9건을 없애 0으로 만들되, **`NACL` 41건은 손대지 않았다.**
+  해설 쪽은 애초에 ADR-015 형식(`네트워크 ACL(Access Control List)`·`NACL(Network Access
+  Control List)`)이었으므로, step 2가 한 일은 프롬프트·보기를 그 표준에 맞춘 것이다.
+- **ElastiCache의 `주 노드`** — 위 (가).
+- **`Deny` ↔ `거부`는 `TERMS`에 아예 없다.** 표기 갈림이 아니라 IAM 정책의 `Effect` 값과
+  그 동작을 설명하는 서술어라서 사용자가 작업 대상에서 뺐다.
+
+#### (라) 그 밖에 판단으로 남긴 것 — **전부 도구의 사각지대이고 다음 phase 후보다**
+
+아래 넷은 「문맥이 달라서」가 아니라 **`TERMS`가 그 형태를 몰라서** 남았다. 바꾸면 정규화가
+겹치지 않아 `notation-diff`가 위반으로 잡고 exit 1이 되므로, 명세가 「exit 1이면 되돌려라」로
+못 박은 규칙에 걸렸다.
+
+| 남은 자리 | 건수 | 상태 |
+|---|---|---|
+| `FIFO(First In First Out) 큐` — `q568`·`q569`·`q570` 해설 | 3 | **같은 삽입형을 이미 `FIFO(...) 대기열`로 쓰는 자리가 4건 있다**(`q092`·`q093`·`q203`·`q550`). 즉 삽입형에서도 표준은 이미 대기열이다. 그 대가로 `q568`은 프롬프트 「FIFO 대기열에서」와 해설 「FIFO(...) 큐의」가, `q569`는 정답 보기와 해설이 어긋난다 |
+| `IAM(Identity And Access Management) Identity Center` — `q249`·`q703`·`q704` 해설 | 3 | 이미 `IAM Identity Center`인데 `IAM`만 ADR-015로 풀린 형태다. `IAM`을 또 붙이면 `IAM(...) IAM Identity Center`가 된다 |
+| 홑 `하드웨어 모듈` — `q229` 해설 | 1 | 앞에서 세운 대상을 줄여 부르는 자리(「그 정도 요구에 … 까지 필요한지」)라 두 이름으로 가르치는 자리는 아니다 |
+| `STS Token`(`q157` c1·`q159` c1) ↔ `STS 토큰`(`q156` c1) | 3 | **같은 대상을 두 표기로 쓴다.** `TERMS`에 짝이 없고 명세의 대상 목록에도 없어 step 3·4가 관찰만 남겼다 |
+
+**앞의 셋은 `b0f13f4`이 쓴 것과 똑같은 두 줄짜리 기법으로 풀린다** — `TERMS`의 해당 짝에
+삽입형 variants를 더하면 정규화가 겹쳐 exit 0을 유지한 채 고칠 수 있다. 넷째는 짝을 새로
+정해야 하므로 표준을 사용자가 골라야 한다(`STS Token` / `STS 토큰`).
+
+**그리고 이 phase가 새로 만든 ADR-015 어긋남 4건이 있다** — `q158`·`q161`·`q705`·`q707`의 해설에서
+약어 `IAM`의 첫 등장이 서비스 이름 `(AWS )IAM Identity Center` 안으로 옮겨 갔는데 풀이
+`IAM(Identity And Access Management)`는 그 뒤에 그대로 남았다. 착수 시점에는 0건이었다.
+**테스트는 깨지지 않는다** — 「풀이가 해설 어딘가에 있는가」를 보고, 첫 등장 자리를 글자로
+고정한 단언은 `q130`·`q080` 둘뿐이기 때문이다. 풀이를 새 첫 등장 자리로 옮기면 위 삽입형이 되므로
+`TERMS`를 넓히는 것과 같은 문제다.
+
+#### 범위 밖이라 손대지 않은 관찰 하나
+
+`emr-glue-athena`는 `content-audit`의 **② 관용 표현이 16건**(개념 6·문항 10)으로 39개 주제 중
+가장 많다. 「돌린다」 계열이고 ADR-030 기준 5의 대상이지만 표기 갈림이 아니라 이 phase의 대상이
+아니었다.
+
+### 다음에 할 일
+
+1. **`b0f13f4`(도구 수정)을 그대로 둘지 판단한다.** 되돌리려면 `git revert b0f13f4`이고,
+   그러면 `notation-diff 7f46259`이 step 10의 두 자리를 위반으로 다시 잡는다.
+2. **(라)의 남은 표기 넷을 다음 phase로 할지 정한다.** 앞의 셋은 `TERMS` 두 줄로 풀리고,
+   `STS Token` / `STS 토큰`은 표준을 골라야 한다.
+3. **표기 표준을 ADR로 굳힐지 판단한다.** step 11은 ADR을 쓰지 않았다 — 사용자 판단이라
+   명세가 금지했다. 굳힌다면 1절의 표가 그대로 표준 목록이 된다.
+4. **병합·push는 사람이 판단한다.** 요청받지 않아 하지 않았다.
+
+---
+
+## phase 32 결과 보고 (2026-09-11) — 네 필드 문체 일관성 정리가 끝났다
+
+`feat-32-field-consistency`에서 step 0~24를 전부 끝냈다. 범위는 **개념 `name`·`summary`와
+문항 `prompt`·`choices` 넷**이고, `paragraphs`·`explanation`·`answerIndex`·id·순서·주제
+메타데이터는 얼어 있었다(`scripts/field-diff.mjs`가 매 step 이것을 확인했다).
+**사실관계와 정답 논리는 건드리지 않았다.** 아래 넷은 사용자가 완료 후 정리해 달라고 한
+항목이고, 그 순서 그대로다. **아직 push하지 않았다** — 4를 봐라.
+
+> 아래쪽의 「phase 31 결과 보고」와 그보다 앞선 절들은 이 절보다 먼저 쓰인 것이라 낡았다.
+> 당시 기록으로 그대로 둔다.
+
+### 1. 필드별 수정 건수
+
+기준은 phase 착수 커밋 `04f6946`(merge: phase 31 문체 확대 적용을 develop에 들인다)이고,
+아래는 그 커밋과 HEAD의 JSON을 **필드 단위로 비교한 실측**이다
+(`node scripts/field-diff.mjs 04f6946 --list`). 각 step의 `summary`에 적힌 자기 보고 수치가
+아니다.
+
+| 필드 | 바뀐 항목 | 전체 | 비율 |
+|---|---|---|---|
+| 개념 `name` | **198** | 618 | 32% |
+| 개념 `summary` | **107** | 618 | 17% |
+| 문항 `prompt` | **13** | 732 | 1.8% |
+| 문항 `choices` | **12** | 732 | 1.6% |
+
+**`name` 198건은 거의 전부 문장형 제목을 명사구로 내린 것이다.** ADR-030 기준 1이고,
+착수 시점 181건이던 문장형 제목이 0건이 됐다. `summary`는 「본문·해설은 새 말을 쓰는데
+요약만 옛말·다른 용어로 남은」 자리를 맞춘 것이고, `prompt`·`choices`가 두 자릿수 초반에
+그친 것은 phase 30이 프롬프트를, phase 31이 해설을 이미 훑었기 때문이다.
+
+**자기 보고 합계와 1건씩 어긋나는 이유**: step `summary`를 합하면
+name 198 / summary 108 / prompt 13 / choices 13이다. `field-diff.mjs`는 **항목(개념·문항)
+단위**로 세고 step은 **수정 자리 단위**로 셌기 때문이다 — 한 개념의 `summary` 안에서 두
+곳을 고친 자리(step 21의 `iam-roles-anywhere`, step 23의 `appconfig` 등)와 한 문항의 보기
+두 개를 고친 자리(step 4의 `q384` c0·c3)가 그 차이다. 어긋난 것이 아니라 세는 단위가 다르다.
+**되짚을 때는 `field-diff.mjs`가 유일한 기준이다.**
+
+#### 주제별 내역 — 개념 `name` / `summary`
+
+| 주제 | `name` | `summary` |
+|---|---|---|
+| `aws-core-services` | — | — |
+| `s3-storage-classes` | 1 | — |
+| `s3-versioning-lifecycle` | — | 3 |
+| `s3-encryption-batch` | — | 1 |
+| `s3-access-control` | 6 | 1 |
+| `ebs-instance-store` | 4 | 2 |
+| `efs-fsx` | 14 | 3 |
+| `data-transfer-services` | 10 | 3 |
+| `storage-gateway-migration` | 1 | 3 |
+| `rds-storage-features` | 10 | 3 |
+| `aurora` | 8 | 6 |
+| `dynamodb` | 7 | 1 |
+| `elasticache-purpose-built-db` | 4 | 2 |
+| `ec2-autoscaling` | 4 | 3 |
+| `elastic-load-balancing` | 10 | 2 |
+| `cloudfront-global-accelerator` | 9 | 3 |
+| `lambda` | 10 | 7 |
+| `ecs-eks-fargate` | 6 | 7 |
+| `api-gateway-step-functions` | 8 | 6 |
+| `sqs-sns-eventbridge` | 14 | 1 |
+| `backup-disaster-recovery` | 4 | 3 |
+| `vpc-networking` | 6 | 3 |
+| `security-groups-nacl` | 4 | — |
+| `hybrid-connectivity` | 5 | 3 |
+| `route53` | 6 | 1 |
+| `emr-glue-athena` | 5 | 6 |
+| `kinesis-streaming` | 5 | 3 |
+| `redshift-opensearch-quicksight` | 5 | 5 |
+| `cloudwatch-xray` | 3 | 2 |
+| `secrets-encryption` | 4 | 2 |
+| `waf-shield` | 3 | 4 |
+| `guardduty-macie-inspector` | 3 | 3 |
+| `iam-permissions` | 9 | 4 |
+| `identity-federation` | 2 | 2 |
+| `organizations-cloudtrail-config` | 2 | 1 |
+| `cost-management` | 6 | 3 |
+| `governance-iac` | — | 1 |
+| `systems-manager` | — | 3 |
+| `ai-ml-services` | — | 1 |
+| **합계** | **198** | **107** |
+
+**한 글자도 안 바뀐 주제가 하나 있다 — `aws-core-services`다.** step 0이 그 주제를 훑고
+고칠 것을 찾지 못했다(문장형 제목 0건, 요약도 본문과 어긋난 자리가 없었다). 이 주제는
+착수 시점에도 content-audit 여섯 지표가 모두 0건이었다.
+
+#### 주제별 내역 — 문항 `prompt` / `choices`
+
+| 주제 | `prompt` | `choices` |
+|---|---|---|
+| `dynamodb` | — | 2 |
+| `efs-fsx` | 1 | 1 |
+| `data-transfer-services` | — | 1 |
+| `rds-storage-features` | — | 1 |
+| `elasticache-purpose-built-db` | — | 1 |
+| `ec2-autoscaling` | 1 | — |
+| `elastic-load-balancing` | 3 | — |
+| `cloudfront-global-accelerator` | — | 1 |
+| `ecs-eks-fargate` | 1 | — |
+| `api-gateway-step-functions` | 2 | — |
+| `sqs-sns-eventbridge` | 1 | — |
+| `backup-disaster-recovery` | — | 1 |
+| `vpc-networking` | — | 2 |
+| `emr-glue-athena` | 1 | — |
+| `cloudwatch-xray` | 1 | — |
+| `iam-permissions` | 1 | 2 |
+| `systems-manager` | 1 | — |
+| **합계** | **13** | **12** |
+
+바뀐 문항 id는 이렇다 — `prompt`: q303 · q329 · q452 · q453 · q460 · q466 · q522 · q535 ·
+q546 · q552 · q617 · q650 · q685. `choices`: q348 · q356 · q384 · q415 · q416 · q432 ·
+q474 · q584 · q587 · q589 · q691 · q699.
+
+#### 정답 보기의 글자가 바뀐 문항 — 2건
+
+`field-diff.mjs`가 경고로 찍는 값이고, **사람이 한 번 더 읽어야 하는 자리라 따로 밝힌다.**
+
+| 문항 | 바뀐 것 | 근거 |
+|---|---|---|
+| `q356` c1 | 「일정을 걸어 하루 한 번 **돌린다**」 → 「하루 한 번 **실행한다**」 | 개념 본문 문단 1과 이 문항 해설이 모두 "일정을 걸어 실행한다"로 쓴다. 오답 포인트 셋(파일 게이트웨이의 "간격 없이 계속", 볼륨 게이트웨이의 "파일이 아닌 스냅샷", Transfer Family의 "스스로 가져오지 않는다")은 하나도 건드리지 않았다 |
+| `q474` c3 | 「엔드포인트를 노출하는 **자리에는** 맞지 않는다」 → 「노출하는 **데는** 맞지 않는다」 | 옛 어휘 「자리」 하나만 바꿨다. 같은 보기의 "CDN을 지나는 요청과 응답을 손보기"는 얼어 있는 본문·해설이 글자 그대로 쓰는 말이라 그대로 뒀고, 오답 포인트 셋도 달라지지 않았다 |
+
+나머지 10건의 `choices` 수정은 **전부 오답 보기**다. 각 step이 오답 포인트가 그 표현에
+걸려 있지 않은지 확인한 뒤에만 고쳤고, 보기 넷의 종결 형태와 결도 맞췄다.
+
+#### 기계 지표 대조 — `node scripts/content-audit.mjs`
+
+기준 커밋 `04f6946`의 지표는 phase 31 보고서에 있다.
+
+| 지표 | 착수(`04f6946`) | 지금 | 판정 |
+|---|---|---|---|
+| ① 문장형 제목 | 181건 (34개 주제) | **0건 (0개 주제)** | **목표 달성** |
+| ② 관용 표현 | 91건 | **74건** | 줄었다 |
+| ③ 정답 노출 후보 | 62건 | 62건 | 늘지 않았다 |
+| ④ 소속 없는 용어 | 1건 | 1건 | 늘지 않았다 |
+| ⑤ 장문 | 3건 | 3건 | 늘지 않았다 |
+| ⑥ 중복 후보 | 8쌍 | 8쌍 | 늘지 않았다 |
+
+**늘어난 지표는 하나도 없다.** 여섯 지표가 모두 0건인 주제는 6개다 —
+`aws-core-services` · `s3-storage-classes` · `s3-encryption-batch` ·
+`redshift-opensearch-quicksight` · `guardduty-macie-inspector` · `governance-iac`.
+
+**② 관용 표현이 74건 남은 이유를 정직하게 적는다.** `content-audit.mjs`의 ②는 개념을
+`summary`+`paragraphs`로, 문항을 `prompt`+`choices`+`explanation`으로 묶어 **항목 단위**로
+센다. 그러므로 `paragraphs`나 `explanation`에 그 낱말이 있으면 이 phase가 고칠 수 있는 네
+필드를 다 고쳐도 건수가 줄지 않는다. 남은 74건이 몰려 있는 곳은 `ecs-eks-fargate` 21 ·
+`emr-glue-athena` 16 · `lambda` 13이고, 이 셋은 phase 31이 본문·해설에서 「돌리다·띄우다」
+계열을 표준어로 쓴 주제다. **범위 안 필드에는 남은 것이 거의 없다** — 아래 2의 「얼어 있는
+본문·해설이 같은 관용 표현을 쓴다」가 그 목록이다.
+
+#### 래칫을 닫았다
+
+`src/data/data.test.ts`의 명사구 단언 **둘을 하나로 합쳤다.** phase 29가 시범 주제에 건
+`it('S3 암호화 주제의 개념 제목이 …')`와 끝낸 주제를 하나씩 더해 온 `nounPhraseRatchet`
+목록(38개)을 지우고, **전 주제 검사** `it('개념 제목이 모두 문장이 아니라 명사구다')` 하나로
+바꿨다. 「제목은 이름표이지 주장이 아니다」와 「예외 목록을 만들지 마라」 주석은 옮겨 살렸고,
+범위를 한정하는 이유를 적은 문단은 사실이 아니게 되어 지웠다.
+
+**단언 하나를 새로 더했다** — `it('한 주제 안에서 개념 제목이 겹치지 않는다')`. 제목을
+명사구로 줄이는 과정에서 **한 주제 안에 같은 제목이 둘 생기면** 개념 목록에서 구분되지
+않는데, 그것이 이 phase가 새로 만들 수 있던 유일한 종류의 회귀였다. 착수 시점에 0건이었고
+지금도 0건이다. **주제를 넘는 중복은 검사하지 않는다** — 같은 서비스가 두 주제에 나오면
+제목이 같은 것이 자연스럽고 착수 시점에도 3건 있었다.
+
+### 2. 보류한 항목과 이유
+
+step 0~23이 남긴 「보류」를 한 목록으로 합쳐 사유별로 묶었다. **사유가 같은 것이 압도적으로
+많다** — 아래 첫 두 분류가 그것이고, 둘 다 이 phase가 네 필드만 고칠 수 있다는 범위에서
+나온다.
+
+#### (가) 얼어 있는 `paragraphs`·`explanation`이 같은 말을 쓴다 — 가장 큰 분류
+
+**고치면 어긋남이 없어지는 것이 아니라 새로 생긴다.** UI가 요약 바로 아래에 본문을 두고
+(개념 읽기), 확인 문제 화면은 해설과 개념 펼치기를 한 화면에 둔다(ADR-016). 그러므로 범위
+안 필드만 고치면 같은 화면에서 같은 것을 두 말로 부르게 된다. step 7이 `q438`에서 처음
+내린 판정이고 step 10·11·14·16·17·18·22·23이 그것을 이었다.
+
+**관용 표현이 얼어 있는 자리 (20건 남짓)**
+- `ec2-autoscaling` — `ec2-image-builder` 문단 1 · `gpu-instance-family` 문단 1의 "인스턴스를 띄우는", `q435`·`q438` 해설의 "띄우려면"·"띄우고". `q438` c3은 정답 보기다
+- `lambda` — 개념 4곳·해설 6곳. 보기 쪽 `q490`·`q507`·`q508`이 자기 해설과 짝이고 `q507` c1은 정답 보기다
+- `ecs-eks-fargate` — 개념 문단 8곳(`eks`·`eks-compute-options`·`fargate-no-time-limit`·`fargate-spot`·`batch-fargate-compute-environment`·`eks-fargate-pod-isolation`·`ecs-task-role-vs-task-execution-role`·`fargate-per-second-billing`)과 해설 12곳. `q516` c3은 정답 보기다
+- `emr-glue-athena` — 본문·해설 16곳. 보기 5건(`q621` c3 · `q623` c2(정답) · `q624` c0 · `q626` c3 · `q628` c1)이 전부 이 자리다. `q628` c1은 근거 개념 문단이 **글자 그대로** 쓴다
+- `sqs-sns-eventbridge` — `eventbridge-event-pattern-vs-polling` 문단 1, `q556` 보기·해설의 "인스턴스를 띄워"
+- `backup-disaster-recovery` — `elastic-disaster-recovery` 요약·문단 0과 `q577` 해설의 "띄우는". `q577` c0은 정답 보기다
+- `hybrid-connectivity` — `outposts-data-residency` 문단 0과 `q604` 해설의 "관리형 서비스를 띄우고". `q604` c2는 정답 보기다
+- `kinesis-streaming` — `kinesis-client-library` 문단 2와 `q641` 해설의 "장기 실행 컨테이너로 띄우면". `q641` c0은 정답 보기다
+- `organizations-cloudtrail-config` — `organizational-unit` 문단 1과 `q711` 해설의 "계정마다 템플릿을 돌려"
+- `cost-management` — `rds-reserved-instance` 문단 1과 `q726` 해설의 "오래 돌릴"
+- `ai-ml-services` — `sagemaker-autopilot` 문단 0과 `q315`·`q316` 해설의 "자동으로 돌려 주는". `q315` c1은 정답 보기다
+- `api-gateway-step-functions` — `step-functions-map-state` 문단 0과 `q544` 해설의 "돌리거나"
+
+**옛 어휘·표현이 얼어 있는 자리**
+- `s3-storage-classes` — `lifecycle-vs-intelligent-tiering`의 "갈림길"·"식는"(`intelligent-tiering-monitoring-fee` 문단 0과 `q323` 프롬프트가 쓴다)
+- `s3-access-control`·`ebs-instance-store` — `batch-copy-vs-replication` 요약("앞으로 들어올 객체를 계속 따라 보내는 장치")이 `q281` 해설과 짝, `s3-access-point`·`s3-storage-lens`·`ebs-recycle-bin` 요약의 "장치"
+- `efs-fsx` — `efs-performance-modes` 요약이 `q334` 해설과 글자까지 같다. `q333` 프롬프트의 "가능한 짧은", `q341` c1·`q343` c3·`q350` c1
+- `data-transfer-services` — `file-gateway-vs-datasync-continuous`의 "갈림길", `q360` c1의 "스트리밍 서비스의 몫"
+- `rds-storage-features` — `q377` c2(정답)의 "비밀번호 자리", `q182` c1의 "Multi-AZ", `q059` 프롬프트의 "짧은 지연 시간", `rds-proxy-failover` 요약의 "승격"
+- `aurora` — `aurora-endpoint-types` 요약의 1인칭 "내가", `aurora-zdr-and-activity-streams`의 "쪽이라", `aurora.aurora`의 "및"
+- `dynamodb`·`elasticache-purpose-built-db` — `elasticache-redis-vs-memcached`의 "갈림길", `dynamodb-incremental-export` 요약이 `q416` 해설·정답 보기와 짝, `q417` 프롬프트의 "가르는", `elasticache-multi-az-failover` 요약의 "죽으면"
+- `ec2-autoscaling` — `ami-and-launch-template` 요약이 `q435` 해설과 짝, `scheduled-scaling`·`target-tracking-vs-simple-scaling`의 "갈림길"(`data.test.ts`가 그 문구를 단언으로 잡고 있다)
+- `elastic-load-balancing` — `q476` 프롬프트의 "밀리는"(해설이 같은 말을 쓴다), `alb-listener-rule-fixed-response` 요약의 "건드리지 않고"
+- `cloudfront-global-accelerator` — `q193` c3의 "가중치 라우팅", `q474` c3의 "손보기", 개념 9·23 요약의 "엣지에서 도는", `q468` c0·`q475` c0·`q477` c1의 "얹어"
+- `lambda` — `q495` 프롬프트의 "밀리는", `lambda-reserved-concurrency` 요약의 "몫"
+- `ecs-eks-fargate` — `eks-fargate-pod-isolation` 요약이 문단 0·`q516` 해설과 **두 곳에서 글자까지 같다**, `app2container`·`eks-aws-load-balancer-controller`·`eks-connector`·`fargate-efs-mount` 요약의 "도는"
+- `api-gateway-step-functions` — `api-gateway-websocket-api` 요약의 "연결을 열어 둔 채", `q546` c3의 "손대지 않고"
+- `sqs-sns-eventbridge` — `eventbridge-private-api-target`의 "길", `eventbridge-ordering-and-retention`의 "보장하지 않는 것", `sns-is-not-a-queue` 요약의 "밀려드는", `sqs-message-size-limit` 요약의 "페이로드", `eventbridge-pipes` 요약의 "장치"
+- `backup-disaster-recovery` — `q560` c1의 "대상 자리"(설정에서 값을 적는 칸이다), `backup-s3-continuous-backup` 요약의 "뜨는"
+- `vpc-networking`·`security-groups-nacl` — `q134` 프롬프트의 "손대지 않은"(`data.test.ts`가 글자로 고정한 자리다), `security-group-stateful-vs-nacl-stateless`의 "상태 저장", `nacl-deny-at-source-subnet` 요약의 "반대가 된다", `endpoint-pricing` 요약의 "비용"
+- `hybrid-connectivity`·`route53` — `direct-connect-vif-types` 요약이 `q607` 해설과 짝, `q610` c3의 "갈아 끼우게", `transit-gateway` 요약의 "다수", `region-attached-edge-options` 요약의 "완전히", `onprem-connectivity-heuristic` 요약의 "떠올린다"
+- `emr-glue-athena` — `emr-security-configuration` 요약의 "워크로드", `q625` 프롬프트의 두 물음
+- `kinesis-streaming`·`redshift-opensearch-quicksight` — `redshift-spectrum` 요약·`q269` c2·`q270` c3의 "그 자리에서", `streaming-services-comparison` 요약의 "담당", `msk-kafka-connect` 요약이 `q642` c1(정답)과 짝, `dynamodb-to-s3-analytics` 요약이 `q270` c1(정답)과 짝, `q639` c0의 "손수", `q640` 프롬프트의 "밀어내지"
+- `cloudwatch-xray`·`secrets-encryption` — `kms-key-per-tenant` 요약이 `q661` c1(정답)의 "가른다"와 짝, `acm-dns-validation` 요약의 "사람 손을 타지 않고", `cloudwatch-alarm-state-change-event` 요약의 "끼우지", `secrets-manager-batch-get-secret-value` 요약의 "반복하는"
+- `waf-shield`·`guardduty-macie-inspector` — `security-hub` 요약·`q679`·`q682` 프롬프트의 "한자리", `security-service-lineup`의 "헷갈리기"(정규식 오검출), `guardduty-finding-to-eventbridge` 요약의 "흘러가고", `cloudfront` 요약이 `q151` 해설과 글자까지 같다
+- `iam-permissions`·`identity-federation` — `q685` c0의 "권한이 갈리게", `q695` c2의 "밀어냈는지"
+- `organizations-cloudtrail-config`·`cost-management` — `scp-attachment-targets`의 "자리"(정책을 붙이는 **위치**를 가리키는 구체어이고 본문 6곳이 쓴다. `q709` c0·`q718` c1은 정답 보기다), `q714` 프롬프트·c3의 "갈라", `q723` c1의 "스캔", `trusted-advisor` 요약의 "진단"
+- `ai-ml-services`·`systems-manager` — 위 관용 표현 항목과 같다
+
+#### (나) 얼어 있는 텍스트 자체가 두 표기로 갈려 있다 (12건)
+
+**어느 쪽으로 맞춰도 나머지 절반과 어긋난다.** 게다가 보기 넷이 한 벌로 같은 표기를 쓰는
+자리에서 하나만 바꾸면 그 차이가 변별 신호가 된다. step 14가 처음 내린 판정이다.
+
+| 갈린 짝 | 양쪽이 얼어 있는 자리 |
+|---|---|
+| 「토픽」 ↔ 「주제」 (SNS) | 보기·프롬프트는 토픽 27회로 한쪽인데 개념 문단 3곳·해설 3곳이 「주제」 |
+| 「FIFO 대기열」 ↔ 「FIFO 큐」 | `sqs`·`sqs-details`가 대기열, `sqs-fifo-*`가 큐 |
+| 「NACL」 ↔ 「네트워크 ACL」 ↔ 「네트워크 접근 제어 목록」 | 개념 문단과 `q130`·`q134`·`q135` 해설이 NACL, `q594`~`q596` 해설과 `nlb-security-group` 문단 1이 네트워크 ACL |
+| 게이트웨이 이름의 한글 ↔ 영문 | `q215` 해설은 `Virtual Private Gateway`, `q599` 해설은 「가상 프라이빗 게이트웨이」 |
+| 「VIF」 ↔ 「가상 인터페이스」 | 문단 0이 약칭을 도입하고 `q607` 해설은 풀어 쓴 쪽만 쓴다 |
+| 「주 노드」 ↔ 「프라이머리 노드」 (EMR) | `emr-node-instance-family-choice` 계열이 주 노드, `emr-node-types` 계열이 프라이머리 노드 |
+| 「Performance Insight」 ↔ 「Performance Insights」 | `q126`·`q648`~`q652` 해설이 단수, `q653`·`q655` 해설이 복수 |
+| 「전용 하드웨어 모듈」 ↔ 「전용 하드웨어 보안 모듈」 | 개념 4·10 요약과 `q660` 해설이 짧은 쪽, `q229` 프롬프트·해설이 긴 쪽 |
+| 「Deny」 ↔ 「거부」 | 문단 0은 `Deny`, `q696` 해설은 「거부」이고 `q696` c1·c2가 한 벌 |
+| 「권한 세트」 ↔ 「Permission Set」 / 「액세스 키」 ↔ 「Access Key」 / 「Identity Center」 ↔ 「IAM Identity Center」 | 개념 name과 문단이 각각 다른 쪽 |
+| 「조직 단위」 ↔ 「OU」 | 보기는 전부 「조직 단위」로 이미 한쪽이고 갈린 쪽이 문단이다 |
+| 「음성」 ↔ 「말소리」 / 「퍼블릭 IP」 ↔ 「퍼블릭 주소」 | `media-ai-service-lineup` name·요약, `q305` c1·해설 |
+| 「IP Set」 ↔ 「IP 세트」 | `waf` 문단 2가 영문, `q152`·`q154` 해설이 한글 |
+| 「결제 콘솔」 ↔ 「결제 대시보드」 / 「기본 부하」 ↔ 「기준이 되는 부하」 | 앞쪽이 `data.test.ts`가 글자로 고정한 요약, 갈린 쪽이 문단 |
+
+#### (다) 문항 설계 문제라 문체 범위 밖이다
+
+- **중복 후보 8쌍** — `q031`·`q033` / `q040`·`q041` / `q096`·`q097` / `q113`·`q116` /
+  `q129`·`q136` / `q130`·`q137` / `q141`·`q145` / `q146`·`q148`. 각 step이 확인한 결과
+  **여덟 짝 모두 정답은 같지만 묻는 것이 다르다**(예: `q129`는 통제 단위가 개별 리소스라는
+  것, `q136`은 여러 리소스를 묶으면서 서브넷에 매이지 않는다는 것)
+- **두 가지를 묻는 프롬프트 2건** — `q625`("기능과 그 기능이 겨냥하지 않는 용도를 함께"),
+  `q650`("그 이유와 대신 놓이는 서비스를 함께"). 보기 넷이 "A이며, B" 꼴로 한 벌을 이뤄
+  고치려면 문항을 다시 설계해야 한다
+- **보기 넷의 모양이 갈리는 자리 3건** — `q504` c2·`q624` c3만 줄표를 쓰고, `q675`는
+  c0·c3이 명사구·c1·c2가 서술문이다. 맞추려면 정답 보기를 다시 써야 한다
+- **장문 3건** — `q054`(63자) · `q079`(63자) · `q029`(62자). 줄이려면 변별 조건을 깎아야
+  한다
+- **소속 없는 용어 1건** — `q650`의 「객체」. S3의 객체가 아니라 「객체 스토리지」라는 일반
+  용어이고 정규식이 그 합성어를 갈라 센 것이다(오검출)
+
+#### (라) 정답 노출 후보 62건 — ADR-030의 예외에 해당한다
+
+**착수 시점과 같은 62건이고 한 건도 늘지 않았다.** 각 step이 전부 읽어 갈랐고 판정은 둘로
+나뉜다 — **전제로 쓰인 이름**(`q037`의 `SSE-KMS`, `q182`의 `RDS`처럼 정답이 아니라 상황을
+세우는 말)과 **그 낱말이 없으면 문항이 성립하지 않는 상황 단서**(`q327`의 "Windows 애플리케이션
+서버", `q456`의 "UDP 트래픽", `q643`의 "500KB", `q307`의 "AMI"). ADR-015가 풀이 대상에서
+뺀 상식 토큰(`AWS`·`DB`·`IP`·`API`)이 겹쳐 잡힌 것도 여럿이다.
+
+#### (마) 저장소 전체에 걸친 표기 규칙 문제 — 한 주제만 맞추면 오히려 갈린다
+
+**개념 `name`의 괄호 앞 공백이 갈려 있다.** 「EBS (Elastic Block Store)」·「EFS (Elastic File
+System)」·「KMS (Key Management Service)」·「보안 그룹 (Security Group)」에는 공백이 있고,
+「Elastic Fabric Adapter(EFA)」·「전역 보조 인덱스(GSI)」·「데드레터 큐(DLQ)」·「조직 단위(OU)」·
+「서비스 계정용 IAM 역할(IRSA)」에는 없다. **개념 618개 전체에 걸친 규칙이라 step 1이 처음
+보류하고 step 2·3·6·11·13·15·19·21·22·23이 같은 판정을 이었다.** 한 주제만 맞추면
+저장소 안에서 오히려 갈린다 — 전체를 한 번에 고르는 일이므로 별도 결정으로 다뤄야 한다.
+
+#### (바) 사실 판정이 필요해 이 phase가 다룰 수 없다 (3건)
+
+이 셋은 **다음 phase의 후보**다. 고치려면 출처를 다시 대조해야 한다.
+
+1. `cloudfront-global-accelerator.cloudfront-functions` — 요약은 "Lambda@Edge와는 실행
+   모델도 **용도도 다르다**"고 하는데 같은 개념 문단 1은 "둘 다 겨냥하는 것은 CDN을 지나는
+   요청과 응답을 손보는 일이다"라 하고 `q474`의 정답 보기도 본문 쪽에 서 있다. 어느 쪽이
+   맞는지 정하는 것이 사실 판정이다
+2. `api-gateway-step-functions.api-gateway-api-key-not-auth` — 요약의 "**사용량을 재는**
+   식별자"가 이 개념 본문에도 이 주제 해설에도 없다. 빼면 요약이 들고 있던 사실이 하나
+   사라져 「의미 삭제」가 되고, 두면 근거를 대조할 수 없다
+3. `redshift-opensearch-quicksight.quicksight-ml-forecast` — 요약의 "**시계열** 예측"이
+   이 주제의 얼어 있는 텍스트에 한 번도 없다(문단 0은 "앞으로의 추세"다). 위와 같은 자리다
+
+### 3. 의미 변경 위험 때문에 손대지 않은 항목
+
+**2와 따로 적는다.** 여기 들어가는 것은 「고치면 사실·조건·수치의 뜻이 달라질 것 같아서」·
+「오답 보기의 함정이 그 표현에 걸려 있어서」·「대체어가 사실을 넓히거나 좁힐 수 있어서」인
+것들이다. **항목마다 무엇이 달라질 뻔했는지를 한 줄로 적었다** — 그것이 이 목록의 쓸모다.
+
+#### (가) 수치·경계값이 달라진다
+
+| 자리 | 손대면 달라지는 것 |
+|---|---|
+| `rds-multi-az-failover-rto` 요약 "5분 **이내**" ↔ 본문·`q387` "5분 **미만**" | 경계값 5분을 포함하느냐가 갈린다 |
+| `warm-standby-for-low-rto` 요약 "**분 단위 아래**" ↔ 본문·`q579` "**60초**" | 위와 같다. 수치로 바꾸면 경계가 새로 정해진다 |
+| `savings-plan-details` 요약 "1년/3년 약정" | 슬래시를 풀어 쓰면 **수치 표기**를 손대는 일이 된다 |
+| `q731` c0 "100퍼센트" ↔ 본문 "60%" | 수치 표기이고, 보기 넷 중 숫자가 든 것이 이 하나뿐이라 표기를 바꾸면 변별 신호가 된다 |
+| `dynamodb-single-digit-latency` 요약 "**응답**을 유지" ↔ 본문 "**성능**" | 응답을 성능으로 넓히면 조건이 흐려진다 |
+| `kinesis-retention-and-fanout`·`kinesis-record-size-limit` 요약의 "최대 365일"·"최대 1MB" | 수치라 하나도 건드리지 않았다 |
+| `multivalue-answer-details` 요약 "최대 **8개**" | 이 개념의 이름값이고 `q221` 프롬프트와 짝이다 |
+| `aurora-global-database-dr-targets` 요약 "RPO 1분·RTO 5분" | 조건 자체다 |
+| `direct-connect-caveats` 요약 "몇 주에서 몇 달" | 물결표만 바꿨고 수치는 그대로다 |
+
+#### (나) 사실의 범위가 넓어지거나 좁아진다
+
+| 자리 | 손대면 달라지는 것 |
+|---|---|
+| `aurora-endpoint-types` 요약 "내가 고른 **복제본**" ↔ 본문 "**인스턴스**를 골라 묶고" | 사용자 지정 엔드포인트가 묶을 수 있는 범위가 달라진다 |
+| `abac` 요약 "**리소스**에 붙인 태그" ↔ 본문 "리소스**와 주체**에" | ABAC가 보는 태그의 범위가 달라진다 |
+| `route53-alias-record` 요약 "**ALB** 같은" ↔ 본문 "**로드 밸런서** 같은" | 별칭 레코드가 겨눌 수 있는 대상의 범위가 달라진다 |
+| `waf-attach-targets` 제목 "붙일 수 있는 곳" | 붙는 쪽만 제목에 올리면 붙지 않는 대상(NLB·S3)이 가려져 범위가 좁아 읽힌다 |
+| `amazon-inspector` 요약 "**고치지는** 않는다" ↔ 본문 "**패치를 적용하는** 서비스가 아니다" | 패치로 좁히면 이 서비스가 하지 않는 일의 범위가 줄어든다 |
+| `internet-gateway-is-not-per-az` 요약 "**고**가용성" ↔ 본문 "가용성" | 단언의 세기가 달라진다 |
+| `centralized-onprem-egress` 요약 "**퍼블릭 서브넷**을 두지 않는다" ↔ 본문 "**인터넷 게이트웨이**를 붙이지 않는다" | 무엇을 두지 않는지의 초점이 옮겨가 정답 보기가 거는 조건이 달라 보인다 |
+| `sns-fifo-topic` 요약 "쓰는 **유일한** 선택지" | 덜어내면 SQS FIFO·EventBridge와 견줘 이것뿐이라는 결론이 사라진다 |
+| `fargate-per-second-billing` 요약 "**수십 초**짜리" ↔ 본문 "**10초** 만에 끝나는" | 요약이 거는 범위가 좁아지거나 넓어진다 |
+| `snowball-edge-compute` 요약 "쿠버네티스 클러스터" ↔ 본문 "**EKS Anywhere** 클러스터" | 지원 범위가 그 배포판 하나로 좁아 읽힌다 |
+| `kinesis-client-library` 요약 "**샤드 할당**" ↔ 해설 "**샤드 수준 제어**" | 통제의 대상이 달라진다 |
+| `service-catalog` 요약 "제품 **묶음**을 카탈로그로" | 맞추려면 덜어내야 해서 **의미 삭제**가 된다 |
+| `control-tower-controls` 요약 "찾아낸다" ↔ 본문 "찾아 **보고하며**" | 보고를 보태면 요약을 늘려 사실을 더하는 일이 된다 |
+| `sagemaker` 요약 "**옮기지** 않고" ↔ 본문 "**복사하지** 않고" | 원본이 남는지 여부의 초점이 달라진다 |
+| `alb-cookie-stickiness` 요약 "이 방식이 아니다" ↔ 본문 "그대로 주지 않는다" | 본문이 둔 여지가 사라져 서술의 강도가 달라진다 |
+| `gateway-load-balancer` 요약 "**일반** 트래픽" ↔ 본문 "웹이나 게임 트래픽" | 본문 말로 좁히면 요약이 두 예시에만 걸려 오히려 범위가 좁아진다 |
+| `nlb-security-group` 요약 "**특정** 소스 IP" ↔ 본문 "**지정한** 소스 IP 범위" | 허용 목록을 누가 정하는지의 초점이 달라진다 |
+| `config-configuration-recorder` 요약 "**건드리지** 않고" ↔ 본문 "설치하거나 설정을 바꾸는 일이 없으므로" | "수정하지 않고"로 좁히면 설치까지 포함하던 범위가 줄어든다 |
+| `redshift-concurrency-scaling` 요약 "클러스터 **크기**를 건드리지 않는다" ↔ 본문 "클러스터를 그대로 둔 채" | 크기를 바꾸지 않는다는 초점이 클러스터 전체로 넓어진다 |
+| `rds-custom` 요약 "직접 **손대야**" | 접근인지 사용자 지정인지로 좁아질 수 있다(step 4가 세운 판정이고 step 8·9·18·22가 이었다) |
+| `sql-server-license-cost` 요약 "**Microsoft** 라이선스" ↔ 본문 "**상용 데이터베이스** 라이선스" | 어느 회사의 라이선스인지가 사라진다. 반대로 본문에 없는 회사 이름을 근거로 삼는 것도 이 phase의 일이 아니다 |
+| `efs-one-zone` 요약 "잃어도 다시 만들 수 있는" | 이 배포 형태를 고르는 조건 자체라 다듬으면 넓어지거나 좁아진다 |
+| `elasticache-not-a-durable-store` 요약 "고가용성과 확장성을 갖춘" | 요구 조건 자체라 풀어 쓰면 경계가 달라진다 |
+| `reserved-instance-types` 요약 "**덜 싸다**" | 비교 대상이 적혀 있지 않고 본문("스팟만큼")과 해설("표준만큼")이 다르다. 풀려면 둘 중 하나를 골라야 하고 그것이 새 해석이다 |
+| `fsx-ontap-multi-az` 요약 "밀리초 미만 공유 스토리지" | 풀어 쓰면 지연이 걸리는 대상(스토리지인가 접근인가)을 새로 해석하게 된다 |
+| `alb-least-outstanding-requests` 요약 "**처리 중인** 요청" ↔ 본문 "**아직 응답하지 않은**" | 세는 대상의 경계가 달라 보인다 |
+| `datasync-task-status-event` 요약 "SUCCESS나 ERROR" | 이벤트가 싣는 상태 값 자체라 한글로 바꾸면 그 값이 사라진다 |
+
+#### (다) 오답 보기의 함정이 그 표현에 걸려 있다 / 정답 보기라 보수적으로 다뤘다
+
+| 자리 | 손대면 달라지는 것 |
+|---|---|
+| `q328` c3 "**EBS 볼륨**을 붙이고" ↔ 해설 "**블록 볼륨**을 따로 붙여" | 해설이 일부러 상위 범주로 일반화한 것으로 읽히고, 보기의 서비스 이름을 손대면 변별 신호가 달라진다 |
+| `q497` c1 "호출을 **흩어 보낸다**" | 이 보기의 함정이 "버퍼가 되지 못한다"이고 그것이 여러 수신자에게 퍼뜨리는 동작이라는 표현에 걸려 있다 |
+| `q193` c2 "**멀티 오리진**" | 보기 넷이 짧은 라벨로 통일돼 있어 하나만 풀어 쓰면 결이 갈리고 그 차이가 변별 신호가 된다 |
+| `q187` c2(정답) "DynamoDB DAX" · `q642` c1(정답) "이기종 소스" · `q270` c1(정답) "변경분" | 정답 보기의 표기를 건드리면 그 글자가 변별 신호가 된다 |
+| `q034`·`q282` (phase 29가 이미 다룬 자리) | 오답을 프롬프트가 묻는 범주 안에 세우는 일과 얽혀 있다 |
+| `q024` 프롬프트 "법·감사 목적의 장기 보관에 쓰는 클래스 가운데" | 보기 넷 중 둘이 그 범위 밖이라 고치려면 프롬프트를 다시 설계해야 한다 |
+| `q228` 프롬프트 "허가된 사용자만" ↔ 본문 "복호화 권한을 따로 가진 사용자만" | 수단을 넣으면 정답(KMS 키로 암호화한다) 쪽으로 글자가 이어져 변별 신호가 생긴다 |
+| `q351` 프롬프트 "그 자리에서 처리" | 본문의 "현장에서"는 정답 보기 c0에만 있는 낱말이라 프롬프트에 넣으면 정답 쪽으로 글자가 이어진다 |
+| `q466` 프롬프트 "한 곳에 모아 둔" | "한 계정에"로 구체화하면 정답 보기의 "네트워킹 계정" 쪽으로 글자가 이어진다 |
+
+#### (라) 이미 자연스러워 억지로 바꾸지 않았다 / 본문 문장을 되풀이하게 된다
+
+UI가 개념 요약 바로 아래에 본문을 두므로, **요약을 본문 말로 맞추면 같은 문장이 두 번
+보인다.** 이 사유로 남긴 자리가 스무 곳 남짓이다 — `parquet-columnar-format`·
+`emr-security-configuration`·`cloudwatch`·`ecs-awsvpc-mode`·`instance-profile`·
+`private-hosted-zone`·`waf-rate-based-rule`·`backup-long-term-retention`·
+`backup-and-restore-dr`·`lambda-function-url-iam-auth`·`api-gateway-custom-domain-name`·
+`secrets-manager-vs-parameter-store`·`kms-multi-region-key`·`cloudfront-signed-url`·
+`organizations-scp` 등이다. `q186`·`q029` 프롬프트처럼 `data.test.ts`가 글자로 고정하고
+지금 문체로도 자연스러운 자리도 여기 든다.
+
+#### (마) 시험 풀이 관점의 표현 — 본문이 이미 그 관점으로 쓰여 있다
+
+`connection-issue-heuristic`("연결 문제의 정답 신호") · `onprem-connectivity-heuristic`
+("온프레미스 연결 문제의 출발점") · `rotation-heuristic`(step 19가 "자동 순환을 가리키는
+신호"로 명사구화했다) 셋이다. 같은 주제의 얼어 있는 본문이 "선택지는 오답이다"(
+`multi-az-standby-limits`) · "문제와 선택지에는"(`storage-type-names`)처럼 이미 그 관점으로
+쓰여 있어, 제목·요약만 고치면 본문과 결이 갈린다. **step 4가 이 판정을 세우고 step 16·19가
+이었다.**
+
+#### (바) 명사구지만 「무엇을 못 하는가」를 제목으로 둔 자리
+
+`multi-az-standby-limits`("다중 AZ 대기 인스턴스로는 할 수 없는 것") ·
+`eventbridge-ordering-and-retention`("EventBridge가 보장하지 않는 것") ·
+`shield-standard-network-layer`("Shield Standard가 다루지 않는 계층") ·
+`waf-attach-targets`("WAF를 붙일 수 있는 곳") 넷이다. `/다$/`에 걸리지 않는 명사구이고,
+무엇을 못 하는지를 제목에 넣으면 더 또렷해지지만 `data.test.ts`가 글자로 고정한 프롬프트와
+짝을 이루거나(`q180`) 범위가 좁아 읽힌다. **step 4가 처음 남기고 step 13·20이 이었다.**
+
+### 4. 마지막 커밋 상태
+
+| 항목 | 값 |
+|---|---|
+| 브랜치 | `feat-32-field-consistency` |
+| 분기 지점 | `04f6946` — `merge: phase 31 문체 확대 적용을 develop에 들인다` |
+| `develop` 대비 | **52 커밋** — step 0~23의 feat·chore 쌍 51개에 이 step의 feat 커밋 하나다. 앞선 step들처럼 `chore: step 24 output` 커밋이 뒤따르면 53이 된다 |
+| 마지막 커밋 | `feat(32-field-consistency): step 24 — ratchet-closeout-and-report` — **이 절을 담은 커밋 자체라 해시를 여기 적을 수 없다**(적으면 그 값을 넣는 순간 해시가 다시 바뀐다). 지금 값은 `git log -1 --format='%h %s'`로 읽어라 |
+| **push** | **하지 않았다.** 병합과 push는 사람이 판단한다(CLAUDE.md 「Git 전략」). 원격에 이 브랜치는 없다 |
+| 워킹 트리 | 이 커밋 시점에 깨끗하다. 내가 만들지 않은 변경은 없었다 |
+
+`src/` 변경 규모(`git diff 04f6946..HEAD --stat -- src/`):
+
+```
+ src/data/data.test.ts   |  47 ++++-
+ src/data/questions.json |  50 ++---
+ src/data/topics.json    | 532 ++++++++++++++++++++++++------------------------
+ 3 files changed, 332 insertions(+), 297 deletions(-)
+```
+
+#### 검증 결과
+
+| 검사 | 결과 |
+|---|---|
+| `npm test` | **492개 통과** (22 파일). 명사구 단언이 전 주제로 걸린 상태다 |
+| `npm run build` | 통과 (tsc 타입체크 포함) |
+| `npm run lint` | 통과 (`--max-warnings 0`) |
+| `node scripts/check-structure.mjs` | exit 0 — 개념 id·name, 주제 메타데이터, 개념 개수·순서, 문항 파일 모두 기준과 같다 |
+| `node scripts/field-diff.mjs 04f6946` | exit 0 — **얼어 있는 필드는 그대로다**(`paragraphs`·`explanation`·`answerIndex`·id·순서·주제 메타데이터) |
+| `node scripts/coverage.mjs` | exit 0 — 개념 **618개 중 618개(100%)**, 문항 732개, 문항 없는 주제 0개 |
+| `node scripts/check-verbatim.mjs` | exit 0 — 32자 이상 겹치는 개념 본문 없음. 넘긴 겹침 1건은 ADR-025가 허용한 S3 클래스 이름 나열이다 |
+| `node scripts/content-audit.mjs` | exit 0 — **① 문장형 제목 0건**. ②는 91→74로 줄고 ③④⑤⑥은 늘지 않았다 |
+
+`scripts/topics-baseline.json`은 매 step `sync-baseline.mjs`로 갱신했고 손으로 고치지
+않았다. `docs/ADR.md`에는 ADR을 쓰지 않았다 — 이번 범위는 문체 수정이고 새로 정할 설계
+결정이 없었다. **문체 기준을 ADR로 굳힐지는 사용자가 판단한다.**
+
+#### 다음 세션이 먼저 할 일
+
+**코드가 아니라 사용자 검수다.** phase 29·30·31이 남긴 교훈이 그대로 적용된다 —
+합격 기준은 「한국어로 자연스럽게 읽히는가」이고 기계로는 판정할 수 없다.
+`npm run dev`로 실제 화면을 열어, 개념 목록에서 **제목 198개가 이름표로 읽히는지**를
+먼저 봐 달라고 청하는 것에서 시작한다. **검수를 테스트 통과나 grep으로 갈음하지 마라.**
+
+열려 있는 후보는 셋이다 — 위 2의 (바) 사실 판정 3건, (마) 개념 `name`의 괄호 앞 공백
+표기 통일(618개 전체), 그리고 phase 31이 본문·해설에 쓴 「돌리다·띄우다」 계열
+74건을 손댈지 여부(그 필드를 여는 결정이 필요하다).
+
+---
+
 작성 시점: 2026-09-09. phase 30(문제 은행 문체 다듬기)의 step 0~28을 **전부 끝낸** 직후다.
 이 파일은 **다음 phase를 고르기 전까지의 인수인계**만 담는다. 결정이 끝나면 그 내용은
 step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
@@ -10,14 +696,321 @@ step 명세와 ADR로 옮겨가고 이 파일은 다시 짧아진다.
 > 시작한다. phase 29가 남긴 교훈이 그대로 적용된다 — **검수를 테스트 통과나 grep으로
 > 갈음하지 마라.**
 
-## 먼저 읽어라 — 다른 기기에서 이어받는 법 (2026-09-09)
+## phase 31 결과 보고 (2026-09-10) — 문체 확대 적용이 끝났다
 
-**브랜치는 `feat-30-prompt-korean-polish`이고 push되지 않았다.** `develop`도 `main`도
-phase 29·30을 담고 있지 않다(배포된 사이트에는 이 변경이 없다).
-**병합과 push는 사람이 판단한다**(CLAUDE.md).
+`feat-31-content-quality-rollout`에서 step 0~25를 전부 끝냈다. 범위는 **문체와 가독성 수정**
+하나였고 사실관계는 건드리지 않았다. 아래 넷은 사용자가 완료 후 정리해 달라고 한 항목이다.
+**아직 push하지 않았다** — 4를 봐라.
+
+> **아래쪽의 「지금 상태」와 「phase 31 — 명세를 짜 두었다. 아직 돌리지 않았다」 두 절은
+> 이 절보다 앞서 쓰인 것이라 낡았다.** 테스트 471개·`fix-vpc-endpoint-fact` 미병합·
+> phase 31 미실행은 전부 이 절의 4가 대신한다. 두 절은 당시 기록으로 그대로 둔다.
+
+### 1. 무엇을 얼마나 고쳤나
+
+**주제 39개를 전부 훑었다.** step 0~2가 세 주제, step 3~25가 나머지 36개다.
+기준선은 phase 착수 커밋 `4453434`이고, 아래 수치는 그 커밋과 HEAD의 JSON을 **필드 단위로
+비교한 실측**이다(요약에 적힌 자기 보고 수치가 아니다).
+
+| 대상 | 총계 | 바뀐 것 |
+|---|---|---|
+| 주제 | 39 | **39** — 한 글자도 안 바뀐 주제가 없다 |
+| 개념 | 618 | **405** (65%) |
+| 개념 문단 `paragraphs` | — | **545곳** |
+| 문항 | 732 | **521** (71%) |
+| 문항 해설 `explanation` | — | **520** |
+
+파일 단위(`git diff 4453434..HEAD --stat -- src/`):
+
+```
+ src/data/data.test.ts   |  321 +++++++++++++++
+ src/data/questions.json | 1042 +++++++++++++++++++++++------------------------
+ src/data/topics.json    |  810 ++++++++++++++++++------------------
+ 3 files changed, 1247 insertions(+), 926 deletions(-)
+```
+
+**step 3에서 범위가 좁아진 것이 데이터에 그대로 남아 있다.** step 0~2와 그 정리 커밋
+(`e81b594`)까지는 `name`·`summary`·문단 개수·`prompt`·`choices`도 손댔고,
+**step 3~25는 개념 `paragraphs`와 문항 `explanation` 둘만** 고쳤다. 그 23개 step이 매번
+"고정 필드 위반 0"이라고 적은 것이 실측으로 확인된다.
+
+| 필드 | 착수 ~ `e81b594` | `e81b594` ~ HEAD (step 3~25) |
+|---|---|---|
+| 개념 `name` | 3 | **0** |
+| 개념 `summary` | 1 | **0** |
+| 개념 문단 개수 | 3 | **0** |
+| 개념 문단 본문 | 53 | 492 |
+| 문항 `prompt` | 6 | **0** |
+| 문항 `choices` | 3 | **0** |
+| 문항 `answerIndex` | 0 | **0** |
+| 문항 `explanation` | 33 | 487 |
+
+`scripts/content-audit.mjs`를 착수 커밋의 데이터에도 돌려 대조했다.
+
+| 지표 | 착수(`4453434`) | 지금 | 차 |
+|---|---|---|---|
+| ① 문장형 제목 | 183 (34개 주제) | **181** (32개 주제) | −2 |
+| ② 관용 표현 | 144 (개념 66·문항 78) | **91** (개념 39·문항 52) | **−53** |
+| ③ 정답 노출 후보 | 62 | 62 | 0 |
+| ④ 소속 없는 용어 | 1 | 1 | 0 |
+| ⑤ 장문 | 3 | 3 | 0 |
+| ⑥ 중복 후보 | 8쌍 | 8쌍 | 0 |
+| 여섯 지표가 모두 0인 주제 | 3 | **4** | +1 |
+
+**늘어난 지표가 하나도 없다.** 줄어든 것은 ①·② 둘뿐이고, 나머지 넷이 그대로인 이유는
+전부 범위 밖 필드(`name`·`prompt`·`choices`)에 있기 때문이다 — 아래 2A를 봐라.
+
+**이 표가 이 phase의 성과를 재지 못한다는 것을 분명히 적어 둔다.** 기계가 보는 것은 여섯
+지표뿐이고, 실제로 고친 것은 은유적 추상어(`자리`·`축`·`갈린다`·`밀린다`), 줄표로 이어
+붙인 문장, 지시어(`이쪽`·`그쪽`·`앞의 둘`), 개념 본문이 확인 문제를 가리키던 말,
+문단 첫 문장의 순서, 주술 불일치다. 유형과 빈도는 3에 있다.
+
+`scripts/topics-baseline.json`의 `questionsSha256`은
+`145f5f7d…` → `d0e7634e…`로 26번 이어 갱신됐고, `conceptLineCount`와 주제 메타데이터는
+그대로다.
+
+### 2. 변경하지 않고 보류한 항목
+
+각 step 요약의 「보류」를 합치면 **262건**이다. 사유별로 묶는다.
+
+#### A. 범위 밖 필드에 있다 — 119건이 이 사유를 명시한다
+
+step 3~25가 손댈 수 있던 것은 개념 `paragraphs`와 문항 `explanation` 둘뿐이었다.
+같은 결함이 다른 필드에도 있으면 **한쪽만 고칠 때 한 주제 안에서 같은 것을 두 말로
+부르게 되므로** 통째로 남긴 경우가 많다.
+
+**A1 — 개념 `name`(문장형 제목) 181건, 32개 주제.** `content-audit.mjs`의 ① 값 그대로다.
+
+| 건수 | 주제 |
+|---|---|
+| 14 | `efs-fsx`, `sqs-sns-eventbridge` |
+| 10 | `lambda` |
+| 9 | `elastic-load-balancing`, `iam-permissions` |
+| 8 | `data-transfer-services`, `rds-storage-features`, `cloudfront-global-accelerator`, `api-gateway-step-functions` |
+| 7 | `aurora`, `dynamodb` |
+| 6 | `s3-access-control`, `ecs-eks-fargate`, `vpc-networking`, `cost-management` |
+| 5 | `hybrid-connectivity`, `kinesis-streaming` |
+| 4 | `ebs-instance-store`, `ec2-autoscaling`, `backup-disaster-recovery`, `emr-glue-athena` |
+| 3 | `elasticache-purpose-built-db`, `security-groups-nacl`, `route53`, `redshift-opensearch-quicksight`, `cloudwatch-xray`, `secrets-encryption`, `waf-shield`, `guardduty-macie-inspector` |
+| 2 | `identity-federation`, `organizations-cloudtrail-config` |
+| 1 | `storage-gateway-migration` |
+| 0 | `aws-core-services`, `s3-storage-classes`, `s3-versioning-lifecycle`, `s3-encryption-batch`, `governance-iac`, `systems-manager`, `ai-ml-services` |
+
+**제목이 본문에서 없앤 말을 그대로 들고 있는 자리**를 step들이 여럿 짚었다 —
+`ecs-task-role-vs-task-execution-role`(`…은 다른 자리다`),
+`elasticache-not-a-durable-store`(`…두는 자리가 아니다`),
+`scp-attachment-targets`(`SCP를 붙일 수 있는 자리`),
+`data-lifecycle-manager`(`…정책으로 돌린다`),
+`kms-automatic-key-rotation`(`…해마다 돈다`),
+`alb-l7-vs-nlb-l4`(`계층으로 갈리는 …`),
+`gpu-instance-family`(`… 서비스 자체가 갈린다`),
+`emr-node-instance-family-choice`(`… 제품군이 갈린다`).
+
+**A2 — 개념 `summary` 62건이 언급된다.** 본문·해설은 고쳤는데 요약만 옛말로 남은 자리다.
+`efs-fsx`(3건)·`ecs-eks-fargate`(6건)·`lambda`(3건)가 많다.
+
+**A3 — 문항 `prompt` 41건.** `q452`·`q453`·`q476`·`q522`·`q535`·`q546`·`q552`·`q650`처럼
+개념·해설의 같은 표현은 고쳤는데 프롬프트만 남은 자리가 대부분이다.
+
+**A4 — 문항 `choices` 51건.** `q348`·`q356`·`q384`·`q415`·`q416`·`q584`·`q587`·`q691`·
+`q718 c1`처럼 보기 하나가 옛말을 그대로 쓴다. `q399`·`q404`·`q427`·`q488`·`q624`는
+보기 넷이 같은 모양의 줄표(` — `)를 써서 한쪽만 끊으면 대칭이 깨진다.
+
+**A5 — 「짝이 깨진 자리」 7건.** 위 A2~A4의 결과다. **반대로 step 21·22는 범위 밖 필드에
+걸친 짝이 하나도 없어 그 두 step은 깨진 짝을 남기지 않았다.**
+
+#### B. `src/data/data.test.ts`가 고정한 구절 — 7건
+
+`toBe`/`toContain` 단언이 그 문장을 잡고 있어, 고치려면 단언까지 함께 고쳐야 한다.
+「단언의 뜻을 바꾸지 마라」가 step 규칙이어서 전부 남겼다.
+
+1. `backup-disaster-recovery.backup-and-restore-dr` p0 + `q578` 해설 — `컴퓨팅은 필요해질 때까지 띄우지 않는다`
+2. `q130` 해설 **전문**(`toBe`) — `통제하는 자리가 서브넷이 아니라`
+3. `guardduty-macie-inspector.amazon-inspector` p1 — `…다른 선택지와의 갈림길이 된다`
+4. `iam-permissions.network-access-analyzer` p0 — `분석 대상이 네트워크인지 권한인지로 갈린다`(짝인 `q688` 해설도 함께 남김)
+5. `organizations-cloudtrail-config.scp-attachment-targets` — `연결한 자리 아래에만 적용된다`
+6. `ai-ml-services.comprehend` p0 — `글의 의미를 다루는 자리`(짝인 `q313` 해설도 함께 남김)
+7. `route53` — `q221` 프롬프트 전문(`toBe`)이 `헬스 체크`/`상태 검사` 통일을 막는다
+
+#### C. 고치면 「새 정보 추가」가 된다
+
+**C1 — 기초 용어 풀이가 그 주제 안에 없다.** step 3~25가 다룬 36개 주제 **거의 전부**에서
+나왔다(24개 항목이 「주제 전체」로 묶여 있다). ADR-010·014·028·029의 목록(22종) 밖이라
+풀이를 세우려면 ADR을 먼저 고쳐야 한다. **618개념 어디에도 정의가 없다고 짚힌 낱말**이
+특히 무겁다.
+
+| 낱말 | 어디서 걸렸나 |
+|---|---|
+| `스냅샷` | `s3-storage-classes`·`ebs-instance-store` 등 다수 — 개념 넷의 주어인데 정의가 없다 |
+| `파드` | `ecs-eks-fargate` 개념 여덟의 주어 |
+| `샤드` | `kinesis-streaming` 개념 다섯의 주어 |
+| `키 자료` | `secrets-encryption` 개념 넷의 주어 |
+| `Web ACL` | `waf-shield` 개념 셋의 주어 |
+| `신뢰 정책` | `iam-permissions` 개념 둘의 주어 |
+| `배스천 호스트` | `systems-manager` 개념 둘·문항 셋의 전제 |
+| `임시 포트 범위` | `security-groups-nacl` — 상태 비저장의 결과를 대는 유일한 근거 |
+| `관리 계정`·`멤버 계정` | `organizations-cloudtrail-config`·`cost-management` 여섯 개념의 주어 |
+| `오리진`·`배포` | `cloudfront-global-accelerator` 개념 절반, `api-gateway-step-functions` |
+| `AZ`·`가용 영역` | `vpc-networking` 개념 넷을 비롯해 여러 주제 (step 1이 `s3-storage-classes`에서 세운 문구를 그대로 쓸 수 있다) |
+
+**C2 — 도입 문장이 없어 그 서비스가 무엇인지가 `summary`에만 있다.** 문단이 한 문장뿐이거나
+카테고리 한 줄 뒤가 곧바로 세부·오해 방지·요구여서, 한 문단 안에서 순서를 바꾸는 것으로는
+풀리지 않는다. `lambda.lambda-function-url`·`lambda.lambda-vpc-access`·
+`route53.resolver`·`cloudwatch-xray.performance-insight`·`ecs-eks-fargate.aws-batch`·
+`ecs-eks-fargate.fargate-no-time-limit`·`waf-shield.waf-bot-control`·
+`cost-management.cost-anomaly-detection`·`kinesis-streaming`의 정의 개념 셋 등이다.
+**문단을 넘는 이동도 범위 밖이었다** — `cloudfront-geo-restriction`·
+`cloudfront-s3-upload-with-oac`·`gpu-instance-family`·`security-group-referencing`처럼
+정체가 `p1`에 있는 자리가 여기 든다.
+
+#### D. 표기를 바꾸는 판단이라 문체 범위를 넘는다 — 같은 것의 두 이름 12자리
+
+| 주제 | 두 이름 |
+|---|---|
+| `route53` | `상태 검사` / `헬스 체크` |
+| `emr-glue-athena` | `프라이머리 노드` / `주 노드` |
+| `elastic-load-balancing` | `타깃 그룹` / `대상 그룹`, `Auto Scaling 그룹` / `오토 스케일링 그룹` |
+| `api-gateway-step-functions` | `Edge-optimized` / `엣지 최적화` |
+| `waf-shield` | `IP Set` / `IP 세트` |
+| `vpc-networking` | `VPC Endpoint` / `VPC 엔드포인트`, `NAT Gateway` / `NAT 게이트웨이` |
+| `secrets-encryption` | `원본`(개념) / `오리진`(해설) |
+| `sqs-sns-eventbridge` | `주제`(개념) / `토픽`(문항) |
+| `elasticache-purpose-built-db` | `DB` / `데이터베이스` |
+| `s3-access-control` | `콘텐츠 전송 네트워크` / `CloudFront` |
+| `efs-fsx` | `Google Cloud`로 적힌 예시(`Google Drive`를 가리키는 듯하다) |
+
+**`sqs-sns-eventbridge`의 `주제`는 특히 성가시다** — 이 앱의 데이터 모델에도 `Topic`이
+있어서 같은 낱말이 두 층에서 쓰인다.
+
+#### E. 대체어가 사실을 넓히거나 좁힐 수 있다 — 11건
+
+비교 기준을 밝히지 않은 `앞선다`·`유리하다`·`떨어진다`·`뒤에 놓인다`·`값을 하다` 계열이다.
+**기준이 같은 문장 안에 있으면 고쳤고**(step 8·13·16·23이 그렇게 했다) **없으면 남겼다** —
+`낫다`·`유리하다`로 바꾸는 순간 원문에 없는 주장이 되기 때문이다. 걸린 자리는
+`data-transfer-services.transfer-family-workflow` p1, `rds-storage-features.rds-custom-byol`·
+`rds-custom` p1, `dynamodb.dynamodb-auto-scaling-target-utilization` p1,
+`dynamodb.dynamodb-s3-export-vs-streams` p0, `q445`,
+`cloudfront-global-accelerator.cloudfront-alb-origin` p0·`cloudfront-price-class` p1,
+`ecs-eks-fargate.eks-aws-load-balancer-controller` p1,
+`api-gateway-step-functions`의 셋, `cloudwatch-xray.log-analysis-options` p1이다.
+
+#### F. 문항 재설계가 필요하다 — 기계 지표가 그대로인 이유
+
+- **⑥ 중복 후보 8쌍 중 3쌍이 실제 중복이다**(`content-audit.mjs` 머리주석) —
+  `q113`·`q116`, `q031`·`q033`, `q040`·`q041`. step 2가 `q031`의 프롬프트 축을 갈라
+  세 문항이 서로 다른 것을 묻게 만들었지만 **개념과 정답 텍스트가 같아 도구에는 계속 뜬다.**
+  중복이 아니라고 판정해 남긴 것은 `q096`·`q097`(step 16), `q141`·`q145`(step 21),
+  `q146`·`q148`(step 22)이다.
+- **③ 정답 노출 후보 62건은 위반 목록이 아니다.** 각 step이 전건을 손으로 읽어
+  「그 낱말이 없으면 문항이 성립하지 않는다」(ADR-030 기준 3의 예외)로 판정했다.
+  `AWS`·`DB`·`IP`처럼 ADR-015가 상식으로 뺀 토큰이 다수 섞인다.
+- **⑤ 장문 3건**(`q029`·`q054`·`q079`)은 쉼표에서 「누가/무엇을/왜」로 끊겨 읽혀 남겼다.
+  `q054`·`q055`·`q056`은 셋이 같은 모양이라 하나만 끊으면 대칭이 깨진다.
+- **④ 소속 없는 용어 1건**은 `q650` 프롬프트의 `객체 스토리지`다.
+- **요구가 둘인 문항**은 ADR-030 기준 2의 경계(`독립된 지식 둘을 곱해야 하는가`)로
+  전부 판정해 남겼다 — `q003`·`q024`·`q170`·`q271`·`q272`·`q275`·`q279`·`q325`·`q326`.
+
+#### G. 판단이 갈려 그대로 뒀다 — 나머지
+
+「고치면 뜻이 미세하게 달라진다」로 남긴 자리들이다. 강조 마커(`**…**`)가 문단 안에 든 곳
+(`data-transfer-services`·`vpc-networking`·`secrets-encryption`)은 **표기 정책이라 범위
+밖**으로 뒀고, `security-service-lineup`의 `**용어** — 정의` 라벨형 줄표는 문단 넷이 같은
+서식이라 손대면 대칭이 깨져 남겼다.
+
+### 3. 반복적으로 발견한 문제 유형 (빈도순)
+
+각 step이 「되풀이해서 나온 문제 유형」에 적은 것을 묶었다. 괄호 안은 **그 유형을 항목으로
+적은 step 수**다. **다음 phase(사실관계 검수)가 무엇을 만나게 될지가 여기서 나온다.**
+
+1. **`자리`가 문맥마다 다른 것을 가리킨다 (22개 step).** 압도적 1위다. 곳·일·역할·서비스·
+   장치·도구·상황·조건·원인·요구·선택지·대상·위치를 두루 가리켰다. **처방은 하나로 고정할 수
+   없다** — 그 문장이 실제로 가리키는 것을 넣어야 하고, 앞 문장이 이미 `서비스다`·`도구다`로
+   끝났으면 명사를 또 넣지 말고 동사를 그대로 부정하는 쪽(`맡지 않는다`)이 짧다.
+   최다 밀집은 `sqs-sns-eventbridge` 한 주제 35곳이었다.
+   **`그 자리에서`(즉시·제자리)·`한자리에`·`비밀번호 자리`(입력 칸)는 대상이 아니다.**
+2. **개념 본문과 해설이 같은 문장을 공유한다 (22개 step — step 4~25 전부).**
+   주제마다 11~20쌍이다. ADR-016으로 확인 문제 화면에서 개념을 펼치면 둘이 같은 화면에
+   보이므로, **한쪽만 고치면 그 자리가 두 이름을 갖는다.** 이 phase가 개념 545곳과 해설
+   520개를 늘 짝으로 맞춘 이유다.
+3. **줄표 ` — `로 두 문장을 이어 붙인다 (11개 step).** 네 모양이 있다 —
+   「요지 → 근거」(마침표로 끊고 `~때문이다`로 받는다), 「선언 → 내용」(그냥 끊으면 된다),
+   「총론 → 열거」(`A하고, B하고, C하는 것이다`로 닫아야 한다),
+   **「주어/목적어 → 삽입구 → 서술어」(끊는 것만으로는 안 되고 문장 구조를 다시 짜야 한다).**
+   해설 쪽이 개념 쪽보다 훨씬 많았다 — phase 28이 해설을 다시 쓸 때 들어온 형태로 보인다.
+4. **`축`이 문맥마다 다른 것을 가리킨다 (11개 step).** 「가르는 기준」이면 `기준`으로 풀리지만,
+   **`축이 하나 더 있다`처럼 갈래를 세는 자리는 낱말 치환으로 안 되고 문장을 다시 써야 한다**
+   (`확인할 것이 하나 더 있다`·`두 가지에서 나뉜다`). 「비교 대상이 다루는 것이 다르다」는
+   뜻이면 `다른 문제다`·`목적이 다르다`가 맞았다.
+5. **개념 본문이 확인 문제를 직접 가리킨다 (8개 step).** `선택지는 오답이다`·
+   `문제에 X가 보이면`·`같은 보기 줄에 오르는`이 그 모양이다. **개념 화면에는 가리킬 보기가
+   없어 그 자리에서 읽히지 않는다.** 가장 밀집한 곳이 `iam-permissions`·`identity-federation`
+   여섯, 그다음이 `organizations-cloudtrail-config`·`cost-management` 넷이었다.
+   **해설의 `선택지`는 대상이 아니다** — 보기와 함께 읽히는 자리다.
+6. **`띄우다`·`돌리다` 계열을 범위 밖 필드 때문에 통째로 보류 (7개 step).**
+   **보류 여부는 그 낱말이 아니라 그 낱말이 `summary`·보기·프롬프트에 있느냐로 갈렸다** —
+   `route53`·`secrets-encryption`·`cloudwatch-xray`·`systems-manager`는 본문·해설에만 있어
+   전부 고쳤고, `ecs-eks-fargate`(22건)·`emr-glue-athena`(16건)·`lambda`(15건)는
+   범위 밖 필드에 걸쳐 있어 하나도 못 고쳤다. **남은 ② 91건의 대부분이 이 셋이다.**
+7. **정규식·도구를 한 번만 돌리면 놓친다 (5개 step).** 활용형이 패턴을 비껴가고
+   (`밀리지 않는다`는 `밀린` 패턴에 안 걸린다), `길`·`오른다`·`모양`처럼 목록에 없는 은유가
+   섞이며, 편집이 새 결함을 만들기도 한다. **편집을 마친 뒤 재스캔이 매번 마지막 몇 건을 줍었다.**
+8. **해설이 개념보다 먼저 옳은 형태를 갖고 있다 (5개 step).** phase 28이 해설을 다시 쓰면서
+   더 나은 표현을 이미 넣어 둔 자리다. **개념을 그쪽에 맞추면 사실을 건드리지 않고 풀린다.**
+9. **문단 첫 문장에 정체가 없다 (유형으로 2개 step, 보류로 11건).** 오해 방지·소거·대비·
+   문제 상황으로 열고 「이것이 무엇인가」가 뒤에 온다. 한 문단 안에서 순서를 바꾸거나 생략된
+   주어를 되살리면 풀리지만, 정체가 다음 문단이나 `summary`에만 있으면 못 푼다(위 C2).
+   **순서를 바꿀 때 첫 문장이 `summary`와 같아지면 안 된다** — UI가 요약 바로 아래에 본문을
+   두므로 같은 문장이 두 번 보인다(step 0의 교훈).
+10. **단발로 나온 것들.** 카테고리 한 줄 바로 뒤 주어 되풀이(step 6·22) /
+    지시어를 이름으로 바꾸면 같은 이름이 이웃 문장에 두 번 남음(step 14) /
+    약어 풀네임(ADR-015)이 지시어 치환을 제약함(step 11) /
+    괄호 약어 풀이가 풀네임 가운데를 가름(step 7) /
+    프롬프트가 이미 옳은 낱말을 쓰고 있어 그것을 근거로 삼음(step 17·18·23·25) /
+    조사 하나가 구문을 바꿈(step 25) /
+    굵은 표시 뒤 줄표는 마침표를 굵은 표시 안에 넣어 끊음(step 25).
+
+**다음 phase에 넘기는 한 줄:** 이 phase는 **문장이 어떻게 읽히는가**만 봤고
+**그 문장이 사실인가**는 한 번도 검증하지 않았다. 위 C1(기초 용어)과 D(같은 것의 두 이름)는
+문체 문제로 잡혔지만 실은 **사실·표기의 문제**여서 다음 phase의 입력이 된다.
+
+### 4. 마지막 커밋 상태
+
+| 항목 | 값 |
+|---|---|
+| 브랜치 | `feat-31-content-quality-rollout` |
+| 분기 지점 | `4453434` — merge: VPC 엔드포인트 사실 통일과 phase 31 명세를 develop에 들인다 |
+| 마지막 커밋 | `8e43110` — chore(31-content-quality-rollout): step 25 output |
+| 그 앞 | `a3c7a1e` — feat(31-content-quality-rollout): step 25 — governance-iac-and-systems-manager-and-ai-ml-services |
+| `develop` 대비 | **56 커밋 앞선다**(이 보고서 커밋을 더하면 57) |
+| `develop`에만 있는 것 | **커밋 하나** — `cf54a5d` docs: worktree에 concepts-raw.md가 없으면 전사 검사가 조용히 건너뛴다는 것을 남긴다. **병합할 때 함께 봐라.** |
+| push | **하지 않았다.** 병합과 push는 사람이 판단한다(CLAUDE.md). |
+
+검증(전부 이 보고서를 쓰기 직전에 직접 돌렸다):
+
+| 명령 | 결과 |
+|---|---|
+| `npm test` | **492개 통과 (22개 파일)** — 착수 시점과 같다. step 0~2가 21개를 더했고(471→492) step 3~25는 단언을 하나도 더하거나 고치지 않았다 |
+| `npm run build` | 통과 (tsc 타입체크 포함, 877ms) |
+| `node scripts/check-structure.mjs` | 이상 없음 — 개념 id·name, 주제 메타데이터, 개념 개수·순서, 문항 파일 전부 기준과 같다 |
+| `node scripts/coverage.mjs` | 개념 618개 중 618개 덮임 (100%), 문항 732개, 문항 없는 주제 0개 |
+| `node scripts/check-verbatim.mjs` | 전사 이상 없음 (ADR-025가 넘기기로 한 서비스 이름 나열 1건만 보고됨) |
+| `node scripts/content-audit.mjs` | **착수 대비 늘어난 지표 0** — 1의 표를 봐라 |
+
+## 먼저 읽어라 — 다른 기기에서 이어받는 법 (2026-09-09에 갱신)
+
+**phase 28~30은 `develop`을 거쳐 `main`까지 나갔다**(`7339754`, 배포된 사이트에 반영돼 있다).
+아래 본문 곳곳에 "phase 29·30은 push되지 않았다"고 적힌 것은 **병합 전에 쓰인 문장이니 믿지
+마라** — 최신은 아래 「지금 상태」 표다.
+
+지금 병합·push를 기다리는 것은 브랜치 `fix-vpc-endpoint-fact` 하나다. 커밋 둘이 들어 있다 —
+**(1) 후보 E 판정(ADR-031)**, **(2) phase 31 명세**. **병합과 push는 사람이 판단한다**(CLAUDE.md).
+
+**phase 31을 돌리기 전에 이 브랜치를 `develop`에 병합해라.** harness가 현재 브랜치에서
+`feat-31-content-quality-rollout`을 파므로, 병합하지 않고 돌리면 step 21(`vpc-networking`)이
+ADR-031이 이미 고친 자리를 다시 열게 된다.
 
 ```bash
-git checkout feat-30-prompt-korean-polish
+git checkout develop
 npm install            # Node 18.17.1
 npm test               # 471개 통과해야 정상
 node scripts/check-structure.mjs   # 이상 없음이어야 정상
@@ -238,6 +1231,7 @@ step들이 범위 밖이라 남긴 것들이다. 각각의 판정 근거는 `ind
 3. **`q036`과 `q173`이 정답(`SSE-KMS`)과 요구(자동 교체)를 공유한다.** `q173`의 주 축은
    봉투 암호화이고 프롬프트가 `data.test.ts`에 문자열로 고정돼 있어 손대지 않았다.
 4. **`vpc-networking.vpc-endpoint`와 `endpoint-pricing`의 어긋남** — 아래 후보 E.
+   **ADR-031이 판정해 끝났다(2026-09-09).**
 
 **판정하고 그대로 두기로 한 것 둘**은 후보가 아니다. 되짚을 때 다시 열지 마라.
 
@@ -325,20 +1319,77 @@ SSE-C가 후보에서 빠지는 까닭은?"
 
 | | |
 |---|---|
-| `feat-30-prompt-korean-polish` | phase 29 전부 + phase 30 step 0~28. **push되지 않았다** |
-| `feat-29-content-quality-pilot` | phase 29 step 0~6. origin에 push돼 있다 |
-| `develop` | phase 28 병합 + 개념 본문 오타 수정. origin과 같다 |
-| `main` | `1a28bd5` — release. origin과 같고 GitHub Pages 배포 성공(1분 24초) |
+| `fix-vpc-endpoint-fact` | 후보 E 판정(ADR-031) + phase 31 명세. `develop`에서 팠고 **병합·push는 아직이다** |
+| `develop` | phase 28·29·30 전부. `feat-30-prompt-korean-polish`와 같고 origin과도 같다 |
+| `main` | `7339754` — release(phase 28~30). origin과 같다 |
 | 배포 주소 | https://working-zima.github.io/aws-saa-c03-quiz/ |
 | 문항 | 732개 (q001~q732) — phase 30은 문항을 더하거나 빼지 않고 프롬프트 718개를 다시 썼다 |
 | 개념 | 618개 / 주제 39개 — phase 30은 `topics.json`을 건드리지 않았다 |
 | 개념 커버리지 | 618/618 (100%) — `data.test.ts`의 불변식으로 고정돼 있다 |
 | 해설 길이 | 전 구간 187자 이상 — `data.test.ts`의 불변식이다 |
-| 테스트 | **471개 통과.** `check-structure`·`lint`·`build` 모두 통과 |
+| 테스트 | **471개 통과.** `check-structure`·`coverage`·`check-verbatim`·`lint`·`build` 모두 통과 |
 
-`phases/index.json`의 phase 28은 `completed`이고 `develop`에 병합해 push까지 끝냈다.
-**phase 29와 30은 브랜치에만 있고 push도 되지 않았다** — 병합과 push는 사람이 판단한다
-(CLAUDE.md). `main`은 아직 phase 28도 담고 있지 않다.
+`phases/index.json`의 phase는 0~30이 전부 `completed`이고, phase 28~30은 `develop`을
+거쳐 `main`까지 나갔다(`7339754`). **위 인수인계 본문 곳곳에 "phase 29·30은 push되지
+않았다"고 적혀 있는데 그것은 병합 전에 쓰인 문장이다** — 이 표가 최신이다.
+지금 병합·push를 기다리는 것은 `fix-vpc-endpoint-fact` 하나다(사람이 판단한다).
+
+## phase 31 — 명세를 짜 두었다. 아직 돌리지 않았다
+
+`phases/31-content-quality-rollout/` 에 **step 0~36**이 있다. phase 29가 시범 주제 하나에서
+세운 기준을 나머지 38개 주제로 넓힌다. `phases/index.json`에 `pending`으로 등록돼 있다.
+
+### 사용자가 답한 결정 — 다시 묻지 마라
+
+2026-09-09에 넷을 정했다.
+
+1. **훑는 순서** — `topics.json` **배열 순서**다. 학습 순서와 같아서 검수도 사용자가 읽던
+   흐름 그대로 할 수 있다. (문항이 많은 주제부터·audit 지표가 많은 주제부터는 탈락)
+2. **step 크기** — **주제 하나가 step 하나**다. 결함 종류별로 가르지 않는다.
+   `sqs-sns-eventbridge`(개념 33·문항 40)만 둘로 쪼갰고, 작은 주제 둘·셋은 묶었다.
+3. **검수 리듬** — **처음 3 step 뒤에 끊는다.** `--max-steps 3`으로 돌리고 멈춰서, 사용자가
+   `npm run dev`로 그 세 주제를 읽고 합격선을 확정한 뒤 나머지를 이어 돌린다.
+   기준이 틀렸다면 3 step치만 되돌리면 된다.
+4. **해설 범위** — **개념 본문과 어긋나는 자리만** 고친다. 전면 재작성이 아니다.
+   phase 28이 732개를 이미 다시 썼고 187자 하한이 `data.test.ts`의 불변식이다.
+
+### 돌리는 법
+
+```bash
+# 이 브랜치를 develop에 병합한 뒤 develop에서 실행한다
+pgrep -f execute.py            # 이미 돌고 있는 것이 없는지 먼저 확인
+python3 scripts/execute.py 31-content-quality-rollout --max-steps 3
+# 멈추면 사용자 검수 → 통과하면 나머지를 이어 돌린다
+```
+
+**규모**: 37 step. phase 30이 29 step에 약 5시간이었고 이건 개념 본문까지 보므로 더 무겁다 —
+**7~10시간**으로 본다. 사용량 한도에 걸릴 것을 전제해라(아래 「이어받을 때 주의할 것」).
+
+### step 배치
+
+주제 39개 중 `s3-encryption-batch`(phase 29의 시범)만 빠진다. `s3-storage-classes`와
+`governance-iac`은 기계 지표가 0이지만 **넣었다** — 기계가 못 보는 다섯(기초 용어·도입
+문장·요구 겹치기·문항 목적·용어 불일치)이 남아 있을 수 있고, 그게 phase 29가 배운 것이다.
+
+| step | 맡은 주제 |
+|---|---|
+| 0~5 | `aws-core-services` `s3-storage-classes` `s3-versioning-lifecycle` `s3-access-control` `ebs-instance-store` `efs-fsx` |
+| 6~11 | `data-transfer-services` `storage-gateway-migration` `rds-storage-features` `aurora` `dynamodb` `elasticache-purpose-built-db` |
+| 12~17 | `ec2-autoscaling` `elastic-load-balancing` `cloudfront-global-accelerator` `lambda` `ecs-eks-fargate` `api-gateway-step-functions` |
+| 18~19 | `sqs-sns-eventbridge` — A는 개념 33 + 문항 앞 20, B는 문항 뒤 20 |
+| 20~26 | `backup-disaster-recovery` `vpc-networking` `security-groups-nacl` `hybrid-connectivity` `route53` `emr-glue-athena` `kinesis-streaming` |
+| 27 | `redshift-opensearch-quicksight` + `cloudwatch-xray` |
+| 28~34 | `secrets-encryption` `waf-shield` `guardduty-macie-inspector` `iam-permissions` `identity-federation` `organizations-cloudtrail-config` `cost-management` |
+| 35 | `governance-iac` + `systems-manager` + `ai-ml-services` |
+| 36 | 마무리 — 명사구 단언을 전 주제로, audit 전체 재측정, ADR·이 파일 갱신 |
+
+### 각 step이 하는 일
+
+콘텐츠를 고치는 것보다 **판정하고 그대로 두는 것**이 중요하고, 그 근거를 `summary`에 남기는
+것이 step의 산출물이다. 기계 지표 여섯은 `content-audit.mjs`가 세고 ③⑤⑥은 후보 목록이라
+사람이 갈라야 한다. 기계가 못 보는 다섯은 **주제 페이지를 처음 읽는 학습자의 눈으로 통독**하는
+것 외에 찾는 방법이 없다 — step 파일이 "지표를 먼저 보면 지표가 있는 자리만 보게 되니
+통독을 먼저 하라"고 못 박고 있다.
 
 ## 다른 기기에서 시작하는 법
 
@@ -404,26 +1455,43 @@ phase 28(해설 재작성)은 14 step에 약 2.6시간이고, 그중 해설을 �
 **위 「38개 주제로 넓히는 작업」과 대상이 겹친다** — `q247`~`q732`가 그 486개다. 둘을 따로
 돌리지 말고 주제를 훑을 때 함께 보는 편이 싸다.
 
-### E. VPC Endpoint 두 본문의 어긋남 판정 — 1 step, 20~30분
+### E. VPC Endpoint 두 본문의 어긋남 판정 — **끝났다 (2026-09-09)**
 
 **후보 E의 나머지(오타 셋·`name` 둘·`retrieval-time`)는 커밋 `5945daa`가 끝냈다.**
 `retrieval-time`은 수를 7에서 8로 바꾸지 않았다 — `s3-express-one-zone` 본문이 "이 클래스는
 그 축 바깥에 있다"고 하므로 일곱이 맞고, 어느 일곱인지를 밝히는 쪽으로 고쳤다. 그 판단의
 근거는 그 커밋 메시지에 있다.
 
-남은 것은 하나다. `vpc-networking.vpc-endpoint` 문단 2는 인터페이스 엔드포인트를
-"S3와 DynamoDB를 **제외한**" 리소스에 연결한다고 하는데, 같은 주제의 `endpoint-pricing`
-문단 0은 "인터페이스 엔드포인트는 **S3 접근에도 쓸 수 있으나** 시간당 요금이 붙는다"고 한다.
-한 주제 안에서 두 문장이 어긋나 보인다.
+남아 있던 하나도 브랜치 `fix-vpc-endpoint-fact`가 끝냈다. 판정은 **ADR-031**이다.
 
-**오타가 아니라 어느 쪽이 맞는지를 정하는 사안이다.** `endpoint-pricing`은 `exam-gaps.md`에
-덤프 인용과 함께 있고 `vpc-endpoint`는 `concepts-raw.md`에서 왔는데, 후자가 이 기기에 없어
-원문을 대조할 수 없다. 전례는 ADR-008의 예외(덤프 해설이 실제 AWS 동작과 어긋나면 정확한
-쪽으로 고친다)와 phase 26의 Glacier 조회 시간 통일이다 — 둘 다 **모순을 남기지 않고 한쪽으로
-통일**했다. 고칠 때는 근거 문항(`q104`·`q105`·`q209`)의 해설도 함께 맞춰야 한다.
+원문을 대조할 수 있었다 — `concepts-raw.md` p33이 "인터페이스 VPC 엔드포인트는 인터넷을
+거치지 않고 S3, DynamoDB 를 제외한 모든 AWS 리소스에 접근할 수 있게 해준다"고 적고 있고,
+**이 문장의 "S3 제외"가 틀렸다.** S3에는 인터페이스 엔드포인트가 있으므로 덤프 인용
+[네트워크1 #98 p203]을 담은 `endpoint-pricing` 쪽이 맞다.
+
+**DynamoDB의 "제외"는 그대로 두었다.** 덤프 인용이 반박하는 것은 S3 하나뿐이고, DynamoDB에
+인터페이스 엔드포인트가 있다고 말하는 출처는 없다. 반박의 사거리를 넘겨 고치면 틀린 문장을
+지우는 대신 근거 없는 문장을 넣게 된다 — 그 규칙이 ADR-031의 본체다. 덕분에 `q104`
+("S3와 DynamoDB 둘 다" → 게이트웨이)의 변별점이 살아서 **세 문항 모두 `prompt`·`choices`를
+손대지 않고 해설만 고쳤다.**
+
+**어긋남은 개념 본문 둘이 아니라 해설 셋까지였다.** `q104` 해설은 "인터페이스는 S3와
+DynamoDB를 제외한 AWS 리소스에 연결하는 유형"이라 하고 `q209` 해설은 "인터페이스도 S3에
+연결할 수는 있으나"라고 해서, 같은 문제 은행이 서로 반대되는 사실을 가르치고 있었다.
+phase 28이 판정을 미루며 해설을 각 개념 본문에 맞춰 둔 결과다. 고친 자리는
+`topics.json` 2개념·`questions.json` 3해설·`exam-gaps.md`(「원본 수정 이력」 4번)다.
 
 ## 이어받을 때 주의할 것
 
+- **worktree를 새로 파면 `docs/source/concepts-raw.md`를 손으로 복사해 넣어라.** 이 파일은
+  gitignore라 `git worktree add`가 옮기지 않는다. 없으면 `check-verbatim.mjs`가 **검사를
+  건너뛰고 exit 0으로 끝난다** — 통과한 것처럼 보이지만 전사 검사가 돌지 않은 것이다(ADR-009).
+  2026-09-09 phase 31의 첫 3 step이 이 상태로 돌았다. 원본을 넣고 다시 검사해 이상 없음을
+  확인했지만, **다음 worktree에서는 harness를 돌리기 전에 복사해라.**
+- **`concepts-raw.md`를 `grep`으로 뒤질 때는 `-a`를 붙여라.** macOS의 BSD grep이 이 파일을
+  binary로 판정해서, `-a` 없이 부르면 **일치가 있어도 아무것도 출력하지 않고 exit 1로 끝난다**
+  (`file`도 `data`라고 답한다). 후보 E가 "원문이 이 기기에 없어 대조할 수 없다"로 넘어갔던
+  것이 실은 이 조용한 실패였다 — 파일은 있었다. 근거는 ADR-031 말미.
 - **`python3`는 이 환경에 없다 — `py` 또는 `python`이 Python 3.13이다.** harness는
   `python scripts/execute.py <phase> --max-steps N`으로 돌린다.
 - **harness를 돌리기 전에 이미 돌고 있는 것이 없는지 확인한다: `pgrep -f execute.py`.**

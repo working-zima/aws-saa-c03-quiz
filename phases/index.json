@@ -153,6 +153,21 @@
       "dir": "30-prompt-korean-polish",
       "status": "completed",
       "completed_at": "2026-09-09T04:48:14+0900"
+    },
+    {
+      "dir": "31-content-quality-rollout",
+      "status": "completed",
+      "completed_at": "2026-09-10T03:20:00+0900"
+    },
+    {
+      "dir": "32-field-consistency",
+      "status": "completed",
+      "completed_at": "2026-09-11T04:58:52+0900"
+    },
+    {
+      "dir": "33-notation-standardization",
+      "status": "completed",
+      "completed_at": "2026-09-11T09:30:46+0900"
     }
   ]
 }
