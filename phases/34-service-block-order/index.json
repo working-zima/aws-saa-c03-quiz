@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "compute-db-reorder",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-11T17:48:13+0900",
+      "summary": "지정된 6개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 6개를 명세 코드로 갱신; s3-encryption-batch 자리 바뀐 개념 10/13 왕복 3 → 0; ebs-instance-store 자리 바뀐 개념 13/15 왕복 3 → 0; elasticache-purpose-built-db 자리 바뀐 개념 13/14 왕복 5 → 0; elastic-load-balancing 자리 바뀐 개념 15/16 왕복 4 → 0; ecs-eks-fargate 자리 바뀐 개념 22/23 왕복 8 → 0; api-gateway-step-functions 자리 바뀐 개념 19/20 왕복 3 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 6개 실패·506개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 2 모두 통과; 테스트 6개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-11T17:53:32+0900"
     },
     {
       "step": 3,
