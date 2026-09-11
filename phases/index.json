@@ -166,7 +166,8 @@
     },
     {
       "dir": "33-notation-standardization",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-11T09:30:46+0900"
     }
   ]
 }
