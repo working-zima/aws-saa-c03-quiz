@@ -71,6 +71,12 @@ const TERMS = [
   { key: 'IP_SET', standard: 'IP 세트', variants: ['IP 세트', 'IP Set'] },
   { key: 'BILLING_CONSOLE', standard: '결제 콘솔', variants: ['결제 콘솔', '결제 대시보드'] },
   { key: 'BASE_LOAD', standard: '기본 부하', variants: ['기본 부하', '기준이 되는 부하'] },
+  // 아래 둘은 표기 갈림이 아니라 **약칭 도입 자리**다. step 10이 첫 등장에 정식 이름을 덧붙여
+  // `VIF` → `가상 인터페이스(VIF)`가 됐는데, 짝이 없으면 그것이 문장 수정으로 잡힌다.
+  // 그래서 대조용으로만 둔다 — 아래 잔량 표의 이 두 줄은 「통일이 덜 됐다」는 뜻이 아니다.
+  // `OU`는 단어 경계를 보지 못해 `SELECT INTO OUTFILE S3` 4건을 함께 센다(잔량 표시만 부풀고 대조에는 영향이 없다).
+  { key: 'VIRTUAL_IF', standard: '가상 인터페이스', variants: ['가상 인터페이스(VIF)', '가상 인터페이스', 'VIF'] },
+  { key: 'ORG_UNIT', standard: '조직 단위', variants: ['조직 단위(OU)', '조직 단위', 'OU'] },
 ]
 
 /** 긴 낱말부터 바꿔야 `IAM Identity Center`가 `Identity Center`에 먼저 걸리지 않는다. */
