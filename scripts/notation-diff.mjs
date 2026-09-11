@@ -57,7 +57,9 @@ const QUESTIONS = 'src/data/questions.json'
  */
 const TERMS = [
   { key: 'SNS_TOPIC', standard: '주제', variants: ['토픽', '주제'] },
-  { key: 'FIFO_QUEUE', standard: 'FIFO 대기열', variants: ['FIFO 대기열', 'FIFO 큐'] },
+  // ADR-015가 약어를 처음 쓸 때 풀어 주므로 `FIFO(First In First Out) 큐` 꼴이 따로 있다.
+  // 삽입형을 짝으로 넣지 않으면 그 자리를 고칠 때 위반으로 잡힌다.
+  { key: 'FIFO_QUEUE', standard: 'FIFO 대기열', variants: ['FIFO(First In First Out) 대기열', 'FIFO(First In First Out) 큐', 'FIFO 대기열', 'FIFO 큐'] },
   { key: 'NETWORK_ACL', standard: '네트워크 ACL', variants: ['네트워크 접근 제어 목록', '네트워크 ACL'] },
   { key: 'PERMISSION_SET', standard: '권한 세트', variants: ['권한 세트', 'Permission Set'] },
   { key: 'ACCESS_KEY', standard: '액세스 키', variants: ['액세스 키', 'Access Key'] },
