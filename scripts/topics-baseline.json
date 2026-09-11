@@ -2387,16 +2387,8 @@
      "name": "WAF (Web Application Firewall)"
     },
     {
-     "id": "waf-shield.shield",
-     "name": "Shield"
-    },
-    {
      "id": "waf-shield.cloudfront",
      "name": "CloudFront"
-    },
-    {
-     "id": "waf-shield.firewall-manager",
-     "name": "AWS Firewall Manager"
     },
     {
      "id": "waf-shield.waf-attach-targets",
@@ -2419,6 +2411,22 @@
      "name": "AWS WAF Bot Control"
     },
     {
+     "id": "waf-shield.waf-body-inspection-size-limit",
+     "name": "WAF가 검사하는 요청 본문의 크기 한도"
+    },
+    {
+     "id": "waf-shield.waf-web-acl-region-must-match-rest-api",
+     "name": "REST API에 붙일 Web ACL의 리전 조건"
+    },
+    {
+     "id": "waf-shield.waf-logging-to-firehose",
+     "name": "Firehose를 거쳐 S3로 가는 WAF 로그"
+    },
+    {
+     "id": "waf-shield.shield",
+     "name": "Shield"
+    },
+    {
      "id": "waf-shield.shield-standard-network-layer",
      "name": "Shield Standard가 다루지 않는 계층"
     },
@@ -2431,16 +2439,8 @@
      "name": "Shield Advanced 보호 그룹"
     },
     {
-     "id": "waf-shield.waf-body-inspection-size-limit",
-     "name": "WAF가 검사하는 요청 본문의 크기 한도"
-    },
-    {
-     "id": "waf-shield.waf-web-acl-region-must-match-rest-api",
-     "name": "REST API에 붙일 Web ACL의 리전 조건"
-    },
-    {
-     "id": "waf-shield.waf-logging-to-firehose",
-     "name": "Firehose를 거쳐 S3로 가는 WAF 로그"
+     "id": "waf-shield.firewall-manager",
+     "name": "AWS Firewall Manager"
     }
    ]
   },
@@ -2458,12 +2458,36 @@
      "name": "GuardDuty"
     },
     {
+     "id": "guardduty-macie-inspector.guardduty-db-login",
+     "name": "GuardDuty의 데이터베이스 로그인 이상 탐지"
+    },
+    {
+     "id": "guardduty-macie-inspector.guardduty-finding-to-eventbridge",
+     "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는 EventBridge"
+    },
+    {
      "id": "guardduty-macie-inspector.macie",
      "name": "Macie"
     },
     {
+     "id": "guardduty-macie-inspector.macie-automated-discovery",
+     "name": "Macie의 민감 데이터 자동 탐지"
+    },
+    {
+     "id": "guardduty-macie-inspector.macie-delegated-administrator",
+     "name": "조직 전체를 보는 Macie 위임 관리자 계정"
+    },
+    {
+     "id": "guardduty-macie-inspector.macie-finding-to-eventbridge",
+     "name": "Macie 탐지 결과를 알림으로 잇는 EventBridge"
+    },
+    {
      "id": "guardduty-macie-inspector.amazon-inspector",
      "name": "Amazon Inspector"
+    },
+    {
+     "id": "guardduty-macie-inspector.inspector-scans-ecr-images",
+     "name": "Inspector의 ECR 컨테이너 이미지 스캔"
     },
     {
      "id": "guardduty-macie-inspector.security-hub",
@@ -2472,30 +2496,6 @@
     {
      "id": "guardduty-macie-inspector.security-service-lineup",
      "name": "헷갈리기 쉬운 보안 서비스 네 가지"
-    },
-    {
-     "id": "guardduty-macie-inspector.guardduty-db-login",
-     "name": "GuardDuty의 데이터베이스 로그인 이상 탐지"
-    },
-    {
-     "id": "guardduty-macie-inspector.macie-automated-discovery",
-     "name": "Macie의 민감 데이터 자동 탐지"
-    },
-    {
-     "id": "guardduty-macie-inspector.inspector-scans-ecr-images",
-     "name": "Inspector의 ECR 컨테이너 이미지 스캔"
-    },
-    {
-     "id": "guardduty-macie-inspector.macie-delegated-administrator",
-     "name": "조직 전체를 보는 Macie 위임 관리자 계정"
-    },
-    {
-     "id": "guardduty-macie-inspector.guardduty-finding-to-eventbridge",
-     "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는 EventBridge"
-    },
-    {
-     "id": "guardduty-macie-inspector.macie-finding-to-eventbridge",
-     "name": "Macie 탐지 결과를 알림으로 잇는 EventBridge"
     }
    ]
   },
@@ -2596,24 +2596,36 @@
      "name": "IAM Identity Center"
     },
     {
+     "id": "identity-federation.identity-center-external-idp",
+     "name": "IAM Identity Center와 외부 IdP의 연결"
+    },
+    {
+     "id": "identity-federation.identity-center-permission-set",
+     "name": "권한 세트"
+    },
+    {
      "id": "identity-federation.sts",
      "name": "STS (Security Token Service)"
-    },
-    {
-     "id": "identity-federation.cognito",
-     "name": "Cognito"
-    },
-    {
-     "id": "identity-federation.aws-directory-service",
-     "name": "AWS Directory Service와 AD Connector"
     },
     {
      "id": "identity-federation.sts-assume-role",
      "name": "STS로 임시 자격 증명 받기"
     },
     {
-     "id": "identity-federation.identity-center-external-idp",
-     "name": "IAM Identity Center와 외부 IdP의 연결"
+     "id": "identity-federation.aws-directory-service",
+     "name": "AWS Directory Service와 AD Connector"
+    },
+    {
+     "id": "identity-federation.custom-identity-broker-for-non-saml",
+     "name": "사용자 지정 ID 브로커"
+    },
+    {
+     "id": "identity-federation.saml-federation-role-to-ad-group-mapping",
+     "name": "SAML 2.0 페더레이션과 IAM 역할의 AD 그룹 매핑"
+    },
+    {
+     "id": "identity-federation.cognito",
+     "name": "Cognito"
     },
     {
      "id": "identity-federation.cognito-pools",
@@ -2622,18 +2634,6 @@
     {
      "id": "identity-federation.cognito-social-idp-federation",
      "name": "Cognito 사용자 풀과 소셜 로그인 연동"
-    },
-    {
-     "id": "identity-federation.custom-identity-broker-for-non-saml",
-     "name": "사용자 지정 ID 브로커"
-    },
-    {
-     "id": "identity-federation.identity-center-permission-set",
-     "name": "권한 세트"
-    },
-    {
-     "id": "identity-federation.saml-federation-role-to-ad-group-mapping",
-     "name": "SAML 2.0 페더레이션과 IAM 역할의 AD 그룹 매핑"
     }
    ]
   },
@@ -2651,26 +2651,6 @@
      "name": "AWS Organizations와 SCP"
     },
     {
-     "id": "organizations-cloudtrail-config.cloudtrail",
-     "name": "CloudTrail"
-    },
-    {
-     "id": "organizations-cloudtrail-config.cloudtrail-lake",
-     "name": "AWS CloudTrail Lake"
-    },
-    {
-     "id": "organizations-cloudtrail-config.aws-config",
-     "name": "AWS Config"
-    },
-    {
-     "id": "organizations-cloudtrail-config.audit-manager",
-     "name": "AWS Audit Manager"
-    },
-    {
-     "id": "organizations-cloudtrail-config.organizational-unit",
-     "name": "조직 단위(OU)"
-    },
-    {
      "id": "organizations-cloudtrail-config.organizations-tag-policy",
      "name": "태그 정책과 SCP"
     },
@@ -2679,12 +2659,8 @@
      "name": "Organizations의 통합 청구"
     },
     {
-     "id": "organizations-cloudtrail-config.cloudtrail-data-events",
-     "name": "관리 이벤트와 데이터 이벤트"
-    },
-    {
-     "id": "organizations-cloudtrail-config.config-configuration-recorder",
-     "name": "구성 레코더"
+     "id": "organizations-cloudtrail-config.organizational-unit",
+     "name": "조직 단위(OU)"
     },
     {
      "id": "organizations-cloudtrail-config.scp-attachment-targets",
@@ -2695,8 +2671,12 @@
      "name": "SCP에서 예외를 두는 방법"
     },
     {
-     "id": "organizations-cloudtrail-config.cloudtrail-log-file-validation",
-     "name": "CloudTrail 로그 파일 유효성 검사"
+     "id": "organizations-cloudtrail-config.aws-config",
+     "name": "AWS Config"
+    },
+    {
+     "id": "organizations-cloudtrail-config.config-configuration-recorder",
+     "name": "구성 레코더"
     },
     {
      "id": "organizations-cloudtrail-config.config-conformance-pack",
@@ -2709,6 +2689,26 @@
     {
      "id": "organizations-cloudtrail-config.config-rule-remediation",
      "name": "AWS Config 규칙과 자동 수정"
+    },
+    {
+     "id": "organizations-cloudtrail-config.cloudtrail",
+     "name": "CloudTrail"
+    },
+    {
+     "id": "organizations-cloudtrail-config.cloudtrail-lake",
+     "name": "AWS CloudTrail Lake"
+    },
+    {
+     "id": "organizations-cloudtrail-config.cloudtrail-data-events",
+     "name": "관리 이벤트와 데이터 이벤트"
+    },
+    {
+     "id": "organizations-cloudtrail-config.cloudtrail-log-file-validation",
+     "name": "CloudTrail 로그 파일 유효성 검사"
+    },
+    {
+     "id": "organizations-cloudtrail-config.audit-manager",
+     "name": "AWS Audit Manager"
     }
    ]
   },
@@ -2724,34 +2724,6 @@
     {
      "id": "cost-management.savings-plan",
      "name": "절약 플랜 (Savings Plan)"
-    },
-    {
-     "id": "cost-management.aws-budgets",
-     "name": "AWS Budgets"
-    },
-    {
-     "id": "cost-management.cost-explorer",
-     "name": "Cost Explorer"
-    },
-    {
-     "id": "cost-management.cost-anomaly-detection",
-     "name": "Cost Anomaly Detection"
-    },
-    {
-     "id": "cost-management.cost-and-usage-report",
-     "name": "AWS 비용 및 사용량 보고서(CUR)"
-    },
-    {
-     "id": "cost-management.billing-and-cost-management",
-     "name": "Billing and Cost Management"
-    },
-    {
-     "id": "cost-management.trusted-advisor",
-     "name": "Trusted Advisor"
-    },
-    {
-     "id": "cost-management.compute-optimizer",
-     "name": "AWS Compute Optimizer"
     },
     {
      "id": "cost-management.savings-plan-details",
@@ -2770,6 +2742,14 @@
      "name": "온디맨드 용량 예약"
     },
     {
+     "id": "cost-management.cost-explorer",
+     "name": "Cost Explorer"
+    },
+    {
+     "id": "cost-management.billing-and-cost-management",
+     "name": "Billing and Cost Management"
+    },
+    {
      "id": "cost-management.cost-allocation-tag-activation",
      "name": "결제 콘솔에서 하는 비용 할당 태그 활성화"
     },
@@ -2778,12 +2758,32 @@
      "name": "통합 청구에서 비용 할당 태그를 활성화하는 계정"
     },
     {
+     "id": "cost-management.aws-budgets",
+     "name": "AWS Budgets"
+    },
+    {
      "id": "cost-management.budget-actions",
      "name": "AWS Budgets의 예산 조치"
     },
     {
      "id": "cost-management.budget-forecasted-alert",
      "name": "예상 지출에 거는 예산 알림"
+    },
+    {
+     "id": "cost-management.cost-anomaly-detection",
+     "name": "Cost Anomaly Detection"
+    },
+    {
+     "id": "cost-management.cost-and-usage-report",
+     "name": "AWS 비용 및 사용량 보고서(CUR)"
+    },
+    {
+     "id": "cost-management.trusted-advisor",
+     "name": "Trusted Advisor"
+    },
+    {
+     "id": "cost-management.compute-optimizer",
+     "name": "AWS Compute Optimizer"
     },
     {
      "id": "cost-management.compute-optimizer-ebs-recommendations",

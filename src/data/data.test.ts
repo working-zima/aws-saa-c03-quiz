@@ -4485,54 +4485,54 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('자격 증명 페더레이션 주제가 서비스 넷 다음에 누구를 어떻게 들이는가를 둔다', () => {
+  it('자격 증명 페더레이션 주제가 Identity Center·STS·Directory Service·페더레이션·Cognito 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'identity-federation')
 
-    // 1단 Identity Center·STS·Cognito·Directory Service가 각각 무엇인가
-    // → 2단 사내 디렉터리와 앱 사용자 중 어느 쪽인가, 사용자 풀과 자격 증명 풀,
-    //   SAML을 못 쓰는 디렉터리는 어떻게 잇는가
-    // → 3단 권한 세트가 계정에 배포되는 방식과 역할을 그룹에 매핑하는 방법.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: IAM Identity Center(3) → STS(2) → Directory Service(1) → 페더레이션 — ID 브로커와 SAML 2.0(2) →
+    //   Cognito(3).
+    // 페더레이션 블록은 사내 디렉터리를 STS와 SAML로 잇는 두 방식이라 STS·Directory Service 뒤.
+    // 앱 사용자를 다루는 Cognito는 사내 사용자 쪽 블록을 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'identity-federation.identity-center',
-      'identity-federation.sts',
-      'identity-federation.cognito',
-      'identity-federation.aws-directory-service',
-      'identity-federation.sts-assume-role',
       'identity-federation.identity-center-external-idp',
+      'identity-federation.identity-center-permission-set',
+      'identity-federation.sts',
+      'identity-federation.sts-assume-role',
+      'identity-federation.aws-directory-service',
+      'identity-federation.custom-identity-broker-for-non-saml',
+      'identity-federation.saml-federation-role-to-ad-group-mapping',
+      'identity-federation.cognito',
       'identity-federation.cognito-pools',
       'identity-federation.cognito-social-idp-federation',
-      'identity-federation.custom-identity-broker-for-non-saml',
-      'identity-federation.identity-center-permission-set',
-      'identity-federation.saml-federation-role-to-ad-group-mapping',
     ])
   })
 
-  it('조직·감사 주제가 서비스 다섯 다음에 무엇을 기록하는가와 설정 항목을 둔다', () => {
+  it('조직·감사 주제가 Organizations·Config·CloudTrail·Audit Manager 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'organizations-cloudtrail-config')
 
-    // 1단 Organizations·SCP·CloudTrail(과 Lake)·Config·Audit Manager가 각각 무엇인가
-    // → 2단 정책을 어디에 붙이는가, 태그 정책과 SCP가 하는 일의 차이, 계정을 나누는
-    //   또 하나의 이유, CloudTrail과 Config가 각각 무엇을 기록하는가
-    // → 3단 SCP를 붙일 자리와 예외를 두는 방법, 로그를 믿을 수 있게 하는 설정,
-    //   준수 팩과 사용자 지정 규칙, 규칙에 자동 수정을 붙이는 방법.
-    // 마지막 하나는 step 19가 (주제 미정)에서 옮겨 왔다(topic-plan "step 경계를 넘는 개념").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Organizations와 SCP(6) → AWS Config(5) → CloudTrail(4) → Audit Manager(1).
+    // Organizations 블록: 태그 정책·통합 청구 다음에 조직 단위를 두어 SCP를 붙이는 자리·예외(세부)와
+    // 붙인다(주요 기능을 가운데 층의 끝에). CloudTrail 로그 파일 유효성 검사가 Config 규칙을 쓰므로
+    // Config를 CloudTrail 앞에 둔다. Audit Manager는 구성 변경 추적 도구가 아니라는 대비로 Config 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'organizations-cloudtrail-config.organizations-scp',
-      'organizations-cloudtrail-config.cloudtrail',
-      'organizations-cloudtrail-config.cloudtrail-lake',
-      'organizations-cloudtrail-config.aws-config',
-      'organizations-cloudtrail-config.audit-manager',
-      'organizations-cloudtrail-config.organizational-unit',
       'organizations-cloudtrail-config.organizations-tag-policy',
       'organizations-cloudtrail-config.organizations-consolidated-billing',
-      'organizations-cloudtrail-config.cloudtrail-data-events',
-      'organizations-cloudtrail-config.config-configuration-recorder',
+      'organizations-cloudtrail-config.organizational-unit',
       'organizations-cloudtrail-config.scp-attachment-targets',
       'organizations-cloudtrail-config.scp-condition-exception',
-      'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+      'organizations-cloudtrail-config.aws-config',
+      'organizations-cloudtrail-config.config-configuration-recorder',
       'organizations-cloudtrail-config.config-conformance-pack',
       'organizations-cloudtrail-config.config-custom-rule',
       'organizations-cloudtrail-config.config-rule-remediation',
+      'organizations-cloudtrail-config.cloudtrail',
+      'organizations-cloudtrail-config.cloudtrail-lake',
+      'organizations-cloudtrail-config.cloudtrail-data-events',
+      'organizations-cloudtrail-config.cloudtrail-log-file-validation',
+      'organizations-cloudtrail-config.audit-manager',
     ])
   })
 
@@ -4712,52 +4712,50 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('WAF·Shield 주제가 서비스 넷 다음에 규칙의 축과 검사의 한계를 둔다', () => {
+  it('WAF·Shield 주제가 WAF·Shield·Firewall Manager 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'waf-shield')
 
-    // 1단 WAF·Shield·CloudFront·Firewall Manager가 각각 무엇인가
-    // → 2단 WAF를 어디에 붙이는가, 규칙을 무엇으로 거르고 누가 쓰는가, 빈도로 거르는
-    //   규칙과 봇, Shield Standard의 범위와 Shield Advanced
-    // → 3단 보호 그룹, 본문 검사 크기 한도, Web ACL의 리전 조건, 로그가 가는 길.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: WAF(10) → Shield(4) → Firewall Manager(1).
+    // CloudFront 재소개는 WAF를 붙이는 자리(waf-attach-targets)가 멀티 오리진 CloudFront를 전제로 쓰므로
+    // WAF 블록 안, 그 앞에 둔다(규칙 5). Firewall Manager는 WAF 규칙을 중앙에서 배포하므로 두 블록 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'waf-shield.waf',
-      'waf-shield.shield',
       'waf-shield.cloudfront',
-      'waf-shield.firewall-manager',
       'waf-shield.waf-attach-targets',
       'waf-shield.waf-rule-types',
       'waf-shield.waf-managed-rule-groups',
       'waf-shield.waf-rate-based-rule',
       'waf-shield.waf-bot-control',
-      'waf-shield.shield-standard-network-layer',
-      'waf-shield.shield-advanced-drt',
-      'waf-shield.shield-advanced-protection-group',
       'waf-shield.waf-body-inspection-size-limit',
       'waf-shield.waf-web-acl-region-must-match-rest-api',
       'waf-shield.waf-logging-to-firehose',
+      'waf-shield.shield',
+      'waf-shield.shield-standard-network-layer',
+      'waf-shield.shield-advanced-drt',
+      'waf-shield.shield-advanced-protection-group',
+      'waf-shield.firewall-manager',
     ])
   })
 
-  it('탐지 주제가 서비스 넷 다음에 각각 무엇을 찾는가와 조직 설정을 둔다', () => {
+  it('탐지 주제가 GuardDuty·Macie·Inspector·Security Hub 블록 다음에 넷의 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'guardduty-macie-inspector')
 
-    // 1단 GuardDuty·Macie·Inspector·Security Hub가 각각 무엇인가
-    // → 2단 헷갈리는 넷이 각각 무엇을 찾는가, DB 로그인 이상은 어디가 잡는가,
-    //   검색 작업과 자동 탐지, 컨테이너 이미지의 취약점 스캔은 어디인가
-    // → 3단 위임 관리자 계정에서 조직 전체를 보는 방법, 탐지 결과를 이벤트로 이어
-    //   자동 대응과 알림을 붙이는 방법.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: GuardDuty(3) → Macie(4) → Inspector(2) → Security Hub(1) → 비교 — 헷갈리는 보안 서비스 넷(1).
+    // 헷갈리는 보안 서비스 넷은 네 블록을 가르는 비교라 네 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'guardduty-macie-inspector.guardduty',
+      'guardduty-macie-inspector.guardduty-db-login',
+      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
       'guardduty-macie-inspector.macie',
+      'guardduty-macie-inspector.macie-automated-discovery',
+      'guardduty-macie-inspector.macie-delegated-administrator',
+      'guardduty-macie-inspector.macie-finding-to-eventbridge',
       'guardduty-macie-inspector.amazon-inspector',
+      'guardduty-macie-inspector.inspector-scans-ecr-images',
       'guardduty-macie-inspector.security-hub',
       'guardduty-macie-inspector.security-service-lineup',
-      'guardduty-macie-inspector.guardduty-db-login',
-      'guardduty-macie-inspector.macie-automated-discovery',
-      'guardduty-macie-inspector.inspector-scans-ecr-images',
-      'guardduty-macie-inspector.macie-delegated-administrator',
-      'guardduty-macie-inspector.guardduty-finding-to-eventbridge',
-      'guardduty-macie-inspector.macie-finding-to-eventbridge',
     ])
   })
 
@@ -4892,30 +4890,31 @@ describe('학습 데이터 무결성', () => {
     })
   })
 
-  it('비용 관리 주제가 도구 여덟 다음에 약정의 크기와 설정 항목을 둔다', () => {
+  it('비용 관리 주제가 약정·비용 조회·예산·이상 탐지·보고서·권장 도구 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cost-management')
 
-    // 1단 비용 도구들이 각각 무엇인가
-    // → 2단 무엇을 얼마만큼 약정하는가, 용량 예약은 왜 할인이 아닌가
-    // → 3단 태그를 어디서 활성화하는가, 예산에 걸 수 있는 조치와 알림 기준,
-    //   권장 대상에 무엇이 들어가는가.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 약정 할인(5) → Cost Explorer·결제 콘솔·비용 할당 태그(4) → AWS Budgets(3) → Cost Anomaly Detection(1) → 비용
+    //   및 사용량 보고서(1) → 권장 도구 — Trusted Advisor·Compute Optimizer(3).
+    // Cost Anomaly Detection은 '예산 초과가 아닌'으로 정의되므로 Budgets 뒤. 비용 및 사용량 보고서는
+    // Cost Explorer·Budgets와 대비하므로 둘 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cost-management.savings-plan',
-      'cost-management.aws-budgets',
-      'cost-management.cost-explorer',
-      'cost-management.cost-anomaly-detection',
-      'cost-management.cost-and-usage-report',
-      'cost-management.billing-and-cost-management',
-      'cost-management.trusted-advisor',
-      'cost-management.compute-optimizer',
       'cost-management.savings-plan-details',
       'cost-management.savings-plan-baseline-vs-spike',
       'cost-management.rds-reserved-instance',
       'cost-management.on-demand-capacity-reservation',
+      'cost-management.cost-explorer',
+      'cost-management.billing-and-cost-management',
       'cost-management.cost-allocation-tag-activation',
       'cost-management.cost-allocation-tag-activation-in-management-account',
+      'cost-management.aws-budgets',
       'cost-management.budget-actions',
       'cost-management.budget-forecasted-alert',
+      'cost-management.cost-anomaly-detection',
+      'cost-management.cost-and-usage-report',
+      'cost-management.trusted-advisor',
+      'cost-management.compute-optimizer',
       'cost-management.compute-optimizer-ebs-recommendations',
     ])
   })
