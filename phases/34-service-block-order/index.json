@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "minor-ops-reorder",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T00:22:48+0900",
+      "summary": "지정된 6개 주제의 개념·baseline을 명세의 서비스 블록 순서로 재배열하고 기존 순서 단언 6개를 명세 코드로 갱신; backup-disaster-recovery 자리 바뀐 개념 10/11 왕복 1 → 0; route53 자리 바뀐 개념 10/13 왕복 4 → 0; iam-permissions 자리 바뀐 개념 14/18 왕복 5 → 0; governance-iac 자리 바뀐 개념 6/7 왕복 2 → 0; systems-manager 자리 바뀐 개념 6/7 왕복 2 → 0; ai-ml-services 자리 바뀐 개념 4/6 왕복 1 → 0; 선행 충돌 없음; Node 18.17.1에서 TDD 지정 6개 실패·506개 통과 확인 후 lint·build·512개 테스트(24개 파일)·구조 검사·verify-order 6 모두 통과; 테스트 6개 블록 외 변경 없음·문항/본문/메타데이터 변경 없음·다른 주제 순서 변경 없음·새 소스 파일 없음.",
+      "completed_at": "2026-09-12T00:27:48+0900"
     },
     {
       "step": 7,
