@@ -34,18 +34,18 @@ const testQuestions: Question[] = [
   { id: 'q003', topicId: 'database', conceptId: 'database.rds', prompt: '질문 3', choices: ['A', 'B', 'C', 'D'], answerIndex: 2, explanation: '해설 3' },
 ]
 
-function renderPage(progress: Progress, forget = vi.fn()) {
+function renderPage(progress: Progress, setInReview = vi.fn()) {
   const view = render(
     <MemoryRouter>
       <ReviewPage
-        forget={forget}
         progress={progress}
         questions={testQuestions}
+        setInReview={setInReview}
         topics={testTopics}
       />
     </MemoryRouter>,
   )
-  return { ...view, forget }
+  return { ...view, setInReview }
 }
 
 // 돌아가기가 실제로 어느 화면에 닿는지 보려면 복습 화면 밖의 라우트가 있어야 한다.
@@ -57,7 +57,7 @@ function renderWithHistory(entries: string[]) {
         <Route
           element={
             <ReviewPage
-              progress={{ version: 2, read: {}, answers: { q001: false }, wrong: { q001: true } }}
+              progress={{ version: 3, read: {}, answers: { q001: false }, review: { q001: true } }}
               questions={testQuestions}
               topics={testTopics}
             />
@@ -71,17 +71,17 @@ function renderWithHistory(entries: string[]) {
 
 describe('ReviewPage', () => {
   it('최상위 section에 한글 단어와 긴 문자열 줄바꿈 클래스를 함께 적용한다', () => {
-    const { container } = renderPage({ version: 2, read: {}, answers: {}, wrong: {} })
+    const { container } = renderPage({ version: 3, read: {}, answers: {}, review: {} })
 
     expect(container.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
   })
 
-  it('오답노트의 문항을 주제별로 묶어 렌더한다', () => {
+  it('복습 목록의 문항을 주제별로 묶어 렌더한다', () => {
     renderPage({
-      version: 2,
+      version: 3,
       read: {},
-      answers: { q001: false, q003: false },
-      wrong: { q001: true, q003: true },
+      answers: { q001: false, q003: true },
+      review: { q001: true, q003: true },
     })
 
     const storageGroup = screen.getByRole('region', { name: '스토리지' })
@@ -92,63 +92,62 @@ describe('ReviewPage', () => {
   })
 
   it('문항마다 근거 개념으로 가는 링크를 붙인다', () => {
-    renderPage({ version: 2, read: {}, answers: { q001: false }, wrong: { q001: true } })
+    renderPage({ version: 3, read: {}, answers: { q001: false }, review: { q001: true } })
 
     expect(screen.getByRole('link', { name: /Amazon S3/ })).toHaveAttribute('href', '/topic/storage')
   })
 
-  // 오답노트가 줄어드는 경로는 사용자가 지우는 것 하나뿐이다 (ADR-017).
-  it('다시 풀어서 맞힌 문항도 오답노트에 남아 있으면 계속 보여준다', () => {
-    renderPage({ version: 2, read: {}, answers: { q001: true }, wrong: { q001: true } })
+  // 다시 풀어 맞혔다고 저절로 빠지지 않는다. 빼는 것은 사용자다 (ADR-017).
+  it('다시 풀어서 맞힌 문항도 복습 목록에 남아 있으면 계속 보여준다', () => {
+    renderPage({ version: 3, read: {}, answers: { q001: true }, review: { q001: true } })
 
     expect(screen.getByText('질문 1')).toBeInTheDocument()
   })
 
-  it('오답노트에 없는 문항은 마지막 시도가 오답이어도 보여주지 않는다', () => {
-    renderPage({ version: 2, read: {}, answers: { q002: false }, wrong: {} })
+  // 틀렸다고 저절로 들어오지도 않는다. 넣는 것도 사용자다 (ADR-032).
+  it('복습 목록에 없는 문항은 틀렸어도 보여주지 않는다', () => {
+    renderPage({ version: 3, read: {}, answers: { q002: false }, review: {} })
 
     expect(screen.queryByText('질문 2')).not.toBeInTheDocument()
   })
 
-  it('지우기를 누르면 그 문항만 오답노트에서 뺀다', async () => {
-    const { forget } = renderPage({
-      version: 2,
+  it('지우기를 누르면 그 문항만 복습 목록에서 뺀다', async () => {
+    const { setInReview } = renderPage({
+      version: 3,
       read: {},
       answers: { q001: false, q002: false },
-      wrong: { q001: true, q002: true },
+      review: { q001: true, q002: true },
     })
 
-    await userEvent.click(screen.getByRole('button', { name: '오답노트에서 지우기: 질문 1' }))
+    await userEvent.click(screen.getByRole('button', { name: '복습 목록에서 지우기: 질문 1' }))
 
-    expect(forget).toHaveBeenCalledTimes(1)
-    expect(forget).toHaveBeenCalledWith('q001')
+    expect(setInReview).toHaveBeenCalledTimes(1)
+    expect(setInReview).toHaveBeenCalledWith('q001', false)
   })
 
-  it('전체 오답과 주제별 오답을 다시 푸는 링크를 준다', () => {
+  it('전체와 주제별로 다시 푸는 링크를 준다', () => {
     renderPage({
-      version: 2,
+      version: 3,
       read: {},
       answers: { q001: false, q003: false },
-      wrong: { q001: true, q003: true },
+      review: { q001: true, q003: true },
     })
 
     expect(screen.getByRole('link', { name: '전체 다시 풀기' })).toHaveAttribute('href', '/review/quiz')
     const storageGroup = screen.getByRole('region', { name: '스토리지' })
-    const topicLink = within(storageGroup).getByRole('link', { name: '오답 다시 풀기' })
+    const topicLink = within(storageGroup).getByRole('link', { name: '다시 풀기' })
     expect(topicLink).toHaveAttribute('href', '/review/quiz/storage')
     expect(topicLink).toHaveClass('min-h-[44px]')
   })
 
-  it('아무것도 안 푼 상태와 오답노트를 비운 상태를 다르게 안내한다', () => {
-    const { unmount } = renderPage({ version: 2, read: {}, answers: {}, wrong: {} })
-    expect(screen.getByText('확인 문제를 풀면 여기에 틀린 문항이 모입니다.')).toBeInTheDocument()
+  // 문제를 풀었어도 복습에 넣지 않았으면 목록은 비어 있다. 그때도 넣는 방법을 알려야 한다.
+  it('복습 목록이 비면 넣는 방법과 주제 목록 링크를 안내한다', () => {
+    renderPage({ version: 3, read: {}, answers: { q001: false }, review: {} })
+
+    expect(screen.getByText('문제를 푼 뒤 복습에 넣은 문항이 여기에 모입니다.')).toBeInTheDocument()
     const topicListLink = screen.getByRole('link', { name: '주제 목록으로 가기' })
     expect(topicListLink).toHaveAttribute('href', '/')
     expect(topicListLink).toHaveClass('min-h-[44px]')
-
-    unmount()
-    renderPage({ version: 2, read: {}, answers: { q001: true }, wrong: {} })
-    expect(screen.getByText('오답노트가 비어 있습니다.')).toBeInTheDocument()
   })
 
   it('돌아가기를 누르면 복습 화면에 들어오기 전 화면으로 간다', async () => {

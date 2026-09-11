@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 import type { Question, Topic } from '../types/content'
+import type { Progress } from '../types/progress'
 import { QuizPage } from './QuizPage'
 
 const testQuestions: Question[] = [
@@ -45,22 +46,26 @@ const testTopics: Topic[] = [
 
 const noShuffle = (items: Question[]) => items
 
+const noReview: Progress = { version: 3, read: {}, answers: {}, review: {} }
+
 function renderPage(
   path = '/topic/test-topic/quiz',
   answer = vi.fn(),
   questions = testQuestions,
   topics?: Topic[],
   shuffle = noShuffle,
+  progress = noReview,
 ) {
+  const setInReview = vi.fn()
   const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} questions={questions} shuffle={shuffle} topics={topics} />} />
+        <Route path="/topic/:topicId/quiz" element={<QuizPage answer={answer} progress={progress} questions={questions} setInReview={setInReview} shuffle={shuffle} topics={topics} />} />
       </Routes>
     </MemoryRouter>,
   )
 
-  return { ...result, answer }
+  return { ...result, answer, setInReview }
 }
 
 describe('QuizPage', () => {
@@ -240,6 +245,16 @@ describe('QuizPage', () => {
     expect(answer).toHaveBeenCalledWith('q001', true)
   })
 
+  it('답을 고른 뒤 복습에 넣기를 누르면 그 문항을 복습 목록에 넣는다', async () => {
+    const user = userEvent.setup()
+    const { setInReview } = renderPage()
+
+    await user.click(screen.getByRole('button', { name: '오답 보기 1' }))
+    await user.click(screen.getByRole('button', { name: '복습에 넣기' }))
+
+    expect(setInReview).toHaveBeenCalledWith('q001', true)
+  })
+
   it('정답 공개 후에도 하단 고정 바를 렌더하지 않는다', async () => {
     const user = userEvent.setup()
     const { container } = renderPage()
@@ -283,12 +298,26 @@ describe('QuizPage', () => {
     expect(document.querySelector('section')).toHaveClass('break-keep', 'break-anywhere')
     expect(screen.getByRole('heading', { name: '확인 문제 완료' })).toBeInTheDocument()
     expect(screen.getByText('맞힌 개수 1 / 2')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '틀린 문제 복습하기' })).toHaveAttribute('href', '/review')
     expect(screen.queryByRole('link', { name: '주제 목록으로 돌아가기' })).toBeNull()
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toBeInTheDocument()
   })
 
-  it('오답이 있고 다음 주제가 있으면 복습과 다음 주제 링크를 함께 렌더한다', async () => {
+  // 완료 화면의 복습 링크는 정오답이 아니라 복습 목록을 따른다. 틀린 문항은 저절로 들어가지 않는다 (ADR-032).
+  it('세트에 복습 목록의 문항이 있으면 전부 맞혀도 복습과 다음 주제 링크를 함께 렌더한다', async () => {
+    const user = userEvent.setup()
+    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, testTopics, noShuffle, { ...noReview, review: { q001: true } })
+
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '정답 보기' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
+
+    expect(screen.getByRole('link', { name: '복습하기' })).toHaveAttribute('href', '/review')
+    expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
+    expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
+  })
+
+  it('틀린 문항이 있어도 복습 목록에 넣지 않았으면 다음 주제 링크를 주요 출구로 렌더한다', async () => {
     const user = userEvent.setup()
     renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, testTopics)
 
@@ -297,22 +326,8 @@ describe('QuizPage', () => {
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
     await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
 
-    expect(screen.getByRole('link', { name: '틀린 문제 복습하기' })).toHaveAttribute('href', '/review')
-    expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
-    expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
-  })
-
-  it('전부 맞히고 다음 주제가 있으면 다음 주제 링크만 주요 출구로 렌더한다', async () => {
-    const user = userEvent.setup()
-    renderPage('/topic/test-topic/quiz', vi.fn(), testQuestions, testTopics)
-
-    await user.click(screen.getByRole('button', { name: '정답 보기' }))
-    await user.click(screen.getByRole('button', { name: '정답 보기' }))
-    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
-    await user.click(screen.getByRole('button', { name: '두 번째 정답' }))
-
-    expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveAttribute('href', '/topic/next-topic')
-    expect(screen.queryByRole('link', { name: '틀린 문제 복습하기' })).toBeNull()
+    expect(screen.queryByRole('link', { name: '복습하기' })).toBeNull()
+    expect(screen.getByRole('link', { name: '다음 주제 이어가기' })).toHaveClass('bg-neutral-100')
     expect(screen.getByRole('link', { name: '개념으로 돌아가기' })).toHaveAttribute('href', '/topic/test-topic')
   })
 

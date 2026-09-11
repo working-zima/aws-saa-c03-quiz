@@ -8,6 +8,8 @@ interface QuizRunnerProps {
   title: string
   questions: Question[]
   answer: (questionId: string, correct: boolean) => void
+  review: Record<string, true>
+  setInReview: (questionId: string, marked: boolean) => void
   renderComplete: (correctCount: number, total: number) => ReactNode
   topics?: Topic[]
 }
@@ -16,7 +18,7 @@ const choiceBaseClass = 'w-full rounded-md border border-neutral-800 bg-[#141414
 const choiceCorrectClass = 'border-green-500/60 bg-green-500/5'
 const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
 const ghostLinkClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
-const conceptToggleClass = 'inline-flex min-h-[44px] items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100'
+const toggleClass = 'inline-flex min-h-[44px] items-center gap-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100'
 
 const chevronDownIcon = (
   <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
@@ -30,7 +32,20 @@ const chevronUpIcon = (
   </svg>
 )
 
-export function QuizRunner({ title, questions, answer, renderComplete, topics = defaultTopics }: QuizRunnerProps) {
+const reviewOffIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <rect height="16" rx="2" width="16" x="4" y="4" />
+  </svg>
+)
+
+const reviewOnIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <rect height="16" rx="2" width="16" x="4" y="4" />
+    <path d="M8 12l3 3 5-6" />
+  </svg>
+)
+
+export function QuizRunner({ title, questions, answer, review, setInReview, renderComplete, topics = defaultTopics }: QuizRunnerProps) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [selections, setSelections] = useState<(number | null)[]>(() => questions.map(() => null))
   const [complete, setComplete] = useState(false)
@@ -53,6 +68,7 @@ export function QuizRunner({ title, questions, answer, renderComplete, topics = 
   // 문항의 근거 개념 하나가 아니라 그 문항이 속한 주제 전체를 펼친다 (ADR-016).
   const topic = topics.find((candidate) => candidate.id === question.topicId)
   const conceptOpen = openConceptIndex === questionIndex
+  const inReview = question.id in review
 
   function selectChoice(choiceIndex: number) {
     if (revealed) return
@@ -124,6 +140,17 @@ export function QuizRunner({ title, questions, answer, renderComplete, topics = 
               ? '정답을 한 번 더 누르면 결과를 봅니다'
               : '정답을 한 번 더 누르면 다음 문제로 넘어갑니다'}
           </p>
+          {/* 틀렸다고 저절로 넣지 않는다. 무엇을 복습할지는 해설을 읽은 학습자가 정한다 (ADR-032).
+              라벨은 켜져 있어도 그대로다. 상태는 체크 표시와 aria-pressed가 전한다. */}
+          <button
+            aria-pressed={inReview}
+            className={toggleClass}
+            onClick={() => setInReview(question.id, !inReview)}
+            type="button"
+          >
+            {inReview ? reviewOnIcon : reviewOffIcon}
+            복습에 넣기
+          </button>
         </div>
       )}
 
@@ -132,7 +159,7 @@ export function QuizRunner({ title, questions, answer, renderComplete, topics = 
           <button
             aria-controls={conceptPanelId}
             aria-expanded={conceptOpen}
-            className={conceptToggleClass}
+            className={toggleClass}
             onClick={() => setOpenConceptIndex(conceptOpen ? null : questionIndex)}
             type="button"
           >

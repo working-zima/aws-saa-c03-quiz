@@ -42,7 +42,7 @@ export function overallPercent(stats: TopicStat[]): number {
   return Math.round((answered / total) * 100)
 }
 
-// 마지막 채점 결과가 아니라 오답노트를 본다. 다시 맞혀도 사용자가 지우기 전에는 남는다 (ADR-017).
-export function wrongQuestions(questions: Question[], progress: Progress): Question[] {
-  return questions.filter((question) => question.id in progress.wrong)
+// 채점 결과가 아니라 사용자가 고른 복습 목록을 본다. 틀렸다고 들어오지도, 맞혔다고 빠지지도 않는다 (ADR-032).
+export function reviewQuestions(questions: Question[], progress: Progress): Question[] {
+  return questions.filter((question) => question.id in progress.review)
 }
