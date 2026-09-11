@@ -238,32 +238,12 @@
      "name": "클라이언트 측 암호화"
     },
     {
-     "id": "s3-encryption-batch.batch-operations",
-     "name": "S3 Batch Operations"
-    },
-    {
-     "id": "s3-encryption-batch.s3-inventory-report",
-     "name": "S3 인벤토리"
-    },
-    {
-     "id": "s3-encryption-batch.s3-object-lambda",
-     "name": "S3 Object Lambda"
-    },
-    {
      "id": "s3-encryption-batch.envelope-encryption",
      "name": "봉투 암호화 (Envelope Encryption)"
     },
     {
      "id": "s3-encryption-batch.sse-kms-audit-trail",
      "name": "SSE-KMS의 감사 추적과 업로드 강제"
-    },
-    {
-     "id": "s3-encryption-batch.batch-copy-vs-replication",
-     "name": "일회성 대량 복사와 지속 복제"
-    },
-    {
-     "id": "s3-encryption-batch.s3-batch-operations-lambda-invoke",
-     "name": "S3 Batch Operations의 Lambda 호출"
     },
     {
      "id": "s3-encryption-batch.sse-kms-cost",
@@ -276,6 +256,26 @@
     {
      "id": "s3-encryption-batch.s3-secure-transport-condition",
      "name": "버킷 정책의 전송 구간 암호화 강제"
+    },
+    {
+     "id": "s3-encryption-batch.batch-operations",
+     "name": "S3 Batch Operations"
+    },
+    {
+     "id": "s3-encryption-batch.s3-inventory-report",
+     "name": "S3 인벤토리"
+    },
+    {
+     "id": "s3-encryption-batch.batch-copy-vs-replication",
+     "name": "일회성 대량 복사와 지속 복제"
+    },
+    {
+     "id": "s3-encryption-batch.s3-batch-operations-lambda-invoke",
+     "name": "S3 Batch Operations의 Lambda 호출"
+    },
+    {
+     "id": "s3-encryption-batch.s3-object-lambda",
+     "name": "S3 Object Lambda"
     }
    ]
   },
@@ -360,28 +360,12 @@
      "name": "EBS Elastic Volumes"
     },
     {
-     "id": "ebs-instance-store.instance-store",
-     "name": "인스턴스 스토어 (Instance Store)"
-    },
-    {
-     "id": "ebs-instance-store.cluster-placement-group",
-     "name": "클러스터 배치 그룹"
-    },
-    {
-     "id": "ebs-instance-store.elastic-fabric-adapter",
-     "name": "Elastic Fabric Adapter(EFA)"
-    },
-    {
      "id": "ebs-instance-store.ebs-volume-type-names",
      "name": "EBS 볼륨 유형의 실제 이름"
     },
     {
      "id": "ebs-instance-store.gp3-iops-independent-of-size",
      "name": "gp3의 IOPS와 용량 분리"
-    },
-    {
-     "id": "ebs-instance-store.spread-placement-group",
-     "name": "분산 배치 그룹"
     },
     {
      "id": "ebs-instance-store.io2-block-express-iops-ceiling",
@@ -410,6 +394,22 @@
     {
      "id": "ebs-instance-store.ebs-fast-snapshot-restore",
      "name": "스냅샷으로 만든 볼륨의 첫 접근이 느린 이유"
+    },
+    {
+     "id": "ebs-instance-store.instance-store",
+     "name": "인스턴스 스토어 (Instance Store)"
+    },
+    {
+     "id": "ebs-instance-store.cluster-placement-group",
+     "name": "클러스터 배치 그룹"
+    },
+    {
+     "id": "ebs-instance-store.spread-placement-group",
+     "name": "분산 배치 그룹"
+    },
+    {
+     "id": "ebs-instance-store.elastic-fabric-adapter",
+     "name": "Elastic Fabric Adapter(EFA)"
     }
    ]
   },
@@ -925,8 +925,40 @@
      "name": "ElastiCache"
     },
     {
+     "id": "elasticache-purpose-built-db.elasticache-redis-vs-memcached",
+     "name": "Redis와 Memcached의 갈림길"
+    },
+    {
+     "id": "elasticache-purpose-built-db.elasticache-multi-az-failover",
+     "name": "ElastiCache의 다중 AZ 자동 장애 조치"
+    },
+    {
+     "id": "elasticache-purpose-built-db.elasticache-global-datastore",
+     "name": "ElastiCache 글로벌 데이터스토어"
+    },
+    {
+     "id": "elasticache-purpose-built-db.cache-requires-application-change",
+     "name": "캐시 도입에 필요한 애플리케이션 코드 변경"
+    },
+    {
+     "id": "elasticache-purpose-built-db.elasticache-not-a-durable-store",
+     "name": "영구 저장소가 아닌 캐시"
+    },
+    {
+     "id": "elasticache-purpose-built-db.dax-dynamodb-only",
+     "name": "DynamoDB 전용 캐시 DAX"
+    },
+    {
+     "id": "elasticache-purpose-built-db.dax-encryption-at-rest",
+     "name": "DAX 저장 중 암호화의 설정 시점"
+    },
+    {
      "id": "elasticache-purpose-built-db.documentdb",
      "name": "Amazon DocumentDB"
+    },
+    {
+     "id": "elasticache-purpose-built-db.documentdb-global-cluster",
+     "name": "DocumentDB 글로벌 클러스터"
     },
     {
      "id": "elasticache-purpose-built-db.neptune",
@@ -943,38 +975,6 @@
     {
      "id": "elasticache-purpose-built-db.timestream",
      "name": "Amazon Timestream"
-    },
-    {
-     "id": "elasticache-purpose-built-db.elasticache-redis-vs-memcached",
-     "name": "Redis와 Memcached의 갈림길"
-    },
-    {
-     "id": "elasticache-purpose-built-db.dax-dynamodb-only",
-     "name": "DynamoDB 전용 캐시 DAX"
-    },
-    {
-     "id": "elasticache-purpose-built-db.elasticache-multi-az-failover",
-     "name": "ElastiCache의 다중 AZ 자동 장애 조치"
-    },
-    {
-     "id": "elasticache-purpose-built-db.elasticache-global-datastore",
-     "name": "ElastiCache 글로벌 데이터스토어"
-    },
-    {
-     "id": "elasticache-purpose-built-db.documentdb-global-cluster",
-     "name": "DocumentDB 글로벌 클러스터"
-    },
-    {
-     "id": "elasticache-purpose-built-db.cache-requires-application-change",
-     "name": "캐시 도입에 필요한 애플리케이션 코드 변경"
-    },
-    {
-     "id": "elasticache-purpose-built-db.elasticache-not-a-durable-store",
-     "name": "영구 저장소가 아닌 캐시"
-    },
-    {
-     "id": "elasticache-purpose-built-db.dax-encryption-at-rest",
-     "name": "DAX 저장 중 암호화의 설정 시점"
     }
    ]
   },
@@ -1075,10 +1075,6 @@
      "name": "ELB"
     },
     {
-     "id": "elastic-load-balancing.gateway-load-balancer",
-     "name": "게이트웨이 로드 밸런서"
-    },
-    {
      "id": "elastic-load-balancing.alb-l7-vs-nlb-l4",
      "name": "계층으로 나뉘는 ALB와 NLB"
     },
@@ -1087,24 +1083,8 @@
      "name": "ALB가 볼 수 있는 라우팅 조건"
     },
     {
-     "id": "elastic-load-balancing.nlb-tls-listener",
-     "name": "NLB의 TLS 리스너"
-    },
-    {
-     "id": "elastic-load-balancing.nlb-udp-listener",
-     "name": "NLB의 UDP 리스너"
-    },
-    {
-     "id": "elastic-load-balancing.nlb-ip-targets",
-     "name": "NLB 대상 그룹의 IP 주소 등록"
-    },
-    {
      "id": "elastic-load-balancing.alb-cookie-stickiness",
      "name": "ALB의 쿠키 기반 스티키 세션"
-    },
-    {
-     "id": "elastic-load-balancing.internal-load-balancer",
-     "name": "내부 로드 밸런서"
     },
     {
      "id": "elastic-load-balancing.sticky-session-tradeoff",
@@ -1123,16 +1103,36 @@
      "name": "ALB 리스너 규칙의 사용자 지정 응답"
     },
     {
+     "id": "elastic-load-balancing.nlb-tls-listener",
+     "name": "NLB의 TLS 리스너"
+    },
+    {
+     "id": "elastic-load-balancing.nlb-udp-listener",
+     "name": "NLB의 UDP 리스너"
+    },
+    {
+     "id": "elastic-load-balancing.nlb-ip-targets",
+     "name": "NLB 대상 그룹의 IP 주소 등록"
+    },
+    {
+     "id": "elastic-load-balancing.gateway-load-balancer",
+     "name": "게이트웨이 로드 밸런서"
+    },
+    {
+     "id": "elastic-load-balancing.gwlb-endpoint-cross-account-inspection",
+     "name": "게이트웨이 로드 밸런서 엔드포인트와 계정 간 트래픽 검사"
+    },
+    {
+     "id": "elastic-load-balancing.internal-load-balancer",
+     "name": "내부 로드 밸런서"
+    },
+    {
      "id": "elastic-load-balancing.load-balancer-idle-timeout",
      "name": "연결 경로 전체의 유휴 타임아웃"
     },
     {
      "id": "elastic-load-balancing.end-to-end-encryption-behind-alb",
      "name": "로드 밸런서 뒤 구간까지의 종단 간 암호화"
-    },
-    {
-     "id": "elastic-load-balancing.gwlb-endpoint-cross-account-inspection",
-     "name": "게이트웨이 로드 밸런서 엔드포인트와 계정 간 트래픽 검사"
     }
    ]
   },
@@ -1340,28 +1340,20 @@
      "name": "ECS"
     },
     {
-     "id": "ecs-eks-fargate.eks",
-     "name": "Amazon EKS (Elastic Kubernetes Service)"
+     "id": "ecs-eks-fargate.ecs-task-role",
+     "name": "태스크 역할과 인스턴스 역할"
     },
     {
-     "id": "ecs-eks-fargate.ecr-image-scan-on-push",
-     "name": "Amazon ECR과 푸시 시 스캔"
+     "id": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
+     "name": "태스크 역할과 태스크 실행 역할"
     },
     {
-     "id": "ecs-eks-fargate.aws-batch",
-     "name": "AWS Batch"
+     "id": "ecs-eks-fargate.ecs-awsvpc-mode",
+     "name": "ECS의 awsvpc 네트워크 모드"
     },
     {
-     "id": "ecs-eks-fargate.elastic-beanstalk",
-     "name": "AWS Elastic Beanstalk"
-    },
-    {
-     "id": "ecs-eks-fargate.app2container",
-     "name": "AWS App2Container"
-    },
-    {
-     "id": "ecs-eks-fargate.eks-compute-options",
-     "name": "EKS의 세 가지 컴퓨팅 방식과 관리 책임"
+     "id": "ecs-eks-fargate.ecs-task-placement-strategy",
+     "name": "ECS 태스크 배치 전략"
     },
     {
      "id": "ecs-eks-fargate.fargate-no-time-limit",
@@ -1372,8 +1364,20 @@
      "name": "Fargate Spot"
     },
     {
-     "id": "ecs-eks-fargate.batch-fargate-compute-environment",
-     "name": "AWS Batch의 컴퓨팅 환경"
+     "id": "ecs-eks-fargate.fargate-per-second-billing",
+     "name": "Fargate의 최소 과금 단위"
+    },
+    {
+     "id": "ecs-eks-fargate.fargate-efs-mount",
+     "name": "Fargate 태스크의 EFS 마운트"
+    },
+    {
+     "id": "ecs-eks-fargate.eks",
+     "name": "Amazon EKS (Elastic Kubernetes Service)"
+    },
+    {
+     "id": "ecs-eks-fargate.eks-compute-options",
+     "name": "EKS의 세 가지 컴퓨팅 방식과 관리 책임"
     },
     {
      "id": "ecs-eks-fargate.eks-fargate-pod-isolation",
@@ -1396,36 +1400,32 @@
      "name": "Amazon EKS Anywhere"
     },
     {
-     "id": "ecs-eks-fargate.ecs-task-role",
-     "name": "태스크 역할과 인스턴스 역할"
-    },
-    {
-     "id": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
-     "name": "태스크 역할과 태스크 실행 역할"
-    },
-    {
      "id": "ecs-eks-fargate.eks-irsa",
      "name": "서비스 계정용 IAM 역할(IRSA)"
     },
     {
-     "id": "ecs-eks-fargate.ecs-awsvpc-mode",
-     "name": "ECS의 awsvpc 네트워크 모드"
-    },
-    {
-     "id": "ecs-eks-fargate.ecs-task-placement-strategy",
-     "name": "ECS 태스크 배치 전략"
-    },
-    {
-     "id": "ecs-eks-fargate.fargate-per-second-billing",
-     "name": "Fargate의 최소 과금 단위"
-    },
-    {
-     "id": "ecs-eks-fargate.fargate-efs-mount",
-     "name": "Fargate 태스크의 EFS 마운트"
-    },
-    {
      "id": "ecs-eks-fargate.eks-secrets-kms-encryption",
      "name": "EKS 시크릿의 KMS 암호화"
+    },
+    {
+     "id": "ecs-eks-fargate.ecr-image-scan-on-push",
+     "name": "Amazon ECR과 푸시 시 스캔"
+    },
+    {
+     "id": "ecs-eks-fargate.aws-batch",
+     "name": "AWS Batch"
+    },
+    {
+     "id": "ecs-eks-fargate.batch-fargate-compute-environment",
+     "name": "AWS Batch의 컴퓨팅 환경"
+    },
+    {
+     "id": "ecs-eks-fargate.elastic-beanstalk",
+     "name": "AWS Elastic Beanstalk"
+    },
+    {
+     "id": "ecs-eks-fargate.app2container",
+     "name": "AWS App2Container"
     }
    ]
   },
@@ -1441,18 +1441,6 @@
     {
      "id": "api-gateway-step-functions.api-gateway",
      "name": "API Gateway"
-    },
-    {
-     "id": "api-gateway-step-functions.step-functions",
-     "name": "Step Functions"
-    },
-    {
-     "id": "api-gateway-step-functions.step-functions-features",
-     "name": "Step Functions의 수동 승인과 재시도"
-    },
-    {
-     "id": "api-gateway-step-functions.amplify",
-     "name": "AWS Amplify"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-jwt-authorizer",
@@ -1495,6 +1483,26 @@
      "name": "API Gateway의 AWS 서비스 통합"
     },
     {
+     "id": "api-gateway-step-functions.api-gateway-custom-domain-name",
+     "name": "API Gateway 사용자 지정 도메인 이름"
+    },
+    {
+     "id": "api-gateway-step-functions.api-gateway-mapping-template-limits",
+     "name": "매핑 템플릿으로 되는 변환과 안 되는 변환"
+    },
+    {
+     "id": "api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy",
+     "name": "리소스 정책의 IP 주소 제한"
+    },
+    {
+     "id": "api-gateway-step-functions.step-functions",
+     "name": "Step Functions"
+    },
+    {
+     "id": "api-gateway-step-functions.step-functions-features",
+     "name": "Step Functions의 수동 승인과 재시도"
+    },
+    {
      "id": "api-gateway-step-functions.step-functions-long-running-workflow",
      "name": "최대 1년까지 이어지는 Step Functions 실행"
     },
@@ -1507,16 +1515,8 @@
      "name": "Map 상태의 항목별 반복 호출"
     },
     {
-     "id": "api-gateway-step-functions.api-gateway-custom-domain-name",
-     "name": "API Gateway 사용자 지정 도메인 이름"
-    },
-    {
-     "id": "api-gateway-step-functions.api-gateway-mapping-template-limits",
-     "name": "매핑 템플릿으로 되는 변환과 안 되는 변환"
-    },
-    {
-     "id": "api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy",
-     "name": "리소스 정책의 IP 주소 제한"
+     "id": "api-gateway-step-functions.amplify",
+     "name": "AWS Amplify"
     }
    ]
   },

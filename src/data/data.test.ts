@@ -2742,26 +2742,26 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('S3 암호화 주제가 암호화·배치·인벤토리 다음에 갈림길과 한계를 둔다', () => {
+  it('S3 암호화 주제가 암호화·Batch Operations와 인벤토리·Object Lambda 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 's3-encryption-batch')
 
-    // 1단 SSE와 배치·인벤토리·Object Lambda가 각각 무엇인가 → 2단 어느 SSE를 고르는가와
-    // 일회성 복사 대 지속 복제 → 3단 비용 구조·SSE-C에 없는 것·전송 구간 강제.
-    // SSE-S3 ↔ SSE-KMS ↔ SSE-C가 한 주제 안에 있어야 한다(PRD "사용자").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 서버 측·클라이언트 측 암호화(8) → Batch Operations와 인벤토리(4) → S3 Object Lambda(1).
+    // Batch Operations 블록은 일회성 복사와 지속 복제의 갈림길이 Lambda 호출(세부)보다 앞선다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       's3-encryption-batch.sse',
       's3-encryption-batch.sse-types',
       's3-encryption-batch.client-side-encryption',
-      's3-encryption-batch.batch-operations',
-      's3-encryption-batch.s3-inventory-report',
-      's3-encryption-batch.s3-object-lambda',
       's3-encryption-batch.envelope-encryption',
       's3-encryption-batch.sse-kms-audit-trail',
-      's3-encryption-batch.batch-copy-vs-replication',
-      's3-encryption-batch.s3-batch-operations-lambda-invoke',
       's3-encryption-batch.sse-kms-cost',
       's3-encryption-batch.sse-c-no-rotation-or-audit',
       's3-encryption-batch.s3-secure-transport-condition',
+      's3-encryption-batch.batch-operations',
+      's3-encryption-batch.s3-inventory-report',
+      's3-encryption-batch.batch-copy-vs-replication',
+      's3-encryption-batch.s3-batch-operations-lambda-invoke',
+      's3-encryption-batch.s3-object-lambda',
     ])
   })
 
@@ -3119,21 +3119,17 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('EBS 주제가 기본 다섯 다음에 볼륨 유형의 갈림길과 스냅샷 운영을 둔다', () => {
+  it('EBS 주제가 EBS 볼륨·스냅샷·인스턴스 스토어·배치 그룹·EFA 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ebs-instance-store')
 
-    // 1단 EBS·인스턴스 스토어·배치 그룹이 무엇인가 → 2단 볼륨 유형끼리의 갈림길과
-    // 클러스터 ↔ 분산 배치 그룹 → 3단 IOPS 상한·계정 속성인 기본 암호화·스냅샷 운영.
-    // gp2 ↔ gp3 ↔ io1 ↔ io2는 서로 갈림길이라 한 주제 안에 둔다(PRD "사용자").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: EBS 볼륨(7) → EBS 스냅샷(4) → 인스턴스 스토어(1) → 배치 그룹(2) → EFA(1).
+    // EFA 본문이 클러스터 배치 그룹과 분산 배치 그룹을 둘 다 전제로 쓰므로 배치 그룹 블록 뒤에 둔다(규칙 5).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ebs-instance-store.ebs',
       'ebs-instance-store.ebs-elastic-volumes',
-      'ebs-instance-store.instance-store',
-      'ebs-instance-store.cluster-placement-group',
-      'ebs-instance-store.elastic-fabric-adapter',
       'ebs-instance-store.ebs-volume-type-names',
       'ebs-instance-store.gp3-iops-independent-of-size',
-      'ebs-instance-store.spread-placement-group',
       'ebs-instance-store.io2-block-express-iops-ceiling',
       'ebs-instance-store.ebs-encryption-by-default',
       'ebs-instance-store.ebs-encryption-performance',
@@ -3141,6 +3137,10 @@ describe('학습 데이터 무결성', () => {
       'ebs-instance-store.ebs-snapshot-block-public-access',
       'ebs-instance-store.data-lifecycle-manager',
       'ebs-instance-store.ebs-fast-snapshot-restore',
+      'ebs-instance-store.instance-store',
+      'ebs-instance-store.cluster-placement-group',
+      'ebs-instance-store.spread-placement-group',
+      'ebs-instance-store.elastic-fabric-adapter',
     ])
   })
 
@@ -3378,26 +3378,28 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('캐시·목적별 DB 주제가 서비스 여섯 다음에 갈림길 다섯과 한계 셋을 둔다', () => {
+  it('캐시·목적별 DB 주제가 ElastiCache·DAX·DocumentDB·Neptune·QLDB·Timestream 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'elasticache-purpose-built-db')
 
-    // 1단 캐시와 목적별 데이터베이스 넷이 각각 무엇인가 → 2단 캐시 엔진과 리전 간
-    // 구성의 갈림길 → 3단 캐시로 풀리지 않는 것과 설정 시점의 제약.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: ElastiCache(6) → DAX(2) → DocumentDB(2) → Neptune(2) → QLDB(1) → Timestream(1).
+    // DAX는 따로 기본 개념이 없어 DynamoDB 전용 캐시라는 갈림길이 블록 머리다.
+    // Timestream은 기록의 불변성을 보장하지 않는다는 대비로 QLDB를 부르므로 QLDB 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'elasticache-purpose-built-db.elasticache',
+      'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
+      'elasticache-purpose-built-db.elasticache-multi-az-failover',
+      'elasticache-purpose-built-db.elasticache-global-datastore',
+      'elasticache-purpose-built-db.cache-requires-application-change',
+      'elasticache-purpose-built-db.elasticache-not-a-durable-store',
+      'elasticache-purpose-built-db.dax-dynamodb-only',
+      'elasticache-purpose-built-db.dax-encryption-at-rest',
       'elasticache-purpose-built-db.documentdb',
+      'elasticache-purpose-built-db.documentdb-global-cluster',
       'elasticache-purpose-built-db.neptune',
       'elasticache-purpose-built-db.neptune-streams',
       'elasticache-purpose-built-db.qldb',
       'elasticache-purpose-built-db.timestream',
-      'elasticache-purpose-built-db.elasticache-redis-vs-memcached',
-      'elasticache-purpose-built-db.dax-dynamodb-only',
-      'elasticache-purpose-built-db.elasticache-multi-az-failover',
-      'elasticache-purpose-built-db.elasticache-global-datastore',
-      'elasticache-purpose-built-db.documentdb-global-cluster',
-      'elasticache-purpose-built-db.cache-requires-application-change',
-      'elasticache-purpose-built-db.elasticache-not-a-durable-store',
-      'elasticache-purpose-built-db.dax-encryption-at-rest',
     ])
   })
 
@@ -3443,28 +3445,31 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('로드 밸런서 주제가 세 로드 밸런서 다음에 선택 기준과 한계를 둔다', () => {
+  it('로드 밸런서 주제가 ELB 개요·ALB·NLB·Gateway Load Balancer·공통 설정 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'elastic-load-balancing')
 
-    // 1단 ELB와 세 로드 밸런서가 각각 무엇인가 → 2단 계층·프로토콜·대상·공개
-    // 범위로 갈린다 → 3단 분산 알고리즘·규칙·타임아웃·암호화 구간.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: ELB 개요와 ALB·NLB의 계층 갈림길(2) → ALB(6) → NLB(3) → Gateway Load Balancer(2) → 공통 설정(3).
+    // alb-l7-vs-nlb-l4는 비교 개념이지만 첫 개념 elb가 ALB·NLB를 이미 소개했고 ALB 블록의
+    // alb-routing-conditions가 이 비교를 전제로 쓰므로 ALB 블록 앞에 둔다(규칙 5가 규칙 4보다 앞선다).
+    // 공통 설정의 유휴 타임아웃이 Gateway Load Balancer를 언급하므로 공통 설정을 맨 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'elastic-load-balancing.elb',
-      'elastic-load-balancing.gateway-load-balancer',
       'elastic-load-balancing.alb-l7-vs-nlb-l4',
       'elastic-load-balancing.alb-routing-conditions',
-      'elastic-load-balancing.nlb-tls-listener',
-      'elastic-load-balancing.nlb-udp-listener',
-      'elastic-load-balancing.nlb-ip-targets',
       'elastic-load-balancing.alb-cookie-stickiness',
-      'elastic-load-balancing.internal-load-balancer',
       'elastic-load-balancing.sticky-session-tradeoff',
       'elastic-load-balancing.alb-least-outstanding-requests',
       'elastic-load-balancing.alb-target-group-independent-scaling',
       'elastic-load-balancing.alb-listener-rule-fixed-response',
+      'elastic-load-balancing.nlb-tls-listener',
+      'elastic-load-balancing.nlb-udp-listener',
+      'elastic-load-balancing.nlb-ip-targets',
+      'elastic-load-balancing.gateway-load-balancer',
+      'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+      'elastic-load-balancing.internal-load-balancer',
       'elastic-load-balancing.load-balancer-idle-timeout',
       'elastic-load-balancing.end-to-end-encryption-behind-alb',
-      'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
     ])
   })
 
@@ -3616,52 +3621,51 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('컨테이너 주제가 서비스 소개 다음에 실행 방식 갈림길과 설정을 둔다', () => {
+  it('컨테이너 주제가 ECS·Fargate·EKS·ECR·Batch·Elastic Beanstalk·App2Container 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')
 
-    // 1단 컨테이너를 돌리고 담고 옮기는 서비스 여섯이 각각 무엇인가
-    // → 2단 세 실행 방식의 관리 책임, 파드와 노드, 클러스터 가시성, 권한을 어디에 붙이나
-    // → 3단 네트워크 모드·배치 전략·과금 단위·저장소·시크릿 암호화.
-    // ECS가 무엇인지 모르는 사람에게 ecs-task-placement-strategy는 아무것도 주지 않는다
-    // (topic-plan "주제 안의 개념 순서").
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: ECS(5) → Fargate(4) → EKS(9) → ECR(1) → AWS Batch(2) → Elastic Beanstalk(1) →
+    //   App2Container(1).
+    // Fargate는 따로 기본 개념이 없고 ECS 첫 개념이 Fargate 기반 ECS를 소개하므로 ECS 바로 뒤에 둔다.
+    // EKS의 Fargate 파드 격리와 Batch의 Fargate 컴퓨팅 환경이 Fargate를 전제로 쓰므로 둘 다 Fargate 블록 뒤.
+    // App2Container는 본문이 Elastic Beanstalk와 대비하므로 그 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ecs-eks-fargate.ecs',
-      'ecs-eks-fargate.eks',
-      'ecs-eks-fargate.ecr-image-scan-on-push',
-      'ecs-eks-fargate.aws-batch',
-      'ecs-eks-fargate.elastic-beanstalk',
-      'ecs-eks-fargate.app2container',
-      'ecs-eks-fargate.eks-compute-options',
+      'ecs-eks-fargate.ecs-task-role',
+      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'ecs-eks-fargate.ecs-awsvpc-mode',
+      'ecs-eks-fargate.ecs-task-placement-strategy',
       'ecs-eks-fargate.fargate-no-time-limit',
       'ecs-eks-fargate.fargate-spot',
-      'ecs-eks-fargate.batch-fargate-compute-environment',
+      'ecs-eks-fargate.fargate-per-second-billing',
+      'ecs-eks-fargate.fargate-efs-mount',
+      'ecs-eks-fargate.eks',
+      'ecs-eks-fargate.eks-compute-options',
       'ecs-eks-fargate.eks-fargate-pod-isolation',
       'ecs-eks-fargate.eks-cluster-autoscaler',
       'ecs-eks-fargate.eks-aws-load-balancer-controller',
       'ecs-eks-fargate.eks-connector',
       'ecs-eks-fargate.eks-anywhere',
-      'ecs-eks-fargate.ecs-task-role',
-      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
       'ecs-eks-fargate.eks-irsa',
-      'ecs-eks-fargate.ecs-awsvpc-mode',
-      'ecs-eks-fargate.ecs-task-placement-strategy',
-      'ecs-eks-fargate.fargate-per-second-billing',
-      'ecs-eks-fargate.fargate-efs-mount',
       'ecs-eks-fargate.eks-secrets-kms-encryption',
+      'ecs-eks-fargate.ecr-image-scan-on-push',
+      'ecs-eks-fargate.aws-batch',
+      'ecs-eks-fargate.batch-fargate-compute-environment',
+      'ecs-eks-fargate.elastic-beanstalk',
+      'ecs-eks-fargate.app2container',
     ])
   })
 
-  it('API Gateway·Step Functions 주제가 두 서비스 다음에 갈림길과 한계를 둔다', () => {
+  it('API Gateway·Step Functions 주제가 API Gateway·Step Functions·Amplify 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'api-gateway-step-functions')
 
-    // 1단 API Gateway와 Step Functions가 무엇이고 무엇을 주는가, Amplify가 무엇인가
-    // → 2단 API 유형 셋, API 키의 한계, 접근 통제, 노출 위치, 통합 방식, 워크플로 두 유형
-    // → 3단 인증서 리전·매핑 템플릿의 한계·보안 그룹을 붙일 수 없다는 것.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: API Gateway(14) → Step Functions(5) → Amplify(1).
+    // API Gateway 블록은 기본 → API 유형·API 키·접근 통제·엔드포인트·통합 방식(갈림길) →
+    // 인증서 리전·매핑 템플릿·IP 제한(세부) 순이다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'api-gateway-step-functions.api-gateway',
-      'api-gateway-step-functions.step-functions',
-      'api-gateway-step-functions.step-functions-features',
-      'api-gateway-step-functions.amplify',
       'api-gateway-step-functions.api-gateway-jwt-authorizer',
       'api-gateway-step-functions.api-gateway-rest-vs-http-timeout',
       'api-gateway-step-functions.api-gateway-rest-only-features',
@@ -3672,12 +3676,15 @@ describe('학습 데이터 무결성', () => {
       'api-gateway-step-functions.api-gateway-behind-cloudfront',
       'api-gateway-step-functions.api-gateway-lambda-proxy-integration',
       'api-gateway-step-functions.api-gateway-aws-service-integration',
-      'api-gateway-step-functions.step-functions-long-running-workflow',
-      'api-gateway-step-functions.step-functions-express-workflow',
-      'api-gateway-step-functions.step-functions-map-state',
       'api-gateway-step-functions.api-gateway-custom-domain-name',
       'api-gateway-step-functions.api-gateway-mapping-template-limits',
       'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy',
+      'api-gateway-step-functions.step-functions',
+      'api-gateway-step-functions.step-functions-features',
+      'api-gateway-step-functions.step-functions-long-running-workflow',
+      'api-gateway-step-functions.step-functions-express-workflow',
+      'api-gateway-step-functions.step-functions-map-state',
+      'api-gateway-step-functions.amplify',
     ])
   })
 
