@@ -29,10 +29,7 @@
     {
       "step": 3,
       "name": "network-analytics-reorder",
-      "status": "blocked",
-      "started_at": "2026-09-11T19:11:26+0900",
-      "blocked_reason": "선행 충돌: vpc-networking 주제의 vpc-networking.nat-instance(명세상 새 6번째) 문단 1은 \"S3처럼 엔드포인트로 우회할 수 있는 대상이면, NAT를 키우는 대신 게이트웨이 엔드포인트로 트래픽을 빼는 것이 병목과 보안을 한 번에 푼다.\"라고 설명한다. 이 문장의 게이트웨이 엔드포인트 연결 대상(S3)과 인터넷 우회 동작을 소개하는 vpc-networking.vpc-endpoint는 현재 5번째에서 새 11번째로 옮겨져 nat-instance 뒤에 오므로 ADR-033 규칙 5와 충돌한다. 지정 순서를 임의로 바꾸지 않고 중단했으며 topics.json·data.test.ts·topics-baseline.json은 수정하지 않았다. AC는 중단 규칙에 따라 실행하지 않았다.",
-      "blocked_at": "2026-09-11T19:14:05+0900"
+      "status": "pending"
     },
     {
       "step": 4,
