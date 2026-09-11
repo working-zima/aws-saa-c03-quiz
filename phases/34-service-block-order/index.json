@@ -1,0 +1,41 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "34-service-block-order",
+  "steps": [
+    {
+      "step": 0,
+      "name": "order-rule-docs",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "sample-reorder",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "compute-db-reorder",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "network-analytics-reorder",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "security-cost-reorder",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "minor-data-compute-reorder",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "minor-ops-reorder",
+      "status": "pending"
+    }
+  ]
+}

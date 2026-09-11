@@ -168,6 +168,10 @@
       "dir": "33-notation-standardization",
       "status": "completed",
       "completed_at": "2026-09-11T09:30:46+0900"
+    },
+    {
+      "dir": "34-service-block-order",
+      "status": "pending"
     }
   ]
 }
