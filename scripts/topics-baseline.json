@@ -1744,42 +1744,6 @@
      "name": "NAT 게이트웨이"
     },
     {
-     "id": "vpc-networking.vpc-endpoint",
-     "name": "VPC Endpoint"
-    },
-    {
-     "id": "vpc-networking.privatelink",
-     "name": "PrivateLink"
-    },
-    {
-     "id": "vpc-networking.vpc-peering",
-     "name": "VPC 피어링"
-    },
-    {
-     "id": "vpc-networking.vpc-flow-logs",
-     "name": "VPC 플로우 로그"
-    },
-    {
-     "id": "vpc-networking.comparison",
-     "name": "NAT Gateway vs VPC Endpoint vs PrivateLink vs VPC 피어링"
-    },
-    {
-     "id": "vpc-networking.nat-gateway-traffic-uses-public-endpoints",
-     "name": "NAT 게이트웨이 경로의 목적지인 공용 엔드포인트"
-    },
-    {
-     "id": "vpc-networking.endpoint-pricing",
-     "name": "엔드포인트 유형별 비용 차이"
-    },
-    {
-     "id": "vpc-networking.privatelink-endpoint-service",
-     "name": "PrivateLink 엔드포인트 서비스"
-    },
-    {
-     "id": "vpc-networking.nat-instance",
-     "name": "NAT 인스턴스와 NAT 게이트웨이의 차이"
-    },
-    {
      "id": "vpc-networking.nat-gateway-per-az",
      "name": "가용 영역마다 두는 NAT 게이트웨이"
     },
@@ -1796,16 +1760,52 @@
      "name": "NAT 게이트웨이에 붙이는 엘라스틱 IP"
     },
     {
+     "id": "vpc-networking.vpc-endpoint",
+     "name": "VPC Endpoint"
+    },
+    {
+     "id": "vpc-networking.endpoint-pricing",
+     "name": "엔드포인트 유형별 비용 차이"
+    },
+    {
      "id": "vpc-networking.vpc-endpoint-policy",
      "name": "VPC 엔드포인트 정책"
+    },
+    {
+     "id": "vpc-networking.s3-is-regional",
+     "name": "리전 수준 서비스인 S3"
+    },
+    {
+     "id": "vpc-networking.nat-gateway-traffic-uses-public-endpoints",
+     "name": "NAT 게이트웨이 경로의 목적지인 공용 엔드포인트"
+    },
+    {
+     "id": "vpc-networking.nat-instance",
+     "name": "NAT 인스턴스와 NAT 게이트웨이의 차이"
+    },
+    {
+     "id": "vpc-networking.vpc-peering",
+     "name": "VPC 피어링"
     },
     {
      "id": "vpc-networking.vpc-peering-scaling-limit",
      "name": "VPC 피어링의 확장 한계"
     },
     {
-     "id": "vpc-networking.s3-is-regional",
-     "name": "리전 수준 서비스인 S3"
+     "id": "vpc-networking.privatelink",
+     "name": "PrivateLink"
+    },
+    {
+     "id": "vpc-networking.privatelink-endpoint-service",
+     "name": "PrivateLink 엔드포인트 서비스"
+    },
+    {
+     "id": "vpc-networking.comparison",
+     "name": "NAT Gateway vs VPC Endpoint vs PrivateLink vs VPC 피어링"
+    },
+    {
+     "id": "vpc-networking.vpc-flow-logs",
+     "name": "VPC 플로우 로그"
     }
    ]
   },
@@ -1823,20 +1823,20 @@
      "name": "보안 그룹 (Security Group)"
     },
     {
-     "id": "security-groups-nacl.nacl",
-     "name": "NACL (Network Access Control List, 네트워크 ACL)"
-    },
-    {
-     "id": "security-groups-nacl.security-group-stateful-vs-nacl-stateless",
-     "name": "상태 저장과 상태 비저장"
-    },
-    {
-     "id": "security-groups-nacl.web-acl-vs-nacl",
-     "name": "Web ACL과 네트워크 ACL의 차이"
-    },
-    {
      "id": "security-groups-nacl.security-group-referencing",
      "name": "보안 그룹 참조"
+    },
+    {
+     "id": "security-groups-nacl.alb-security-group-outbound-and-health-check-port",
+     "name": "로드 밸런서 보안 그룹의 아웃바운드와 상태 검사 포트"
+    },
+    {
+     "id": "security-groups-nacl.nlb-security-group",
+     "name": "NLB에 붙이는 보안 그룹"
+    },
+    {
+     "id": "security-groups-nacl.nacl",
+     "name": "NACL (Network Access Control List, 네트워크 ACL)"
     },
     {
      "id": "security-groups-nacl.nacl-rule-limit",
@@ -1847,12 +1847,12 @@
      "name": "보내는 쪽 서브넷에 거는 거부 규칙"
     },
     {
-     "id": "security-groups-nacl.alb-security-group-outbound-and-health-check-port",
-     "name": "로드 밸런서 보안 그룹의 아웃바운드와 상태 검사 포트"
+     "id": "security-groups-nacl.security-group-stateful-vs-nacl-stateless",
+     "name": "상태 저장과 상태 비저장"
     },
     {
-     "id": "security-groups-nacl.nlb-security-group",
-     "name": "NLB에 붙이는 보안 그룹"
+     "id": "security-groups-nacl.web-acl-vs-nacl",
+     "name": "Web ACL과 네트워크 ACL의 차이"
     }
    ]
   },
@@ -1870,8 +1870,20 @@
      "name": "Site-to-Site VPN"
     },
     {
+     "id": "hybrid-connectivity.access-terms",
+     "name": "Customer Gateway와 Bastion Host"
+    },
+    {
      "id": "hybrid-connectivity.client-vpn",
      "name": "AWS Client VPN"
+    },
+    {
+     "id": "hybrid-connectivity.transit-gateway",
+     "name": "Transit Gateway"
+    },
+    {
+     "id": "hybrid-connectivity.transit-gateway-cross-region-peering",
+     "name": "리전 간 Transit Gateway 피어링"
     },
     {
      "id": "hybrid-connectivity.direct-connect",
@@ -1882,48 +1894,8 @@
      "name": "가상 프라이빗 게이트웨이(VGW)"
     },
     {
-     "id": "hybrid-connectivity.access-terms",
-     "name": "Customer Gateway와 Bastion Host"
-    },
-    {
-     "id": "hybrid-connectivity.transit-gateway",
-     "name": "Transit Gateway"
-    },
-    {
      "id": "hybrid-connectivity.direct-connect-gateway",
      "name": "Direct Connect Gateway"
-    },
-    {
-     "id": "hybrid-connectivity.region-attached-edge-options",
-     "name": "Local Zone·Outposts·Wavelength Zone의 리전 연결 전제"
-    },
-    {
-     "id": "hybrid-connectivity.onprem-connectivity-heuristic",
-     "name": "온프레미스 연결 문제의 출발점"
-    },
-    {
-     "id": "hybrid-connectivity.vpn-vs-direct-connect",
-     "name": "Site-to-Site VPN vs Direct Connect"
-    },
-    {
-     "id": "hybrid-connectivity.per-vpc-vpn-for-isolation",
-     "name": "VPC마다 따로 맺는 Site-to-Site VPN"
-    },
-    {
-     "id": "hybrid-connectivity.transit-gateway-cross-region-peering",
-     "name": "리전 간 Transit Gateway 피어링"
-    },
-    {
-     "id": "hybrid-connectivity.onprem-access-via-interface-endpoint",
-     "name": "온프레미스에서 쓰는 인터페이스 엔드포인트"
-    },
-    {
-     "id": "hybrid-connectivity.data-locality-cost",
-     "name": "데이터 지역성으로 전송 비용 줄이기"
-    },
-    {
-     "id": "hybrid-connectivity.outposts-data-residency",
-     "name": "Outposts로 지키는 데이터 상주 요건"
     },
     {
      "id": "hybrid-connectivity.direct-connect-caveats",
@@ -1938,8 +1910,36 @@
      "name": "Direct Connect의 가상 인터페이스(VIF)"
     },
     {
+     "id": "hybrid-connectivity.vpn-vs-direct-connect",
+     "name": "Site-to-Site VPN vs Direct Connect"
+    },
+    {
+     "id": "hybrid-connectivity.onprem-connectivity-heuristic",
+     "name": "온프레미스 연결 문제의 출발점"
+    },
+    {
+     "id": "hybrid-connectivity.per-vpc-vpn-for-isolation",
+     "name": "VPC마다 따로 맺는 Site-to-Site VPN"
+    },
+    {
+     "id": "hybrid-connectivity.onprem-access-via-interface-endpoint",
+     "name": "온프레미스에서 쓰는 인터페이스 엔드포인트"
+    },
+    {
+     "id": "hybrid-connectivity.data-locality-cost",
+     "name": "데이터 지역성으로 전송 비용 줄이기"
+    },
+    {
      "id": "hybrid-connectivity.centralized-onprem-egress",
      "name": "온프레미스로 모으는 아웃바운드 인터넷 트래픽"
+    },
+    {
+     "id": "hybrid-connectivity.region-attached-edge-options",
+     "name": "Local Zone·Outposts·Wavelength Zone의 리전 연결 전제"
+    },
+    {
+     "id": "hybrid-connectivity.outposts-data-residency",
+     "name": "Outposts로 지키는 데이터 상주 요건"
     }
    ]
   },
@@ -2024,6 +2024,26 @@
      "name": "EMR 클러스터의 세 가지 노드"
     },
     {
+     "id": "emr-glue-athena.emr-transient-cluster",
+     "name": "일시적 클러스터와 장기 실행 클러스터"
+    },
+    {
+     "id": "emr-glue-athena.emr-managed-scaling",
+     "name": "EMR 관리형 스케일링"
+    },
+    {
+     "id": "emr-glue-athena.emr-node-instance-family-choice",
+     "name": "노드 역할에 따른 인스턴스 제품군 선택"
+    },
+    {
+     "id": "emr-glue-athena.emr-runtime-role",
+     "name": "EMR 런타임 역할"
+    },
+    {
+     "id": "emr-glue-athena.emr-security-configuration",
+     "name": "EMR 보안 구성"
+    },
+    {
      "id": "emr-glue-athena.spark",
      "name": "Spark"
     },
@@ -2040,24 +2060,12 @@
      "name": "AWS Glue DataBrew"
     },
     {
-     "id": "emr-glue-athena.athena",
-     "name": "Athena"
-    },
-    {
-     "id": "emr-glue-athena.lake-formation",
-     "name": "AWS Lake Formation"
-    },
-    {
-     "id": "emr-glue-athena.emr-transient-cluster",
-     "name": "일시적 클러스터와 장기 실행 클러스터"
-    },
-    {
-     "id": "emr-glue-athena.emr-managed-scaling",
-     "name": "EMR 관리형 스케일링"
-    },
-    {
      "id": "emr-glue-athena.glue-etl-with-per-customer-kms-key",
      "name": "고객마다 다른 키로 암호화하는 Glue ETL 작업"
+    },
+    {
+     "id": "emr-glue-athena.athena",
+     "name": "Athena"
     },
     {
      "id": "emr-glue-athena.athena-encrypted-and-pay-per-query",
@@ -2072,24 +2080,16 @@
      "name": "조회 빈도로 나뉘는 로그 저장 위치"
     },
     {
+     "id": "emr-glue-athena.lake-formation",
+     "name": "AWS Lake Formation"
+    },
+    {
      "id": "emr-glue-athena.lake-formation-blueprint-and-athena",
      "name": "Lake Formation 블루프린트와 Athena의 열 수준 권한"
     },
     {
      "id": "emr-glue-athena.lake-formation-lf-tags",
      "name": "LF 태그 기반 액세스 제어"
-    },
-    {
-     "id": "emr-glue-athena.emr-node-instance-family-choice",
-     "name": "노드 역할에 따른 인스턴스 제품군 선택"
-    },
-    {
-     "id": "emr-glue-athena.emr-runtime-role",
-     "name": "EMR 런타임 역할"
-    },
-    {
-     "id": "emr-glue-athena.emr-security-configuration",
-     "name": "EMR 보안 구성"
     },
     {
      "id": "emr-glue-athena.parquet-columnar-format",
@@ -2111,48 +2111,12 @@
      "name": "Kinesis Data Streams"
     },
     {
-     "id": "kinesis-streaming.data-firehose",
-     "name": "Data Firehose"
-    },
-    {
-     "id": "kinesis-streaming.managed-service-apache-flink",
-     "name": "Managed Service for Apache Flink"
-    },
-    {
-     "id": "kinesis-streaming.kinesis-video-streams",
-     "name": "Amazon Kinesis Video Streams"
-    },
-    {
-     "id": "kinesis-streaming.msk",
-     "name": "Amazon MSK (Managed Streaming for Apache Kafka)"
-    },
-    {
-     "id": "kinesis-streaming.streaming-services-comparison",
-     "name": "Data Firehose vs Kinesis Data Streams vs Managed Service for Apache Flink"
-    },
-    {
-     "id": "kinesis-streaming.flink-kinesis-source-sink",
-     "name": "Flink의 Kinesis 스트림 소스와 싱크"
-    },
-    {
-     "id": "kinesis-streaming.firehose-lambda-transformation",
-     "name": "Firehose의 적재 전 Lambda 변환"
-    },
-    {
-     "id": "kinesis-streaming.firehose-format-conversion",
-     "name": "Firehose의 형식 변환"
-    },
-    {
      "id": "kinesis-streaming.kinesis-retention-and-fanout",
      "name": "보존 기간과 향상된 팬아웃"
     },
     {
      "id": "kinesis-streaming.kinesis-client-library",
      "name": "샤드와 체크포인트를 직접 다루는 소비자"
-    },
-    {
-     "id": "kinesis-streaming.msk-kafka-connect",
-     "name": "MSK가 수집과 변환까지 맡는 방식"
     },
     {
      "id": "kinesis-streaming.kinesis-record-size-limit",
@@ -2167,8 +2131,44 @@
      "name": "Kinesis 스트림의 프로비저닝 모드와 온디맨드 모드"
     },
     {
+     "id": "kinesis-streaming.data-firehose",
+     "name": "Data Firehose"
+    },
+    {
+     "id": "kinesis-streaming.firehose-lambda-transformation",
+     "name": "Firehose의 적재 전 Lambda 변환"
+    },
+    {
+     "id": "kinesis-streaming.firehose-format-conversion",
+     "name": "Firehose의 형식 변환"
+    },
+    {
      "id": "kinesis-streaming.firehose-buffering",
      "name": "Firehose의 버퍼링 지연"
+    },
+    {
+     "id": "kinesis-streaming.managed-service-apache-flink",
+     "name": "Managed Service for Apache Flink"
+    },
+    {
+     "id": "kinesis-streaming.flink-kinesis-source-sink",
+     "name": "Flink의 Kinesis 스트림 소스와 싱크"
+    },
+    {
+     "id": "kinesis-streaming.streaming-services-comparison",
+     "name": "Data Firehose vs Kinesis Data Streams vs Managed Service for Apache Flink"
+    },
+    {
+     "id": "kinesis-streaming.kinesis-video-streams",
+     "name": "Amazon Kinesis Video Streams"
+    },
+    {
+     "id": "kinesis-streaming.msk",
+     "name": "Amazon MSK (Managed Streaming for Apache Kafka)"
+    },
+    {
+     "id": "kinesis-streaming.msk-kafka-connect",
+     "name": "MSK가 수집과 변환까지 맡는 방식"
     }
    ]
   },
@@ -2190,14 +2190,6 @@
      "name": "Redshift Spectrum"
     },
     {
-     "id": "redshift-opensearch-quicksight.opensearch-text-search",
-     "name": "Amazon OpenSearch Service"
-    },
-    {
-     "id": "redshift-opensearch-quicksight.quicksight",
-     "name": "Amazon QuickSight"
-    },
-    {
      "id": "redshift-opensearch-quicksight.oltp-vs-olap",
      "name": "OLTP와 OLAP"
     },
@@ -2210,16 +2202,24 @@
      "name": "조회 빈도에 따른 Redshift 적재와 S3 보관"
     },
     {
-     "id": "redshift-opensearch-quicksight.quicksight-ml-forecast",
-     "name": "QuickSight에 내장된 머신러닝 예측"
-    },
-    {
      "id": "redshift-opensearch-quicksight.redshift-concurrency-scaling",
      "name": "Redshift 동시성 확장"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-copy-from-s3",
      "name": "S3에서 COPY 명령으로 하는 Redshift 병렬 적재"
+    },
+    {
+     "id": "redshift-opensearch-quicksight.opensearch-text-search",
+     "name": "Amazon OpenSearch Service"
+    },
+    {
+     "id": "redshift-opensearch-quicksight.quicksight",
+     "name": "Amazon QuickSight"
+    },
+    {
+     "id": "redshift-opensearch-quicksight.quicksight-ml-forecast",
+     "name": "QuickSight에 내장된 머신러닝 예측"
     },
     {
      "id": "redshift-opensearch-quicksight.dynamodb-to-s3-analytics",
@@ -2241,18 +2241,6 @@
      "name": "CloudWatch"
     },
     {
-     "id": "cloudwatch-xray.x-ray",
-     "name": "X-Ray"
-    },
-    {
-     "id": "cloudwatch-xray.performance-insight",
-     "name": "Performance Insights"
-    },
-    {
-     "id": "cloudwatch-xray.amazon-managed-grafana",
-     "name": "Amazon Managed Grafana"
-    },
-    {
      "id": "cloudwatch-xray.cloudwatch-network-monitor",
      "name": "CloudWatch Network Monitor"
     },
@@ -2265,10 +2253,6 @@
      "name": "로그 분석 선택지: OpenSearch와 CloudWatch Logs Insights"
     },
     {
-     "id": "cloudwatch-xray.performance-insights-rightsizing",
-     "name": "Performance Insights와 적정 규모 조정"
-    },
-    {
      "id": "cloudwatch-xray.cloudwatch-agent-memory-metric",
      "name": "CloudWatch 에이전트의 메모리 사용률 지표"
     },
@@ -2279,6 +2263,22 @@
     {
      "id": "cloudwatch-xray.cloudwatch-alarm-state-change-event",
      "name": "CloudWatch 알람의 상태 변경 이벤트"
+    },
+    {
+     "id": "cloudwatch-xray.x-ray",
+     "name": "X-Ray"
+    },
+    {
+     "id": "cloudwatch-xray.performance-insight",
+     "name": "Performance Insights"
+    },
+    {
+     "id": "cloudwatch-xray.performance-insights-rightsizing",
+     "name": "Performance Insights와 적정 규모 조정"
+    },
+    {
+     "id": "cloudwatch-xray.amazon-managed-grafana",
+     "name": "Amazon Managed Grafana"
     }
    ]
   },

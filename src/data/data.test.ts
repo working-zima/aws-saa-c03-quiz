@@ -3944,81 +3944,89 @@ describe('학습 데이터 무결성', () => {
     )
   })
 
-  it('VPC 주제가 구성 요소 여덟 다음에 갈림길과 한계를 둔다', () => {
+  it('VPC 주제가 NAT·엔드포인트 블록 뒤에 둘의 비교를 두고 네 연결 방식의 비교와 플로우 로그로 끝낸다', () => {
     const topic = topics.find((candidate) => candidate.id === 'vpc-networking')
 
-    // 1단 VPC 구성 요소가 각각 무엇인가
-    // → 2단 NAT Gateway ↔ VPC Endpoint ↔ PrivateLink ↔ 피어링 중 언제 무엇을 고르는가
-    // → 3단 가용 영역마다 두는 것과 그렇지 않은 것, 엘라스틱 IP, 엔드포인트 정책, 확장 한계.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: VPC와 서브넷(1) → 인터넷 게이트웨이(2) → NAT 게이트웨이(5) → VPC 엔드포인트(4) → 비교 — NAT 경로와 엔드포인트(2) → VPC
+    //   피어링(2) → PrivateLink(2) → 비교 — NAT·엔드포인트·PrivateLink·피어링(1) → VPC 플로우 로그(1).
+    // internet-gateway-is-not-per-az는 인터넷 게이트웨이 개념이지만 본문이 바로 앞의 nat-gateway-per-az
+    // 규칙을 전제로 대비하므로 NAT 블록 안에 둔다(규칙 5). nat-gateway-traffic-uses-public-endpoints와
+    // nat-instance는 NAT 개념이지만 본문이 인터페이스 엔드포인트·게이트웨이 엔드포인트를 대안으로 쓰므로
+    // NAT·엔드포인트 두 블록 뒤에 비교로 둔다(규칙 4·5). PrivateLink 엔드포인트 서비스가 피어링과
+    // 대비하므로 피어링 블록을 PrivateLink 앞에 둔다. 네 연결 방식의 비교는 네 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'vpc-networking.vpc-subnet',
       'vpc-networking.internet-gateway',
       'vpc-networking.egress-only-igw',
       'vpc-networking.nat-gateway',
-      'vpc-networking.vpc-endpoint',
-      'vpc-networking.privatelink',
-      'vpc-networking.vpc-peering',
-      'vpc-networking.vpc-flow-logs',
-      'vpc-networking.comparison',
-      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
-      'vpc-networking.endpoint-pricing',
-      'vpc-networking.privatelink-endpoint-service',
-      'vpc-networking.nat-instance',
       'vpc-networking.nat-gateway-per-az',
       'vpc-networking.internet-gateway-is-not-per-az',
       'vpc-networking.nat-gateway-count-by-environment',
       'vpc-networking.nat-gateway-elastic-ip',
+      'vpc-networking.vpc-endpoint',
+      'vpc-networking.endpoint-pricing',
       'vpc-networking.vpc-endpoint-policy',
-      'vpc-networking.vpc-peering-scaling-limit',
       'vpc-networking.s3-is-regional',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+      'vpc-networking.nat-instance',
+      'vpc-networking.vpc-peering',
+      'vpc-networking.vpc-peering-scaling-limit',
+      'vpc-networking.privatelink',
+      'vpc-networking.privatelink-endpoint-service',
+      'vpc-networking.comparison',
+      'vpc-networking.vpc-flow-logs',
     ])
   })
 
-  it('보안 그룹·NACL 주제가 둘의 소개 다음에 상태 저장 갈림길과 설정을 둔다', () => {
+  it('보안 그룹·NACL 주제가 보안 그룹·NACL 블록 다음에 둘의 비교를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'security-groups-nacl')
 
-    // 1단 보안 그룹과 NACL이 각각 무엇인가 → 2단 상태 저장과 상태 비저장, Web ACL과
-    // 네트워크 ACL의 차이 → 3단 규칙 수 제한, 거부 규칙을 어느 서브넷에 거는가,
-    // 로드 밸런서 보안 그룹의 아웃바운드.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: 보안 그룹(4) → NACL(3) → 비교 — 상태 저장과 Web ACL(2).
+    // 상태 저장 ↔ 상태 비저장과 Web ACL ↔ 네트워크 ACL은 두 블록을 가르는 비교라 두 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'security-groups-nacl.security-group',
-      'security-groups-nacl.nacl',
-      'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
-      'security-groups-nacl.web-acl-vs-nacl',
       'security-groups-nacl.security-group-referencing',
-      'security-groups-nacl.nacl-rule-limit',
-      'security-groups-nacl.nacl-deny-at-source-subnet',
       'security-groups-nacl.alb-security-group-outbound-and-health-check-port',
       'security-groups-nacl.nlb-security-group',
+      'security-groups-nacl.nacl',
+      'security-groups-nacl.nacl-rule-limit',
+      'security-groups-nacl.nacl-deny-at-source-subnet',
+      'security-groups-nacl.security-group-stateful-vs-nacl-stateless',
+      'security-groups-nacl.web-acl-vs-nacl',
     ])
   })
 
-  it('하이브리드 연결 주제가 연결 수단 여덟 다음에 갈림길과 한계를 둔다', () => {
+  it('하이브리드 연결 주제가 연결 수단 블록 다음에 선택 기준·트래픽 설계·엣지 옵션을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'hybrid-connectivity')
 
-    // 1단 연결 수단들이 각각 무엇인가 → 2단 VPN과 Direct Connect의 갈림길, VPC마다
-    // 따로 걸 것인가 Transit Gateway로 모을 것인가, 데이터 지역성으로 비용 줄이기
-    // → 3단 Direct Connect의 함정과 복원력 구성, VIF 유형, 온프레미스로 되돌리는 아웃바운드.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Site-to-Site VPN(2) → Client VPN(1) → Transit Gateway(2) → Direct Connect(6) → 비교 — VPN과
+    //   Direct Connect(3) → 온프레미스와 오가는 트래픽(3) → 리전에 붙는 엣지 옵션(2).
+    // Direct Connect 블록의 가상 프라이빗 게이트웨이·Direct Connect Gateway·VIF 유형이 Transit Gateway를
+    // 전제로 쓰므로 Transit Gateway를 Direct Connect 앞에 둔다. VPN과 Direct Connect의 비교·출발점·
+    // VPC마다 따로 맺는 VPN은 두 수단과 Transit Gateway를 함께 부르므로 연결 수단 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'hybrid-connectivity.site-to-site-vpn',
+      'hybrid-connectivity.access-terms',
       'hybrid-connectivity.client-vpn',
+      'hybrid-connectivity.transit-gateway',
+      'hybrid-connectivity.transit-gateway-cross-region-peering',
       'hybrid-connectivity.direct-connect',
       'hybrid-connectivity.virtual-private-gateway',
-      'hybrid-connectivity.access-terms',
-      'hybrid-connectivity.transit-gateway',
       'hybrid-connectivity.direct-connect-gateway',
-      'hybrid-connectivity.region-attached-edge-options',
-      'hybrid-connectivity.onprem-connectivity-heuristic',
-      'hybrid-connectivity.vpn-vs-direct-connect',
-      'hybrid-connectivity.per-vpc-vpn-for-isolation',
-      'hybrid-connectivity.transit-gateway-cross-region-peering',
-      'hybrid-connectivity.onprem-access-via-interface-endpoint',
-      'hybrid-connectivity.data-locality-cost',
-      'hybrid-connectivity.outposts-data-residency',
       'hybrid-connectivity.direct-connect-caveats',
       'hybrid-connectivity.direct-connect-resiliency',
       'hybrid-connectivity.direct-connect-vif-types',
+      'hybrid-connectivity.vpn-vs-direct-connect',
+      'hybrid-connectivity.onprem-connectivity-heuristic',
+      'hybrid-connectivity.per-vpc-vpn-for-isolation',
+      'hybrid-connectivity.onprem-access-via-interface-endpoint',
+      'hybrid-connectivity.data-locality-cost',
       'hybrid-connectivity.centralized-onprem-egress',
+      'hybrid-connectivity.region-attached-edge-options',
+      'hybrid-connectivity.outposts-data-residency',
     ])
   })
 
@@ -4161,83 +4169,84 @@ describe('학습 데이터 무결성', () => {
     expect(bodyOf('cloudfront-global-accelerator.lambda-at-edge-response-compression')).toContain('전달 직전에 응답을 압축한다')
   })
 
-  it('EMR·Glue·Athena 주제가 서비스 소개 다음에 갈림길과 클러스터 설정을 둔다', () => {
+  it('EMR·Glue·Athena 주제가 EMR·Spark·Glue·Athena·Lake Formation·Parquet 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'emr-glue-athena')
 
-    // 1단 EMR·Spark·Glue·Athena·Lake Formation이 각각 무엇인가
-    // → 2단 클러스터를 얼마나 띄워 두는가, 변환을 어디서 돌리는가, 조회 비용은 어떻게
-    //   붙는가, 로그를 어디에 쌓는가, 데이터 레이크의 권한은 어느 경로로 걸리는가
-    // → 3단 노드 역할별 인스턴스 제품군·작업별 권한·암호화 설정·열 지향 형식.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: EMR(7) → Spark(1) → Glue(4) → Athena(4) → Lake Formation(3) → Apache Parquet(1).
+    // EMR 블록: 관리형 스케일링이 코어 노드를 언급하므로 노드 세 가지가 그 앞(규칙 5), 노드 역할별
+    // 제품군은 세부라 갈림길 뒤. Glue의 고객별 키 ETL은 EMR과 대비하므로 EMR 블록 뒤, Lake Formation
+    // 블루프린트는 Athena를 거친 열 권한을 쓰므로 Athena 블록 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'emr-glue-athena.emr',
       'emr-glue-athena.emr-node-types',
+      'emr-glue-athena.emr-transient-cluster',
+      'emr-glue-athena.emr-managed-scaling',
+      'emr-glue-athena.emr-node-instance-family-choice',
+      'emr-glue-athena.emr-runtime-role',
+      'emr-glue-athena.emr-security-configuration',
       'emr-glue-athena.spark',
       'emr-glue-athena.glue',
       'emr-glue-athena.glue-crawler',
       'emr-glue-athena.glue-databrew',
-      'emr-glue-athena.athena',
-      'emr-glue-athena.lake-formation',
-      'emr-glue-athena.emr-transient-cluster',
-      'emr-glue-athena.emr-managed-scaling',
       'emr-glue-athena.glue-etl-with-per-customer-kms-key',
+      'emr-glue-athena.athena',
       'emr-glue-athena.athena-encrypted-and-pay-per-query',
       'emr-glue-athena.athena-federated-query',
       'emr-glue-athena.log-storage-s3-athena',
+      'emr-glue-athena.lake-formation',
       'emr-glue-athena.lake-formation-blueprint-and-athena',
       'emr-glue-athena.lake-formation-lf-tags',
-      'emr-glue-athena.emr-node-instance-family-choice',
-      'emr-glue-athena.emr-runtime-role',
-      'emr-glue-athena.emr-security-configuration',
       'emr-glue-athena.parquet-columnar-format',
     ])
   })
 
-  it('스트리밍 주제가 서비스 다섯 다음에 갈림길과 한계값을 둔다', () => {
+  it('스트리밍 주제가 Data Streams·Firehose·Flink 블록과 그 비교 다음에 Video Streams·MSK를 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'kinesis-streaming')
 
-    // 1단 스트리밍 서비스 다섯이 각각 무엇인가
-    // → 2단 담당 단계의 비교, 스트림 사이에 무엇을 끼울 수 있는가, 큐 계열과 갈리는 축,
-    //   소비자를 직접 만들 때와 맡길 때, Kafka 생태계로 얻는 것
-    // → 3단 레코드 크기·파티션 키 쏠림·용량 모드·버퍼링 지연.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Kinesis Data Streams(6) → Data Firehose(4) → Managed Service for Apache Flink(2) → 비교 — 세
+    //   서비스의 담당 단계(1) → Kinesis Video Streams(1) → Amazon MSK(2).
+    // Flink의 Kinesis 소스·싱크가 Data Streams를 전제로 쓰므로 Flink가 Data Streams 뒤. 세 서비스의
+    // 담당 단계 비교는 세 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'kinesis-streaming.kinesis-data-streams',
-      'kinesis-streaming.data-firehose',
-      'kinesis-streaming.managed-service-apache-flink',
-      'kinesis-streaming.kinesis-video-streams',
-      'kinesis-streaming.msk',
-      'kinesis-streaming.streaming-services-comparison',
-      'kinesis-streaming.flink-kinesis-source-sink',
-      'kinesis-streaming.firehose-lambda-transformation',
-      'kinesis-streaming.firehose-format-conversion',
       'kinesis-streaming.kinesis-retention-and-fanout',
       'kinesis-streaming.kinesis-client-library',
-      'kinesis-streaming.msk-kafka-connect',
       'kinesis-streaming.kinesis-record-size-limit',
       'kinesis-streaming.kinesis-partition-key-hot-shard',
       'kinesis-streaming.kinesis-capacity-mode',
+      'kinesis-streaming.data-firehose',
+      'kinesis-streaming.firehose-lambda-transformation',
+      'kinesis-streaming.firehose-format-conversion',
       'kinesis-streaming.firehose-buffering',
+      'kinesis-streaming.managed-service-apache-flink',
+      'kinesis-streaming.flink-kinesis-source-sink',
+      'kinesis-streaming.streaming-services-comparison',
+      'kinesis-streaming.kinesis-video-streams',
+      'kinesis-streaming.msk',
+      'kinesis-streaming.msk-kafka-connect',
     ])
   })
 
-  it('웨어하우스·검색·시각화 주제가 서비스 넷 다음에 갈림길과 적재 경로를 둔다', () => {
-    const topic = topics.find(
-      (candidate) => candidate.id === 'redshift-opensearch-quicksight',
-    )
+  it('웨어하우스·검색·시각화 주제가 Redshift·OpenSearch·QuickSight 블록 다음에 적재 경로를 둔다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'redshift-opensearch-quicksight')
 
-    // 1단 Redshift·Spectrum·OpenSearch·QuickSight가 각각 무엇인가
-    // → 2단 트랜잭션과 분석, 임시 쿼리와 반복되는 고성능 쿼리, 핫·콜드 분리, 내장 예측
-    // → 3단 동시성 확장·COPY 병렬 적재·운영 테이블의 과거 데이터를 S3에 남기는 자리.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: Redshift와 Spectrum(7) → OpenSearch(1) → QuickSight(2) → 운영 데이터를 S3에 남기는 경로(1).
+    // Redshift 블록: 기본·Spectrum → OLTP와 OLAP·Athena와의 갈림길·핫 콜드 분리 → 동시성 확장·COPY.
+    // 운영 테이블의 과거 데이터를 S3에 남기는 경로는 조회를 Athena·QuickSight에 맡기므로 QuickSight 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'redshift-opensearch-quicksight.redshift',
       'redshift-opensearch-quicksight.redshift-spectrum',
-      'redshift-opensearch-quicksight.opensearch-text-search',
-      'redshift-opensearch-quicksight.quicksight',
       'redshift-opensearch-quicksight.oltp-vs-olap',
       'redshift-opensearch-quicksight.athena-vs-redshift-workload',
       'redshift-opensearch-quicksight.redshift-hot-cold-split',
-      'redshift-opensearch-quicksight.quicksight-ml-forecast',
       'redshift-opensearch-quicksight.redshift-concurrency-scaling',
       'redshift-opensearch-quicksight.redshift-copy-from-s3',
+      'redshift-opensearch-quicksight.opensearch-text-search',
+      'redshift-opensearch-quicksight.quicksight',
+      'redshift-opensearch-quicksight.quicksight-ml-forecast',
       'redshift-opensearch-quicksight.dynamodb-to-s3-analytics',
     ])
   })
@@ -4353,25 +4362,23 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('CloudWatch·X-Ray 주제가 서비스 넷 다음에 관측의 경계와 지표 설정을 둔다', () => {
+  it('CloudWatch·X-Ray 주제가 CloudWatch·X-Ray·Performance Insights·Managed Grafana 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'cloudwatch-xray')
 
-    // 1단 CloudWatch·X-Ray·Performance Insights·Managed Grafana가 각각 무엇이고
-    //   하이브리드 연결의 품질은 무엇이 재는가
-    // → 2단 관측이 어디까지인가, 로그를 어디서 분석하는가, 규모 조정의 근거는 무엇인가
-    // → 3단 기본 지표에 없는 값·상세 모니터링의 간격·알람의 상태 변경 이벤트.
+    // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+    // 블록: CloudWatch(7) → X-Ray(1) → Performance Insights(2) → Managed Grafana(1).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cloudwatch-xray.cloudwatch',
-      'cloudwatch-xray.x-ray',
-      'cloudwatch-xray.performance-insight',
-      'cloudwatch-xray.amazon-managed-grafana',
       'cloudwatch-xray.cloudwatch-network-monitor',
       'cloudwatch-xray.cloudwatch-container-insights',
       'cloudwatch-xray.log-analysis-options',
-      'cloudwatch-xray.performance-insights-rightsizing',
       'cloudwatch-xray.cloudwatch-agent-memory-metric',
       'cloudwatch-xray.ec2-detailed-monitoring',
       'cloudwatch-xray.cloudwatch-alarm-state-change-event',
+      'cloudwatch-xray.x-ray',
+      'cloudwatch-xray.performance-insight',
+      'cloudwatch-xray.performance-insights-rightsizing',
+      'cloudwatch-xray.amazon-managed-grafana',
     ])
   })
 
