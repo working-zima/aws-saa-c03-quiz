@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
  "conceptLineCount": 618,
- "questionsSha256": "09ec6f1b70471af5cb450396178dec10bb2b36054633e453a6718899f1b6590c",
+ "questionsSha256": "aadc1894b3eb2d9211159ef346057bf24510ba534b78ccade4d40bf018343f54",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1603,7 +1603,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-fifo-topic",
-     "name": "SNS FIFO 토픽"
+     "name": "SNS FIFO 주제"
     },
     {
      "id": "sqs-sns-eventbridge.ses-inbound-email-receiving",
@@ -1627,15 +1627,15 @@
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
-     "name": "FIFO 큐의 순서 보장 단위인 메시지 그룹 ID"
+     "name": "FIFO 대기열의 순서 보장 단위인 메시지 그룹 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
-     "name": "5분 동안 적용되는 FIFO 큐의 중복 제거 ID"
+     "name": "5분 동안 적용되는 FIFO 대기열의 중복 제거 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
-     "name": "FIFO 큐의 콘텐츠 기반 중복 제거"
+     "name": "FIFO 대기열의 콘텐츠 기반 중복 제거"
     },
     {
      "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
@@ -1647,7 +1647,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.cross-account-sns-to-sqs-queue-policy",
-     "name": "계정 간 SNS 발행과 큐 정책의 토픽 ARN"
+     "name": "계정 간 SNS 발행과 큐 정책의 주제 ARN"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission",
@@ -1655,7 +1655,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions",
-     "name": "암호화된 SNS 토픽 게시에 필요한 세 가지 권한"
+     "name": "암호화된 SNS 주제 게시에 필요한 세 가지 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy",
@@ -2246,7 +2246,7 @@
     },
     {
      "id": "cloudwatch-xray.performance-insight",
-     "name": "Performance Insight"
+     "name": "Performance Insights"
     },
     {
      "id": "cloudwatch-xray.amazon-managed-grafana",
@@ -2593,7 +2593,7 @@
    "concepts": [
     {
      "id": "identity-federation.identity-center",
-     "name": "Identity Center"
+     "name": "IAM Identity Center"
     },
     {
      "id": "identity-federation.sts",
