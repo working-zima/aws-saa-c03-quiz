@@ -96,7 +96,10 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 
 아래는 이미 알고 있는 것이고 **충돌이 아니다.** 순서를 바꾸지 말고 멈추지도 마라.
 
-이 step의 주제에는 알려진 잔여 교차 언급이 없다.
+- `security-groups-nacl.nlb-security-group`(보안 그룹 블록)이 "서브넷 경계에서 네트워크 ACL로 같은 일을 하려면 규칙이 상태를 기억하지 않아 임시 포트 범위까지 직접 열어야 하고"로 NACL을 언급한다 — NACL 블록보다 앞이다.
+- `vpc-networking.nat-gateway-count-by-environment`(NAT 블록)가 "NAT 인스턴스로 되돌리는 쪽은 확장과 장애 조치를 사람이 떠안는 구성이다"로 NAT 인스턴스를 언급한다 — 그것을 다루는 `nat-instance`(NAT·엔드포인트 비교)보다 앞이다.
+
+이것들은 같은 문장 안에서 대상이 무엇인지(무엇을 하는지) 말하는 곁가지 언급이다. 착수 뒤 한국어 표기까지 넣어 다시 검사하다 찾은 잔여라 아직 ADR-033 「트레이드오프」 목록에 없고, 이 phase의 step 7이 그 목록에 더한다.
 
 ## 주제별 명세
 
@@ -110,16 +113,16 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 | 2 | 2 | 인터넷 게이트웨이 | `vpc-networking.internet-gateway` | 인터넷 게이트웨이 |
 | 3 | 3 | 인터넷 게이트웨이 | `vpc-networking.egress-only-igw` | Egress-only 인터넷 게이트웨이 |
 | 4 | 4 | NAT 게이트웨이 | `vpc-networking.nat-gateway` | NAT 게이트웨이 |
-| 5 | 10 | NAT 게이트웨이 | `vpc-networking.nat-gateway-traffic-uses-public-endpoints` | NAT 게이트웨이 경로의 목적지인 공용 엔드포인트 |
-| 6 | 13 | NAT 게이트웨이 | `vpc-networking.nat-instance` | NAT 인스턴스와 NAT 게이트웨이의 차이 |
-| 7 | 14 | NAT 게이트웨이 | `vpc-networking.nat-gateway-per-az` | 가용 영역마다 두는 NAT 게이트웨이 |
-| 8 | 15 | NAT 게이트웨이 | `vpc-networking.internet-gateway-is-not-per-az` | 리전 수준 리소스인 인터넷 게이트웨이 |
-| 9 | 16 | NAT 게이트웨이 | `vpc-networking.nat-gateway-count-by-environment` | 환경에 따라 달라지는 NAT 게이트웨이 수 |
-| 10 | 17 | NAT 게이트웨이 | `vpc-networking.nat-gateway-elastic-ip` | NAT 게이트웨이에 붙이는 엘라스틱 IP |
-| 11 | 5 | VPC 엔드포인트 | `vpc-networking.vpc-endpoint` | VPC Endpoint |
-| 12 | 11 | VPC 엔드포인트 | `vpc-networking.endpoint-pricing` | 엔드포인트 유형별 비용 차이 |
-| 13 | 18 | VPC 엔드포인트 | `vpc-networking.vpc-endpoint-policy` | VPC 엔드포인트 정책 |
-| 14 | 20 | VPC 엔드포인트 | `vpc-networking.s3-is-regional` | 리전 수준 서비스인 S3 |
+| 5 | 14 | NAT 게이트웨이 | `vpc-networking.nat-gateway-per-az` | 가용 영역마다 두는 NAT 게이트웨이 |
+| 6 | 15 | NAT 게이트웨이 | `vpc-networking.internet-gateway-is-not-per-az` | 리전 수준 리소스인 인터넷 게이트웨이 |
+| 7 | 16 | NAT 게이트웨이 | `vpc-networking.nat-gateway-count-by-environment` | 환경에 따라 달라지는 NAT 게이트웨이 수 |
+| 8 | 17 | NAT 게이트웨이 | `vpc-networking.nat-gateway-elastic-ip` | NAT 게이트웨이에 붙이는 엘라스틱 IP |
+| 9 | 5 | VPC 엔드포인트 | `vpc-networking.vpc-endpoint` | VPC Endpoint |
+| 10 | 11 | VPC 엔드포인트 | `vpc-networking.endpoint-pricing` | 엔드포인트 유형별 비용 차이 |
+| 11 | 18 | VPC 엔드포인트 | `vpc-networking.vpc-endpoint-policy` | VPC 엔드포인트 정책 |
+| 12 | 20 | VPC 엔드포인트 | `vpc-networking.s3-is-regional` | 리전 수준 서비스인 S3 |
+| 13 | 10 | 비교 — NAT 경로와 엔드포인트 | `vpc-networking.nat-gateway-traffic-uses-public-endpoints` | NAT 게이트웨이 경로의 목적지인 공용 엔드포인트 |
+| 14 | 13 | 비교 — NAT 경로와 엔드포인트 | `vpc-networking.nat-instance` | NAT 인스턴스와 NAT 게이트웨이의 차이 |
 | 15 | 7 | VPC 피어링 | `vpc-networking.vpc-peering` | VPC 피어링 |
 | 16 | 19 | VPC 피어링 | `vpc-networking.vpc-peering-scaling-limit` | VPC 피어링의 확장 한계 |
 | 17 | 6 | PrivateLink | `vpc-networking.privatelink` | PrivateLink |
@@ -132,22 +135,22 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 이 `it` 블록 **전체**를 아래로 바꾼다. 제목·주석·기대 배열이 모두 바뀐다.
 
 ```ts
-  it('VPC 주제가 구성 요소 블록 다음에 네 연결 방식의 비교와 플로우 로그를 둔다', () => {
+  it('VPC 주제가 NAT·엔드포인트 블록 뒤에 둘의 비교를 두고 네 연결 방식의 비교와 플로우 로그로 끝낸다', () => {
     const topic = topics.find((candidate) => candidate.id === 'vpc-networking')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: VPC와 서브넷(1) → 인터넷 게이트웨이(2) → NAT 게이트웨이(7) → VPC 엔드포인트(4) → VPC 피어링(2) → PrivateLink(2) → 비교
-    //   — NAT·엔드포인트·PrivateLink·피어링(1) → VPC 플로우 로그(1).
+    // 블록: VPC와 서브넷(1) → 인터넷 게이트웨이(2) → NAT 게이트웨이(5) → VPC 엔드포인트(4) → 비교 — NAT 경로와 엔드포인트(2) → VPC
+    //   피어링(2) → PrivateLink(2) → 비교 — NAT·엔드포인트·PrivateLink·피어링(1) → VPC 플로우 로그(1).
     // internet-gateway-is-not-per-az는 인터넷 게이트웨이 개념이지만 본문이 바로 앞의 nat-gateway-per-az
-    // 규칙을 전제로 대비하므로 NAT 블록 안에 둔다(규칙 5). PrivateLink 엔드포인트 서비스가 피어링과
+    // 규칙을 전제로 대비하므로 NAT 블록 안에 둔다(규칙 5). nat-gateway-traffic-uses-public-endpoints와
+    // nat-instance는 NAT 개념이지만 본문이 인터페이스 엔드포인트·게이트웨이 엔드포인트를 대안으로 쓰므로
+    // NAT·엔드포인트 두 블록 뒤에 비교로 둔다(규칙 4·5). PrivateLink 엔드포인트 서비스가 피어링과
     // 대비하므로 피어링 블록을 PrivateLink 앞에 둔다. 네 연결 방식의 비교는 네 블록 뒤(규칙 4).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'vpc-networking.vpc-subnet',
       'vpc-networking.internet-gateway',
       'vpc-networking.egress-only-igw',
       'vpc-networking.nat-gateway',
-      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
-      'vpc-networking.nat-instance',
       'vpc-networking.nat-gateway-per-az',
       'vpc-networking.internet-gateway-is-not-per-az',
       'vpc-networking.nat-gateway-count-by-environment',
@@ -156,6 +159,8 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
       'vpc-networking.endpoint-pricing',
       'vpc-networking.vpc-endpoint-policy',
       'vpc-networking.s3-is-regional',
+      'vpc-networking.nat-gateway-traffic-uses-public-endpoints',
+      'vpc-networking.nat-instance',
       'vpc-networking.vpc-peering',
       'vpc-networking.vpc-peering-scaling-limit',
       'vpc-networking.privatelink',

@@ -102,6 +102,10 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 
 이것들은 "X는 이 일을 하지 않는다" 식의 대비 문장이고 같은 문장 안에서 X가 무엇인지 말한다. ADR-033 「트레이드오프」에 적힌 잔여다.
 
+- `organizations-cloudtrail-config.organizations-tag-policy`가 "둘을 각각 알맞은 조직 단위에 붙이는 것이 답이다"로 조직 단위를 쓴다 — 같은 블록의 `organizational-unit`보다 앞이다. 이 개념의 요점은 태그 정책과 SCP의 분업이고, 조직 단위에 붙이는 방식은 `organizational-unit`이 곧이어 다룬다.
+
+이것들은 뒤 개념이 다루는 말을 먼저 쓰지만 말 자체가 뜻을 드러내고, 그 개념의 요점이 그 말에 기대지 않는다. 전제가 아니고, 잔여 목록에도 넣지 않는다.
+
 ## 주제별 명세
 
 `현재 자리`는 착수 시점 `topics.json`에서 그 주제 안의 몇 번째 개념인지다(1부터).

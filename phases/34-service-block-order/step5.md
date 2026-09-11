@@ -96,7 +96,14 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 
 아래는 이미 알고 있는 것이고 **충돌이 아니다.** 순서를 바꾸지 말고 멈추지도 마라.
 
-이 step의 주제에는 알려진 잔여 교차 언급이 없다.
+- `rds-storage-features.rds-multi-az-failover-rto`(다중 AZ 블록)가 "주기적인 스냅샷과 템플릿은 복구를 사람이 시작해야 하므로 애초에 자동 장애 조치 장치가 아니다"로 스냅샷을 언급한다 — 백업과 스냅샷 블록보다 앞이다. 같은 문단의 읽기 전용 복제본은 앞의 `features`가 이미 소개했다.
+- `dynamodb.dynamodb-streams-batch-size`(Streams 블록)가 "원본 테이블의 읽기 용량을 늘리거나 보조 인덱스를 더하는 것은 밀림의 원인과 무관하고"로 보조 인덱스를 언급한다 — 전역 보조 인덱스 블록보다 앞이다.
+
+이것들은 같은 문장 안에서 대상이 무엇인지(무엇을 하는지) 말하는 곁가지 언급이다. 착수 뒤 한국어 표기까지 넣어 다시 검사하다 찾은 잔여라 아직 ADR-033 「트레이드오프」 목록에 없고, 이 phase의 step 7이 그 목록에 더한다.
+
+- `dynamodb.dynamodb-streams-batch-size`의 "늘려야 할 것은 대상 테이블의 쓰기 용량 단위다"는 용량 모드 블록의 `dynamodb-capacity-modes`보다 앞이다. 쓰기 용량이라는 말이 뜻을 드러내고, 이 개념의 요점(배치 크기와 대상 테이블의 쓰기 병목)은 용량 모드의 구분에 기대지 않는다.
+
+이것들은 뒤 개념이 다루는 말을 먼저 쓰지만 말 자체가 뜻을 드러내고, 그 개념의 요점이 그 말에 기대지 않는다. 전제가 아니고, 잔여 목록에도 넣지 않는다.
 
 ## 주제별 명세
 
@@ -416,14 +423,14 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 | 4 | 4 | 인스턴스 제품군 | `ec2-autoscaling.memory-optimized-instance-family` | 메모리 최적화 인스턴스 제품군 |
 | 5 | 5 | 인스턴스 제품군 | `ec2-autoscaling.gpu-instance-family` | GPU 인스턴스 제품군과 컴퓨팅 서비스 선택 |
 | 6 | 17 | 인스턴스 제품군 | `ec2-autoscaling.enhanced-networking` | 향상된 네트워킹 |
-| 7 | 6 | 예약 인스턴스 | `ec2-autoscaling.reserved-instance-types` | 표준 예약 인스턴스와 전환 가능 예약 인스턴스 |
-| 8 | 7 | 스팟과 혼합 구성 | `ec2-autoscaling.spot-workload-fit` | 스팟에 올릴 수 있는 워크로드 |
-| 9 | 11 | 스팟과 혼합 구성 | `ec2-autoscaling.spot-allocation-strategy` | 스팟 할당 전략 |
-| 10 | 12 | 스팟과 혼합 구성 | `ec2-autoscaling.asg-instance-type-override` | Auto Scaling 그룹의 인스턴스 유형 재정의 |
-| 11 | 13 | 스팟과 혼합 구성 | `ec2-autoscaling.asg-on-demand-base-capacity` | Auto Scaling 그룹의 온디맨드 기반 용량 |
-| 12 | 8 | 조정 정책 | `ec2-autoscaling.scheduled-scaling` | 예약된 조정과 대상 추적의 갈림길 |
-| 13 | 9 | 조정 정책 | `ec2-autoscaling.target-tracking-vs-simple-scaling` | 대상 추적과 단순 조정의 갈림길 |
-| 14 | 10 | 조정 정책 | `ec2-autoscaling.predictive-scaling` | 예측 스케일링 |
+| 7 | 6 | 구매 옵션 | `ec2-autoscaling.reserved-instance-types` | 표준 예약 인스턴스와 전환 가능 예약 인스턴스 |
+| 8 | 7 | 구매 옵션 | `ec2-autoscaling.spot-workload-fit` | 스팟에 올릴 수 있는 워크로드 |
+| 9 | 8 | 조정 정책 | `ec2-autoscaling.scheduled-scaling` | 예약된 조정과 대상 추적의 갈림길 |
+| 10 | 9 | 조정 정책 | `ec2-autoscaling.target-tracking-vs-simple-scaling` | 대상 추적과 단순 조정의 갈림길 |
+| 11 | 10 | 조정 정책 | `ec2-autoscaling.predictive-scaling` | 예측 스케일링 |
+| 12 | 11 | 스팟과 혼합 구성 | `ec2-autoscaling.spot-allocation-strategy` | 스팟 할당 전략 |
+| 13 | 12 | 스팟과 혼합 구성 | `ec2-autoscaling.asg-instance-type-override` | Auto Scaling 그룹의 인스턴스 유형 재정의 |
+| 14 | 13 | 스팟과 혼합 구성 | `ec2-autoscaling.asg-on-demand-base-capacity` | Auto Scaling 그룹의 온디맨드 기반 용량 |
 | 15 | 14 | Auto Scaling 운영 | `ec2-autoscaling.warm-pool` | Auto Scaling 웜 풀 |
 | 16 | 15 | Auto Scaling 운영 | `ec2-autoscaling.asg-single-instance-self-healing` | 용량을 1로 고정한 오토 스케일링 그룹의 인스턴스 교체 |
 | 17 | 16 | Auto Scaling 운영 | `ec2-autoscaling.elb-health-check-drives-asg-replacement` | 로드 밸런서 상태 검사와 인스턴스 교체 |
@@ -434,13 +441,15 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
 이 `it` 블록 **전체**를 아래로 바꾼다. 제목·주석·기대 배열이 모두 바뀐다.
 
 ```ts
-  it('EC2·Auto Scaling 주제가 인스턴스 재료·제품군·구매 옵션·조정 정책·운영 블록 순서로 개념을 둔다', () => {
+  it('EC2·Auto Scaling 주제가 인스턴스 재료·제품군·구매 옵션·조정 정책·혼합 구성·운영 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(3) → 예약 인스턴스(1) → 스팟과 혼합 구성(4) → 조정 정책(3) → Auto Scaling 운영(3) →
+    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(3) → 구매 옵션(2) → 조정 정책(3) → 스팟과 혼합 구성(3) → Auto Scaling 운영(3) →
     //   ParallelCluster(1).
     // 향상된 네트워킹은 인스턴스 유형이 지원해야 켜지는 기능이라 인스턴스 제품군 블록 끝에 둔다.
+    // 스팟에 올릴 워크로드는 예약 인스턴스 유형과 함께 어떤 구매 옵션을 고를지의 갈림길이라 구매 옵션 블록에 둔다.
+    // 스팟과 혼합 구성의 인스턴스 유형 재정의가 예약된 조정을 전제로 쓰므로 조정 정책 블록을 그 앞에 둔다(규칙 5).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'ec2-autoscaling.ec2',
       'ec2-autoscaling.ami-and-launch-template',
@@ -450,12 +459,12 @@ choices · explanation · answerIndex · 문항 배열), 주제 메타데이터,
       'ec2-autoscaling.enhanced-networking',
       'ec2-autoscaling.reserved-instance-types',
       'ec2-autoscaling.spot-workload-fit',
-      'ec2-autoscaling.spot-allocation-strategy',
-      'ec2-autoscaling.asg-instance-type-override',
-      'ec2-autoscaling.asg-on-demand-base-capacity',
       'ec2-autoscaling.scheduled-scaling',
       'ec2-autoscaling.target-tracking-vs-simple-scaling',
       'ec2-autoscaling.predictive-scaling',
+      'ec2-autoscaling.spot-allocation-strategy',
+      'ec2-autoscaling.asg-instance-type-override',
+      'ec2-autoscaling.asg-on-demand-base-capacity',
       'ec2-autoscaling.warm-pool',
       'ec2-autoscaling.asg-single-instance-self-healing',
       'ec2-autoscaling.elb-health-check-drives-asg-replacement',

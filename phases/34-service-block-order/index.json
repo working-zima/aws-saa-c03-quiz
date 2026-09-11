@@ -48,6 +48,11 @@
       "step": 6,
       "name": "minor-ops-reorder",
       "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "residual-docs",
+      "status": "pending"
     }
   ],
   "created_at": "2026-09-11T16:57:42+0900"
