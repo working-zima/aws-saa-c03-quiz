@@ -173,6 +173,10 @@
       "dir": "34-service-block-order",
       "status": "completed",
       "completed_at": "2026-09-12T00:30:03+0900"
+    },
+    {
+      "dir": "35-question-topic-audit",
+      "status": "pending"
     }
   ]
 }

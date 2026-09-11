@@ -1,0 +1,76 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "35-question-topic-audit",
+  "steps": [
+    {
+      "step": 0,
+      "name": "audit-criteria-docs",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "audit-tooling",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "sample-verdicts",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "verdicts-s3-block",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "verdicts-file-db",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "verdicts-db-compute",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "verdicts-delivery-serverless",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "verdicts-integration-backup",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "verdicts-network",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "verdicts-analytics-observability",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "verdicts-security",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "verdicts-identity-cost-ops",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "consistency-pass",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "audit-report",
+      "status": "pending"
+    }
+  ]
+}
