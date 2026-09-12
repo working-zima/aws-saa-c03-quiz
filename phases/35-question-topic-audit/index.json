@@ -29,10 +29,7 @@
     {
       "step": 3,
       "name": "verdicts-s3-block",
-      "status": "completed",
-      "started_at": "2026-09-12T12:52:49+0900",
-      "summary": "담당 6개 주제(aws-core-services·s3-storage-classes·s3-versioning-lifecycle·s3-encryption-batch·s3-access-control·ebs-instance-store)의 미판정 85문항 판정: keep 85·ambiguous 0·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 84·partial 1(q037)·no 0; move+yes 0건·keep+no 0건. q037은 주제는 맞으나 중심 지식이 비용 구조라 같은 주제의 sse-kms-cost를 개념으로 권했다. 판단이 어려웠던 문항 q037·q271·q283·q294·q259. 누적 125줄이며 step 2의 11문항은 건드리지 않았다; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사(125건)·secondaryTopics 상한·신호 조합·제품 데이터 4종 해시 확인 통과.",
-      "completed_at": "2026-09-12T13:05:53+0900"
+      "status": "pending"
     },
     {
       "step": 4,
