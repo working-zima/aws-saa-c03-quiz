@@ -85,7 +85,9 @@
     {
       "step": 10,
       "name": "verdicts-security",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-13T03:55:57+0900",
+      "summary": "담당 4개 주제의 미판정 76문항 추가: keep 72·ambiguous 2(q667·q684)·move-recommended 2(q152·q153), 이동 confidence high 1·medium 1·low 0; conceptFit yes 75·partial 1(q153)·no 0, move+yes 1(q152)·keep+no 0. q153은 캐시 무효화를 묻는 CloudFront 기능 문항이라 q154와 같이 cloudfront-global-accelerator.cloudfront-ttl로 이동 권고(high·ready)다. q152는 OAC 문항으로 같은 경계에서 CloudFront 주제를 권하지만, 현재 개념이 OAC를 직접 정의해 conceptFit yes이고 대상 주제에서 OAC를 담은 cloudfront-s3-upload-with-oac는 업로드 경로가 중심이라 권장 개념을 null로 두었다(medium·needs-design). q667(ACM 만료 이벤트)·q684(Macie 탐지 결과 알림)는 서비스 이벤트 → EventBridge → SNS 구조에서 오답을 가르는 폴링 대 이벤트·큐 대 알림 축을 sqs-sns-eventbridge의 eventbridge-event-pattern-vs-polling·sns-is-not-a-queue가 설명해 q364와 같이 ambiguous로 남겼고, 오답이 보안 서비스의 역할을 오해한 q680·q683은 q656과 같이 유지했다. q678은 정답이 EC2 Image Builder지만 오답이 발견과 조치를 혼동한 것이라 q355처럼 amazon-inspector를 유지했다. 판단이 어려웠던 문항 q140·q145·q152·q153·q236·q667·q678·q683·q684·q691·q692. 제약 메모: q152·q153·q154가 모두 옮겨지면 waf-shield.cloudfront에 문항이 남지 않지만 이 개념은 문항이 3개라 문항 단위 coverageConflict 식에는 잡히지 않는다. 누적 663줄, 기존 587줄 바이트 보존 및 담당 76문항 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음."
     },
     {
       "step": 11,
