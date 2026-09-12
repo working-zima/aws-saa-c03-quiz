@@ -77,6 +77,9 @@ export function validateVerdicts(text, { questions, topics, expect, complete = f
         invalid(`${field}: 비어 있지 않은 문자열들의 배열이어야 한다`)
       }
     }
+    if (Array.isArray(row.scenarioServices) && row.scenarioServices.length === 0) {
+      invalid('scenarioServices: 상황 서비스 또는 문항이 가르는 대상을 최소 1개 적어야 한다')
+    }
     if (Array.isArray(row.secondaryTopics) && row.secondaryTopics.length > 2) {
       invalid('secondaryTopics: 최대 2개까지 허용한다')
     }
