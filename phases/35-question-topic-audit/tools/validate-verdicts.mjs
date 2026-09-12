@@ -124,7 +124,10 @@ export function validateVerdicts(text, { questions, topics, expect, complete = f
     if (['keep', 'ambiguous'].includes(row.verdict) && row.confidence !== null) {
       invalid('confidence: keep·ambiguous에서는 null이어야 한다')
     }
-    for (const [field, minimum] of [['decidingKnowledge', 15], ['rationale', 30]]) {
+    // 재검토 신호 조합은 설명을 더 요구한다. 두 판단이 양립하는 이유 자체는 사람이 읽는다.
+    const needsReviewExplanation = (moving && row.conceptFit === 'yes') ||
+      (row.verdict === 'keep' && row.conceptFit === 'no')
+    for (const [field, minimum] of [['decidingKnowledge', 15], ['rationale', needsReviewExplanation ? 80 : 30]]) {
       if (typeof row[field] === 'string' && [...row[field].trim()].length < minimum) {
         invalid(`${field}: 양끝 공백을 뺀 글이 ${minimum}자 이상이어야 한다`)
       }
