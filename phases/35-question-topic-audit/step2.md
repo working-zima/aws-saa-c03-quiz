@@ -28,8 +28,16 @@ ADR-034의 순서를 그대로 따른다. 앞 칸을 채우지 못하면 뒤 칸
 4. **`recommendedConceptId`** — 결정 지식을 가장 잘 설명하는 개념을 `topics.json`에서 찾아 지목한다.
    그 개념이 속한 주제가 `recommendedTopic`이다. 적절한 개념이 대상 주제에 없으면 `null`로 두고
    `rationale`에 "대상 주제에 맞는 개념이 없다"고 적는다.
-5. **`conceptFit`** — 지금 연결된 `conceptId`가 결정 지식을 얼마나 설명하는가. `yes`(그 개념이
-   결정 지식이다) · `partial`(관련은 있으나 결정 지식의 일부만) · `no`(방향이 다르다).
+5. **`conceptFit`** — 지금 연결된 `conceptId`가 **정답을 가르는 중심 지식 자체를 직접 설명하는가.**
+   - `yes` — 관련 내용을 포함하는 수준이 아니라, 이 문항에서 정답을 오답과 구분하게 만드는 **중심
+     지식 자체**를 그 개념이 직접 설명한다.
+   - `partial` — 그 개념도 문제 해결에 관련되지만, 정답을 결정하는 핵심 지식은 **다른 개념이 더
+     직접적이고 중심적으로** 설명한다.
+   - `no` — 그 개념은 주로 시나리오의 배경이나 주변 지식을 설명하고, 정답을 결정하는 핵심 지식은
+     다른 개념에 있다.
+
+   **"현재 개념에서도 관련 내용을 찾을 수 있다"는 이유만으로 `yes`를 주지 마라.** 마지막에 반드시
+   이렇게 물어라 — **"이 문항을 이 개념의 확인 문제라고 부르는 것이 가장 자연스러운가?"**
 6. **`verdict`** — `keep` · `ambiguous` · `move-recommended`. 1~5가 한 곳을 가리키지 않으면
    **주저 없이 `ambiguous`로 남긴다.** 억지로 한쪽을 고르는 것이 이 audit의 가장 큰 실패다.
    `move-recommended`일 때만 `confidence`를 쓴다 — `high`(다른 주제가 명확히 더 적절) ·
@@ -102,16 +110,38 @@ ADR-034의 순서를 그대로 따른다. 앞 칸을 채우지 못하면 뒤 칸
 교체 가능성 시험 하나로 결론내지 말고, 오답 넷이 무엇을 오해한 것인지와 해설이 실제로 어떤 지식을
 정답 근거로 쓰는지를 함께 보고 판정해라. 결론이 한쪽으로 서지 않으면 `ambiguous`가 맞는 답이다.
 
-## 이미 판정이 있으면 — 다시 만들지 말고 고친다
+## 재검토 신호 — 두 조합은 rationale에서 설명한다
 
-`audit/verdicts.jsonl`이 이미 있고 40줄이면 **판정 내용을 새로 만들지 마라.** 검사에 걸린 줄만
-고친다. 앞선 실행에서 문항을 읽고 내린 판단을 재생성으로 날리지 않기 위해서다.
+아래 조합은 틀렸다는 뜻이 아니다. 다만 그 자리에서 한 번 더 보고, **왜 그 조합이 가능한지**를
+`rationale`에 명시한다.
 
-- `secondaryTopics`는 **최대 2개**다(step 1이 정한 스키마). 세 개 이상 적었으면 정답을 결정하는 데
-  가장 가까운 둘만 남긴다. primary가 아닌 주제를 모아 두는 칸이 아니다.
-- `tools/validate-verdicts.mjs`가 이 상한을 검사하지 않으면 **검사기에 그 규칙을 더한다.** 남은
-  692문항이 같은 실수를 반복하지 않게 막는 것이 이 검사기의 목적이다.
-- 그 밖의 판정 필드(`verdict`·`decidingKnowledge`·`rationale` 등)는 그대로 둔다.
+- `move-recommended` + `conceptFit=yes` — 현재 개념이 중심 지식을 직접 설명하는데도 다른 주제를
+  권하는 경우다. 개념은 맞는데 주제 경계가 어긋난 자리일 수 있다.
+- `keep` + `conceptFit=no` — 주제는 맞는데 연결된 개념이 배경 지식인 경우다. 같은 주제 안의 다른
+  개념으로 `recommendedConceptId`를 바꾸는 것이 답일 수 있다.
+
+`move-recommended` + `conceptFit=yes`가 여러 건 반복되면 `conceptFit`을 여전히 느슨하게 주고 있다는
+뜻이다. 그때는 그 판정들을 다시 보라.
+
+## 이 step은 재검토다 — 같은 40문항을 새 `conceptFit` 정의로 다시 본다
+
+`audit/verdicts.jsonl`에 이미 40줄이 있다. **표본을 새로 뽑지 말고 문항을 새로 만들지 마라.**
+같은 40개를 위의 좁힌 `conceptFit` 정의로 다시 판정한다.
+
+- `conceptFit`은 40건 **모두 다시 판단한다.** 앞선 실행은 40건 전부를 `yes`로 적어 이 칸이 변별력을
+  갖지 못했다.
+- **기존 `verdict`를 무조건 유지하지 마라.** 새 정의가 `verdict` 판단에도 영향을 준다면 `verdict`도
+  바꾼다. 반대로 바뀔 이유가 없으면 그대로 둔다.
+- 아래 다섯은 특히 다시 확인한다 — `q154` · `q223` · `q355` · `q364` · `q284`.
+- 지금 `move-recommended`인 `q154`·`q223`·`q355`가 **새 정의로도 `conceptFit=yes`인지** 반드시 다시 본다.
+- `q364`는 DataSync 고유 지식과 EventBridge·SNS 패턴 양쪽으로 읽힌다. 이동을 억지로 확정하지 마라.
+  새 정의를 적용한 뒤에도 `ambiguous`가 맞다면 그 이유를 `rationale`에 다시 쓴다.
+- **판정 수를 맞추려 하지 마라.** 이 audit의 목적은 이동 문항을 많이 찾는 것이 아니라 **핵심 학습
+  목표가 잘못 배정된 문항만** 찾는 것이다. 기준에 맞으면 대부분 `keep`이어도 그대로 받아들인다.
+- `secondaryTopics`는 **최대 2개**다. `coverageConflict`와 `retarget`은 여전히 의미 판정의 근거가
+  아니다 — 판정을 먼저 하고 제약은 그 뒤에 계산한다.
+- `tools/validate-verdicts.mjs`가 위 상한이나 아래 AC의 규칙을 검사하지 않으면 **검사기에 그 규칙을
+  더한다.** 남은 692문항이 같은 실수를 반복하지 않게 막는 것이 그 검사기의 목적이다.
 
 ## Acceptance Criteria
 
@@ -124,6 +154,7 @@ test "$(wc -l < phases/35-question-topic-audit/audit/verdicts.jsonl)" = 40
 node phases/35-question-topic-audit/tools/validate-verdicts.mjs --expect 40
 node -e "const f=require('fs');const want=['q001','q035','q044','q054','q068','q079','q087','q108','q114','q125','q128','q129','q154','q170','q174','q177','q188','q202','q206','q209','q211','q223','q226','q231','q248','q249','q256','q272','q284','q323','q327','q355','q364','q366','q377','q467','q630','q705','q722','q724'];const got=f.readFileSync('phases/35-question-topic-audit/audit/verdicts.jsonl','utf8').trim().split('\n').map((l)=>JSON.parse(l).id);if(JSON.stringify(got)!==JSON.stringify(want))throw new Error('표본 목록이나 순서가 다르다');console.log('표본 40문항 판정 완료')"
 node -e "const f=require('fs');const rows=f.readFileSync('phases/35-question-topic-audit/audit/verdicts.jsonl','utf8').trim().split('\n').map(JSON.parse);const bad=rows.filter((r)=>r.secondaryTopics.length>2).map((r)=>r.id);if(bad.length)throw new Error('secondaryTopics가 2개를 넘는다: '+bad.join(', '));console.log('secondaryTopics 상한 확인')"
+node -e "const f=require('fs');const rows=f.readFileSync('phases/35-question-topic-audit/audit/verdicts.jsonl','utf8').trim().split('\n').map(JSON.parse);const flagged=rows.filter((r)=>(r.verdict==='move-recommended'&&r.conceptFit==='yes')||(r.verdict==='keep'&&r.conceptFit==='no'));const thin=flagged.filter((r)=>[...r.rationale.trim()].length<80).map((r)=>r.id);if(thin.length)throw new Error('재검토 신호 조합인데 rationale이 짧다: '+thin.join(', '));console.log('재검토 신호 조합 '+flagged.length+'건 설명 확인')"
 node -e "const c=require('crypto'),f=require('fs');const want={'src/data/questions.json':'aadc1894b3eb2d92','src/data/topics.json':'5a227aea172ca391','src/data/data.test.ts':'4f83435d7479cad8','scripts/topics-baseline.json':'aade58a88000ca6c'};for(const[p,h]of Object.entries(want)){const g=c.createHash('sha256').update(f.readFileSync(p)).digest('hex');if(!g.startsWith(h))throw new Error('제품 데이터가 바뀌었다: '+p)}console.log('제품 데이터 4종 그대로')"
 ```
 
