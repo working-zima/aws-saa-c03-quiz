@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "verdicts-file-db",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T17:15:43+0900",
+      "summary": "담당 4개 주제의 미판정 86문항 추가: keep 85·ambiguous 1(q348)·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 80·partial 6(q043·q045·q046·q061·q065·q344)·no 0, move+yes 0·keep+no 0. partial 6건은 같은 주제 내 개념 연결 변경 권고이며 q348은 EFS 복제 제약과 DataSync 구성의 주제 경계를 미확정으로 남겼다. 판단이 어려웠던 문항 q043·q045·q046·q047·q061·q064·q344·q348·q358·q373·q380·q384. 누적 211줄, 승인 표본 40줄을 포함한 기존 125줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-12T17:28:05+0900"
     },
     {
       "step": 5,
