@@ -77,7 +77,9 @@
     {
       "step": 9,
       "name": "verdicts-analytics-observability",
-      "status": "pending"
+      "status": "error",
+      "error_message": "[3회 시도 후 실패] Step did not update status",
+      "failed_at": "2026-09-13T03:43:22+0900"
     },
     {
       "step": 10,
