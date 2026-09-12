@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "sample-verdicts",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T12:20:47+0900",
+      "summary": "동일 표본 40문항 재검토: keep 37·ambiguous 1(q364)·move-recommended 2(q154·q223), 이동 confidence high 2·medium 0·low 0; conceptFit yes 37·partial 3(q068·q154·q223)·no 0; 판단이 어려웠던 문항 q068·q154·q223·q284·q355·q364, q284·q355는 keep으로 변경, q223은 coverageConflict로 needs-design. 검사기에 재검토 신호 조합 rationale 80자 하한을 TDD로 추가(저장소 밖 도구 테스트 6개 통과); Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·표본 순서·판정 스키마·secondaryTopics 상한·제품 데이터 4종 해시 확인 통과. AC의 wc 문자열 비교는 macOS 앞쪽 공백으로 실패하여 동등한 -eq 숫자 비교로 40줄 확인.",
+      "completed_at": "2026-09-12T12:30:11+0900"
     },
     {
       "step": 3,
