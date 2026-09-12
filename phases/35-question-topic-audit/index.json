@@ -77,7 +77,9 @@
     {
       "step": 9,
       "name": "verdicts-analytics-observability",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-13T03:43:25+0900",
+      "summary": "담당 4개 주제의 미판정 55문항 추가: keep 55·ambiguous 0·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 55·partial 0·no 0, move+yes 0·keep+no 0. 네 주제 모두 문항이 정답을 가르는 지식이 현재 주제의 개념에 있었다 — 다른 주제의 서비스가 정답 구성에 들어간 문항(q270·q623·q624·q638·q639·q650·q652·q654·q656)은 그 주제를 secondaryTopics로만 기록했다. 판단이 어려웠던 문항 q264·q270·q626·q633·q634·q635·q650·q652·q654·q656. q633~q635는 세 서비스의 단계를 나누는 비교 개념도 관련되지만, 대비를 프롬프트에 세운 q128과 달리 서비스 하나의 역할을 물어 그 역할을 정의하는 소개 개념에 yes로 두었다. q656은 이벤트 소스를 바꿔도 EventBridge 규칙 논리가 남아 q364와 닮았으나, sqs-sns-eventbridge에 함수 없이 대상을 직접 부르는 연결을 다루는 개념이 없고 오답이 알람 상태 변경을 자동 대응으로 잇는 방법을 오해한 것이라 유지했다. q626은 q223의 이동 목적지 개념과 판정이 맞물린다. 누적 587줄, 승인 표본 40줄을 포함한 기존 532줄 바이트 보존 및 담당 60문항 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음."
     },
     {
       "step": 10,
