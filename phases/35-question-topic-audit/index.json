@@ -69,7 +69,10 @@
     {
       "step": 8,
       "name": "verdicts-network",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-13T03:21:28+0900",
+      "summary": "담당 4개 주제의 미판정 73문항 추가: keep 72·ambiguous 0·move-recommended 1(q225), 이동 confidence high 1·medium 0·low 0; conceptFit yes 72·partial 1(q225)·no 0, move+yes 0·keep+no 0. q225는 NACL 한계가 이미 주어진 상황에서 WAF IP 세트와 지리적 일치 규칙을 가르는 문항이므로 waf-shield.waf-rule-types로 이동 권고하며, 현재 개념의 유일 문항이라 coverageConflict true·retarget needs-design이다. 판단이 어려웠던 문항 q212·q213·q218·q220·q225·q586·q593·q595·q597·q598·q603·q604·q608·q611·q613·q616. 누적 532줄, 승인 표본 40줄을 포함한 기존 459줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-13T03:34:49+0900"
     },
     {
       "step": 9,
