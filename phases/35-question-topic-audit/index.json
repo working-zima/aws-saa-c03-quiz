@@ -48,7 +48,7 @@
       "status": "completed",
       "started_at": "2026-09-12T17:29:25+0900",
       "summary": "담당 4개 주제의 미판정 79문항 추가: keep 78·ambiguous 1(q400)·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 78·partial 1(q400)·no 0, move+yes 0·keep+no 0. q400은 RDS for Oracle의 35일 초과 보존을 묻는 문항이라 정답 선택 지식이 backup-disaster-recovery.backup-long-term-retention 쪽이지만, 해설과 현재 개념이 클론의 Aurora 전용 제약을 갈림길로 세우고 있어 주제 경계를 미확정으로 남겼다(이동 시 목적지만 기록). 판단이 어려웠던 문항 q067·q070·q071·q075·q076·q077·q400·q403·q433·q450. 소개 개념에 걸린 정의 문항 여섯은 전용 개념이 다른 축(확장 대상·Lambda 경로·적용 범위·단순 조정 대비·워크로드 적합성·표준 대 전환 가능)을 중심으로 설명해 소개 문단이 더 직접적이라 yes로 두었고, 이는 같은 개념의 q068을 partial로 본 표본 판정과 어긋나지 않는다. 누적 290줄, 기존 211줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
-      "completed_at": "2026-09-12T17:47:00+0900"
+      "completed_at": "2026-09-12T17:46:08+0900"
     },
     {
       "step": 6,
