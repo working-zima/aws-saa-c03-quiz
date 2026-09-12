@@ -93,7 +93,10 @@
     {
       "step": 11,
       "name": "verdicts-identity-cost-ops",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-13T08:27:36+0900",
+      "summary": "담당 6개 주제의 미판정 69문항 추가: keep 68·ambiguous 1(q728)·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 66·partial 3(q159·q165·q728)·no 0, move+yes 0·keep+no 0. q159는 identity-center-permission-set, q165는 savings-plan-details로 같은 주제 내 연결 변경을 권한다. q728은 중단 허용 작업의 스팟 적합성과 절약 플랜·용량 예약을 가르는 비용 비교 사이에서 주제 경계를 미확정으로 두고 ec2-autoscaling.spot-workload-fit을 잠정 권했다. q301·q303·q307은 정답 구성에 다른 주제의 서비스나 기능이 들어가도 현재 개념이 비교 축 자체를 직접 설명해 유지했고, q302·q731은 알림 패턴보다 명령 실행 방식과 예측 비용 기준이 각각 답을 가른다. 판단이 어려웠던 문항 q159·q165·q244·q301·q302·q303·q306·q307·q308·q703·q714·q719·q721·q723·q726·q728·q729·q730·q731·q732. 누적 732줄, 승인 표본 40줄을 포함한 기존 663줄 바이트 보존 및 담당 72문항 누락·중복 없음 확인; 전체 누적 keep 717·ambiguous 8·move-recommended 7. Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사(--complete 포함)·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-13T08:37:49+0900"
     },
     {
       "step": 12,
