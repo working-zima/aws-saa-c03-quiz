@@ -53,7 +53,10 @@
     {
       "step": 6,
       "name": "verdicts-delivery-serverless",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T22:17:33+0900",
+      "summary": "담당 4개 주제의 미판정 94문항 추가: keep 90·ambiguous 2(q459·q497)·move-recommended 2(q465·q508), 이동 confidence high 2·medium 0·low 0; conceptFit yes 89·partial 5(q080·q081·q086·q472·q508)·no 0, move+yes 1(q465)·keep+no 0. q465는 인증서 발급·갱신의 관리 책임을 묻는 ACM 문항으로, q508은 관리형 DB의 OS 접근을 묻는 RDS Custom 문항으로 이동 권고하며 둘 다 retarget ready·coverageConflict false다. q459는 내부 로드 밸런서와 사설 DNS의 독립된 지식, q497은 Lambda 한도 대응과 큐의 요청 보관 패턴 사이의 주제 경계를 미확정으로 남겼다. 판단이 어려웠던 문항 q080·q081·q086·q459·q465·q472·q474·q486·q487·q497·q504·q505·q506·q508·q518·q521. 누적 384줄, 승인 표본 40줄을 포함한 기존 290줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-12T22:31:01+0900"
     },
     {
       "step": 7,
