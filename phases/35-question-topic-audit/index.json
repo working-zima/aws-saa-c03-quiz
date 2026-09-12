@@ -21,10 +21,7 @@
     {
       "step": 2,
       "name": "sample-verdicts",
-      "status": "completed",
-      "started_at": "2026-09-12T12:08:32+0900",
-      "summary": "기존 표본 40문항 판정 보존: keep 35·ambiguous 2·move-recommended 3(high 2·medium 1·low 0), 경계 검토 q284·q355·q364; q724의 secondaryTopics만 Athena·QuickSight 주제 2개로 축소하고 검사기에 상한 추가(TDD 6개 통과). Node 18.17.1에서 lint·build·기존 테스트 512개·구조·표본 목록/순서·판정·독립 상한·제품 데이터 4종 해시 검사 통과, src/·scripts/ 75개 파일 보존. AC의 wc 문자열 비교는 macOS 앞쪽 공백으로 실패하여 동등한 -eq 숫자 비교로 40줄 확인.",
-      "completed_at": "2026-09-12T12:13:27+0900"
+      "status": "pending"
     },
     {
       "step": 3,
