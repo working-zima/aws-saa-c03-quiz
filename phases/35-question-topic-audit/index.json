@@ -61,7 +61,9 @@
     {
       "step": 7,
       "name": "verdicts-integration-backup",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-12T22:36:04+0900",
+      "summary": "담당 3개 주제의 미판정 75문항 추가: keep 75·ambiguous 0·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 75·partial 0·no 0, move+yes 0·keep+no 0. 세 주제 모두 서비스 경계와 문항의 결정 지식이 어긋나는 자리가 없었다 — 다른 주제의 서비스가 정답 구성에 들어간 문항(q542·q554·q558·q578)도 마지막 보기를 가르는 지식이 현재 주제에 있어 유지했다. 판단이 어려웠던 문항 q088·q089·q094·q537·q542·q545·q551·q554·q558·q578. q537은 정답이 API Gateway 캐싱인데 개념 이름이 엔드포인트 유형이라 망설였으나, 그 개념의 두 번째 문단이 네 설정을 비교하며 캐싱을 직접 규정하고 앱 안에 캐싱을 다루는 다른 개념이 없어 yes로 두었다. 누적 459줄, 기존 384줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음."
     },
     {
       "step": 8,
