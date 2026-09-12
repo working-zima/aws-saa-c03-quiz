@@ -77,6 +77,9 @@ export function validateVerdicts(text, { questions, topics, expect, complete = f
         invalid(`${field}: 비어 있지 않은 문자열들의 배열이어야 한다`)
       }
     }
+    if (Array.isArray(row.secondaryTopics) && row.secondaryTopics.length > 2) {
+      invalid('secondaryTopics: 최대 2개까지 허용한다')
+    }
     if (typeof row.coverageConflict !== 'boolean') invalid('coverageConflict: boolean이어야 한다')
     if (!Number.isSafeInteger(row.step) || row.step < 0) invalid('step: 0 이상의 정수여야 한다')
     for (const [field, allowed] of Object.entries(ENUMS)) {
