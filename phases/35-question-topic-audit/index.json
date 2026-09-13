@@ -101,7 +101,10 @@
     {
       "step": 12,
       "name": "consistency-pass",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-13T08:55:31+0900",
+      "summary": "732건을 11개 축으로 교차 검토(다문항 개념 78개·192문항 포함)해 총 41건 수정: 보조 주제 37건(q025·q031·q034·q038·q039·q040·q041·q089·q171·q176·q184·q186·q225·q254·q255·q277·q280·q282·q291·q293·q318·q321·q401·q404·q406·q425·q432·q529·q532·q533·q543·q548·q555·q558·q577·q585·q652)은 오답·대안·상황 조건을 정답 구성의 보조 지식으로 센 기준 차이를 정리했고, q533은 오답 CloudFront 대신 실제 백엔드 Lambda를 기록했다(축 1~8·11). q538·q656은 현재 개념의 직접 설명이나 대상 개념의 부재만으로 주제를 확정하던 근거를 고쳐 keep→ambiguous로 두 해석을 남겼다(축 2·3·6). q633·q635는 q128 문제문에 없는 대비 표현을 근거로 삼던 rationale만 바로잡고 keep·yes를 유지했다(축 1·3). 최종 keep 715·ambiguous 10·move-recommended 7, conceptFit yes 711·partial 21·no 0, confidence high 6·medium 1·low 0·null 725; 재검토 신호 2건(move+yes 2: q152·q465, keep+no 0)은 직접 설명하는 개념과 주제 경계가 어긋나는 이유를 확인했다(축 9·10). coverageConflict true 2(q223·q225)·false 730, retarget ready 4·needs-design 3·null 725를 재계산해 확인했고 커버리지 때문에 의미 판정을 되돌린 곳은 없다(축 11). q152·q153·q154를 모두 옮기면 waf-shield.cloudfront가 비는 집합 단위 제약은 기존 step 10 메모대로 남으며 문항 단위 계산식을 바꾸지 않았다. Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·732줄·완전성 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. rationale 41건·secondaryTopics 37건·verdict 2건만 변경하고 732줄·문항 id 집합·줄 순서·미수정 691줄 바이트·worksheet 전문을 보존했다. verdicts.jsonl과 index.json만 변경, 제품 데이터·코드·검사기 변경 없음.",
+      "completed_at": "2026-09-13T09:08:07+0900"
     },
     {
       "step": 13,
