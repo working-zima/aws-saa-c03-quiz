@@ -109,7 +109,10 @@
     {
       "step": 13,
       "name": "audit-report",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-13T13:49:24+0900",
+      "summary": "tools/aggregate.mjs(저장소 밖 도구 테스트 10개로 TDD)로 audit/report.md 14절과 by-topic 39개 파일을 생성: 판정 732건·누락 0·중복 0, keep 715(97.7%)·ambiguous 10(1.4%)·move-recommended 7(1.0%), confidence high 6·medium 1·low 0, conceptFit yes 711·partial 21·no 0. 이동 쌍 5개 — waf-shield→cloudfront-global-accelerator 3(q152·q153·q154)·elastic-load-balancing→secrets-encryption(q465)·lambda→rds-storage-features(q508)·security-groups-nacl→waf-shield(q225)·cloudwatch-xray→emr-glue-athena(q223), 이동 후보 비율 최고 waf-shield 15.0%. retarget ready 4(q153·q154·q465·q508)·needs-design 3(q152 대상 개념 없음, q223·q225 coverageConflict); 개념 단위로 세면 후보를 모두 옮길 때 비는 개념이 3개이고 그중 waf-shield.cloudfront(q152·q153·q154)는 문항 단위 식에 잡히지 않는다. move+yes 2(q152·q465)·keep+no 0·keep+partial 14. ambiguous 10건 중 5건(q364·q497·q656·q667·q684)이 sqs-sns-eventbridge를 다른 해석으로 두며, q364 최종은 ambiguous·conceptFit yes. step 2~11 summary 합계(keep 717·ambiguous 8)와 현재의 차이는 step 12가 바꾼 q538·q656(keep→ambiguous)뿐이고 급변 경고 0건. 집계 중 판정을 고쳐야 할 자리는 발견하지 못했다. Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·집계 재실행 결과 동일·판정 검사(--expect 732 --complete)·주제 파일 39개·제품 데이터 4종 해시 등 AC 전부 통과, verdicts.jsonl·worksheet.jsonl·src·scripts 변경 없음.",
+      "completed_at": "2026-09-13T14:04:51+0900"
     }
   ],
   "created_at": "2026-09-12T08:24:23+0900"
