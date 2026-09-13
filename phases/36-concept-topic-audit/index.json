@@ -2,20 +2,84 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "36-concept-topic-audit",
   "steps": [
-    { "step": 0, "name": "audit-criteria-docs", "status": "pending" },
-    { "step": 1, "name": "build-worksheet", "status": "pending" },
-    { "step": 2, "name": "sample-criteria", "status": "pending" },
-    { "step": 3, "name": "concepts-s3-block", "status": "pending" },
-    { "step": 4, "name": "concepts-file-db", "status": "pending" },
-    { "step": 5, "name": "concepts-db-compute", "status": "pending" },
-    { "step": 6, "name": "concepts-delivery-serverless", "status": "pending" },
-    { "step": 7, "name": "concepts-integration-backup", "status": "pending" },
-    { "step": 8, "name": "concepts-network", "status": "pending" },
-    { "step": 9, "name": "concepts-analytics-observability", "status": "pending" },
-    { "step": 10, "name": "concepts-security", "status": "pending" },
-    { "step": 11, "name": "concepts-identity-cost-ops", "status": "pending" },
-    { "step": 12, "name": "consistency-pass", "status": "pending" },
-    { "step": 13, "name": "cross-phase35", "status": "pending" },
-    { "step": 14, "name": "audit-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "audit-criteria-docs",
+      "status": "completed",
+      "summary": "ADR-035를 지정 원문·줄바꿈 그대로 신설하고 lint·build·512개 테스트·구조 검사·문구 검사·잠긴 파일 5종 해시 검사를 모두 통과했다.",
+      "started_at": "2026-09-13T19:28:13+0900",
+      "completed_at": "2026-09-13T19:30:46+0900"
+    },
+    {
+      "step": 1,
+      "name": "build-worksheet",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "sample-criteria",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "concepts-s3-block",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "concepts-file-db",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "concepts-db-compute",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "concepts-delivery-serverless",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "concepts-integration-backup",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "concepts-network",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "concepts-analytics-observability",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "concepts-security",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "concepts-identity-cost-ops",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "consistency-pass",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "cross-phase35",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "audit-report",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-13T19:28:13+0900"
 }
