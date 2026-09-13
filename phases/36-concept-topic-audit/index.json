@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "build-worksheet",
-      "status": "pending"
+      "status": "completed",
+      "summary": "워크시트 생성기·판정 검사기를 구현하고 개념 전문·배열 순서·732문항 연결을 보존한 618줄을 생성했다. 신호가 있는 개념 수는 foreignServiceMentions 169·commonPatternMentions 86·comparisonShape 35·nearDuplicateCandidates 21이며, Node 18.17.1에서 도구 TDD 66개·기존 테스트 512개·lint·build·구조 검사·워크시트 AC·잠긴 파일 5종 해시 검사를 모두 통과했다. 판정 파일은 생성하지 않았다.",
+      "started_at": "2026-09-13T19:30:54+0900",
+      "completed_at": "2026-09-13T19:39:48+0900"
     },
     {
       "step": 2,
