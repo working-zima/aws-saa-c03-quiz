@@ -53,7 +53,9 @@
     {
       "step": 6,
       "name": "concepts-delivery-serverless",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-14T18:55:31+0900",
+      "summary": "트래픽 분배·엣지·서버리스·컨테이너 4개 주제의 미판정 개념 77개(15·23·17·22개)를 판정했다: keep 77·ambiguous 0·move-recommended 0, confidence high 0·medium 0·low 0(null 77), serviceSpecificGoal true 71·false 6, duplicateOf 0건, 신호 조합 0건(keep+중복 0·move+고유 목표 0). 판단이 어려웠던 elastic-load-balancing.end-to-end-encryption-behind-alb·cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction·lambda.lambda-kinesis-event-source·lambda.serverless-runtime-no-os-access·ecs-eks-fargate.ecr-image-scan-on-push·ecs-eks-fargate.app2container는 각각 뒤 구간 TLS가 만드는 인증서 운영 판단, S3 OAC에 대응하는 ALB 오리진 보호, 처리 계층으로서의 Lambda 이벤트 소스, 관리형 런타임의 OS 접근이라는 비교 축, ECR에서 켜는 스캔 설정, 컨테이너 변환 도구와 Beanstalk의 대비가 중심이라 keep했다. 중복 후보 aws-core-services.elb·aws-core-services.lambda(입문 깊이 차이)와 fargate-no-time-limit↔fargate-per-second-billing(실행 시간 상한 대 최소 과금 단위)은 결정적 지식이 달라 중복으로 보지 않았다. 승인된 표본 4개를 포함한 기존 252줄을 바이트 단위로 보존해 총 329줄이 됐고 담당 주제의 81개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 329·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다."
     },
     {
       "step": 7,
