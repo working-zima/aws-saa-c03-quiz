@@ -93,7 +93,10 @@
     {
       "step": 11,
       "name": "concepts-identity-cost-ops",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-15T08:00:42+0900",
+      "summary": "자격 증명·비용·운영 6개 주제의 미판정 개념 58개(identity-federation 10·organizations-cloudtrail-config 15·cost-management 16·governance-iac 6·systems-manager 6·ai-ml-services 5)를 판정했다: keep 57·ambiguous 1·move-recommended 0, confidence high 0·medium 0·low 0(null 58), serviceSpecificGoal true 56·false 2, duplicateOf 1행(systems-manager.ssm-patch-manager→ec2-autoscaling.ec2-image-builder), 신호 조합 1건(keep+중복 1·move+고유 목표 0). ambiguous는 cost-management.on-demand-capacity-reservation으로, 절약 플랜·예약 인스턴스와 혼동되는 비할인 기능을 현재 약정 블록에서 가르는 해석과 EC2 용량 기능이며 정답 대안이 스팟이라 ec2-autoscaling의 구매 옵션 블록이 자연스럽다는 해석을 남겼다. 판단이 어려웠던 systems-manager.ec2-instance-connect-endpoint·ssm-run-command·ssm-patch-manager, organizations-cloudtrail-config.organizations-consolidated-billing·scp-condition-exception·config-custom-rule, cost-management.budget-forecasted-alert·cost-and-usage-report, governance-iac.cloudformation-drift-detection은 각각 Session Manager와 짝을 이루는 배스천 없는 SSH 접속 경로, 명령을 실행하는 쪽의 기능(이벤트는 활용 예라 표본 DataSync·ACM과 구분), Patch Manager의 적용 범위 한계, 격리와 통합 청구를 함께 얻는 계정 구조, SCP의 예외 표현 제약, 관리형 규칙 밖 구성 값 감시(IOPS·알림은 예와 전달 수단), 실제·예측 알림 기준(SNS는 경로), 원본 청구 데이터를 고르는 판단, 드리프트 감지의 대상 범위라는 비교 축이 중심이라 keep했다. ssm-patch-manager는 ec2-image-builder 문단 1과 같은 구분을 반대편에서 가르쳐 중복으로 기록했고, organizations-scp 문단 1의 관리 계정 태그 활성화(cost-allocation-tag-activation-in-management-account와 겹침)·savings-plan↔savings-plan-details·cognito-pools↔cognito-social-idp-federation은 곁가지나 일부만 겹쳐 중복으로 보지 않았다. 기존 560줄과 승인된 표본 6개를 바이트 단위로 보존해 총 618줄이 됐고 담당 주제의 64개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 618·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-15T08:15:53+0900"
     },
     {
       "step": 12,
