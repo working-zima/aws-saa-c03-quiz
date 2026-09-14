@@ -85,7 +85,10 @@
     {
       "step": 10,
       "name": "concepts-security",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-15T04:56:57+0900",
+      "summary": "보안 4개 주제의 미판정 개념 60개(secrets-encryption 19·waf-shield 14·guardduty-macie-inspector 10·iam-permissions 17)를 판정했다: keep 56·ambiguous 2·move-recommended 2, confidence high 1·medium 1·low 0(null 58), serviceSpecificGoal true 57·false 3, duplicateOf 2행(secrets-encryption.secrets-manager-vs-parameter-store↔rotation-heuristic), 신호 조합 4건(keep+중복 2·move+고유 목표 2). 이동 권고는 waf-shield.cloudfront→cloudfront-global-accelerator(high, CloudFront 기본 소개 뒤의 기능 개요)와 iam-permissions.iam-roles-anywhere→identity-federation(medium, STS 임시 자격 증명 블록)이며 실제 데이터는 옮기지 않았다. 판단이 어려웠던 위 두 이동 개념과 guardduty-macie-inspector.guardduty-finding-to-eventbridge·macie-finding-to-eventbridge에는 근거를 남겼고, 두 이벤트 연동은 탐지 서비스의 운영 통합과 EventBridge 공통 대응·알림 패턴이 함께 중심이라 표본 DataSync·ACM과 같은 기준으로 ambiguous로 뒀다. secrets-encryption.parameter-store·lambda-env-var-kms·kms-cloudhsm-key-store·acm-cloudfront-region, guardduty-macie-inspector.macie-automated-discovery·macie-delegated-administrator·inspector-scans-ecr-images, iam-permissions.network-access-analyzer·permissions-boundary는 각각 비밀값 관리 수단의 비교·키 저장과 인증서의 사용 조건·관리형 검사 실행·탐지 통합의 전제·검사 주체·분석 대상 비교·개별 권한 상한이 중심이라 keep했다. 기존 500줄과 승인된 표본 4개를 바이트 단위로 보존해 총 560줄이 됐고 담당 주제의 64개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 560·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-15T05:06:22+0900"
     },
     {
       "step": 11,
