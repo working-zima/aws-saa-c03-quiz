@@ -77,7 +77,9 @@
     {
       "step": 9,
       "name": "concepts-analytics-observability",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-15T03:16:23+0900",
+      "summary": "분석·관측 4개 주제의 미판정 개념 54개(emr-glue-athena 19·kinesis-streaming 15·redshift-opensearch-quicksight 10·cloudwatch-xray 10)를 판정했다: keep 53·ambiguous 1·move-recommended 0, confidence high 0·medium 0·low 0(null 54), serviceSpecificGoal true 50·false 4, duplicateOf 0건, 신호 조합 0건(keep+중복 0·move+고유 목표 0). ambiguous는 cloudwatch-xray.cloudwatch-alarm-state-change-event로, 알람 상태 변경을 자동 대응의 출발점으로 삼는 CloudWatch 알람 활용과 규칙이 대상을 직접 호출해 함수를 끼우지 않는 EventBridge 규칙 설계(sqs-sns-eventbridge.eventbridge-resource-change-rule과 같은 패턴)라는 두 해석을 남겼고 표본 DataSync·ACM 이벤트 알림과 같은 기준을 따랐다. 판단이 어려웠던 redshift-opensearch-quicksight.dynamodb-to-s3-analytics·redshift-opensearch-quicksight.oltp-vs-olap·kinesis-streaming.msk·cloudwatch-xray.cloudwatch-agent-memory-metric·cloudwatch-xray.ec2-detailed-monitoring·cloudwatch-xray.performance-insight·cloudwatch-xray.performance-insights-rightsizing·cloudwatch-xray.cloudwatch-container-insights·emr-glue-athena.parquet-columnar-format은 각각 웨어하우스 없이 S3 위에서 질의·시각화하는 선택, 트랜잭션과 분석의 워크로드 축, 관리형 Kafka 자체(amazon-mq와 닮은 이전 패턴은 대비), 에이전트가 있어야 만들어지는 지표 수집 범위(조정 지표 선택을 가르친 sqs-queue-depth-scaling과 구분), 지표 수집 간격, 데이터베이스 기능이 아닌 성능 관측과 관측 도구 비교, eks-connector와 반대편에서 세우는 관측 범위, 분석 쿼리의 읽는 양이 중심이라 keep했다. dynamodb-to-s3-analytics↔dynamodb.dynamodb-s3-export-vs-streams·quicksight, managed-service-apache-flink↔streaming-services-comparison, kinesis-partition-key-hot-shard↔kinesis-capacity-mode, firehose-format-conversion↔parquet-columnar-format, kinesis-client-library↔lambda.lambda-kinesis-event-source는 결정적 지식이 달라 중복으로 보지 않았다. 기존 446줄을 바이트 단위로 보존해 총 500줄이 됐고 담당 주제의 58개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 500·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다."
     },
     {
       "step": 10,
