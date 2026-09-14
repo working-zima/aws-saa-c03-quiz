@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "concepts-file-db",
-      "status": "pending"
+      "status": "completed",
+      "summary": "파일 스토리지·전송·마이그레이션·RDS 4개 주제의 미판정 개념 68개(24·18·6·20개)를 판정했다: keep 68·ambiguous 0·move-recommended 0, confidence high 0·medium 0·low 0(null 68), serviceSpecificGoal true 62·false 6, duplicateOf 1행(rds-storage-features.rds→aws-core-services.rds), 신호 조합 1건(keep+중복 1·move+고유 목표 0). 판단이 어려웠던 efs-fsx.fsx-file-gateway·efs-fsx.fsx-ontap-snapmirror·data-transfer-services.snowball-edge-compute·data-transfer-services.transfer-family-structured-logging·rds-storage-features.rds-snapshot-cross-region-copy·rds-storage-features.rds-custom-byol은 각각 파일 시스템과 접속 통로의 비교, ONTAP 복제 통합, 오프라인 장비 기능, 전송 사용자 기록, RDS 복구 수단 선택, Custom의 이전 조건이 중심이라 keep했다. RDS 소개 중복은 서비스 지형과 RDS 기능 블록 양쪽의 도입 역할로 소속 판정과 분리했다. 승인된 표본 4개를 포함한 기존 120줄을 바이트 단위로 보존해 총 188줄이 됐고 담당 주제의 72개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 188·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "started_at": "2026-09-14T18:35:49+0900",
+      "completed_at": "2026-09-14T18:44:59+0900"
     },
     {
       "step": 5,
