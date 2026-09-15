@@ -117,7 +117,9 @@
     {
       "step": 14,
       "name": "audit-report",
-      "status": "pending"
+      "status": "completed",
+      "summary": "tools/aggregate.mjs가 verdicts.jsonl·concepts.jsonl·cross-phase35.jsonl·phase 35 문항 판정·src/data에서 report.md·by-topic 39개·handoff-fixes.md를 만든다(숫자는 전부 스크립트가 세고, 교차 유형은 cross-phase35.mjs의 classify로 다시 계산해 파일과 대조한다). 최종 집계: 판정 618(누락·중복 0, 주제 39개 합 618), keep 600(97.1%)·ambiguous 11(1.8%)·move-recommended 7(1.1%), confidence high 4·medium 3·low 0, serviceSpecificGoal true 514·false 104(move 안 true 6/7), 이동 주제 쌍 5개(ebs-instance-store→ec2-autoscaling 3이 최다, 이동 비율 최고 20.0%), duplicateOf 16개·8쌍(같은 주제 4·다른 주제 4·한쪽만 0), 재검토 신호 move+고유 목표 6·keep+중복 16, 교차 ① 580·2A 11(영향 14문항)·2B 4(4)·3 2(2)·4 0·hold 21(24)이며 step 13 기록과 차이 없음, step별 급변 경고 0, step 12 표식 38줄. 인계 후보: 1절 high 이동 4(영향 6문항)·2A 14·2B 4·3 2·4 0·보류 21(ambiguous 11·medium 3·hold 21의 합집합)이고, 후보마다 영향 문항 전체·conceptId/topicId 변경 여부·원/대상 주제·서비스 블록 자리·phase 34 순서 영향·커버리지 영향·되돌리는 방법·data.test.ts와 topics-baseline.json의 해당 줄을 적었다. HANDOFF-P36의 원 주제 쪽 공백(blockImpact 7건 모두 원 주제 미기재)은 후보마다 「원 주제 쪽 영향」으로 회수했다. 판정을 고칠 근거는 찾지 못했고 설계 문제만 report.md 14절에 남겼다: 추가 설계가 필요한 이동 후보 2건(spread-placement-group은 지정한 앞 개념 cluster-placement-group이 medium이라 자리 미정, waf-shield.cloudfront는 옮긴 id가 cloudfront-global-accelerator.cloudfront와 겹치고 blockImpact가 겹침 정리를 후속 설계로 미루며 q152의 권장 개념이 없음), 이동 권고를 모두 넣으면 cluster-placement-group 뒤에 지정한 enhanced-networking 대신 spread-placement-group이 붙는 자리 1건, 2B의 q223·q225는 원 개념의 유일한 문항이라 옮기면 커버리지가 깨짐. 이전 시도가 남긴 산출물을 다시 생성해 바이트 단위로 같음을 확인했고, verdicts.jsonl·cross-phase35.jsonl·데이터·테스트·phase 35 산출물은 그대로이며, Node 18.17.1에서 lint·build·512개 테스트·구조 검사·aggregate.mjs·검사기 --expect 618 --complete·파일 존재·주제 파일 39개·보고서 수치 대조·잠긴 파일 5종 해시 AC를 모두 통과했고 핵심 수치와 순수 함수는 저장소 밖 임시 검사로 따로 대조했다.",
+      "started_at": "2026-09-16T03:22:39+0900"
     }
   ],
   "created_at": "2026-09-13T19:28:13+0900"
