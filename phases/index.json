@@ -181,7 +181,8 @@
     },
     {
       "dir": "36-concept-topic-audit",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-09-16T03:55:53+0900"
     }
   ]
 }
