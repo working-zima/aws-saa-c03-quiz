@@ -1,0 +1,214 @@
+{
+  "phase": "37-question-relink",
+  "sources": {
+    "questionAudit": "phases/35-question-topic-audit/audit/verdicts.jsonl",
+    "crossAudit": "phases/36-concept-topic-audit/audit/cross-phase35.jsonl"
+  },
+  "baseline": {
+    "questionCount": 732,
+    "conceptCount": 618,
+    "questionsSha256": "aadc1894b3eb2d9211159ef346057bf24510ba534b78ccade4d40bf018343f54",
+    "topicsSha256": "5a227aea172ca391ee1110d9228f933b9f8e728f8b8bf04e8da952e4def74e7a",
+    "contentSha256": "990b6bf49c9aaea914d25ffef0e67373477fd67244326ff586c8742b237ecd3d",
+    "linksOutsideScopeSha256": "d27d62fed36aee3c9f8d8814034830eeef8e89d7282aec562127b423983d18de",
+    "auditSha256": {
+      "phases/35-question-topic-audit/audit/verdicts.jsonl": "fc56b769b25279b4047133801b86bc71d95142210c2b6f7667c6c4d0d79cf643",
+      "phases/36-concept-topic-audit/audit/verdicts.jsonl": "7b3c6f3054b697836967af6c0226b9db40678389c3bb0c61c6af43ce49fa5b26",
+      "phases/36-concept-topic-audit/audit/cross-phase35.jsonl": "effc860809f8605fd14f954127d4c4606613243b5d9f9cb44e733ff4f75cba99"
+    }
+  },
+  "items": [
+    {
+      "id": "q037",
+      "type": "2A",
+      "from": {
+        "topicId": "s3-encryption-batch",
+        "conceptId": "s3-encryption-batch.sse-types"
+      },
+      "to": {
+        "topicId": "s3-encryption-batch",
+        "conceptId": "s3-encryption-batch.sse-kms-cost"
+      }
+    },
+    {
+      "id": "q043",
+      "type": "2A",
+      "from": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.efs"
+      },
+      "to": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.efs-lifecycle-management"
+      }
+    },
+    {
+      "id": "q045",
+      "type": "2A",
+      "from": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.fsx"
+      },
+      "to": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.fsx-lustre-s3-data-repository-association"
+      }
+    },
+    {
+      "id": "q046",
+      "type": "2A",
+      "from": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.fsx"
+      },
+      "to": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.fsx-ontap-multi-protocol-tiering"
+      }
+    },
+    {
+      "id": "q061",
+      "type": "2A",
+      "from": {
+        "topicId": "rds-storage-features",
+        "conceptId": "rds-storage-features.features"
+      },
+      "to": {
+        "topicId": "rds-storage-features",
+        "conceptId": "rds-storage-features.rds-multi-az-db-cluster"
+      }
+    },
+    {
+      "id": "q065",
+      "type": "2A",
+      "from": {
+        "topicId": "rds-storage-features",
+        "conceptId": "rds-storage-features.features"
+      },
+      "to": {
+        "topicId": "rds-storage-features",
+        "conceptId": "rds-storage-features.rds-blue-green-deployment"
+      }
+    },
+    {
+      "id": "q068",
+      "type": "2A",
+      "from": {
+        "topicId": "aurora",
+        "conceptId": "aurora.aurora"
+      },
+      "to": {
+        "topicId": "aurora",
+        "conceptId": "aurora.aurora-replica-auto-scaling"
+      }
+    },
+    {
+      "id": "q080",
+      "type": "2A",
+      "from": {
+        "topicId": "elastic-load-balancing",
+        "conceptId": "elastic-load-balancing.elb"
+      },
+      "to": {
+        "topicId": "elastic-load-balancing",
+        "conceptId": "elastic-load-balancing.nlb-udp-listener"
+      }
+    },
+    {
+      "id": "q081",
+      "type": "2A",
+      "from": {
+        "topicId": "elastic-load-balancing",
+        "conceptId": "elastic-load-balancing.elb"
+      },
+      "to": {
+        "topicId": "elastic-load-balancing",
+        "conceptId": "elastic-load-balancing.gateway-load-balancer"
+      }
+    },
+    {
+      "id": "q086",
+      "type": "2A",
+      "from": {
+        "topicId": "lambda",
+        "conceptId": "lambda.lambda"
+      },
+      "to": {
+        "topicId": "lambda",
+        "conceptId": "lambda.lambda-reserved-concurrency"
+      }
+    },
+    {
+      "id": "q159",
+      "type": "2A",
+      "from": {
+        "topicId": "identity-federation",
+        "conceptId": "identity-federation.identity-center"
+      },
+      "to": {
+        "topicId": "identity-federation",
+        "conceptId": "identity-federation.identity-center-permission-set"
+      }
+    },
+    {
+      "id": "q165",
+      "type": "2A",
+      "from": {
+        "topicId": "cost-management",
+        "conceptId": "cost-management.savings-plan"
+      },
+      "to": {
+        "topicId": "cost-management",
+        "conceptId": "cost-management.savings-plan-details"
+      }
+    },
+    {
+      "id": "q344",
+      "type": "2A",
+      "from": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.efs-ia-file-size-threshold"
+      },
+      "to": {
+        "topicId": "efs-fsx",
+        "conceptId": "efs-fsx.efs-lifecycle-management"
+      }
+    },
+    {
+      "id": "q465",
+      "type": "2B",
+      "from": {
+        "topicId": "elastic-load-balancing",
+        "conceptId": "elastic-load-balancing.end-to-end-encryption-behind-alb"
+      },
+      "to": {
+        "topicId": "secrets-encryption",
+        "conceptId": "secrets-encryption.acm"
+      }
+    },
+    {
+      "id": "q472",
+      "type": "2A",
+      "from": {
+        "topicId": "cloudfront-global-accelerator",
+        "conceptId": "cloudfront-global-accelerator.global-accelerator-static-ip"
+      },
+      "to": {
+        "topicId": "cloudfront-global-accelerator",
+        "conceptId": "cloudfront-global-accelerator.global-accelerator-protocols"
+      }
+    },
+    {
+      "id": "q508",
+      "type": "2B",
+      "from": {
+        "topicId": "lambda",
+        "conceptId": "lambda.serverless-runtime-no-os-access"
+      },
+      "to": {
+        "topicId": "rds-storage-features",
+        "conceptId": "rds-storage-features.rds-custom"
+      }
+    }
+  ]
+}

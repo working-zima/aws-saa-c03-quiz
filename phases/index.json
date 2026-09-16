@@ -168,6 +168,27 @@
       "dir": "33-notation-standardization",
       "status": "completed",
       "completed_at": "2026-09-11T09:30:46+0900"
+    },
+    {
+      "dir": "34-service-block-order",
+      "status": "completed",
+      "completed_at": "2026-09-12T00:30:03+0900"
+    },
+    {
+      "dir": "35-question-topic-audit",
+      "status": "completed",
+      "completed_at": "2026-09-13T14:04:52+0900"
+    },
+    {
+      "dir": "36-concept-topic-audit",
+      "status": "completed",
+      "completed_at": "2026-09-16T03:55:53+0900"
+    },
+    {
+      "dir": "37-question-relink",
+      "status": "completed",
+      "failed_at": "2026-09-16T19:16:14+0900",
+      "completed_at": "2026-09-16T19:22:12+0900"
     }
   ]
 }

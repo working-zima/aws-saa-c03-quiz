@@ -1,0 +1,120 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "35-question-topic-audit",
+  "steps": [
+    {
+      "step": 0,
+      "name": "audit-criteria-docs",
+      "status": "completed",
+      "started_at": "2026-09-12T08:24:23+0900",
+      "summary": "docs/ADR.md 끝에 지정 본문·줄바꿈 그대로 ADR-034 신설; Node 18.17.1에서 lint·build·테스트 512개·구조 검사·ADR 문구/단일성 검사·제품 데이터 4종 해시 확인 등 AC 전부 통과.",
+      "completed_at": "2026-09-12T08:27:10+0900"
+    },
+    {
+      "step": 1,
+      "name": "audit-tooling",
+      "status": "completed",
+      "started_at": "2026-09-12T08:27:31+0900",
+      "summary": "워크시트 생성·판정 검사 도구 2개와 worksheet.jsonl 732줄(유일 문항 540건) 작성; Node 18.17.1에서 lint·build·기존 테스트 512개·도구 테스트 12개·구조 검사·제품 데이터 4종 해시·문항 전문 보존·CLI 검증 통과. AC의 wc 문자열 비교는 macOS 앞쪽 공백으로 실패하여 동등한 -eq 숫자 비교로 732줄 확인; verdicts.jsonl 미생성, phase 밖 파일 변경 없음.",
+      "completed_at": "2026-09-12T08:36:13+0900"
+    },
+    {
+      "step": 2,
+      "name": "sample-verdicts",
+      "status": "completed",
+      "started_at": "2026-09-12T12:20:47+0900",
+      "summary": "동일 표본 40문항 재검토: keep 37·ambiguous 1(q364)·move-recommended 2(q154·q223), 이동 confidence high 2·medium 0·low 0; conceptFit yes 37·partial 3(q068·q154·q223)·no 0; 판단이 어려웠던 문항 q068·q154·q223·q284·q355·q364, q284·q355는 keep으로 변경, q223은 coverageConflict로 needs-design. 검사기에 재검토 신호 조합 rationale 80자 하한을 TDD로 추가(저장소 밖 도구 테스트 6개 통과); Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·표본 순서·판정 스키마·secondaryTopics 상한·제품 데이터 4종 해시 확인 통과. AC의 wc 문자열 비교는 macOS 앞쪽 공백으로 실패하여 동등한 -eq 숫자 비교로 40줄 확인.",
+      "completed_at": "2026-09-12T12:30:11+0900"
+    },
+    {
+      "step": 3,
+      "name": "verdicts-s3-block",
+      "status": "completed",
+      "started_at": "2026-09-12T17:10:58+0900",
+      "summary": "담당 6개 주제 85문항 판정 완료(재실행으로 기존 판정 보존): keep 85·ambiguous 0·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 84·partial 1(q037)·no 0, move+yes 0·keep+no 0; 판단이 어려웠던 문항 q037·q172·q259·q274·q279·q283·q294. q037은 같은 주제의 sse-kms-cost 개념을 권장. 빈 scenarioServices 8건(q009~q015·q317)만 보완하고 검사기에 최소 1개 규칙을 TDD로 추가(저장소 밖 도구 테스트 9개 통과). 누적 125줄, 승인 표본 40줄·나머지 77줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과.",
+      "completed_at": "2026-09-12T17:15:36+0900"
+    },
+    {
+      "step": 4,
+      "name": "verdicts-file-db",
+      "status": "completed",
+      "started_at": "2026-09-12T17:15:43+0900",
+      "summary": "담당 4개 주제의 미판정 86문항 추가: keep 85·ambiguous 1(q348)·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 80·partial 6(q043·q045·q046·q061·q065·q344)·no 0, move+yes 0·keep+no 0. partial 6건은 같은 주제 내 개념 연결 변경 권고이며 q348은 EFS 복제 제약과 DataSync 구성의 주제 경계를 미확정으로 남겼다. 판단이 어려웠던 문항 q043·q045·q046·q047·q061·q064·q344·q348·q358·q373·q380·q384. 누적 211줄, 승인 표본 40줄을 포함한 기존 125줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-12T17:28:05+0900"
+    },
+    {
+      "step": 5,
+      "name": "verdicts-db-compute",
+      "status": "completed",
+      "started_at": "2026-09-12T17:29:25+0900",
+      "summary": "담당 4개 주제의 미판정 79문항 추가: keep 78·ambiguous 1(q400)·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 78·partial 1(q400)·no 0, move+yes 0·keep+no 0. q400은 RDS for Oracle의 35일 초과 보존을 묻는 문항이라 정답 선택 지식이 backup-disaster-recovery.backup-long-term-retention 쪽이지만, 해설과 현재 개념이 클론의 Aurora 전용 제약을 갈림길로 세우고 있어 주제 경계를 미확정으로 남겼다(이동 시 목적지만 기록). 판단이 어려웠던 문항 q067·q070·q071·q075·q076·q077·q400·q403·q433·q450. 소개 개념에 걸린 정의 문항 여섯은 전용 개념이 다른 축(확장 대상·Lambda 경로·적용 범위·단순 조정 대비·워크로드 적합성·표준 대 전환 가능)을 중심으로 설명해 소개 문단이 더 직접적이라 yes로 두었고, 이는 같은 개념의 q068을 partial로 본 표본 판정과 어긋나지 않는다. 누적 290줄, 기존 211줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-12T17:46:08+0900"
+    },
+    {
+      "step": 6,
+      "name": "verdicts-delivery-serverless",
+      "status": "completed",
+      "started_at": "2026-09-12T22:17:33+0900",
+      "summary": "담당 4개 주제의 미판정 94문항 추가: keep 90·ambiguous 2(q459·q497)·move-recommended 2(q465·q508), 이동 confidence high 2·medium 0·low 0; conceptFit yes 89·partial 5(q080·q081·q086·q472·q508)·no 0, move+yes 1(q465)·keep+no 0. q465는 인증서 발급·갱신의 관리 책임을 묻는 ACM 문항으로, q508은 관리형 DB의 OS 접근을 묻는 RDS Custom 문항으로 이동 권고하며 둘 다 retarget ready·coverageConflict false다. q459는 내부 로드 밸런서와 사설 DNS의 독립된 지식, q497은 Lambda 한도 대응과 큐의 요청 보관 패턴 사이의 주제 경계를 미확정으로 남겼다. 판단이 어려웠던 문항 q080·q081·q086·q459·q465·q472·q474·q486·q487·q497·q504·q505·q506·q508·q518·q521. 누적 384줄, 승인 표본 40줄을 포함한 기존 290줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-12T22:31:01+0900"
+    },
+    {
+      "step": 7,
+      "name": "verdicts-integration-backup",
+      "status": "completed",
+      "started_at": "2026-09-12T22:36:04+0900",
+      "summary": "담당 3개 주제의 미판정 75문항 추가: keep 75·ambiguous 0·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 75·partial 0·no 0, move+yes 0·keep+no 0. 세 주제 모두 서비스 경계와 문항의 결정 지식이 어긋나는 자리가 없었다 — 다른 주제의 서비스가 정답 구성에 들어간 문항(q542·q554·q558·q578)도 마지막 보기를 가르는 지식이 현재 주제에 있어 유지했다. 판단이 어려웠던 문항 q088·q089·q094·q537·q542·q545·q551·q554·q558·q578. q537은 정답이 API Gateway 캐싱인데 개념 이름이 엔드포인트 유형이라 망설였으나, 그 개념의 두 번째 문단이 네 설정을 비교하며 캐싱을 직접 규정하고 앱 안에 캐싱을 다루는 다른 개념이 없어 yes로 두었다. 누적 459줄, 기존 384줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-12T22:51:07+0900"
+    },
+    {
+      "step": 8,
+      "name": "verdicts-network",
+      "status": "completed",
+      "started_at": "2026-09-13T03:21:28+0900",
+      "summary": "담당 4개 주제의 미판정 73문항 추가: keep 72·ambiguous 0·move-recommended 1(q225), 이동 confidence high 1·medium 0·low 0; conceptFit yes 72·partial 1(q225)·no 0, move+yes 0·keep+no 0. q225는 NACL 한계가 이미 주어진 상황에서 WAF IP 세트와 지리적 일치 규칙을 가르는 문항이므로 waf-shield.waf-rule-types로 이동 권고하며, 현재 개념의 유일 문항이라 coverageConflict true·retarget needs-design이다. 판단이 어려웠던 문항 q212·q213·q218·q220·q225·q586·q593·q595·q597·q598·q603·q604·q608·q611·q613·q616. 누적 532줄, 승인 표본 40줄을 포함한 기존 459줄 바이트 보존 및 담당 범위 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-13T03:34:49+0900"
+    },
+    {
+      "step": 9,
+      "name": "verdicts-analytics-observability",
+      "status": "completed",
+      "started_at": "2026-09-13T03:43:25+0900",
+      "summary": "담당 4개 주제의 미판정 55문항 추가: keep 55·ambiguous 0·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 55·partial 0·no 0, move+yes 0·keep+no 0. 네 주제 모두 문항이 정답을 가르는 지식이 현재 주제의 개념에 있었다 — 다른 주제의 서비스가 정답 구성에 들어간 문항(q270·q623·q624·q638·q639·q650·q652·q654·q656)은 그 주제를 secondaryTopics로만 기록했다. 판단이 어려웠던 문항 q264·q270·q626·q633·q634·q635·q650·q652·q654·q656. q633~q635는 세 서비스의 단계를 나누는 비교 개념도 관련되지만, 대비를 프롬프트에 세운 q128과 달리 서비스 하나의 역할을 물어 그 역할을 정의하는 소개 개념에 yes로 두었다. q656은 이벤트 소스를 바꿔도 EventBridge 규칙 논리가 남아 q364와 닮았으나, sqs-sns-eventbridge에 함수 없이 대상을 직접 부르는 연결을 다루는 개념이 없고 오답이 알람 상태 변경을 자동 대응으로 잇는 방법을 오해한 것이라 유지했다. q626은 q223의 이동 목적지 개념과 판정이 맞물린다. 누적 587줄, 승인 표본 40줄을 포함한 기존 532줄 바이트 보존 및 담당 60문항 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-13T03:55:47+0900"
+    },
+    {
+      "step": 10,
+      "name": "verdicts-security",
+      "status": "completed",
+      "started_at": "2026-09-13T03:55:57+0900",
+      "summary": "담당 4개 주제의 미판정 76문항 추가: keep 72·ambiguous 2(q667·q684)·move-recommended 2(q152·q153), 이동 confidence high 1·medium 1·low 0; conceptFit yes 75·partial 1(q153)·no 0, move+yes 1(q152)·keep+no 0. q153은 캐시 무효화를 묻는 CloudFront 기능 문항이라 q154와 같이 cloudfront-global-accelerator.cloudfront-ttl로 이동 권고(high·ready)다. q152는 OAC 문항으로 같은 경계에서 CloudFront 주제를 권하지만, 현재 개념이 OAC를 직접 정의해 conceptFit yes이고 대상 주제에서 OAC를 담은 cloudfront-s3-upload-with-oac는 업로드 경로가 중심이라 권장 개념을 null로 두었다(medium·needs-design). q667(ACM 만료 이벤트)·q684(Macie 탐지 결과 알림)는 서비스 이벤트 → EventBridge → SNS 구조에서 오답을 가르는 폴링 대 이벤트·큐 대 알림 축을 sqs-sns-eventbridge의 eventbridge-event-pattern-vs-polling·sns-is-not-a-queue가 설명해 q364와 같이 ambiguous로 남겼고, 오답이 보안 서비스의 역할을 오해한 q680·q683은 q656과 같이 유지했다. q678은 정답이 EC2 Image Builder지만 오답이 발견과 조치를 혼동한 것이라 q355처럼 amazon-inspector를 유지했다. 판단이 어려웠던 문항 q140·q145·q152·q153·q236·q667·q678·q683·q684·q691·q692. 제약 메모: q152·q153·q154가 모두 옮겨지면 waf-shield.cloudfront에 문항이 남지 않지만 이 개념은 문항이 3개라 문항 단위 coverageConflict 식에는 잡히지 않는다. 누적 663줄, 기존 587줄 바이트 보존 및 담당 76문항 누락·중복 없음 확인; Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-13T04:12:49+0900"
+    },
+    {
+      "step": 11,
+      "name": "verdicts-identity-cost-ops",
+      "status": "completed",
+      "started_at": "2026-09-13T08:27:36+0900",
+      "summary": "담당 6개 주제의 미판정 69문항 추가: keep 68·ambiguous 1(q728)·move-recommended 0, 이동 confidence high 0·medium 0·low 0; conceptFit yes 66·partial 3(q159·q165·q728)·no 0, move+yes 0·keep+no 0. q159는 identity-center-permission-set, q165는 savings-plan-details로 같은 주제 내 연결 변경을 권한다. q728은 중단 허용 작업의 스팟 적합성과 절약 플랜·용량 예약을 가르는 비용 비교 사이에서 주제 경계를 미확정으로 두고 ec2-autoscaling.spot-workload-fit을 잠정 권했다. q301·q303·q307은 정답 구성에 다른 주제의 서비스나 기능이 들어가도 현재 개념이 비교 축 자체를 직접 설명해 유지했고, q302·q731은 알림 패턴보다 명령 실행 방식과 예측 비용 기준이 각각 답을 가른다. 판단이 어려웠던 문항 q159·q165·q244·q301·q302·q303·q306·q307·q308·q703·q714·q719·q721·q723·q726·q728·q729·q730·q731·q732. 누적 732줄, 승인 표본 40줄을 포함한 기존 663줄 바이트 보존 및 담당 72문항 누락·중복 없음 확인; 전체 누적 keep 717·ambiguous 8·move-recommended 7. Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·판정 검사(--complete 포함)·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. verdicts.jsonl과 index.json만 변경, 검사기·제품 코드 변경 없음.",
+      "completed_at": "2026-09-13T08:37:49+0900"
+    },
+    {
+      "step": 12,
+      "name": "consistency-pass",
+      "status": "completed",
+      "started_at": "2026-09-13T08:55:31+0900",
+      "summary": "732건을 11개 축으로 교차 검토(다문항 개념 78개·192문항 포함)해 총 41건 수정: 보조 주제 37건(q025·q031·q034·q038·q039·q040·q041·q089·q171·q176·q184·q186·q225·q254·q255·q277·q280·q282·q291·q293·q318·q321·q401·q404·q406·q425·q432·q529·q532·q533·q543·q548·q555·q558·q577·q585·q652)은 오답·대안·상황 조건을 정답 구성의 보조 지식으로 센 기준 차이를 정리했고, q533은 오답 CloudFront 대신 실제 백엔드 Lambda를 기록했다(축 1~8·11). q538·q656은 현재 개념의 직접 설명이나 대상 개념의 부재만으로 주제를 확정하던 근거를 고쳐 keep→ambiguous로 두 해석을 남겼다(축 2·3·6). q633·q635는 q128 문제문에 없는 대비 표현을 근거로 삼던 rationale만 바로잡고 keep·yes를 유지했다(축 1·3). 최종 keep 715·ambiguous 10·move-recommended 7, conceptFit yes 711·partial 21·no 0, confidence high 6·medium 1·low 0·null 725; 재검토 신호 2건(move+yes 2: q152·q465, keep+no 0)은 직접 설명하는 개념과 주제 경계가 어긋나는 이유를 확인했다(축 9·10). coverageConflict true 2(q223·q225)·false 730, retarget ready 4·needs-design 3·null 725를 재계산해 확인했고 커버리지 때문에 의미 판정을 되돌린 곳은 없다(축 11). q152·q153·q154를 모두 옮기면 waf-shield.cloudfront가 비는 집합 단위 제약은 기존 step 10 메모대로 남으며 문항 단위 계산식을 바꾸지 않았다. Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·732줄·완전성 검사·상한·신호 조합·제품 데이터 4종 해시 등 AC 전부 통과. rationale 41건·secondaryTopics 37건·verdict 2건만 변경하고 732줄·문항 id 집합·줄 순서·미수정 691줄 바이트·worksheet 전문을 보존했다. verdicts.jsonl과 index.json만 변경, 제품 데이터·코드·검사기 변경 없음.",
+      "completed_at": "2026-09-13T09:08:07+0900"
+    },
+    {
+      "step": 13,
+      "name": "audit-report",
+      "status": "completed",
+      "started_at": "2026-09-13T13:49:24+0900",
+      "summary": "tools/aggregate.mjs(저장소 밖 도구 테스트 10개로 TDD)로 audit/report.md 14절과 by-topic 39개 파일을 생성: 판정 732건·누락 0·중복 0, keep 715(97.7%)·ambiguous 10(1.4%)·move-recommended 7(1.0%), confidence high 6·medium 1·low 0, conceptFit yes 711·partial 21·no 0. 이동 쌍 5개 — waf-shield→cloudfront-global-accelerator 3(q152·q153·q154)·elastic-load-balancing→secrets-encryption(q465)·lambda→rds-storage-features(q508)·security-groups-nacl→waf-shield(q225)·cloudwatch-xray→emr-glue-athena(q223), 이동 후보 비율 최고 waf-shield 15.0%. retarget ready 4(q153·q154·q465·q508)·needs-design 3(q152 대상 개념 없음, q223·q225 coverageConflict); 개념 단위로 세면 후보를 모두 옮길 때 비는 개념이 3개이고 그중 waf-shield.cloudfront(q152·q153·q154)는 문항 단위 식에 잡히지 않는다. move+yes 2(q152·q465)·keep+no 0·keep+partial 14. ambiguous 10건 중 5건(q364·q497·q656·q667·q684)이 sqs-sns-eventbridge를 다른 해석으로 두며, q364 최종은 ambiguous·conceptFit yes. step 2~11 summary 합계(keep 717·ambiguous 8)와 현재의 차이는 step 12가 바꾼 q538·q656(keep→ambiguous)뿐이고 급변 경고 0건. 집계 중 판정을 고쳐야 할 자리는 발견하지 못했다. Node 18.17.1에서 lint·build·기존 테스트 512개·구조 검사·집계 재실행 결과 동일·판정 검사(--expect 732 --complete)·주제 파일 39개·제품 데이터 4종 해시 등 AC 전부 통과, verdicts.jsonl·worksheet.jsonl·src·scripts 변경 없음.",
+      "completed_at": "2026-09-13T14:04:51+0900"
+    }
+  ],
+  "created_at": "2026-09-12T08:24:23+0900",
+  "completed_at": "2026-09-13T14:04:52+0900"
+}

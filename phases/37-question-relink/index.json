@@ -1,0 +1,32 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "37-question-relink",
+  "steps": [
+    {
+      "step": 0,
+      "name": "relink-spec",
+      "status": "completed",
+      "started_at": "2026-09-16T19:04:00+0900",
+      "summary": "감사 파일에서 재연결 16건(2A 14·2B 2)의 relink.json을 기계 생성하고 혼합 쉼표 포맷을 보존하는 전용 검증기를 완성했다. --pre·전체 AC 통과, 제품 데이터 불변 확인.",
+      "completed_at": "2026-09-16T19:09:06+0900"
+    },
+    {
+      "step": 1,
+      "name": "apply-relink",
+      "status": "completed",
+      "summary": "questions.json 16줄의 연결(2A 14·2B 2), data.test.ts 지정 단언 네 자리와 topics-baseline.json의 questionsSha256을 갱신했다. 전체 AC·512개 테스트 통과, 개념 커버리지 618/618(100%)와 범위 밖 불변 확인.",
+      "started_at": "2026-09-16T19:09:07+0900",
+      "completed_at": "2026-09-16T19:12:16+0900"
+    },
+    {
+      "step": 2,
+      "name": "verification-report",
+      "status": "completed",
+      "started_at": "2026-09-16T19:18:01+0900",
+      "summary": "phases/37-question-relink/verification.md에 재연결 16건(2A 14·2B 2)의 before→after와 불변 조건을 실측해 남겼다. 문항 732·개념 618·커버리지 100%, 본문·정답 위치·범위 밖 716건 연결·topics.json·감사 3파일 다이제스트 일치, 원 개념 13곳 모두 문항 1개 이상 잔존, 검증 6종 전부 exit 0(512개 테스트 통과).",
+      "completed_at": "2026-09-16T19:22:11+0900"
+    }
+  ],
+  "created_at": "2026-09-16T19:04:00+0900",
+  "completed_at": "2026-09-16T19:22:12+0900"
+}

@@ -1,0 +1,128 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "36-concept-topic-audit",
+  "steps": [
+    {
+      "step": 0,
+      "name": "audit-criteria-docs",
+      "status": "completed",
+      "summary": "ADR-035를 지정 원문·줄바꿈 그대로 신설하고 lint·build·512개 테스트·구조 검사·문구 검사·잠긴 파일 5종 해시 검사를 모두 통과했다.",
+      "started_at": "2026-09-13T19:28:13+0900",
+      "completed_at": "2026-09-13T19:30:46+0900"
+    },
+    {
+      "step": 1,
+      "name": "build-worksheet",
+      "status": "completed",
+      "summary": "워크시트 생성기·판정 검사기를 구현하고 개념 전문·배열 순서·732문항 연결을 보존한 618줄을 생성했다. 신호가 있는 개념 수는 foreignServiceMentions 169·commonPatternMentions 86·comparisonShape 35·nearDuplicateCandidates 21이며, Node 18.17.1에서 도구 TDD 66개·기존 테스트 512개·lint·build·구조 검사·워크시트 AC·잠긴 파일 5종 해시 검사를 모두 통과했다. 판정 파일은 생성하지 않았다.",
+      "started_at": "2026-09-13T19:30:54+0900",
+      "completed_at": "2026-09-13T19:39:48+0900"
+    },
+    {
+      "step": 2,
+      "name": "sample-criteria",
+      "status": "completed",
+      "summary": "표본 40개(39주제)를 지정 순서로 판정했다: keep 37·ambiguous 3·move-recommended 0, confidence high 0·medium 0·low 0(null 40), serviceSpecificGoal true 30·false 10, duplicateOf 2행(로그 분석 1쌍). 판단이 어려웠던 개념은 data-transfer-services.datasync-task-status-event·ecs-eks-fargate.elastic-beanstalk·secrets-encryption.acm-expiration-event이며 두 해석을 남겼다. 같은 공통 기능 연동형에서도 DataSync·ACM 이벤트 알림은 서비스 운영과 이벤트→알림 패턴이 함께 중심이라 ambiguous, s3-versioning-lifecycle.s3-replication-cross-account-kms·sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions·iam-permissions.access-analyzer-delegated-administrator는 해당 기능의 성립 조건이 중심이라 keep으로 갈렸다. 소개형에서는 Elastic Beanstalk의 배포 방식·인스턴스 운영 책임 경계는 ambiguous, aws-core-services.elb·cloudfront-global-accelerator.cloudfront는 입문·서비스 블록의 기본 역할이라 keep이며 이름이 같은 상대 개념과 학습 깊이가 달라 중복으로 보지 않았다. emr-glue-athena.log-storage-s3-athena↔cloudwatch-xray.log-analysis-options는 같은 로그 조회 선택 기준을 가르쳐 중복으로 기록하되 양쪽 주제의 비교 축으로 유지했다. Node 18.17.1에서 lint·build·512개 테스트를 포함한 AC 10개와 잠긴 파일 5종 해시 검사를 모두 통과했고, 교차 분석 파일 없이 사용자 검토를 위해 step 3 이후를 pending으로 남겼다.",
+      "started_at": "2026-09-13T19:39:56+0900",
+      "completed_at": "2026-09-13T19:48:54+0900"
+    },
+    {
+      "step": 3,
+      "name": "concepts-s3-block",
+      "status": "completed",
+      "started_at": "2026-09-13T19:59:33+0900",
+      "summary": "S3·블록 스토리지 6개 주제의 개념 80개(표본 6개 제외)를 판정했다: keep 74·ambiguous 3·move-recommended 3, confidence high 2·medium 1·low 0(null 77), serviceSpecificGoal true 62·false 18, duplicateOf 5행(aws-core-services.rds→rds-storage-features.rds, s3-storage-classes.glacier-flexible-retrieval↔glacier-flexible-retrieval-standard-time, s3-encryption-batch.envelope-encryption↔sse-c-no-rotation-or-audit), 신호 조합 8건(keep+중복 5·move+고유 목표 3). 이동 권고는 EC2 고유 배치·네트워크 기능인 ebs-instance-store.cluster-placement-group(medium)·spread-placement-group(high)·elastic-fabric-adapter(high)를 ec2-autoscaling의 enhanced-networking 앞뒤로 옮기는 것이다. 판단이 어려웠던 개념은 s3-encryption-batch.s3-object-lambda(데이터 처리 대 요청자별 접근 방식)와 s3-access-control.s3-storage-lens·s3-storage-lens-advanced-activity-metrics(현재 주제 대 s3-storage-classes의 분석·비용 개념)로 ambiguous로 남겼고, aws-core-services.exponential-backoff-retry·blob-offload-to-s3는 맡을 서비스 주제가 없는 공통 원칙이라 keep했다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 120·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 AC를 모두 통과했다.",
+      "completed_at": "2026-09-13T20:18:12+0900"
+    },
+    {
+      "step": 4,
+      "name": "concepts-file-db",
+      "status": "completed",
+      "summary": "파일 스토리지·전송·마이그레이션·RDS 4개 주제의 미판정 개념 68개(24·18·6·20개)를 판정했다: keep 68·ambiguous 0·move-recommended 0, confidence high 0·medium 0·low 0(null 68), serviceSpecificGoal true 62·false 6, duplicateOf 1행(rds-storage-features.rds→aws-core-services.rds), 신호 조합 1건(keep+중복 1·move+고유 목표 0). 판단이 어려웠던 efs-fsx.fsx-file-gateway·efs-fsx.fsx-ontap-snapmirror·data-transfer-services.snowball-edge-compute·data-transfer-services.transfer-family-structured-logging·rds-storage-features.rds-snapshot-cross-region-copy·rds-storage-features.rds-custom-byol은 각각 파일 시스템과 접속 통로의 비교, ONTAP 복제 통합, 오프라인 장비 기능, 전송 사용자 기록, RDS 복구 수단 선택, Custom의 이전 조건이 중심이라 keep했다. RDS 소개 중복은 서비스 지형과 RDS 기능 블록 양쪽의 도입 역할로 소속 판정과 분리했다. 승인된 표본 4개를 포함한 기존 120줄을 바이트 단위로 보존해 총 188줄이 됐고 담당 주제의 72개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 188·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "started_at": "2026-09-14T18:35:49+0900",
+      "completed_at": "2026-09-14T18:44:59+0900"
+    },
+    {
+      "step": 5,
+      "name": "concepts-db-compute",
+      "status": "completed",
+      "summary": "데이터베이스·EC2 확장 4개 주제의 미판정 개념 64개(17·17·13·17개)를 판정했다: keep 64·ambiguous 0·move-recommended 0, confidence high 0·medium 0·low 0(null 64), serviceSpecificGoal true 59·false 5, duplicateOf 1행(aurora.read-replica-no-schema-change→rds-storage-features.rds-blue-green-deployment), 신호 조합 1건(keep+중복 1·move+고유 목표 0). 판단이 어려웠던 aurora.read-replica-no-schema-change·aurora.sql-server-license-cost·aurora.aurora-clone·dynamodb.dynamodb-s3-export-vs-streams·elasticache-purpose-built-db.neptune-streams·ec2-autoscaling.gpu-instance-family·ec2-autoscaling.reserved-instance-types는 각각 복제본의 변경 제약, 엔진 호환·비용 비교, 클론 적용 범위, 테이블 내보내기 선택, 내장 변경 캡처, GPU 실행 조건, EC2 예약 유형의 변경 제약이 중심이라 keep했다. 스키마 변경 제약과 블루/그린 대안의 중복은 소속 유지와 분리해 기록했다. 승인된 표본 4개를 포함한 기존 188줄을 바이트 단위로 보존해 총 252줄이 됐고 담당 주제의 68개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 252·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "started_at": "2026-09-14T18:45:06+0900",
+      "completed_at": "2026-09-14T18:54:58+0900"
+    },
+    {
+      "step": 6,
+      "name": "concepts-delivery-serverless",
+      "status": "completed",
+      "started_at": "2026-09-14T18:55:31+0900",
+      "summary": "트래픽 분배·엣지·서버리스·컨테이너 4개 주제의 미판정 개념 77개(15·23·17·22개)를 판정했다: keep 77·ambiguous 0·move-recommended 0, confidence high 0·medium 0·low 0(null 77), serviceSpecificGoal true 71·false 6, duplicateOf 0건, 신호 조합 0건(keep+중복 0·move+고유 목표 0). 판단이 어려웠던 elastic-load-balancing.end-to-end-encryption-behind-alb·cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction·lambda.lambda-kinesis-event-source·lambda.serverless-runtime-no-os-access·ecs-eks-fargate.ecr-image-scan-on-push·ecs-eks-fargate.app2container는 각각 뒤 구간 TLS가 만드는 인증서 운영 판단, S3 OAC에 대응하는 ALB 오리진 보호, 처리 계층으로서의 Lambda 이벤트 소스, 관리형 런타임의 OS 접근이라는 비교 축, ECR에서 켜는 스캔 설정, 컨테이너 변환 도구와 Beanstalk의 대비가 중심이라 keep했다. 중복 후보 aws-core-services.elb·aws-core-services.lambda(입문 깊이 차이)와 fargate-no-time-limit↔fargate-per-second-billing(실행 시간 상한 대 최소 과금 단위)은 결정적 지식이 달라 중복으로 보지 않았다. 승인된 표본 4개를 포함한 기존 252줄을 바이트 단위로 보존해 총 329줄이 됐고 담당 주제의 81개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 329·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-14T19:10:54+0900"
+    },
+    {
+      "step": 7,
+      "name": "concepts-integration-backup",
+      "status": "completed",
+      "summary": "통합·메시징과 백업·재해 복구 3개 주제의 미판정 개념 60개(19·31·10개)를 판정했다: keep 57·ambiguous 1·move-recommended 2, confidence high 1·medium 1·low 0(null 58), serviceSpecificGoal true 49·false 11, duplicateOf 0건, 신호 조합 1건(keep+중복 0·move+고유 목표 1). 이동 권고는 api-gateway-step-functions.api-gateway-behind-cloudfront→cloudfront-global-accelerator(high, CloudFront 오리진 블록)와 sqs-sns-eventbridge.sqs-queue-depth-scaling→ec2-autoscaling(medium, Auto Scaling 정책 블록)이며 실제 데이터는 옮기지 않았다. 판단이 어려웠던 두 이동 개념과 api-gateway-step-functions.amplify(개발·배포와 백엔드 처리의 책임 구분 대 SNS 알림 선택, ambiguous)에 근거를 남겼고, api-gateway-step-functions.api-gateway-resource-policy·sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy·backup-disaster-recovery.organizations-backup-policy는 각 서비스의 접근·운영 조건이 중심이라 keep했다. 승인된 표본 4개를 포함한 기존 329줄을 바이트 단위로 보존해 총 389줄이 됐고 담당 주제의 64개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 389·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "started_at": "2026-09-14T23:42:01+0900",
+      "completed_at": "2026-09-14T23:52:21+0900"
+    },
+    {
+      "step": 8,
+      "name": "concepts-network",
+      "status": "completed",
+      "started_at": "2026-09-15T03:01:51+0900",
+      "summary": "네트워크 4개 주제의 미판정 개념 57개(vpc-networking 19·security-groups-nacl 8·hybrid-connectivity 18·route53 12)를 판정했다: keep 56·ambiguous 1·move-recommended 0, confidence high 0·medium 0·low 0(null 57), serviceSpecificGoal true 43·false 14, duplicateOf 2행(route53.private-hosted-zone↔private-hosted-zone-vpc-only), 신호 조합 2건(keep+중복 2·move+고유 목표 0). ambiguous는 hybrid-connectivity.access-terms로, Customer Gateway(VPN 종단, virtual-private-gateway의 전제)와 Bastion Host(프라이빗 인스턴스 접속, systems-manager·vpc-networking 쪽)라는 성격이 다른 두 용어가 한 개념에 묶여 두 해석을 남겼다. 판단이 어려웠던 vpc-networking.s3-is-regional·security-groups-nacl.alb-security-group-outbound-and-health-check-port·security-groups-nacl.nlb-security-group·hybrid-connectivity.onprem-access-via-interface-endpoint·hybrid-connectivity.data-locality-cost·hybrid-connectivity.region-attached-edge-options·route53.multi-region-failover-for-region-outage는 각각 VPC 구성을 S3에 적용하는 오해, 로드 밸런서를 대상으로 한 보안 그룹 규칙 설계, 온프레미스 연결과 엔드포인트의 통합, 연결을 넘는 데이터 처리 위치, 확장 인프라의 리전 연결 전제, 리전 전환을 맡는 상태 검사 기반 DNS 장애 조치가 중심이라 keep했다. route53.route53↔aws-core-services.route-53, direct-connect-gateway↔direct-connect-vif-types, vpc-endpoint↔endpoint-pricing은 결정적 지식이 달라 중복으로 보지 않았다. 기존 389줄을 바이트 단위로 보존해 총 446줄이 됐고 담당 주제의 61개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 446·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-15T03:16:14+0900"
+    },
+    {
+      "step": 9,
+      "name": "concepts-analytics-observability",
+      "status": "completed",
+      "started_at": "2026-09-15T03:16:23+0900",
+      "summary": "분석·관측 4개 주제의 미판정 개념 54개(emr-glue-athena 19·kinesis-streaming 15·redshift-opensearch-quicksight 10·cloudwatch-xray 10)를 판정했다: keep 53·ambiguous 1·move-recommended 0, confidence high 0·medium 0·low 0(null 54), serviceSpecificGoal true 50·false 4, duplicateOf 0건, 신호 조합 0건(keep+중복 0·move+고유 목표 0). ambiguous는 cloudwatch-xray.cloudwatch-alarm-state-change-event로, 알람 상태 변경을 자동 대응의 출발점으로 삼는 CloudWatch 알람 활용과 규칙이 대상을 직접 호출해 함수를 끼우지 않는 EventBridge 규칙 설계(sqs-sns-eventbridge.eventbridge-resource-change-rule과 같은 패턴)라는 두 해석을 남겼고 표본 DataSync·ACM 이벤트 알림과 같은 기준을 따랐다. 판단이 어려웠던 redshift-opensearch-quicksight.dynamodb-to-s3-analytics·redshift-opensearch-quicksight.oltp-vs-olap·kinesis-streaming.msk·cloudwatch-xray.cloudwatch-agent-memory-metric·cloudwatch-xray.ec2-detailed-monitoring·cloudwatch-xray.performance-insight·cloudwatch-xray.performance-insights-rightsizing·cloudwatch-xray.cloudwatch-container-insights·emr-glue-athena.parquet-columnar-format은 각각 웨어하우스 없이 S3 위에서 질의·시각화하는 선택, 트랜잭션과 분석의 워크로드 축, 관리형 Kafka 자체(amazon-mq와 닮은 이전 패턴은 대비), 에이전트가 있어야 만들어지는 지표 수집 범위(조정 지표 선택을 가르친 sqs-queue-depth-scaling과 구분), 지표 수집 간격, 데이터베이스 기능이 아닌 성능 관측과 관측 도구 비교, eks-connector와 반대편에서 세우는 관측 범위, 분석 쿼리의 읽는 양이 중심이라 keep했다. dynamodb-to-s3-analytics↔dynamodb.dynamodb-s3-export-vs-streams·quicksight, managed-service-apache-flink↔streaming-services-comparison, kinesis-partition-key-hot-shard↔kinesis-capacity-mode, firehose-format-conversion↔parquet-columnar-format, kinesis-client-library↔lambda.lambda-kinesis-event-source는 결정적 지식이 달라 중복으로 보지 않았다. 기존 446줄을 바이트 단위로 보존해 총 500줄이 됐고 담당 주제의 58개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 500·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-15T03:29:35+0900"
+    },
+    {
+      "step": 10,
+      "name": "concepts-security",
+      "status": "completed",
+      "started_at": "2026-09-15T04:56:57+0900",
+      "summary": "보안 4개 주제의 미판정 개념 60개(secrets-encryption 19·waf-shield 14·guardduty-macie-inspector 10·iam-permissions 17)를 판정했다: keep 56·ambiguous 2·move-recommended 2, confidence high 1·medium 1·low 0(null 58), serviceSpecificGoal true 57·false 3, duplicateOf 2행(secrets-encryption.secrets-manager-vs-parameter-store↔rotation-heuristic), 신호 조합 4건(keep+중복 2·move+고유 목표 2). 이동 권고는 waf-shield.cloudfront→cloudfront-global-accelerator(high, CloudFront 기본 소개 뒤의 기능 개요)와 iam-permissions.iam-roles-anywhere→identity-federation(medium, STS 임시 자격 증명 블록)이며 실제 데이터는 옮기지 않았다. 판단이 어려웠던 위 두 이동 개념과 guardduty-macie-inspector.guardduty-finding-to-eventbridge·macie-finding-to-eventbridge에는 근거를 남겼고, 두 이벤트 연동은 탐지 서비스의 운영 통합과 EventBridge 공통 대응·알림 패턴이 함께 중심이라 표본 DataSync·ACM과 같은 기준으로 ambiguous로 뒀다. secrets-encryption.parameter-store·lambda-env-var-kms·kms-cloudhsm-key-store·acm-cloudfront-region, guardduty-macie-inspector.macie-automated-discovery·macie-delegated-administrator·inspector-scans-ecr-images, iam-permissions.network-access-analyzer·permissions-boundary는 각각 비밀값 관리 수단의 비교·키 저장과 인증서의 사용 조건·관리형 검사 실행·탐지 통합의 전제·검사 주체·분석 대상 비교·개별 권한 상한이 중심이라 keep했다. 기존 500줄과 승인된 표본 4개를 바이트 단위로 보존해 총 560줄이 됐고 담당 주제의 64개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 560·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-15T05:06:22+0900"
+    },
+    {
+      "step": 11,
+      "name": "concepts-identity-cost-ops",
+      "status": "completed",
+      "started_at": "2026-09-15T08:00:42+0900",
+      "summary": "자격 증명·비용·운영 6개 주제의 미판정 개념 58개(identity-federation 10·organizations-cloudtrail-config 15·cost-management 16·governance-iac 6·systems-manager 6·ai-ml-services 5)를 판정했다: keep 57·ambiguous 1·move-recommended 0, confidence high 0·medium 0·low 0(null 58), serviceSpecificGoal true 56·false 2, duplicateOf 1행(systems-manager.ssm-patch-manager→ec2-autoscaling.ec2-image-builder), 신호 조합 1건(keep+중복 1·move+고유 목표 0). ambiguous는 cost-management.on-demand-capacity-reservation으로, 절약 플랜·예약 인스턴스와 혼동되는 비할인 기능을 현재 약정 블록에서 가르는 해석과 EC2 용량 기능이며 정답 대안이 스팟이라 ec2-autoscaling의 구매 옵션 블록이 자연스럽다는 해석을 남겼다. 판단이 어려웠던 systems-manager.ec2-instance-connect-endpoint·ssm-run-command·ssm-patch-manager, organizations-cloudtrail-config.organizations-consolidated-billing·scp-condition-exception·config-custom-rule, cost-management.budget-forecasted-alert·cost-and-usage-report, governance-iac.cloudformation-drift-detection은 각각 Session Manager와 짝을 이루는 배스천 없는 SSH 접속 경로, 명령을 실행하는 쪽의 기능(이벤트는 활용 예라 표본 DataSync·ACM과 구분), Patch Manager의 적용 범위 한계, 격리와 통합 청구를 함께 얻는 계정 구조, SCP의 예외 표현 제약, 관리형 규칙 밖 구성 값 감시(IOPS·알림은 예와 전달 수단), 실제·예측 알림 기준(SNS는 경로), 원본 청구 데이터를 고르는 판단, 드리프트 감지의 대상 범위라는 비교 축이 중심이라 keep했다. ssm-patch-manager는 ec2-image-builder 문단 1과 같은 구분을 반대편에서 가르쳐 중복으로 기록했고, organizations-scp 문단 1의 관리 계정 태그 활성화(cost-allocation-tag-activation-in-management-account와 겹침)·savings-plan↔savings-plan-details·cognito-pools↔cognito-social-idp-federation은 곁가지나 일부만 겹쳐 중복으로 보지 않았다. 기존 560줄과 승인된 표본 6개를 바이트 단위로 보존해 총 618줄이 됐고 담당 주제의 64개념이 모두 판정됐다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 618·담당 범위·blockImpact/신호 조합·잠긴 파일 5종 해시·교차 파일 부재 등 AC 10개를 모두 통과했다.",
+      "completed_at": "2026-09-15T08:15:53+0900"
+    },
+    {
+      "step": 12,
+      "name": "consistency-pass",
+      "status": "completed",
+      "summary": "618건을 10개 축으로 교차 비교해 38개 개념의 판정 필드만 수정했다. 축 1·3·5: 일반 역할·비교 원리의 serviceSpecificGoal true→false 29건(emr-glue-athena.emr, emr-glue-athena.glue, kinesis-streaming.kinesis-data-streams, kinesis-streaming.data-firehose, kinesis-streaming.managed-service-apache-flink, redshift-opensearch-quicksight.redshift, cloudwatch-xray.cloudwatch, cloudwatch-xray.x-ray, cloudwatch-xray.performance-insight, cloudwatch-xray.amazon-managed-grafana, secrets-encryption.secrets-manager, secrets-encryption.parameter-store, secrets-encryption.acm, waf-shield.shield, guardduty-macie-inspector.guardduty, guardduty-macie-inspector.amazon-inspector, guardduty-macie-inspector.security-hub, identity-federation.sts, organizations-cloudtrail-config.aws-config, organizations-cloudtrail-config.cloudtrail, organizations-cloudtrail-config.audit-manager, cost-management.billing-and-cost-management, cost-management.trusted-advisor, governance-iac.cloudformation, governance-iac.service-catalog, ecs-eks-fargate.aws-batch, ai-ml-services.comprehend, ai-ml-services.amazon-lex, hybrid-connectivity.vpn-vs-direct-connect); 축 3·5: 서비스별 전송 방식·연결 제약·라우팅 선택의 serviceSpecificGoal false→true 4건(data-transfer-services.file-gateway-vs-datasync-continuous, hybrid-connectivity.onprem-connectivity-heuristic, hybrid-connectivity.region-attached-edge-options, route53.multi-region-failover-for-region-outage); 축 4·9: 한쪽에만 있던 duplicateOf를 상호 기록한 2건(rds-storage-features.rds-blue-green-deployment, ec2-autoscaling.ec2-image-builder); 축 3·6: 할인과 용량 확보의 비교를 EC2 이름·스팟 결론으로 보류하지 않도록 ambiguous→keep 1건(cost-management.on-demand-capacity-reservation); 축 3·8: 비교 결론과 주제 간 선행 독서를 소속 근거로 쓴 rationale 정리 2건(ecs-eks-fargate.fargate-no-time-limit, redshift-opensearch-quicksight.athena-vs-redshift-workload). 모든 수정 rationale에 변경 내용과 이유를 남겼다. 최종 fit keep 600·ambiguous 11·move-recommended 7, confidence high 4·medium 3·low 0(null 611), serviceSpecificGoal true 514·false 104, duplicateOf 16행(8쌍), 재검토 신호 조합 22건(keep+중복 16·move+고유 목표 6). 이동 권고 7건의 방향과 blockImpact는 대상 배열 및 ADR-033의 전제·블록 순서와 대조해 유지했다. 가장 높은 ebs-instance-store의 이동 비율 3/15도 EC2 배치·네트워크 기능이라는 학습 목표로 재확인했고 비율은 맞추지 않았다. 축 2의 서비스별 권한·암호화·로깅 조건은 keep, DataSync·ACM·CloudWatch·GuardDuty·Macie의 이벤트 연동은 서비스 운영과 공통 이벤트 패턴의 두 해석으로 ambiguous를 유지했다. 580행은 바이트 단위로 보존했으며 전체 618행의 개념 id·순서·questionCount·questionIds와 나머지 고정 필드도 그대로다. Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 618 --complete·id 집합/신호 검사·잠긴 파일 5종 해시·교차 파일 부재 등 AC 9개를 모두 통과했다. phase 35 판정 내용은 열람하지 않고 AC의 해시만 계산했으며 개념·문항·제품 코드·테스트·검사기는 수정하지 않았다.",
+      "started_at": "2026-09-15T21:52:38+0900",
+      "completed_at": "2026-09-15T22:06:49+0900"
+    },
+    {
+      "step": 13,
+      "name": "cross-phase35",
+      "status": "completed",
+      "summary": "phase 35 문항 판정 732줄과 phase 36 개념 판정 618줄을 교차해 38줄을 썼다: ① 580(618−38)·2A 11·2B 4·3 2·4 0·hold 21. 2A(문항 conceptId만 변경, 영향 14문항)는 s3-encryption-batch.sse-types(q037)·efs-fsx.efs(q043)·efs-fsx.efs-ia-file-size-threshold(q344)·efs-fsx.fsx(q045·q046)·rds-storage-features.features(q061·q065)·aurora.aurora(q068)·elastic-load-balancing.elb(q080·q081)·cloudfront-global-accelerator.global-accelerator-static-ip(q472)·lambda.lambda(q086)·identity-federation.identity-center(q159)·cost-management.savings-plan(q165)이며 원 개념마다 다른 문항이 남는다. 2B(topicId·conceptId 함께 변경, 영향 4문항, 모두 high)는 cloudwatch-xray.log-analysis-options(q223→emr-glue-athena.log-storage-s3-athena)·elastic-load-balancing.end-to-end-encryption-behind-alb(q465→secrets-encryption.acm)·lambda.serverless-runtime-no-os-access(q508→rds-storage-features.rds-custom)·security-groups-nacl.nacl-rule-limit(q225→waf-shield.waf-rule-types)이고 대상 개념은 모두 권장 주제 안에 있으나 q223·q225는 원 개념의 유일한 문항이다. 3(영향 2문항)은 ebs-instance-store.spread-placement-group(q287)·ebs-instance-store.elastic-fabric-adapter(q284)이고 4는 없다. hold 21은 개념 ambiguous 11, 문항 ambiguous 6(efs-fsx.efs-replication-one-way·aurora.aurora-clone·elastic-load-balancing.internal-load-balancer·lambda.lambda-concurrency-limit-throttling·api-gateway-step-functions.api-gateway-behind-cloudfront·cost-management.on-demand-capacity-reservation), 이동 권고 confidence가 high가 아님 4(ebs-instance-store.cluster-placement-group·sqs-sns-eventbridge.sqs-queue-depth-scaling·iam-permissions.iam-roles-anywhere·waf-shield.cloudfront — 마지막은 개념과 세 문항의 방향이 같지만 q152가 medium이고 대상 개념이 없어 추가 설계가 필요하다)이며 방향 어긋남은 0이다. 규칙 해석 둘을 스크립트 주석에 적었다: verdict가 keep이어도 같은 주제의 다른 개념을 권한 문항은 2A로 세고, 이동 권고의 confidence가 high가 아니면 확신 높은 결론이 아니므로 hold로 보낸다. 판정 사이의 긴장 셋을 근거에 남기고 판정은 고치지 않았다: q686의 keep 근거가 iam-roles-anywhere의 이동 권고와 반대쪽을 가리키고, q728의 잠정 권장이 step 12가 on-demand-capacity-reservation을 keep으로 고칠 때 물리친 EC2 해석과 같은 방향이며, q465의 이동이 end-to-end-encryption-behind-alb 개념이 자기 범위로 본 인증서 관리 비교와 겹친다. verdicts.jsonl·phase 35 산출물·데이터·테스트는 그대로이고, Node 18.17.1에서 lint·build·512개 테스트·구조 검사·검사기 --expect 618 --complete·교차 줄 검사·잠긴 파일 5종 해시 AC를 모두 통과했으며 분류 규칙은 저장소 밖 임시 테스트 15개로 먼저 확인했다.",
+      "started_at": "2026-09-15T22:07:38+0900",
+      "completed_at": "2026-09-15T22:22:49+0900"
+    },
+    {
+      "step": 14,
+      "name": "audit-report",
+      "status": "completed",
+      "summary": "tools/aggregate.mjs가 verdicts.jsonl·concepts.jsonl·cross-phase35.jsonl·phase 35 문항 판정·src/data에서 report.md·by-topic 39개·handoff-fixes.md를 만든다(숫자는 전부 스크립트가 세고, 교차 유형은 cross-phase35.mjs의 classify로 다시 계산해 파일과 대조한다). 최종 집계: 판정 618(누락·중복 0, 주제 39개 합 618), keep 600(97.1%)·ambiguous 11(1.8%)·move-recommended 7(1.1%), confidence high 4·medium 3·low 0, serviceSpecificGoal true 514·false 104(move 안 true 6/7), 이동 주제 쌍 5개(ebs-instance-store→ec2-autoscaling 3이 최다, 이동 비율 최고 20.0%), duplicateOf 16개·8쌍(같은 주제 4·다른 주제 4·한쪽만 0), 재검토 신호 move+고유 목표 6·keep+중복 16, 교차 ① 580·2A 11(영향 14문항)·2B 4(4)·3 2(2)·4 0·hold 21(24)이며 step 13 기록과 차이 없음, step별 급변 경고 0, step 12 표식 38줄. 인계 후보: 1절 high 이동 4(영향 6문항)·2A 14·2B 4·3 2·4 0·보류 21(ambiguous 11·medium 3·hold 21의 합집합)이고, 후보마다 영향 문항 전체·conceptId/topicId 변경 여부·원/대상 주제·서비스 블록 자리·phase 34 순서 영향·커버리지 영향·되돌리는 방법·data.test.ts와 topics-baseline.json의 해당 줄을 적었다. HANDOFF-P36의 원 주제 쪽 공백(blockImpact 7건 모두 원 주제 미기재)은 후보마다 「원 주제 쪽 영향」으로 회수했다. 판정을 고칠 근거는 찾지 못했고 설계 문제만 report.md 14절에 남겼다: 추가 설계가 필요한 이동 후보 2건(spread-placement-group은 지정한 앞 개념 cluster-placement-group이 medium이라 자리 미정, waf-shield.cloudfront는 옮긴 id가 cloudfront-global-accelerator.cloudfront와 겹치고 blockImpact가 겹침 정리를 후속 설계로 미루며 q152의 권장 개념이 없음), 이동 권고를 모두 넣으면 cluster-placement-group 뒤에 지정한 enhanced-networking 대신 spread-placement-group이 붙는 자리 1건, 2B의 q223·q225는 원 개념의 유일한 문항이라 옮기면 커버리지가 깨짐. 이전 시도가 남긴 산출물을 다시 생성해 바이트 단위로 같음을 확인했고, verdicts.jsonl·cross-phase35.jsonl·데이터·테스트·phase 35 산출물은 그대로이며, Node 18.17.1에서 lint·build·512개 테스트·구조 검사·aggregate.mjs·검사기 --expect 618 --complete·파일 존재·주제 파일 39개·보고서 수치 대조·잠긴 파일 5종 해시 AC를 모두 통과했고 핵심 수치와 순수 함수는 저장소 밖 임시 검사로 따로 대조했다.",
+      "started_at": "2026-09-16T03:22:39+0900",
+      "completed_at": "2026-09-16T03:55:53+0900"
+    }
+  ],
+  "created_at": "2026-09-13T19:28:13+0900",
+  "completed_at": "2026-09-16T03:55:53+0900"
+}
