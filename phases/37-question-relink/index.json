@@ -2,8 +2,24 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "37-question-relink",
   "steps": [
-    { "step": 0, "name": "relink-spec", "status": "pending" },
-    { "step": 1, "name": "apply-relink", "status": "pending" },
-    { "step": 2, "name": "verification-report", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "relink-spec",
+      "status": "completed",
+      "started_at": "2026-09-16T19:04:00+0900",
+      "summary": "감사 파일에서 재연결 16건(2A 14·2B 2)의 relink.json을 기계 생성하고 혼합 쉼표 포맷을 보존하는 전용 검증기를 완성했다. --pre·전체 AC 통과, 제품 데이터 불변 확인.",
+      "completed_at": "2026-09-16T19:09:06+0900"
+    },
+    {
+      "step": 1,
+      "name": "apply-relink",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "verification-report",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-16T19:04:00+0900"
 }
