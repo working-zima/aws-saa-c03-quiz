@@ -183,6 +183,12 @@
       "dir": "36-concept-topic-audit",
       "status": "completed",
       "completed_at": "2026-09-16T03:55:53+0900"
+    },
+    {
+      "dir": "37-question-relink",
+      "status": "completed",
+      "failed_at": "2026-09-16T19:16:14+0900",
+      "completed_at": "2026-09-16T19:22:12+0900"
     }
   ]
 }

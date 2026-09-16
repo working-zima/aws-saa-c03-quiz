@@ -1074,9 +1074,11 @@ describe('학습 데이터 무결성', () => {
     'efs-fsx.efs-replication-one-way',
     'efs-fsx.fsx-windows-storage-auto-scaling',
     'efs-fsx.fsx-lustre-s3-data-repository-association',
+    // phase 37 — q344를 efs-lifecycle-management로 재연결해 이 구간이 덮는 개념이 하나 늘었다.
+    'efs-fsx.efs-lifecycle-management',
   ]
 
-  it('공유 파일 스토리지 문제 24개가 담당 개념 21개를 빠짐없이 덮는다', () => {
+  it('공유 파일 스토리지 문제 24개가 담당 개념 22개를 빠짐없이 덮는다', () => {
     const addedQuestions = questions.slice(326, 350)
 
     expect(addedQuestions).toHaveLength(24)
@@ -1462,9 +1464,11 @@ describe('학습 데이터 무결성', () => {
     'elastic-load-balancing.load-balancer-idle-timeout',
     'elastic-load-balancing.end-to-end-encryption-behind-alb',
     'elastic-load-balancing.gwlb-endpoint-cross-account-inspection',
+    // phase 37 — q465를 secrets-encryption.acm으로 재연결해 이 구간이 다른 주제의 개념 하나를 덮는다.
+    'secrets-encryption.acm',
   ]
 
-  it('EC2·로드 밸런서 문제 32개가 담당 개념 28개를 빠짐없이 덮는다', () => {
+  it('EC2·로드 밸런서 문제 32개가 담당 개념 29개를 빠짐없이 덮는다', () => {
     const addedQuestions = questions.slice(434, 466)
 
     expect(addedQuestions).toHaveLength(32)
@@ -1473,7 +1477,9 @@ describe('학습 데이터 무결성', () => {
     )
     expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
       ...Array(18).fill('ec2-autoscaling'),
-      ...Array(14).fill('elastic-load-balancing'),
+      ...Array(12).fill('elastic-load-balancing'),
+      'secrets-encryption',
+      'elastic-load-balancing',
     ])
     expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
       [...step8Concepts].sort(),
@@ -1554,9 +1560,11 @@ describe('학습 데이터 무결성', () => {
     'cloudfront-global-accelerator.cloudfront-s3-upload-with-oac',
     'cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction',
     'cloudfront-global-accelerator.cloudfront-functions-no-external-calls',
+    // phase 37 — q472를 global-accelerator-protocols로 재연결해 이 구간이 덮는 개념이 하나 늘었다.
+    'cloudfront-global-accelerator.global-accelerator-protocols',
   ]
 
-  it('CloudFront·엣지 문제 22개가 담당 개념 19개를 빠짐없이 덮는다', () => {
+  it('CloudFront·엣지 문제 22개가 담당 개념 20개를 빠짐없이 덮는다', () => {
     const addedQuestions = questions.slice(466, 488)
 
     expect(addedQuestions).toHaveLength(22)
@@ -1641,16 +1649,21 @@ describe('학습 데이터 무결성', () => {
     'lambda.lambda-version-alias-config-freeze',
     'lambda.lambda-execution-role-logs',
     'lambda.serverless-runtime-no-os-access',
+    // phase 37 — q508을 rds-storage-features.rds-custom으로 재연결해 이 구간이 다른 주제의 개념 하나를 덮는다.
+    'rds-storage-features.rds-custom',
   ]
 
-  it('Lambda 문제 20개가 담당 개념 15개를 빠짐없이 덮는다', () => {
+  it('Lambda 문제 20개가 담당 개념 16개를 빠짐없이 덮는다', () => {
     const addedQuestions = questions.slice(488, 508)
 
     expect(addedQuestions).toHaveLength(20)
     expect(addedQuestions.map(({ id }) => id)).toEqual(
       Array.from({ length: 20 }, (_, index) => `q${index + 489}`),
     )
-    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual(Array(20).fill('lambda'))
+    expect(addedQuestions.map(({ topicId }) => topicId)).toEqual([
+      ...Array(19).fill('lambda'),
+      'rds-storage-features',
+    ])
     expect([...new Set(addedQuestions.map(({ conceptId }) => conceptId))].sort()).toEqual(
       [...step10Concepts].sort(),
     )
