@@ -134,8 +134,18 @@ node phases/37-question-relink/tools/verify-relink.mjs --post
 11. 본문 다이제스트가 `baseline.contentSha256`과 같다 —
     `prompt`·`choices`·`explanation`·`answerIndex` 변경 0건.
 12. 범위 밖 다이제스트가 `baseline.linksOutsideScopeSha256`과 같다 — 716개 문항 연결 불변.
-13. `questions.json`이 **문항 한 줄 포맷**을 지킨다 — `{"id":"q` 로 시작하는 줄이 732줄이고,
-    각 줄에서 뒤의 쉼표를 뗀 문자열이 `JSON.stringify(JSON.parse(줄))`와 **글자 그대로 같다**.
+13. `questions.json`이 **문항 한 줄 포맷**을 지킨다. 이 파일은 여러 phase가 이어붙여 온 모양이라
+    **줄 앞에 쉼표가 붙은 줄과 줄 뒤에 붙은 줄이 섞여 있고, 쉼표 하나만 있는 줄이 1줄 있다.**
+    있는 그대로 검사하고 **쉼표 배치를 고치지 마라** — 정규화는 이번 범위가 아니다.
+
+    - `raw.split('\n')`은 원소 736개다. 첫 원소가 `[`, 마지막 원소가 `''`(파일 끝 개행),
+      그 앞 원소가 `]`다.
+    - 그 사이 원소마다 **앞의 쉼표 하나와 뒤의 쉼표 하나를 떼어** 남은 문자열을 `본문`이라 한다.
+    - `본문`이 빈 문자열인 줄은 정확히 **1줄**이다.
+    - 나머지 **732줄**은 전부 `본문`이 `{"id":"q`로 시작하고,
+      `JSON.stringify(JSON.parse(본문)) === 본문`이며, 키 순서가
+      `id`·`topicId`·`conceptId`·`prompt`·`choices`·`answerIndex`·`explanation`다.
+
     (필드 순서·공백·추가 필드가 흘러드는 것을 막는다. 재직렬화로 파일을 다시 쓰면 여기서 걸린다.)
 
 `--pre`가 더 보는 것:
