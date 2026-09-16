@@ -155,11 +155,11 @@ NODE
 
 3. `npm run build` — exit 0
 
-   > ✓ built in 891ms
+   > ✓ built in 772ms
 
 4. `npm test` — exit 0
 
-   > Duration  2.93s (transform 1.07s, setup 1.05s, collect 5.32s, tests 5.80s, environment 4.96s, prepare 1.49s)
+   > Duration  2.97s (transform 1.22s, setup 1.25s, collect 5.58s, tests 5.09s, environment 5.41s, prepare 1.48s)
 
 5. `node scripts/check-structure.mjs` — exit 0
 
