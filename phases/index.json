@@ -186,8 +186,9 @@
     },
     {
       "dir": "37-question-relink",
-      "status": "error",
-      "failed_at": "2026-09-16T19:16:14+0900"
+      "status": "completed",
+      "failed_at": "2026-09-16T19:16:14+0900",
+      "completed_at": "2026-09-16T19:22:12+0900"
     }
   ]
 }
