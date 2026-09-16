@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "apply-relink",
-      "status": "pending"
+      "status": "completed",
+      "summary": "questions.json 16줄의 연결(2A 14·2B 2), data.test.ts 지정 단언 네 자리와 topics-baseline.json의 questionsSha256을 갱신했다. 전체 AC·512개 테스트 통과, 개념 커버리지 618/618(100%)와 범위 밖 불변 확인.",
+      "started_at": "2026-09-16T19:09:07+0900",
+      "completed_at": "2026-09-16T19:12:16+0900"
     },
     {
       "step": 2,
