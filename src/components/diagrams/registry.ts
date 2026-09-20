@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
 
@@ -7,4 +8,5 @@ import { VpcPathsDiagram } from './VpcPathsDiagram'
 export const diagramsByConceptId: Record<string, ComponentType> = {
   'vpc-networking.comparison': VpcPathsDiagram,
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
+  'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
 }
