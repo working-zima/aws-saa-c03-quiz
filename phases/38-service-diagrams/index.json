@@ -29,9 +29,7 @@
     {
       "step": 2,
       "name": "hybrid-paths",
-      "status": "error",
-      "started_at": "2026-09-20T21:24:41+0900",
-      "error_message": "[3회 시도 후 실패] Step did not update status",
+      "status": "pending",
       "failed_at": "2026-09-20T21:26:39+0900"
     },
     {
