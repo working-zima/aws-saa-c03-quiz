@@ -12,7 +12,9 @@ PRD 「디자인」과 UI_GUIDE 「색상」이 "정답/오답/중요도 외에 
 ## 읽어야 할 파일
 
 - `phases/38-service-diagrams/step0.md` ~ `step5.md` — 무엇을 왜 정했는지.
-- `phases/38-service-diagrams/index.json` — step 0~5의 `summary`. **실측값이 거기 있다.**
+- **`phases/38-service-diagrams/measurements.md` — 브라우저 실측표. UI_GUIDE에 적을 숫자는
+  전부 여기서 가져온다.** 이 파일에 없는 숫자를 지어내지 마라.
+- `phases/38-service-diagrams/index.json` — step 0~5·7의 `summary`.
 - `docs/PRD.md` 「디자인」, `docs/ADR.md`, `docs/UI_GUIDE.md`, `docs/ARCHITECTURE.md`.
 - `phases/37-question-relink/verification.md` — 검증 보고의 선례.
 - `tailwind.config.js`, `src/components/diagrams/` 전체, `src/lib/svg-bounds.ts`.
@@ -84,6 +86,8 @@ step 명세가 적은 번호를 믿지 마라 — 이 규칙이 생긴 경위는
 - 접근성: `figure`에 `aria-label`, 캡션은 `aria-live="polite"`, 시나리오 버튼은 `aria-pressed`.
   **헤딩을 쓰지 않는다** — `ConceptList`가 호출 화면에 따라 헤딩 레벨을 바꾸기 때문이다.
 - 넘침은 `src/lib/svg-bounds.ts`의 두 함수로 테스트에서 기계로 잡는다. 눈으로만 확인하지 않는다.
+  **다만 그 검사는 `rect` 좌표만 본다** — `text`의 실제 폭은 어림값이고, 경로선이 상자를
+  가로지르는지는 보지 않는다. 그 둘은 사람이 브라우저로 본다.
 
 ### 4. `docs/ARCHITECTURE.md`
 
@@ -102,6 +106,7 @@ step 명세가 적은 번호를 믿지 마라 — 이 규칙이 생긴 경위는
 `phases/37-question-relink/verification.md`의 꼴을 따른다. **자기 보고가 아니라 실측을 적어라.**
 
 - 도식 다섯의 목록: 컴포넌트 파일, 앵커 개념 id, 노드 수, 시나리오 수, 최종 `viewBox`.
+  **`measurements.md`를 베끼지 말고 가리켜라** — 같은 표를 두 곳에 두면 갈린다.
 - 관문 검사 결과: 다섯 장 각각에서 `boxesOutsideViewBox`가 빈 배열인지, 라벨 넘침이 0인지,
   `viewBox` 폭이 280인지.
 - 각 도식에서 **가장 긴 라벨**과 그 `estimateTextWidth(라벨, 10)` 값.
@@ -130,8 +135,8 @@ node scripts/coverage.mjs
    - ADR 번호가 `grep '^### ADR-0' docs/ADR.md`의 마지막 다음 번호인가?
    - PRD 「디자인」의 개정된 줄이 ADR 번호를 가리키는가?
    - UI_GUIDE 「색상」의 "새 색을 도입하지 마라"가 도식 예외와 모순되지 않는가?
-   - UI_GUIDE 「도식」 절의 숫자가 `index.json`의 `summary` 실측값과 일치하는가?
-     **지어낸 숫자를 넣지 마라.** summary에 없으면 그 줄을 비우고 `verification.md`에 적어라.
+   - UI_GUIDE 「도식」 절의 숫자가 `measurements.md`의 실측표와 일치하는가?
+     **지어낸 숫자를 넣지 마라.** 그 표에 없으면 그 줄을 비우고 `verification.md`에 적어라.
    - `src/` 아래 파일이 하나도 변경되지 않았는가? (`git diff --stat`으로 확인)
 
 ## 금지사항
