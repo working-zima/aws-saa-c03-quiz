@@ -2,13 +2,44 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "38-service-diagrams",
   "steps": [
-    { "step": 0, "name": "diagram-shell", "status": "pending" },
-    { "step": 1, "name": "vpc-paths", "status": "pending" },
-    { "step": 2, "name": "hybrid-paths", "status": "pending" },
-    { "step": 3, "name": "edge-to-origin", "status": "pending" },
-    { "step": 4, "name": "s3-class-axis", "status": "pending" },
-    { "step": 5, "name": "sg-nacl-boundary", "status": "pending" },
-    { "step": 6, "name": "docs-and-report", "status": "pending" }
+    {
+      "step": 0,
+      "name": "diagram-shell",
+      "status": "completed",
+      "summary": "도식 공통 틀·빈 레지스트리·ConceptList 삽입점·색 토큰 2종·SVG 경계/글자 폭 순수 함수를 TDD로 구현하고 전체 533개 테스트와 AC 4종을 통과했다.",
+      "started_at": "2026-09-20T20:49:38+0900",
+      "completed_at": "2026-09-20T20:56:23+0900"
+    },
+    {
+      "step": 1,
+      "name": "vpc-paths",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "hybrid-paths",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "edge-to-origin",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "s3-class-axis",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "sg-nacl-boundary",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "docs-and-report",
+      "status": "pending"
+    }
   ],
   "created_at": "2026-09-20T00:00:00+0900"
 }
