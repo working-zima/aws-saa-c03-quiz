@@ -115,8 +115,10 @@ step 명세가 적은 번호를 믿지 마라 — 이 규칙이 생긴 경위는
   **이 phase는 `src/data/`를 건드리지 않았으므로 전부 그대로여야 한다.**
 - `node scripts/check-structure.mjs` 결과.
 - `git diff --stat`으로 이 phase가 건드린 파일 전체 목록.
-- **남은 것**: 눈으로 볼 사람이 확인해야 하는 것 — 글자 실제 렌더 크기, 겹침, 곡선 경로의
-  가독성. 기계 검사는 `rect`의 좌표만 본다. `text`의 실제 폭은 어림값이다. 그 한계를 적어라.
+- 경로·노드 교차 검사 결과(`tools/check-path-crossings.mjs`). 그 검사기가 무엇을 덮고
+  무엇을 못 덮는지도 한 줄로 적어라.
+- **남은 것**: 눈으로 볼 사람이 확인해야 하는 것. `measurements.md`의 「아직 눈으로 보지
+  않은 것」을 가리키고, 그 뒤에 새로 생긴 것이 있으면 더해라. 베끼지 마라.
 
 ## Acceptance Criteria
 
@@ -126,6 +128,7 @@ npm run lint
 npm test
 node scripts/check-structure.mjs
 node scripts/coverage.mjs
+node phases/38-service-diagrams/tools/check-path-crossings.mjs
 ```
 
 ## 검증 절차
