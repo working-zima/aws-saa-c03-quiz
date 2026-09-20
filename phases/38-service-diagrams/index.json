@@ -63,7 +63,10 @@
     {
       "step": 6,
       "name": "docs-and-report",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-21T01:32:36+0900",
+      "summary": "ADR-036으로 도식 내부 계층 구분용 두 색 예외를 확정하고 PRD·UI_GUIDE·ARCHITECTURE의 지정 절과 검증 보고를 갱신했다. measurements.md의 브라우저 실측을 반영했으며 현재 렌더한 다섯 도식의 경계·라벨 넘침 0건, viewBox 폭 280을 확인했다. Node 18.17.1에서 AC 6종·33개 파일 647개 테스트 통과, 문항 732·개념 618·커버리지 100% 및 구조 불변 유지. 경로 검사 43노드·42경로 통과와 검사 범위·미측정 캡션을 기록했다. Git 명령 금지에 따라 phase 전체 diff는 미확인으로 남기고 SHA-256 대조로 step 6의 src/ 73개 파일·tailwind.config.js·phases/NEXT.md 불변을 확인했다.",
+      "completed_at": "2026-09-21T01:40:50+0900"
     }
   ],
   "created_at": "2026-09-20T00:00:00+0900"
