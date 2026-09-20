@@ -65,7 +65,7 @@ describe('VpcPathsDiagram', () => {
 
     await selectScenario('프라이빗 → 인터넷')
 
-    expect(caption).toHaveTextContent('NAT를 거쳐 나가며, 외부의 접속 시작은 막는다.')
+    expect(caption).toHaveTextContent(/NAT.*퍼블릭 서브넷/)
     expect(caption.textContent).not.toBe(idleCaption)
     expect(caption).toHaveAttribute('aria-live', 'polite')
   })
@@ -79,6 +79,29 @@ describe('VpcPathsDiagram', () => {
 
     for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
     expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+  })
+
+  it.each([
+    '사용자 → EC2', 'Lambda → EC2', '프라이빗 → 인터넷', 'VPC → S3',
+    'Lambda → 로그', 'Lambda → EFS', '온프레미스 → VPC',
+  ])('%s 캡션은 20자를 넘어 조건과 제약을 설명한다', async (label) => {
+    const { container } = render(<VpcPathsDiagram />)
+    await selectScenario(label)
+
+    expect(container.querySelector('figcaption')!.textContent!.length).toBeGreaterThan(20)
+  })
+
+  it('로그 캡션에 근거 없는 VPC 경로 설명을 넣지 않는다', async () => {
+    const { container } = render(<VpcPathsDiagram />)
+    await selectScenario('Lambda → 로그')
+
+    expect(container.querySelector('figcaption')).not.toHaveTextContent('VPC')
+  })
+
+  it('모바일 SVG 래퍼는 figure 패딩을 포함한 폭을 쓰고 sm 이상에서는 여백을 복원한다', () => {
+    render(<VpcPathsDiagram />)
+
+    expect(diagram().parentElement).toHaveClass('-mx-4', 'sm:mx-0', 'max-sm:w-[calc(100%+2rem)]')
   })
 
   it('모든 rect가 280폭 viewBox 경계 안에 있다', () => {

@@ -40,31 +40,31 @@ const paths: Record<string, string> = {
 // 사실 근거는 step 1에 지정된 개념 본문이다. 캡션은 그 사실을 짧게 다시 쓴다.
 const scenarios: DiagramScenario[] = [
   {
-    id: 's1', label: '사용자 → EC2', caption: '웹 요청은 ALB를 거쳐 EC2로 전달된다.',
+    id: 's1', label: '사용자 → EC2', caption: '외부 접근을 허용하면 퍼블릭, 막으면 프라이빗 서브넷이다.',
     nodes: ['internet', 'igw', 'alb', 'ec2'], paths: ['internet-igw', 'igw-alb', 'alb-ec2'],
   },
   {
-    id: 's2', label: 'Lambda → EC2', caption: 'Lambda를 VPC에 연결해 사설 EC2에 닿는다.',
+    id: 's2', label: 'Lambda → EC2', caption: '퍼블릭 배치로는 사설 EC2에 못 닿는다. 수신 보안 그룹의 소스는 상대 그룹 ID다.',
     nodes: ['lambda', 'eni', 'ec2'], paths: ['lambda-eni', 'eni-ec2'],
   },
   {
-    id: 's3', label: '프라이빗 → 인터넷', caption: 'NAT를 거쳐 나가며, 외부의 접속 시작은 막는다.',
+    id: 's3', label: '프라이빗 → 인터넷', caption: 'NAT 게이트웨이는 프라이빗에서 쓰지만 퍼블릭 서브넷에 둔다.',
     nodes: ['ec2', 'nat', 'igw', 'internet'], paths: ['ec2-nat', 'nat-igw', 'igw-internet'],
   },
   {
-    id: 's4', label: 'VPC → S3', caption: 'S3는 VPC 밖에 두고, 인터넷 없이 연결한다.',
+    id: 's4', label: 'VPC → S3', caption: '게이트웨이 엔드포인트는 무료다. S3에는 VPC·서브넷 배치도 보안 그룹도 없다.',
     nodes: ['ec2', 'endpoint', 's3'], paths: ['ec2-endpoint', 'endpoint-s3'],
   },
   {
-    id: 's5', label: 'Lambda → 로그', caption: '로그 쓰기 권한은 Lambda 실행 역할에 둔다.',
+    id: 's5', label: 'Lambda → 로그', caption: '로그가 없으면 로깅 설정보다 실행 역할의 쓰기 권한을 먼저 확인한다.',
     nodes: ['lambda', 'logs'], paths: ['lambda-logs'],
   },
   {
-    id: 's6', label: 'Lambda → EFS', caption: '공유 파일은 EFS를 연결해 읽는다.',
+    id: 's6', label: 'Lambda → EFS', caption: '레이어 한도를 넘는 종속성을 재배포 없이 갱신한다. 전송은 TLS로 자동 암호화된다.',
     nodes: ['lambda', 'eni', 'efs'], paths: ['lambda-eni', 'eni-efs'],
   },
   {
-    id: 's7', label: '온프레미스 → VPC', caption: '온프레미스는 VPN의 암호화 경로로 접속한다.',
+    id: 's7', label: '온프레미스 → VPC', caption: '가상 프라이빗 게이트웨이는 VPC별로 붙으므로 VPC가 늘면 확장이 어렵다.',
     nodes: ['onprem', 'vgw', 'rds'], paths: ['onprem-vgw', 'vgw-rds'],
   },
 ]
@@ -82,7 +82,7 @@ export function VpcPathsDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="w-full max-w-[380px]">
+      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
         <svg aria-label="VPC 통신 경로" className="block h-auto w-full" role="img" viewBox="0 0 280 740">
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">

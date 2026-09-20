@@ -18,6 +18,24 @@ const frameProps = {
 }
 
 describe('DiagramFrame', () => {
+  it('모바일에서는 좌우 여백·테두리·둥근 모서리를 없애고 sm 이상에서 복원한다', () => {
+    render(<DiagramFrame {...frameProps} />)
+
+    expect(screen.getByRole('figure', { name: '테스트 도식' })).toHaveClass(
+      '-mx-5', 'sm:mx-0', 'rounded-none', 'sm:rounded-lg',
+      'border', 'border-x-0', 'sm:border-x',
+    )
+  })
+
+  it('버튼 간격과 좌우 여백을 좁히면서 터치 높이 44px을 유지한다', () => {
+    render(<DiagramFrame {...frameProps} />)
+
+    expect(screen.getByRole('group', { name: '통신 시나리오' })).toHaveClass('flex-wrap', 'gap-2')
+    for (const button of screen.getAllByRole('button')) {
+      expect(button).toHaveClass('min-h-[44px]', 'px-2.5')
+    }
+  })
+
   it('시나리오 선택을 전달하고 active가 바뀔 때까지 화면 상태를 유지한다', async () => {
     const onSelect = vi.fn()
     render(<DiagramFrame {...frameProps} onSelect={onSelect} />)
