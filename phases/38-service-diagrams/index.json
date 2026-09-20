@@ -1,0 +1,14 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "38-service-diagrams",
+  "steps": [
+    { "step": 0, "name": "diagram-shell", "status": "pending" },
+    { "step": 1, "name": "vpc-paths", "status": "pending" },
+    { "step": 2, "name": "hybrid-paths", "status": "pending" },
+    { "step": 3, "name": "edge-to-origin", "status": "pending" },
+    { "step": 4, "name": "s3-class-axis", "status": "pending" },
+    { "step": 5, "name": "sg-nacl-boundary", "status": "pending" },
+    { "step": 6, "name": "docs-and-report", "status": "pending" }
+  ],
+  "created_at": "2026-09-20T00:00:00+0900"
+}
