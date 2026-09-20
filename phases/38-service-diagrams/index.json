@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "vpc-paths",
-      "status": "pending"
+      "status": "completed",
+      "summary": "VPC 통신 도식 1개·시나리오 7개를 TDD로 구현하고 comparison에 등록했다. 렌더된 SVG 실측: viewBox 0 0 280 740, 최장 라벨 S3 게이트웨이 엔드포인트의 estimateTextWidth(라벨, 10)=122·노드 폭 232, 2열 노드 12개·1열 전체 폭 노드 2개, 관문 검사 5·6·7 통과. Node 18.17.1에서 AC 4종·전체 550개 테스트 통과. 공유 틀 보완 필요: DiagramFrame의 p-4·테두리 때문에 320px 화면에서 SVG 표시 폭은 계산상 246px으로 1:1이 되지 않는다. 수정 금지에 따라 틀은 유지했으며 step 2~5의 규약 확정 전에 검토해야 한다. 브라우저 미연결로 실제 화면 폭·캡션 줄 수는 실측하지 못했다.",
+      "started_at": "2026-09-20T20:56:23+0900",
+      "completed_at": "2026-09-20T21:04:10+0900"
     },
     {
       "step": 2,
