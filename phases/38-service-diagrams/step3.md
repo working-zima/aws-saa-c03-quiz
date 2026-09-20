@@ -69,6 +69,11 @@ S3는 VPC 안에 만드는 자원이 아니다(`vpc-networking.s3-is-regional`).
 | `s5` | Global Accelerator | viewer → ga → nlba | `global-accelerator`, `global-accelerator-static-ip`, `global-accelerator-endpoints` |
 | `s6` | 리전 장애 조치 | viewer → ga → nlbb (**`route53`은 경로에 없다**) | `global-accelerator-vs-dns-failover` |
 
+**캡션에는 바닥이 있다.** 경로 그림이 이미 말하는 것(A에서 B로 간다)을 글로 되풀이하지 마라.
+각 캡션은 **그림이 말하지 못하는 것 하나**를 반드시 담는다 — 그 경로가 성립하는 조건,
+그 경로의 제약, 또는 왜 다른 경로가 아닌가. 한 줄 요약으로 끝내면 캡션을 둔 이유가 없다.
+`figcaption`은 두 줄 자리를 비워 두고 있다.
+
 `s1`이 이 도식의 첫 수다 — **오리진까지 가지 않고 엣지에서 끝나는 경로**를 보여야
 나머지 다섯의 "오리진으로 넘어간다"가 대비로 읽힌다.
 
