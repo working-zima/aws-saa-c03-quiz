@@ -19,6 +19,11 @@
       "completed_at": "2026-09-20T21:04:10+0900"
     },
     {
+      "step": 7,
+      "name": "frame-and-captions",
+      "status": "pending"
+    },
+    {
       "step": 2,
       "name": "hybrid-paths",
       "status": "pending"

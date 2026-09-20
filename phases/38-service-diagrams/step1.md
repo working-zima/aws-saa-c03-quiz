@@ -94,8 +94,11 @@
 | `s6` | Lambda → EFS | lambda → eni → efs | `lambda.lambda-efs-mount` |
 | `s7` | 온프레미스 → VPC | onprem → vgw → rds | `hybrid-connectivity.site-to-site-vpn`, `hybrid-connectivity.virtual-private-gateway` |
 
-`s5`가 이 도식에서 값이 가장 큰 시나리오다 — **VPC를 하나도 지나지 않는 경로**라서,
-나머지 여섯과 대비되며 "어디까지가 VPC의 일인가"를 보여준다. 빼지 마라.
+`s5`는 노드 둘이 모두 AWS 관리 영역에 있어 VPC 박스 밖에서 끝나는 유일한 시나리오다. 빼지 마라.
+
+> **2026-09-20 정정(step 7).** 이 자리에 원래 "VPC를 하나도 지나지 않는 경로라서"라고 적혀
+> 있었다. `lambda.lambda-execution-role-logs` 본문에 그런 말이 없으므로 근거 없는 주장이었다.
+> 배치는 그대로 두고, 캡션에는 그 개념이 실제로 말하는 것만 쓴다. step 7이 캡션을 고쳤다.
 
 범례: 색 두 가지와 무채색이 각각 무엇인지 한 줄. 위치로도 읽히므로 범례는 거들 뿐이다.
 
