@@ -21,7 +21,10 @@
     {
       "step": 7,
       "name": "frame-and-captions",
-      "status": "pending"
+      "status": "completed",
+      "summary": "모바일 전폭·버튼 간격·캡션 7개를 TDD로 보정했다. figure 클래스: -mx-5 min-w-0 space-y-3 rounded-none border border-x-0 border-disabled bg-panel p-4 break-keep break-anywhere sm:mx-0 sm:rounded-lg sm:border-x; SVG 래퍼 클래스: -mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0 (w-full은 음수 마진만으로 늘어나지 않아 모바일에서 패딩 2rem을 폭에 더하고 빌드 CSS 생성을 확인). 버튼 gap-2·px-2.5, min-h-[44px] 유지. 캡션 글자 수(공백·문장부호 포함): s1 32·s2 48·s3 34·s4 45·s5 38·s6 47·s7 42자; s5에 VPC 없음. viewBox 0 0 280 740·노드 좌표·경로·시나리오 구성 유지, step 1 관문 검사 5·6·7 통과. Node 18.17.1에서 AC 5종 및 전체 561개 테스트 통과. 연결된 브라우저가 없고 Chrome 제어가 허용되지 않아 320·390·1280px의 SVG 표시 폭·라벨 표시 크기·가로 넘침·버튼 줄 높이·캡션 두 줄 여부는 미측정이며 브라우저 재측정이 필요하다.",
+      "started_at": "2026-09-20T21:18:45+0900",
+      "completed_at": "2026-09-20T21:23:47+0900"
     },
     {
       "step": 2,
