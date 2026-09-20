@@ -8,6 +8,7 @@ src/
 ├── App.tsx            # 라우터 정의
 ├── pages/             # 화면 단위 (라우트 하나 = 파일 하나)
 ├── components/        # 재사용 UI 컴포넌트
+│   └── diagrams/      # 개념 본문 안에 들어가는 SVG 도식. 레이아웃이 서로 달라 도식마다 컴포넌트 하나.
 ├── data/              # 빌드 타임 정적 학습 데이터 (JSON)
 ├── types/             # TypeScript 타입 정의 (단일 출처)
 └── lib/               # 순수 로직. React 의존 없음.
@@ -444,3 +445,4 @@ pages/*  ──읽기──▶  lib/progress.ts  ──▶  localStorage
 | `lib/*` (채점·진행률·저장소) | Vitest 단위 테스트. DOM 불필요. |
 | `src/data/*.json` | 스키마 검증 테스트 — 타입 일치, id 유일성, `conceptId` 참조 무결성, `answerIndex` 범위, **개념 커버리지 100%**(개념 618개가 모두 문항 하나 이상을 갖는가), 문항 id의 연속성 |
 | `pages/`, `components/` | @testing-library/react. 사용자 관점 동작만. |
+| `components/diagrams/*` | @testing-library/react + 좌표 단언. 시나리오 동작에 더해 **viewBox 넘침과 라벨 넘침을 `src/lib/svg-bounds.ts`로 기계 검사**한다. 브라우저가 없는 환경에서 레이아웃 회귀를 잡는 유일한 장치다. |

@@ -2,13 +2,73 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "38-service-diagrams",
   "steps": [
-    { "step": 0, "name": "diagram-shell", "status": "pending" },
-    { "step": 1, "name": "vpc-paths", "status": "pending" },
-    { "step": 2, "name": "hybrid-paths", "status": "pending" },
-    { "step": 3, "name": "edge-to-origin", "status": "pending" },
-    { "step": 4, "name": "s3-class-axis", "status": "pending" },
-    { "step": 5, "name": "sg-nacl-boundary", "status": "pending" },
-    { "step": 6, "name": "docs-and-report", "status": "pending" }
+    {
+      "step": 0,
+      "name": "diagram-shell",
+      "status": "completed",
+      "summary": "도식 공통 틀·빈 레지스트리·ConceptList 삽입점·색 토큰 2종·SVG 경계/글자 폭 순수 함수를 TDD로 구현하고 전체 533개 테스트와 AC 4종을 통과했다.",
+      "started_at": "2026-09-20T20:49:38+0900",
+      "completed_at": "2026-09-20T20:56:23+0900"
+    },
+    {
+      "step": 1,
+      "name": "vpc-paths",
+      "status": "completed",
+      "summary": "VPC 통신 도식 1개·시나리오 7개를 TDD로 구현하고 comparison에 등록했다. 렌더된 SVG 실측: viewBox 0 0 280 740, 최장 라벨 S3 게이트웨이 엔드포인트의 estimateTextWidth(라벨, 10)=122·노드 폭 232, 2열 노드 12개·1열 전체 폭 노드 2개, 관문 검사 5·6·7 통과. Node 18.17.1에서 AC 4종·전체 550개 테스트 통과. 공유 틀 보완 필요: DiagramFrame의 p-4·테두리 때문에 320px 화면에서 SVG 표시 폭은 계산상 246px으로 1:1이 되지 않는다. 수정 금지에 따라 틀은 유지했으며 step 2~5의 규약 확정 전에 검토해야 한다. 브라우저 미연결로 실제 화면 폭·캡션 줄 수는 실측하지 못했다.",
+      "started_at": "2026-09-20T20:56:23+0900",
+      "completed_at": "2026-09-20T21:04:10+0900"
+    },
+    {
+      "step": 7,
+      "name": "frame-and-captions",
+      "status": "completed",
+      "summary": "모바일 전폭·버튼 간격·캡션 7개를 TDD로 보정했다. figure 클래스: -mx-5 min-w-0 space-y-3 rounded-none border border-x-0 border-disabled bg-panel p-4 break-keep break-anywhere sm:mx-0 sm:rounded-lg sm:border-x; SVG 래퍼 클래스: -mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0 (w-full은 음수 마진만으로 늘어나지 않아 모바일에서 패딩 2rem을 폭에 더하고 빌드 CSS 생성을 확인). 버튼 gap-2·px-2.5, min-h-[44px] 유지. 캡션 글자 수(공백·문장부호 포함): s1 32·s2 48·s3 34·s4 45·s5 38·s6 47·s7 42자; s5에 VPC 없음. viewBox 0 0 280 740·노드 좌표·경로·시나리오 구성 유지, step 1 관문 검사 5·6·7 통과. Node 18.17.1에서 AC 5종 및 전체 561개 테스트 통과. 연결된 브라우저가 없고 Chrome 제어가 허용되지 않아 320·390·1280px의 SVG 표시 폭·라벨 표시 크기·가로 넘침·버튼 줄 높이·캡션 두 줄 여부는 미측정이며 브라우저 재측정이 필요하다.",
+      "started_at": "2026-09-20T21:18:45+0900",
+      "completed_at": "2026-09-20T21:23:47+0900"
+    },
+    {
+      "step": 2,
+      "name": "hybrid-paths",
+      "status": "completed",
+      "failed_at": "2026-09-20T21:26:39+0900",
+      "started_at": "2026-09-20T21:29:27+0900",
+      "summary": "온프레미스 연결 도식 1개·시나리오 6개를 TDD로 구현하고 hybrid-connectivity.vpn-vs-direct-connect에 등록했다. 실측: viewBox 0 0 280 540, 최장 라벨 '가상 프라이빗 게이트웨이 (VPC A)'의 estimateTextWidth(라벨, 10)=165·노드 폭 232, 2열 노드 4개(onprem·remote, internet·dxloc)·1열 폭 노드 7개, 그룹 박스 4개(온프레미스·리전·VPC A·VPC B). 인터넷과 Direct Connect 위치를 같은 y에 나란히 두어 전용선이 인터넷을 지나지 않음을 위치로 보인다. 캡션 글자 수 s1 59·s2 53·s3 55·s4 55·s5 53·s6 52자이고 개념 본문과의 최장 겹침은 11자(ADR-025 임계값 32자 미만)다. 경로 14개 전부가 제3의 노드 상자를 피하고 양 끝이 노드 경계에 닿는 것을 일회성 스크립트로 확인했다. 관문 검사 5·6·7 통과, Node 18.17.1에서 AC 4종·전체 587개 테스트 통과. 규약 판단 둘: 그룹 이름 '온프레미스 데이터 센터'를 박스 라벨로 쓰면 같은 이름의 노드와 두 번 겹쳐 박스 라벨만 '온프레미스'로 줄였고, 인터넷·Direct Connect 위치 층은 노드 자체가 층 표시라 별도 박스를 그리지 않았다(step 1이 인터넷·온프레미스를 다룬 방식과 같다). DiagramFrame·svg-bounds는 고치지 않았고 step 7이 정한 래퍼 클래스를 그대로 썼다. 브라우저 미연결로 320·390·1280px의 실제 표시 폭·캡션 줄 수는 미측정이다.",
+      "completed_at": "2026-09-20T21:40:15+0900"
+    },
+    {
+      "step": 3,
+      "name": "edge-to-origin",
+      "status": "completed",
+      "failed_at": "2026-09-20T21:46:05+0900",
+      "started_at": "2026-09-20T23:02:43+0900",
+      "summary": "엣지→오리진 도식 1개·시나리오 6개를 cloudfront-global-accelerator.global-accelerator-vs-dns-failover에 등록했다. 앞 세션이 세션 한도로 registry.ts 등록 직전에 끊겨 테스트 1개가 빨간 채 남아 있었고, 이 세션은 그 TDD 중단점에서 이어 등록 한 줄로 초록을 만든 뒤 도식 전체를 재검증했다. 실측: viewBox 0 0 280 480, 최장 라벨 'Global Accelerator 고정 IP'의 estimateTextWidth(라벨, 10)=141·노드 폭 172, 2열 노드 6개(cf·route53, alb·s3, ec2·nlba)·1열 전체 폭 노드 2개(viewer·onpremapi)·열 하나만 쓰는 노드 2개(ga·nlbb), 그룹 박스 3개(엣지 로케이션·리전 A·리전 B). 리전 A와 B를 세로로 쌓고(region-a 212~320, region-b 340~404) 온프레미스 API를 둘 밖 아래(436)에 두어 오리진의 위치를 좌표로 보인다. route53은 엣지 층 옆(x=204)에 같은 노드 상자로 그리되 여섯 시나리오 어디에서도 경로에 들어가지 않으며, 그것이 s6에서 흐려지는 것으로 '장애 조치가 DNS를 거치지 않는다'를 보인다. 캡션 글자 수 s1 60·s2 62·s3 70·s4 63·s5 59·s6 70자이고 개념 본문과의 최장 겹침은 15자(ADR-025 임계값 32자 미만)다. 경로 8개 전부가 제3의 노드 상자를 피하고 양 끝이 노드 경계에 닿는 것을 일회성 스크립트로 확인했다. 관문 검사 5·6·7 통과, Node 18.17.1에서 AC 4종·전체 615개 테스트 통과. DiagramFrame·svg-bounds·src/data는 고치지 않았고 step 7이 정한 래퍼 클래스를 그대로 썼다. 브라우저 미연결로 320·390·1280px의 실제 표시 폭과 캡션 줄 수는 미측정이다 — 캡션이 step 2(52~59자)보다 길어 320px에서 세 줄이 될 수 있으나 figcaption의 min-h-24가 네 줄 자리를 비워 두므로 본문이 밀리지는 않는다.",
+      "completed_at": "2026-09-20T23:06:43+0900"
+    },
+    {
+      "step": 4,
+      "name": "s3-class-axis",
+      "status": "completed",
+      "started_at": "2026-09-20T23:06:43+0900",
+      "summary": "S3 스토리지 클래스 분류 도식 1개를 s3-storage-classes.s3-storage-class-cost-order에 등록했다. 시나리오가 없는 정적 도식이라 DiagramFrame에 scenarios를 넘기지 않아 버튼이 0개다(전체도 없다). 실측: viewBox 0 0 280 596, 최장 라벨 'S3 Glacier Flexible Retrieval'의 estimateTextWidth(라벨, 10)=159.5·노드 폭 240, 라벨이 전부 길어 2열 노드는 0개이고 여덟 모두 1열 전체 폭(칸 바깥 256·안쪽 240)이다. 그룹 박스 5개: immediate(y 4~304)·longterm-immediate(234~296)·waiting(314~512)·longterm-waiting(382~504)·outside(522~592, 유일한 점선). 대기 조회의 장기 보관 바깥 칸은 y 332~382의 50px을 노드도 글자도 없이 비워 두어, 기다려야 하는 클래스가 전부 Glacier 계열임을 구조로 보인다 — '없음' 같은 글자를 채우지 않았고 테스트가 그 칸의 노드 0개·글자 0개를 회귀로 고정한다. S3 Express One Zone은 두 그룹의 bottom(304·512)보다 아래인 544에 두어 좌표로 기준 밖임을 보인다. 곁말은 step이 지정한 7개만 붙이고 glacier-instant에는 붙이지 않았다. 규약 판단 하나: 곁말을 '노드 옆'에 두지 못하고 상자 바로 아래 줄(baseline node.y+41, 9px)로 내렸다 — 가장 긴 곁말 '접근 시점을 예측하기 어려울 때 · 검색 요금 없음'이 9px에서 215.5라 어느 노드(최대 256) 옆에도 들어가지 않고, 일곱을 같은 규칙으로 두는 편이 자리마다 예외를 두는 것보다 낫다고 봤다. 비용은 좌표축으로 그리지 않았다 — SVG 밖 <p data-cost-order> 한 줄에 본문의 세 관계만 적고, One Zone-IA·Intelligent-Tiering·Instant Retrieval·Express One Zone이 그 줄에 없다는 것을 테스트가 단언해 전체 순위가 생기는 것을 막는다. 캡션·곁말·비용 줄과 개념 본문(summary 포함)의 최장 겹침은 26자이고 그 구간에 한글이 없다(전부 영문 클래스명, ADR-025 임계 32자 미만). 첫 초안의 비용 줄이 s3-storage-class-cost-order의 summary와 31자 겹쳐 문장을 다시 썼다. 관문 검사 5·6·7 통과(rect 13개 전부 viewBox 안, 라벨 여덟 각각 estimateTextWidth+12 <= 노드 폭, viewBox 폭 280). Node 18.17.1에서 AC 4종·전체 630개 테스트 통과. DiagramFrame·svg-bounds·src/data는 고치지 않았고 registry.ts에는 import 한 줄과 매핑 한 줄만 더했으며 step 7이 정한 래퍼 클래스를 그대로 썼다. 브라우저 미연결로 320·390·1280px의 실제 표시 폭은 미측정이다 — 세로 596은 지금까지 중 두 번째로 길어 320px에서 도식 한 장이 화면 두 개를 넘는다.",
+      "completed_at": "2026-09-20T23:14:35+0900"
+    },
+    {
+      "step": 5,
+      "name": "sg-nacl-boundary",
+      "status": "completed",
+      "started_at": "2026-09-20T23:14:35+0900",
+      "summary": "보안 그룹·네트워크 ACL 경계 도식 1개·시나리오 2개를 security-groups-nacl.security-group-stateful-vs-nacl-stateless에 등록했다. 실측: viewBox 0 0 280 360, 최장 라벨 '보안 그룹 아웃바운드'의 estimateTextWidth(라벨, 10)=101·노드 폭 128, 2열 노드 6개(ec2·rds, nacl-in·nacl-out, sg-in·sg-out)·1열 전체 폭 노드 2개(outside 264·resource 264), 그룹 박스 2개(nacl-boundary 4,4,272,126 · sg-boundary 16,42,248,78 — 둘 다 실선). 위쪽 경계 그림은 두 경계를 중첩해 감싸는 대상이 다름을 좌표로 보이고(테스트가 sg 경계의 네 변이 nacl 경계 안쪽에 완전히 들어가는 것과 EC2·RDS 둘을 함께 감싸는 것을 단언한다), 아래쪽 왕복 그림은 280 폭에 네 칸을 가로로 놓을 수 없어 세로 두 열로 세웠다 — 왼쪽 열이 요청 방향, 오른쪽 열이 응답 방향이고 바깥·리소스가 두 열의 공통 끝점이라 어느 시나리오에서도 흐려지지 않는다. '그 응답'에서만 보안 그룹 아웃바운드 칸이 점선(4 3)이 되고 NACL 아웃바운드 칸은 실선으로 남는다 — 이 도식의 그룹 박스가 모두 실선이라 SVG 전체에서 stroke-dasharray를 가진 rect가 정확히 하나인지를 테스트가 회귀로 붙든다(전체·들어오는 요청에서는 0개). 캡션 글자 수 idle 60·req 78·res 81자이고 개념 본문(name·summary 포함)과의 최장 겹침은 11자(ADR-025 임계값 32자 미만)다. 경로 6개 전부가 제3의 노드 상자를 피하고 양 끝이 노드 경계에 닿는 것을 일회성 스크립트로 확인했다. 관문 검사 5·6·7 통과(rect 10개 전부 viewBox 안, 라벨 여덟 각각 estimateTextWidth+12 <= 노드 폭, viewBox 폭 280). Node 18.17.1에서 AC 4종·전체 647개 테스트 통과. 규약 판단 둘: (1) step 명세의 칸 이름 'SG 인바운드/아웃바운드'를 '보안 그룹 인바운드/아웃바운드'로 폈다 — step 1이 영문 약어 치환을 금지했고 'SG'는 네 출처와 개념 본문 어디에도 없는 말인 반면 'NACL'은 개념 name 자체라 그대로 뒀다. 편 라벨도 폭 128 칸에 113으로 들어간다. (2) 세 축의 값을 '경계 옆'이 아니라 각 경계 박스 안쪽 좌상단의 박스 라벨 바로 아랫줄(9px, muted)에 뒀다 — 두 경계가 폭 272·248이라 옆에 남는 띠가 12px뿐이고, 박스 라벨과 붙여 두는 편이 어느 경계의 성질인지 더 분명하다. DiagramFrame·svg-bounds·src/data는 고치지 않았고 registry.ts에는 import 한 줄과 매핑 한 줄만 더했으며 step 7이 정한 래퍼 클래스를 그대로 썼다. 브라우저 미연결로 320·390·1280px의 실제 표시 폭과 캡션 줄 수는 미측정이다 — res 캡션 81자는 320px 기준 계산상 4줄이라 figcaption의 min-h-24(4줄)에 들어가지만, 실기기에서 한 줄 더 밀리는지는 확인이 필요하다.",
+      "completed_at": "2026-09-20T23:21:54+0900"
+    },
+    {
+      "step": 6,
+      "name": "docs-and-report",
+      "status": "completed",
+      "started_at": "2026-09-21T01:32:36+0900",
+      "summary": "ADR-036으로 도식 내부 계층 구분용 두 색 예외를 확정하고 PRD·UI_GUIDE·ARCHITECTURE의 지정 절과 검증 보고를 갱신했다. measurements.md의 브라우저 실측을 반영했으며 현재 렌더한 다섯 도식의 경계·라벨 넘침 0건, viewBox 폭 280을 확인했다. Node 18.17.1에서 AC 6종·33개 파일 647개 테스트 통과, 문항 732·개념 618·커버리지 100% 및 구조 불변 유지. 경로 검사 43노드·42경로 통과와 검사 범위·미측정 캡션을 기록했다. Git 명령 금지에 따라 phase 전체 diff는 미확인으로 남기고 SHA-256 대조로 step 6의 src/ 73개 파일·tailwind.config.js·phases/NEXT.md 불변을 확인했다.",
+      "completed_at": "2026-09-21T01:40:50+0900"
+    }
   ],
-  "created_at": "2026-09-20T00:00:00+0900"
+  "created_at": "2026-09-20T00:00:00+0900",
+  "completed_at": "2026-09-21T01:40:50+0900"
 }
