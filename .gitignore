@@ -14,7 +14,7 @@ tsconfig.tsbuildinfo
 phases/**/phase*-output.json
 phases/**/step*-output.json
 
-# 원본 PDF (17MB). 추출본 docs/source/concepts-raw.md 가 커밋되므로 저장소에는 넣지 않는다.
+# 원본 PDF (17MB). 추출본 docs/source/concepts-raw.md 도 아래에서 무시한다(ADR-009).
 *.pdf
 
 # 에이전트별 worktree (저장소 안에 만들 경우). 커밋 대상이 아니다.

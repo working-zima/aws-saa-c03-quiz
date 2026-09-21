@@ -120,8 +120,8 @@ interface Progress {
 ### 헤더는 모든 화면에서 같다
 
 `Layout`의 헤더는 로고 + "검색" + "복습" 고정이다. **어느 화면인지 판별하는 분기를
-두지 마라.** `Layout`이 지금 쓰는 라우터 훅은 스크롤 복원용 `useLocation().key`와
-`useNavigationType()` 둘뿐이다.
+두지 마라.** `Layout`이 지금 쓰는 라우터 훅은 스크롤 복원용 `useLocation()`과 `useNavigationType()`뿐이고,
+`useLocation()`에서 읽는 것은 `key`와 앵커 예외용 `hash` 둘이다(아래 "화면 전환 시 스크롤").
 
 전에는 확인 문제 화면에서만 "근거 개념" 링크(→ `/topic/:topicId`)를 띄우고 "검색"을
 빼는 분기가 있었다. 그 링크가 **문항 화면을 언마운트시켜 진행 위치와 고른 보기를
@@ -413,7 +413,7 @@ UI_GUIDE "돌아가기"에 있다. 새 탭이나 공유 링크로 이 화면을 
 ## 데이터 흐름
 
 ```
-docs/source/concepts-raw.md          (원본 PDF 추출본, 커밋됨)
+docs/source/concepts-raw.md          (원본 PDF 추출본, gitignore — 로컬에만 둔다. ADR-009)
         │
         │  빌드 전 1회. harness step에서 사람이 검수하며 생성한다.
         │  앱 런타임이나 npm 스크립트에서 자동 생성하지 않는다.
