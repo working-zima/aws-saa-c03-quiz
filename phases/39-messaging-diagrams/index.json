@@ -2,9 +2,29 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "39-messaging-diagrams",
   "steps": [
-    { "step": 0, "name": "messaging-shapes", "status": "pending" },
-    { "step": 1, "name": "eventbridge-routing", "status": "pending" },
-    { "step": 2, "name": "sns-fanout", "status": "pending" },
-    { "step": 3, "name": "sqs-message-life", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "messaging-shapes",
+      "status": "completed",
+      "summary": "SQS 첫 개념에 MessagingShapesDiagram 등록: 14개 노드·세 단계·5개 시나리오; viewBox 0 0 280 592; 최장 라벨 EventBridge 이벤트 버스의 estimateTextWidth(라벨, 10)=121.5, 노드 폭 240; 기존 온프레미스 앱은 추정 폭 91, 노드 폭 112; 2열 노드 12개·1열 전체 폭 노드 2개; 관문 5·6·7 통과; TDD 및 Node 18.17.1에서 AC 5개 통과(전체 34개 파일·666개 테스트, 신규 19개); DiagramFrame 추가 요구 없음·미수정, 학습 JSON 미수정; 브라우저 권한 검토에서 로컬 페이지 접근이 거부되어 실제 글자 폭·캡션 두 줄·경로 가독성의 브라우저 실측은 미수행.",
+      "started_at": "2026-09-24T16:46:44+0900",
+      "completed_at": "2026-09-24T16:54:53+0900"
+    },
+    {
+      "step": 1,
+      "name": "eventbridge-routing",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "sns-fanout",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "sqs-message-life",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-24T16:46:44+0900"
 }
