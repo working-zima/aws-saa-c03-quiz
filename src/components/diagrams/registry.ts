@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
+import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
 import { SgNaclBoundaryDiagram } from './SgNaclBoundaryDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
@@ -13,4 +14,5 @@ export const diagramsByConceptId: Record<string, ComponentType> = {
   'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,
   'security-groups-nacl.security-group-stateful-vs-nacl-stateless': SgNaclBoundaryDiagram,
+  'sqs-sns-eventbridge.sqs': MessagingShapesDiagram,
 }
