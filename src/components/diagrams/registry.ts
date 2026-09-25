@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
+import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
@@ -15,4 +16,5 @@ export const diagramsByConceptId: Record<string, ComponentType> = {
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,
   'security-groups-nacl.security-group-stateful-vs-nacl-stateless': SgNaclBoundaryDiagram,
   'sqs-sns-eventbridge.sqs': MessagingShapesDiagram,
+  'sqs-sns-eventbridge.eventbridge': EventBridgeRoutingDiagram,
 }
