@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "eventbridge-routing",
-      "status": "pending"
+      "status": "completed",
+      "summary": "EventBridge 첫 개념에 EventBridgeRoutingDiagram 등록: 17개 노드·네 단계·대상 안 점선 VPC·7개 시나리오; viewBox 0 0 280 900; 전체 폭 240 노드는 default-bus·custom-bus·partner-bus·pipe 4개, 2열 노드 13개(일반 폭 112·VPC 안 108); 경로 교차는 최초 검사부터 0건 — 버스·파이프를 좌우 통로로 우회하고 pipe-sfn은 대상 두 열 사이로 연결; 관문 5·6·7 통과; TDD 실패 확인 후 구현, Node 18.17.1에서 AC 5개 통과(35개 파일·690개 테스트, 신규 24개); DiagramFrame 추가 요구 없음·미수정, step 0 도식·학습 JSON 미수정; 캡션은 14px·본문 폭 286px 보수 추정상 모두 두 줄이나 브라우저 실측값은 아님; 자동 승인 검토에서 사용자 권한 거부를 이유로 로컬 페이지 접근이 차단되어 실제 글자 폭·캡션 줄바꿈·경로 가독성의 브라우저 실측은 미수행.",
+      "started_at": "2026-09-25T22:34:46+0900",
+      "completed_at": "2026-09-25T22:43:01+0900"
     },
     {
       "step": 2,
