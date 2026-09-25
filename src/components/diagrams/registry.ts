@@ -6,6 +6,7 @@ import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
 import { SgNaclBoundaryDiagram } from './SgNaclBoundaryDiagram'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
+import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
 
 // 개념 id → 그 개념 본문 바로 뒤에 붙는 도식.
@@ -19,4 +20,5 @@ export const diagramsByConceptId: Record<string, ComponentType> = {
   'sqs-sns-eventbridge.sqs': MessagingShapesDiagram,
   'sqs-sns-eventbridge.eventbridge': EventBridgeRoutingDiagram,
   'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer': SnsFanoutDiagram,
+  'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time': SqsMessageLifeDiagram,
 }
