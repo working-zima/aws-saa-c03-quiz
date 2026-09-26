@@ -143,6 +143,86 @@
         "vpc-networking.comparison",
         "vpc-networking.vpc-subnet"
       ]
+    },
+    "vpc-destination": {
+      "label": "VPC 목적지별 선택 도식",
+      "svgLabel": "VPC 목적지별 선택",
+      "idleCaption": "목적지부터 고르면 그 안의 조건과 답을 비교할 수 있다.",
+      "nodes": {
+        "inet-ipv4": "NAT 게이트웨이",
+        "inet-ipv6": "Egress-only 인터넷 게이트웨이",
+        "inet-both": "인터넷 게이트웨이",
+        "svc-gateway": "게이트웨이 엔드포인트",
+        "svc-interface": "인터페이스 엔드포인트",
+        "svc-no-public": "NAT 게이트웨이로는 못 채움",
+        "app-private": "PrivateLink",
+        "app-scope": "엔드포인트 정책",
+        "app-routing": "피어링·Transit Gateway와 다른 점",
+        "vpc-pair": "VPC 피어링",
+        "vpc-many": "Transit Gateway",
+        "vpc-isolated": "VPC마다 Site-to-Site VPN"
+      },
+      "nodeNotes": {
+        "inet-ipv4": "IPv4로 내부에서 나가는 접속만",
+        "inet-ipv6": "IPv6로 내부에서 나가는 접속만",
+        "inet-both": "외부가 시작한 접속도 받아야 함",
+        "svc-gateway": "S3·DynamoDB에 비용 효율적으로 접근",
+        "svc-interface": "그 밖의 여러 AWS 서비스에 접근",
+        "svc-no-public": "공용 IP 사용을 금지한 조건",
+        "app-private": "여러 계정·VPC에서 사설로 접속",
+        "app-scope": "접속 주체와 허용 대상을 제한",
+        "app-routing": "라우팅 테이블 변경 없이 접속",
+        "vpc-pair": "두 VPC 전체를 사설 경로로 연결",
+        "vpc-many": "VPC 수가 수백 개로 늘어날 예정",
+        "vpc-isolated": "두 VPC 사이 통신을 허용하지 않음"
+      },
+      "groups": {
+        "internet": "인터넷",
+        "services": "AWS 서비스",
+        "application": "다른 VPC의 앱",
+        "vpcs": "다른 VPC 전체"
+      },
+      "scenarios": [
+        {
+          "id": "d1",
+          "label": "인터넷",
+          "caption": "내부에서 시작하는 접속만 필요한지, 외부가 시작하는 요청도 받아야 하는지 확인한다. 나가는 접속만 필요하면 IPv4와 IPv6를 구분해 고른다.",
+          "sources": [
+            "vpc-networking.nat-gateway",
+            "vpc-networking.egress-only-igw",
+            "vpc-networking.internet-gateway"
+          ]
+        },
+        {
+          "id": "d2",
+          "label": "AWS 서비스",
+          "caption": "AWS 서비스에 인터넷을 거치지 않고 연결하려면 엔드포인트를 쓴다. NAT 게이트웨이를 통하면 목적지가 AWS 서비스여도 공용 엔드포인트에 접속한다.",
+          "sources": [
+            "vpc-networking.vpc-endpoint",
+            "vpc-networking.nat-gateway-traffic-uses-public-endpoints"
+          ]
+        },
+        {
+          "id": "d3",
+          "label": "다른 VPC의 앱",
+          "caption": "PrivateLink는 다른 VPC의 특정 애플리케이션만 사설로 이용하게 한다. VPC 전체를 서로 연결해야 하는 경우와 구분한다.",
+          "sources": [
+            "vpc-networking.privatelink",
+            "vpc-networking.privatelink-endpoint-service"
+          ]
+        },
+        {
+          "id": "d4",
+          "label": "다른 VPC 전체",
+          "caption": "연결할 VPC가 얼마나 늘어날지와 서로 통신해도 되는지를 함께 살핀다. VPC 수와 격리 조건에 따라 연결 방식을 고른다.",
+          "sources": [
+            "vpc-networking.vpc-peering-scaling-limit"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.comparison"
+      ]
     }
   },
   "tables": {},
