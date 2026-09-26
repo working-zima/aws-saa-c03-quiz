@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { topics as defaultTopics } from '../data'
+import { topics as defaultTopics, visualsByTopicId } from '../data'
 import { isCorrect } from '../lib/grading'
 import type { Question, Topic } from '../types/content'
 import { ConceptList } from './ConceptList'
@@ -169,7 +169,7 @@ export function QuizRunner({ title, questions, answer, review, setInReview, rend
           {conceptOpen && (
             <div className="space-y-5" id={conceptPanelId}>
               <h3 className="text-lg font-medium text-title">{topic.title}</h3>
-              <ConceptList concepts={topic.concepts} headingLevel={4} />
+              <ConceptList concepts={topic.concepts} glossary={visualsByTopicId[topic.id]?.glossary} headingLevel={4} />
             </div>
           )}
         </div>

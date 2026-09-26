@@ -3,16 +3,35 @@ import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
+import { NatCountDiagram } from './NatCountDiagram'
+import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
 import { SgNaclBoundaryDiagram } from './SgNaclBoundaryDiagram'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
+import { VpcDestinationDiagram } from './VpcDestinationDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
+import { VpcScopeDiagram } from './VpcScopeDiagram'
+import {
+  AttachTargetsTable,
+  EndpointTypesTable,
+  FlowLogsVsCloudTrailTable,
+  NatInstanceVsGatewayTable,
+  PrivateConnectivityTable,
+} from './vpcTables'
 
 // 개념 id → 그 개념 본문 바로 뒤에 붙는 도식.
 // step 1~5가 여기에 한 줄씩 더한다.
-export const diagramsByConceptId: Record<string, ComponentType> = {
-  'vpc-networking.comparison': VpcPathsDiagram,
+export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]> = {
+  'vpc-networking.comparison': [VpcPathsDiagram, VpcDestinationDiagram],
+  'vpc-networking.internet-gateway-is-not-per-az': VpcScopeDiagram,
+  'vpc-networking.nat-gateway-count-by-environment': NatCountDiagram,
+  'vpc-networking.vpc-peering-scaling-limit': PeeringScaleDiagram,
+  'vpc-networking.s3-is-regional': AttachTargetsTable,
+  'vpc-networking.endpoint-pricing': EndpointTypesTable,
+  'vpc-networking.nat-instance': NatInstanceVsGatewayTable,
+  'vpc-networking.privatelink-endpoint-service': PrivateConnectivityTable,
+  'vpc-networking.vpc-flow-logs': FlowLogsVsCloudTrailTable,
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
   'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,

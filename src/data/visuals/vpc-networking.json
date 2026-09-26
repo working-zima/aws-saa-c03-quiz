@@ -1,0 +1,610 @@
+{
+  "diagrams": {
+    "vpc-paths": {
+      "label": "VPC 통신 경로 도식",
+      "svgLabel": "VPC 통신 경로",
+      "idleCaption": "경로를 고르면 통신 순서와 경계를 볼 수 있다.",
+      "legend": "파랑: AWS 관리 · 청록: 서브넷 자원 · 회색: 외부·연결 지점",
+      "nodes": {
+        "internet": "인터넷",
+        "onprem": "온프레미스",
+        "lambda": "Lambda 실행 환경",
+        "logs": "CloudWatch Logs",
+        "s3": "S3",
+        "igw": "인터넷 게이트웨이",
+        "vgw": "가상 프라이빗 게이트웨이",
+        "alb": "ALB",
+        "nat": "NAT 게이트웨이",
+        "eni": "Lambda ENI",
+        "ec2": "EC2",
+        "efs": "EFS 탑재 대상",
+        "rds": "RDS",
+        "endpoint": "S3 게이트웨이 엔드포인트",
+        "interface-endpoint": "인터페이스 엔드포인트",
+        "pl-endpoint": "PrivateLink 엔드포인트",
+        "peering": "VPC 피어링",
+        "tgw": "Transit Gateway",
+        "other-app": "다른 VPC의 앱"
+      },
+      "groups": {
+        "region": "리전",
+        "managed": "AWS 관리 영역",
+        "vpc": "VPC",
+        "public": "퍼블릭 서브넷",
+        "private": "프라이빗 서브넷",
+        "other-vpc": "다른 VPC"
+      },
+      "scenarios": [
+        {
+          "id": "s1",
+          "label": "사용자 → EC2",
+          "caption": "외부 접근을 허용하면 퍼블릭, 막으면 프라이빗 서브넷이다.",
+          "sources": [
+            "vpc-networking.internet-gateway",
+            "vpc-networking.vpc-subnet",
+            "elastic-load-balancing.elb"
+          ]
+        },
+        {
+          "id": "s2",
+          "label": "Lambda → EC2",
+          "caption": "퍼블릭 배치로는 사설 EC2에 못 닿는다. 수신 보안 그룹의 소스는 상대 그룹 ID다.",
+          "sources": [
+            "lambda.lambda-vpc-access",
+            "security-groups-nacl.security-group-referencing"
+          ]
+        },
+        {
+          "id": "s3",
+          "label": "프라이빗 → 인터넷",
+          "caption": "NAT 게이트웨이는 프라이빗에서 쓰지만 퍼블릭 서브넷에 둔다.",
+          "sources": [
+            "vpc-networking.nat-gateway",
+            "vpc-networking.nat-gateway-elastic-ip",
+            "vpc-networking.nat-gateway-traffic-uses-public-endpoints"
+          ]
+        },
+        {
+          "id": "s4",
+          "label": "VPC → S3",
+          "caption": "게이트웨이 엔드포인트는 무료다. S3에는 VPC·서브넷 배치도 보안 그룹도 없다.",
+          "sources": [
+            "vpc-networking.vpc-endpoint",
+            "vpc-networking.endpoint-pricing",
+            "vpc-networking.s3-is-regional"
+          ]
+        },
+        {
+          "id": "s5",
+          "label": "Lambda → 로그",
+          "caption": "로그가 없으면 로깅 설정보다 실행 역할의 쓰기 권한을 먼저 확인한다.",
+          "sources": [
+            "lambda.lambda-execution-role-logs"
+          ]
+        },
+        {
+          "id": "s6",
+          "label": "Lambda → EFS",
+          "caption": "레이어 한도를 넘는 종속성을 재배포 없이 갱신한다. 전송은 TLS로 자동 암호화된다.",
+          "sources": [
+            "lambda.lambda-efs-mount"
+          ]
+        },
+        {
+          "id": "s7",
+          "label": "온프레미스 → VPC",
+          "caption": "가상 프라이빗 게이트웨이는 VPC별로 붙으므로 VPC가 늘면 확장이 어렵다.",
+          "sources": [
+            "hybrid-connectivity.site-to-site-vpn",
+            "hybrid-connectivity.virtual-private-gateway"
+          ]
+        },
+        {
+          "id": "s8",
+          "label": "프라이빗 → 그 외 AWS 서비스",
+          "caption": "게이트웨이 미지원 서비스용이며 시간당 과금된다. VPC 사설 주소를 써 공용 IP 금지 조건도 채운다.",
+          "sources": [
+            "vpc-networking.vpc-endpoint",
+            "vpc-networking.endpoint-pricing",
+            "vpc-networking.nat-gateway-traffic-uses-public-endpoints"
+          ]
+        },
+        {
+          "id": "s9",
+          "label": "PrivateLink → 다른 VPC의 앱",
+          "caption": "특정 앱 하나만 연결한다. 라우팅 테이블 변경 없이 엔드포인트 정책으로 접근을 좁힌다.",
+          "sources": [
+            "vpc-networking.privatelink",
+            "vpc-networking.privatelink-endpoint-service"
+          ]
+        },
+        {
+          "id": "s10",
+          "label": "VPC ⇄ VPC 피어링",
+          "caption": "두 VPC 전체를 사설로 잇는 1:1 방식이다. VPC가 늘수록 연결 수가 급증한다.",
+          "sources": [
+            "vpc-networking.vpc-peering",
+            "vpc-networking.vpc-peering-scaling-limit",
+            "vpc-networking.comparison"
+          ]
+        },
+        {
+          "id": "s11",
+          "label": "Transit Gateway",
+          "caption": "수백 VPC 확장에는 단일 허브를 쓴다. 연결만 제공하며 앱별 접근 제한은 맡지 않는다.",
+          "sources": [
+            "hybrid-connectivity.transit-gateway",
+            "vpc-networking.vpc-peering-scaling-limit",
+            "vpc-networking.privatelink-endpoint-service"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.comparison",
+        "vpc-networking.vpc-subnet"
+      ]
+    },
+    "vpc-destination": {
+      "label": "VPC 목적지별 선택 도식",
+      "svgLabel": "VPC 목적지별 선택",
+      "idleCaption": "목적지부터 고르면 그 안의 조건과 답을 비교할 수 있다.",
+      "nodes": {
+        "inet-ipv4": "NAT 게이트웨이",
+        "inet-ipv6": "Egress-only 인터넷 게이트웨이",
+        "inet-both": "인터넷 게이트웨이",
+        "svc-gateway": "게이트웨이 엔드포인트",
+        "svc-interface": "인터페이스 엔드포인트",
+        "svc-no-public": "NAT 게이트웨이로는 못 채움",
+        "app-private": "PrivateLink",
+        "app-scope": "엔드포인트 정책",
+        "app-routing": "피어링·Transit Gateway와 다른 점",
+        "vpc-pair": "VPC 피어링",
+        "vpc-many": "Transit Gateway",
+        "vpc-isolated": "VPC마다 Site-to-Site VPN"
+      },
+      "nodeNotes": {
+        "inet-ipv4": "IPv4로 내부에서 나가는 접속만",
+        "inet-ipv6": "IPv6로 내부에서 나가는 접속만",
+        "inet-both": "외부가 시작한 접속도 받아야 함",
+        "svc-gateway": "S3·DynamoDB에 비용 효율적으로 접근",
+        "svc-interface": "그 밖의 여러 AWS 서비스에 접근",
+        "svc-no-public": "공용 IP 사용을 금지한 조건",
+        "app-private": "여러 계정·VPC에서 사설로 접속",
+        "app-scope": "접속 주체와 허용 대상을 제한",
+        "app-routing": "라우팅 테이블 변경 없이 접속",
+        "vpc-pair": "두 VPC 전체를 사설 경로로 연결",
+        "vpc-many": "VPC 수가 수백 개로 늘어날 예정",
+        "vpc-isolated": "두 VPC 사이 통신을 허용하지 않음"
+      },
+      "groups": {
+        "internet": "인터넷",
+        "services": "AWS 서비스",
+        "application": "다른 VPC의 앱",
+        "vpcs": "다른 VPC 전체"
+      },
+      "scenarios": [
+        {
+          "id": "d1",
+          "label": "인터넷",
+          "caption": "나가기만 하는지, 밖에서 먼저 들어오는 요청도 받는지로 갈린다.",
+          "sources": [
+            "vpc-networking.nat-gateway",
+            "vpc-networking.egress-only-igw",
+            "vpc-networking.internet-gateway"
+          ]
+        },
+        {
+          "id": "d2",
+          "label": "AWS 서비스",
+          "caption": "엔드포인트는 인터넷을 거치지 않는다. NAT 경로는 공용 엔드포인트로 나간다.",
+          "sources": [
+            "vpc-networking.vpc-endpoint",
+            "vpc-networking.nat-gateway-traffic-uses-public-endpoints"
+          ]
+        },
+        {
+          "id": "d3",
+          "label": "다른 VPC의 앱",
+          "caption": "VPC 전체가 아니라 애플리케이션 하나만 사설로 연다.",
+          "sources": [
+            "vpc-networking.privatelink",
+            "vpc-networking.privatelink-endpoint-service"
+          ]
+        },
+        {
+          "id": "d4",
+          "label": "다른 VPC 전체",
+          "caption": "VPC가 얼마나 늘어날지, 서로 통신해도 되는지가 답을 가른다.",
+          "sources": [
+            "vpc-networking.vpc-peering-scaling-limit"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.comparison"
+      ]
+    },
+    "vpc-scope": {
+      "label": "VPC 리소스의 존재 단위 도식",
+      "svgLabel": "VPC 리소스의 존재 단위",
+      "idleCaption": "인터넷 게이트웨이는 가용 영역에 속하지 않으므로 여러 개로 늘려도 가용성이 오르지 않는다. NAT 게이트웨이는 자기 가용 영역과 함께 무너지므로 가용 영역마다 하나씩 둔다. S3는 VPC 안에 만들 수 없다.",
+      "legend": "파랑: AWS 관리 · 청록: 서브넷 자원 · 회색: 연결 지점",
+      "nodes": {
+        "s3": "S3",
+        "igw": "인터넷 게이트웨이",
+        "nat-a": "NAT 게이트웨이",
+        "nat-b": "NAT 게이트웨이",
+        "ec2-a": "EC2",
+        "ec2-b": "EC2"
+      },
+      "groups": {
+        "region": "리전",
+        "vpc": "VPC",
+        "az-a": "가용 영역 A",
+        "az-b": "가용 영역 B",
+        "public-a": "퍼블릭 서브넷",
+        "public-b": "퍼블릭 서브넷",
+        "private-a": "프라이빗 서브넷",
+        "private-b": "프라이빗 서브넷"
+      },
+      "scenarios": [],
+      "sources": [
+        "vpc-networking.internet-gateway-is-not-per-az",
+        "vpc-networking.nat-gateway-per-az",
+        "vpc-networking.s3-is-regional"
+      ]
+    },
+    "nat-count": {
+      "label": "환경별 NAT 게이트웨이 수 도식",
+      "svgLabel": "환경별 NAT 게이트웨이 수",
+      "idleCaption": "환경과 장애 상황을 골라 NAT 게이트웨이 수에 따라 나가는 길이 어떻게 달라지는지 본다.",
+      "legend": "청록: 서브넷 자원 · 회색: 외부·연결 지점",
+      "nodes": {
+        "internet": "인터넷",
+        "igw": "인터넷 게이트웨이",
+        "nat-a": "NAT 게이트웨이",
+        "ec2-a": "EC2",
+        "nat-b": "NAT 게이트웨이",
+        "ec2-b": "EC2",
+        "nat-c": "NAT 게이트웨이",
+        "ec2-c": "EC2"
+      },
+      "groups": {
+        "vpc": "VPC",
+        "az-a": "가용 영역 A",
+        "az-b": "가용 영역 B",
+        "az-c": "가용 영역 C"
+      },
+      "notes": {
+        "public": "퍼블릭 서브넷",
+        "private": "프라이빗 서브넷",
+        "failure": "장애"
+      },
+      "scenarios": [
+        {
+          "id": "n1",
+          "label": "프로덕션",
+          "caption": "가용 영역마다 자기 쪽 NAT 게이트웨이로 나간다. 시간당 요금은 게이트웨이 개수만큼 붙는다.",
+          "sources": [
+            "vpc-networking.nat-gateway-per-az",
+            "vpc-networking.nat-gateway-count-by-environment"
+          ]
+        },
+        {
+          "id": "n2",
+          "label": "개발",
+          "caption": "모든 프라이빗 서브넷의 기본 경로를 게이트웨이 하나로 모아 요금을 한 개분으로 줄인다.",
+          "sources": [
+            "vpc-networking.nat-gateway-count-by-environment"
+          ]
+        },
+        {
+          "id": "n3",
+          "label": "프로덕션 · AZ A 장애",
+          "caption": "가용 영역 하나가 무너져도 나머지 가용 영역은 자기 쪽 게이트웨이로 계속 나간다.",
+          "sources": [
+            "vpc-networking.nat-gateway-per-az"
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "개발 · AZ A 장애",
+          "caption": "NAT가 있던 가용 영역이 무너지면 나머지도 인터넷을 잃는다. 고가용성이 불필요할 때의 대가다.",
+          "sources": [
+            "vpc-networking.nat-gateway-per-az",
+            "vpc-networking.nat-gateway-count-by-environment"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.nat-gateway-count-by-environment"
+      ]
+    },
+    "peering-scale": {
+      "label": "VPC 피어링과 Transit Gateway의 연결 수 도식",
+      "svgLabel": "VPC 수에 따른 피어링과 Transit Gateway의 연결 수",
+      "idleCaption": "모든 VPC가 서로 통신해야 한다면 필요한 연결 수를 VPC 수별로 비교한다. 지금은 VPC 4개다.",
+      "legend": "파랑: AWS 관리 · 회색: VPC·연결",
+      "nodes": {
+        "vpc": "VPC",
+        "tgw": "Transit Gateway"
+      },
+      "groups": {
+        "mesh": "VPC 피어링",
+        "hub": "Transit Gateway"
+      },
+      "notes": {
+        "count": "연결 {count}개"
+      },
+      "scenarios": [
+        {
+          "id": "p3",
+          "label": "VPC 3개",
+          "caption": "모든 VPC가 서로 통신해야 한다면 셋까지는 두 방식 모두 3개다.",
+          "sources": [
+            "vpc-networking.vpc-peering",
+            "vpc-networking.vpc-peering-scaling-limit"
+          ]
+        },
+        {
+          "id": "p6",
+          "label": "VPC 6개",
+          "caption": "모든 VPC가 서로 통신해야 한다면 피어링 15개, Transit Gateway 6개로 벌어진다.",
+          "sources": [
+            "vpc-networking.vpc-peering-scaling-limit"
+          ]
+        },
+        {
+          "id": "p10",
+          "label": "VPC 10개",
+          "caption": "모든 VPC가 서로 통신해야 한다면 45개 대 10개다. 수백 개면 Transit Gateway다.",
+          "sources": [
+            "vpc-networking.vpc-peering-scaling-limit",
+            "hybrid-connectivity.transit-gateway"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.vpc-peering-scaling-limit",
+        "hybrid-connectivity.transit-gateway"
+      ]
+    }
+  },
+  "tables": {
+    "attach-targets": {
+      "label": "무엇을 어디에 붙이나",
+      "columns": [
+        "붙이는 것 → 대상",
+        "판정",
+        "이유"
+      ],
+      "rows": [
+        {
+          "header": "엘라스틱 IP → NAT 게이트웨이",
+          "cells": [
+            "가능",
+            "만들 때 하나를 연결해야 나갈 출구가 생긴다"
+          ]
+        },
+        {
+          "header": "엘라스틱 IP → 인터넷 게이트웨이",
+          "cells": [
+            "불가",
+            "VPC에 연결하는 장치라 주소를 붙이지 않는다"
+          ]
+        },
+        {
+          "header": "NAT 게이트웨이 → 프라이빗 서브넷",
+          "cells": [
+            "불가",
+            "퍼블릭 서브넷에 둔다"
+          ]
+        },
+        {
+          "header": "엔드포인트 정책 → VPC 엔드포인트",
+          "cells": [
+            "가능",
+            "그 경로로 닿을 주체와 리소스를 좁힌다"
+          ]
+        },
+        {
+          "header": "보안 그룹 → S3",
+          "cells": [
+            "불가",
+            "S3는 버킷 정책이나 ACL로 막는다"
+          ]
+        }
+      ],
+      "columnWidths": [
+        "36%",
+        "16%",
+        "48%"
+      ],
+      "sources": [
+        "vpc-networking.nat-gateway-elastic-ip",
+        "vpc-networking.nat-gateway",
+        "vpc-networking.vpc-endpoint-policy",
+        "vpc-networking.s3-is-regional"
+      ]
+    },
+    "endpoint-types": {
+      "label": "게이트웨이 엔드포인트와 인터페이스 엔드포인트",
+      "columns": [
+        "",
+        "게이트웨이",
+        "인터페이스"
+      ],
+      "rows": [
+        {
+          "header": "대상",
+          "cells": [
+            "S3·DynamoDB. DynamoDB는 이 유형으로만 닿는다",
+            "그 밖의 AWS 서비스. S3도 닿는다"
+          ]
+        },
+        {
+          "header": "비용",
+          "cells": [
+            "무료",
+            "시간당 요금. 데이터 처리 비용은 NAT보다 싸다"
+          ]
+        },
+        {
+          "header": "고를 때",
+          "cells": [
+            "S3에 비용 효율로 닿을 때",
+            "여러 종류의 서비스에 닿아야 할 때"
+          ]
+        }
+      ],
+      "columnWidths": [
+        "24%",
+        "38%",
+        "38%"
+      ],
+      "sources": [
+        "vpc-networking.vpc-endpoint",
+        "vpc-networking.endpoint-pricing"
+      ]
+    },
+    "nat-instance-vs-gateway": {
+      "label": "NAT 인스턴스와 NAT 게이트웨이",
+      "columns": [
+        "",
+        "NAT 인스턴스",
+        "NAT 게이트웨이"
+      ],
+      "rows": [
+        {
+          "header": "운영",
+          "cells": [
+            "EC2로 직접 운영한다",
+            "관리형이다"
+          ]
+        },
+        {
+          "header": "트래픽이 몰리면",
+          "cells": [
+            "사양에 묶여 병목이 되고 뒤의 Lambda·EC2가 간헐적으로 타임아웃을 낸다",
+            "인스턴스 사양에 묶이지 않는다"
+          ]
+        },
+        {
+          "header": "확장·장애 조치",
+          "cells": [
+            "사람이 떠안는다",
+            "사람이 떠안지 않는다"
+          ]
+        }
+      ],
+      "columnWidths": [
+        "24%",
+        "38%",
+        "38%"
+      ],
+      "sources": [
+        "vpc-networking.nat-instance",
+        "vpc-networking.nat-gateway-count-by-environment"
+      ]
+    },
+    "private-connectivity": {
+      "label": "PrivateLink, VPC 피어링, Transit Gateway",
+      "columns": [
+        "",
+        "열어 주는 범위",
+        "라우팅 테이블"
+      ],
+      "rows": [
+        {
+          "header": "PrivateLink",
+          "cells": [
+            "애플리케이션 하나. 엔드포인트 정책으로 좁힌다",
+            "건드리지 않는다"
+          ]
+        },
+        {
+          "header": "VPC 피어링",
+          "cells": [
+            "두 VPC 전체",
+            "VPC가 늘수록 연결과 경로가 함께 는다"
+          ]
+        },
+        {
+          "header": "Transit Gateway",
+          "cells": [
+            "연결을 열 뿐 애플리케이션 단위로 제한하지 않는다",
+            "—"
+          ]
+        }
+      ],
+      "columnWidths": [
+        "24%",
+        "38%",
+        "38%"
+      ],
+      "sources": [
+        "vpc-networking.privatelink-endpoint-service",
+        "vpc-networking.vpc-peering",
+        "vpc-networking.comparison",
+        "hybrid-connectivity.transit-gateway"
+      ]
+    },
+    "flow-logs-vs-cloudtrail": {
+      "label": "VPC 플로우 로그와 CloudTrail",
+      "columns": [
+        "",
+        "플로우 로그",
+        "CloudTrail"
+      ],
+      "rows": [
+        {
+          "header": "기록하는 것",
+          "cells": [
+            "네트워크 인터페이스를 오가는 트래픽의 메타데이터. 패킷 내용은 아니다",
+            "누가 어떤 API를 불렀는가"
+          ]
+        },
+        {
+          "header": "쌓이는 곳",
+          "cells": [
+            "CloudWatch Logs 같은 로그 대상",
+            "트레일. 플로우 로그는 여기 실리지 않는다"
+          ]
+        }
+      ],
+      "columnWidths": [
+        "24%",
+        "38%",
+        "38%"
+      ],
+      "sources": [
+        "vpc-networking.vpc-flow-logs"
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "IAM",
+      "expansion": "Identity And Access Management",
+      "meaning": "AWS 리소스를 누가 쓸 수 있는지 접근 권한을 관리하는 서비스다.",
+      "sourceConceptId": "iam-permissions.iam"
+    },
+    {
+      "term": "EC2",
+      "expansion": "Elastic Compute Cloud",
+      "meaning": "AWS에서 빌려 쓰는 컴퓨터로, 기본 단위는 컴퓨터 한 대다.",
+      "sourceConceptId": "aws-core-services.ec2"
+    },
+    {
+      "term": "ACL",
+      "expansion": "Access Control List",
+      "meaning": "접근을 허용하거나 막는 규칙을 모아 둔 목록이다.",
+      "sourceConceptId": "security-groups-nacl.nacl"
+    },
+    {
+      "term": "VPN",
+      "meaning": "인터넷 위에 암호화된 통신 경로를 만들어 네트워크를 잇는다.",
+      "sourceConceptId": "hybrid-connectivity.site-to-site-vpn"
+    }
+  ]
+}

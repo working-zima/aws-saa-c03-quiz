@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ConceptList } from '../components/ConceptList'
-import { questions as defaultQuestions, topics as defaultTopics } from '../data'
+import { questions as defaultQuestions, topics as defaultTopics, visualsByTopicId } from '../data'
 import { useProgress } from '../hooks/useProgress'
 import { adjacentTopics } from '../lib/navigation'
 import type { Question, Topic } from '../types/content'
@@ -89,7 +89,7 @@ export function ConceptReadPage({ topics = defaultTopics, questions = defaultQue
         </div>
       </header>
 
-      <ConceptList concepts={topic.concepts} headingLevel={2} />
+      <ConceptList concepts={topic.concepts} glossary={visualsByTopicId[topic.id]?.glossary} headingLevel={2} />
 
       {!hasQuestions && (
         <p className="text-[15px] leading-7 text-muted">이 주제의 확인 문제는 준비 중입니다.</p>
