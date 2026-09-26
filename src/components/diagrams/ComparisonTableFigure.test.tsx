@@ -32,6 +32,21 @@ describe('ComparisonTableFigure', () => {
     expect(figure.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull()
   })
 
+  // 320px에서 세 열이 같은 폭이면 짧은 판정 열은 비고 나머지가 빽빽하게 접힌다(phase 40 실측).
+  it.each(Object.keys(anchors))('%s: 열 폭을 데이터대로 나누고 합이 100%%다', (id) => {
+    const table = tables[id]
+    render(<ComparisonTableFigure table={table} />)
+
+    const widths = Array.from(screen.getByRole('table').querySelectorAll('colgroup col'), (col) => (col as HTMLElement).style.width)
+    expect(widths).toEqual(table.columnWidths)
+    expect(table.columnWidths!.reduce((sum, width) => sum + Number.parseFloat(width), 0)).toBe(100)
+  })
+
+  it('무엇을 어디에 붙이나: 판정 열이 가장 좁다', () => {
+    const widths = tables['attach-targets'].columnWidths!.map((width) => Number.parseFloat(width))
+    expect(Math.min(...widths)).toBe(widths[1])
+  })
+
   it.each(Object.keys(anchors))('%s: 열 머리와 행 구조가 데이터와 같다', (id) => {
     const table = tables[id]
     render(<ComparisonTableFigure table={table} />)

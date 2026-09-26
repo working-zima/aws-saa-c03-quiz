@@ -29,6 +29,7 @@ export interface ComparisonTable {
   label: string // figure aria-label이자 표 제목
   columns: string[] // 3개 이하. 첫 열은 행 머리 열의 제목.
   rows: ComparisonTableRow[]
+  columnWidths?: string[] // 열마다 '36%' 같은 백분율. 합은 100%. 없으면 균등 분할.
   sources: string[]
 }
 

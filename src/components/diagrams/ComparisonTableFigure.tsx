@@ -13,6 +13,13 @@ export function ComparisonTableFigure({ table }: ComparisonTableFigureProps) {
     <figure aria-label={table.label} className="-mx-5 min-w-0 space-y-3 rounded-none border border-x-0 border-disabled bg-panel p-4 break-keep break-anywhere sm:mx-0 sm:rounded-lg sm:border-x">
       <p className="text-sm text-title">{table.label}</p>
       <table className="w-full table-fixed break-keep text-left text-sm">
+        {table.columnWidths && (
+          <colgroup>
+            {table.columnWidths.map((width, index) => (
+              <col key={index} style={{ width }} />
+            ))}
+          </colgroup>
+        )}
         <thead>
           <tr className="border-b border-disabled">
             {table.columns.map((column, index) => (
