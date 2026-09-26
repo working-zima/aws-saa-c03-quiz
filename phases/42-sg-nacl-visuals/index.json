@@ -1,0 +1,8 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "42-sg-nacl-visuals",
+  "steps": [
+    { "step": 0, "name": "sg-nacl-table", "status": "pending" },
+    { "step": 1, "name": "layer-diagram", "status": "pending" }
+  ]
+}
