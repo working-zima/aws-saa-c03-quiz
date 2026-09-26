@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
+import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
@@ -29,6 +30,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'backup-disaster-recovery.backup-ec2-resource-assignment': Ec2AssignmentTable,
   'backup-disaster-recovery.organizations-backup-policy': BackupPolicyScopeTable,
   'backup-disaster-recovery.backup-cross-account-copy': CopyDestinationTable,
+  'backup-disaster-recovery.elastic-disaster-recovery': DrChoiceDiagram,
   'vpc-networking.comparison': [VpcPathsDiagram, VpcDestinationDiagram],
   'vpc-networking.internet-gateway-is-not-per-az': VpcScopeDiagram,
   'vpc-networking.nat-gateway-count-by-environment': NatCountDiagram,

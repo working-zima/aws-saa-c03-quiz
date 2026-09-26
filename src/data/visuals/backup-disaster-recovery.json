@@ -1,5 +1,55 @@
 {
   "diagrams": {
+    "dr-choice": {
+      "label": "재해 복구 방식 선택 도식",
+      "svgLabel": "재해 복구 방식 선택",
+      "idleCaption": "방식을 눌러 원본 위치와 복구 시간 목표에 따른 선택 경로를 살펴본다.",
+      "legend": "파랑: 재해 복구 방식 · 회색: 원본 위치와 복구 시간 목표",
+      "nodes": {
+        "onprem": "온프레미스",
+        "aws": "AWS",
+        "rto-hours": "몇 시간",
+        "rto-seconds": "60초처럼 짧음",
+        "backup-restore": "백업 및 복원",
+        "warm-standby": "대기 리전",
+        "drs": "Elastic Disaster Recovery"
+      },
+      "nodeNotes": {
+        "backup-restore": "이미지·백업만 복사, 컴퓨팅은 꺼 둠",
+        "warm-standby": "로드 밸런서·최소 인스턴스 켬·리전 간 데이터 복제",
+        "drs": "디스크 변경을 블록 단위로 계속 복제"
+      },
+      "groups": {
+        "source": "원본 위치",
+        "rto": "복구 시간 목표",
+        "strategy": "재해 복구 방식"
+      },
+      "scenarios": [
+        {
+          "id": "r1",
+          "label": "백업 및 복원",
+          "caption": "재해 후 CloudFormation 템플릿으로 재구축한다. 평소 운영 비용이 가장 낮다.",
+          "sources": ["backup-disaster-recovery.backup-and-restore-dr"]
+        },
+        {
+          "id": "r2",
+          "label": "대기 리전",
+          "caption": "상태 점검 기반 DNS 장애 조치로 자동 전환한다. 장애 후에 켜는 절차는 없다.",
+          "sources": ["backup-disaster-recovery.warm-standby-for-low-rto"]
+        },
+        {
+          "id": "r3",
+          "label": "Elastic Disaster Recovery",
+          "caption": "복제본으로 인스턴스를 시작해 15분 RTO에 대응하며, 장애 조치 없이 시험한다.",
+          "sources": ["backup-disaster-recovery.elastic-disaster-recovery"]
+        }
+      ],
+      "sources": [
+        "backup-disaster-recovery.backup-and-restore-dr",
+        "backup-disaster-recovery.warm-standby-for-low-rto",
+        "backup-disaster-recovery.elastic-disaster-recovery"
+      ]
+    },
     "backup-flow": {
       "label": "AWS Backup 백업 흐름 도식",
       "svgLabel": "AWS Backup 백업 흐름",
