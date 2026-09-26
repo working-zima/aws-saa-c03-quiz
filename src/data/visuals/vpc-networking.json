@@ -1,1 +1,150 @@
-{ "diagrams": {}, "tables": {}, "glossary": [] }
+{
+  "diagrams": {
+    "vpc-paths": {
+      "label": "VPC 통신 경로 도식",
+      "svgLabel": "VPC 통신 경로",
+      "idleCaption": "경로를 고르면 통신 순서와 경계를 볼 수 있다.",
+      "legend": "파랑: AWS 관리 · 청록: 서브넷 자원 · 회색: 외부·연결 지점",
+      "nodes": {
+        "internet": "인터넷",
+        "onprem": "온프레미스",
+        "lambda": "Lambda 실행 환경",
+        "logs": "CloudWatch Logs",
+        "s3": "S3",
+        "igw": "인터넷 게이트웨이",
+        "vgw": "가상 프라이빗 게이트웨이",
+        "alb": "ALB",
+        "nat": "NAT 게이트웨이",
+        "eni": "Lambda ENI",
+        "ec2": "EC2",
+        "efs": "EFS 탑재 대상",
+        "rds": "RDS",
+        "endpoint": "S3 게이트웨이 엔드포인트",
+        "interface-endpoint": "인터페이스 엔드포인트",
+        "pl-endpoint": "PrivateLink 엔드포인트",
+        "peering": "VPC 피어링",
+        "tgw": "Transit Gateway",
+        "other-app": "다른 VPC의 앱"
+      },
+      "groups": {
+        "region": "리전",
+        "managed": "AWS 관리 영역",
+        "vpc": "VPC",
+        "public": "퍼블릭 서브넷",
+        "private": "프라이빗 서브넷",
+        "other-vpc": "다른 VPC"
+      },
+      "scenarios": [
+        {
+          "id": "s1",
+          "label": "사용자 → EC2",
+          "caption": "외부 접근을 허용하면 퍼블릭, 막으면 프라이빗 서브넷이다.",
+          "sources": [
+            "vpc-networking.internet-gateway",
+            "vpc-networking.vpc-subnet",
+            "elastic-load-balancing.elb"
+          ]
+        },
+        {
+          "id": "s2",
+          "label": "Lambda → EC2",
+          "caption": "퍼블릭 배치로는 사설 EC2에 못 닿는다. 수신 보안 그룹의 소스는 상대 그룹 ID다.",
+          "sources": [
+            "lambda.lambda-vpc-access",
+            "security-groups-nacl.security-group-referencing"
+          ]
+        },
+        {
+          "id": "s3",
+          "label": "프라이빗 → 인터넷",
+          "caption": "NAT 게이트웨이는 프라이빗에서 쓰지만 퍼블릭 서브넷에 둔다.",
+          "sources": [
+            "vpc-networking.nat-gateway",
+            "vpc-networking.nat-gateway-elastic-ip",
+            "vpc-networking.nat-gateway-traffic-uses-public-endpoints"
+          ]
+        },
+        {
+          "id": "s4",
+          "label": "VPC → S3",
+          "caption": "게이트웨이 엔드포인트는 무료다. S3에는 VPC·서브넷 배치도 보안 그룹도 없다.",
+          "sources": [
+            "vpc-networking.vpc-endpoint",
+            "vpc-networking.endpoint-pricing",
+            "vpc-networking.s3-is-regional"
+          ]
+        },
+        {
+          "id": "s5",
+          "label": "Lambda → 로그",
+          "caption": "로그가 없으면 로깅 설정보다 실행 역할의 쓰기 권한을 먼저 확인한다.",
+          "sources": [
+            "lambda.lambda-execution-role-logs"
+          ]
+        },
+        {
+          "id": "s6",
+          "label": "Lambda → EFS",
+          "caption": "레이어 한도를 넘는 종속성을 재배포 없이 갱신한다. 전송은 TLS로 자동 암호화된다.",
+          "sources": [
+            "lambda.lambda-efs-mount"
+          ]
+        },
+        {
+          "id": "s7",
+          "label": "온프레미스 → VPC",
+          "caption": "가상 프라이빗 게이트웨이는 VPC별로 붙으므로 VPC가 늘면 확장이 어렵다.",
+          "sources": [
+            "hybrid-connectivity.site-to-site-vpn",
+            "hybrid-connectivity.virtual-private-gateway"
+          ]
+        },
+        {
+          "id": "s8",
+          "label": "프라이빗 → 그 외 AWS 서비스",
+          "caption": "게이트웨이 미지원 서비스용이며 시간당 과금된다. VPC 사설 주소를 써 공용 IP 금지 조건도 채운다.",
+          "sources": [
+            "vpc-networking.vpc-endpoint",
+            "vpc-networking.endpoint-pricing",
+            "vpc-networking.nat-gateway-traffic-uses-public-endpoints"
+          ]
+        },
+        {
+          "id": "s9",
+          "label": "PrivateLink → 다른 VPC의 앱",
+          "caption": "특정 앱 하나만 연결한다. 라우팅 테이블 변경 없이 엔드포인트 정책으로 접근을 좁힌다.",
+          "sources": [
+            "vpc-networking.privatelink",
+            "vpc-networking.privatelink-endpoint-service"
+          ]
+        },
+        {
+          "id": "s10",
+          "label": "VPC ⇄ VPC 피어링",
+          "caption": "두 VPC 전체를 사설로 잇는 1:1 방식이다. VPC가 늘수록 연결 수가 급증한다.",
+          "sources": [
+            "vpc-networking.vpc-peering",
+            "vpc-networking.vpc-peering-scaling-limit",
+            "vpc-networking.comparison"
+          ]
+        },
+        {
+          "id": "s11",
+          "label": "Transit Gateway",
+          "caption": "수백 VPC 확장에는 단일 허브를 쓴다. 연결만 제공하며 앱별 접근 제한은 맡지 않는다.",
+          "sources": [
+            "hybrid-connectivity.transit-gateway",
+            "vpc-networking.vpc-peering-scaling-limit",
+            "vpc-networking.privatelink-endpoint-service"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.comparison",
+        "vpc-networking.vpc-subnet"
+      ]
+    }
+  },
+  "tables": {},
+  "glossary": []
+}
