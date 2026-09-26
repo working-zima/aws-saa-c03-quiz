@@ -223,6 +223,36 @@
       "sources": [
         "vpc-networking.comparison"
       ]
+    },
+    "vpc-scope": {
+      "label": "VPC 리소스의 존재 단위 도식",
+      "svgLabel": "VPC 리소스의 존재 단위",
+      "idleCaption": "인터넷 게이트웨이는 가용 영역에 속하지 않으므로 여러 개로 늘려도 가용성이 오르지 않는다. NAT 게이트웨이는 자기 가용 영역과 함께 무너지므로 가용 영역마다 하나씩 둔다. S3는 VPC 안에 만들 수 없다.",
+      "legend": "파랑: AWS 관리 · 청록: 서브넷 자원 · 회색: 연결 지점",
+      "nodes": {
+        "s3": "S3",
+        "igw": "인터넷 게이트웨이",
+        "nat-a": "NAT 게이트웨이",
+        "nat-b": "NAT 게이트웨이",
+        "ec2-a": "EC2",
+        "ec2-b": "EC2"
+      },
+      "groups": {
+        "region": "리전",
+        "vpc": "VPC",
+        "az-a": "가용 영역 A",
+        "az-b": "가용 영역 B",
+        "public-a": "퍼블릭 서브넷",
+        "public-b": "퍼블릭 서브넷",
+        "private-a": "프라이빗 서브넷",
+        "private-b": "프라이빗 서브넷"
+      },
+      "scenarios": [],
+      "sources": [
+        "vpc-networking.internet-gateway-is-not-per-az",
+        "vpc-networking.nat-gateway-per-az",
+        "vpc-networking.s3-is-regional"
+      ]
     }
   },
   "tables": {},

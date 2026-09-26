@@ -9,11 +9,13 @@ import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
 import { VpcDestinationDiagram } from './VpcDestinationDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
+import { VpcScopeDiagram } from './VpcScopeDiagram'
 
 // 개념 id → 그 개념 본문 바로 뒤에 붙는 도식.
 // step 1~5가 여기에 한 줄씩 더한다.
 export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]> = {
   'vpc-networking.comparison': [VpcPathsDiagram, VpcDestinationDiagram],
+  'vpc-networking.internet-gateway-is-not-per-az': VpcScopeDiagram,
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
   'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,
