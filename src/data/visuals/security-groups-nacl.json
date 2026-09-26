@@ -1,0 +1,47 @@
+{
+  "diagrams": {},
+  "tables": {
+    "sg-vs-nacl": {
+      "label": "보안 그룹과 NACL 비교",
+      "columns": ["", "보안 그룹", "NACL"],
+      "rows": [
+        {
+          "header": "적용 위치",
+          "cells": ["리소스 · 서브넷에 매이지 않음", "서브넷"]
+        },
+        {
+          "header": "허용 규칙",
+          "cells": ["가능", "가능"]
+        },
+        {
+          "header": "차단 규칙",
+          "cells": ["불가", "가능"]
+        },
+        {
+          "header": "상태 기억",
+          "cells": ["함 · 응답은 규칙 없이 나감", "안 함 · 양방향에 규칙 필요"]
+        },
+        {
+          "header": "규칙 대상 IP",
+          "cells": ["가능", "가능"]
+        },
+        {
+          "header": "다른 보안 그룹 참조",
+          "cells": ["가능", "불가"]
+        },
+        {
+          "header": "기본 규칙",
+          "cells": ["인바운드 차단 · 아웃바운드 허용", "양방향 허용"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": [
+        "security-groups-nacl.security-group",
+        "security-groups-nacl.nacl",
+        "security-groups-nacl.security-group-referencing",
+        "security-groups-nacl.security-group-stateful-vs-nacl-stateless"
+      ]
+    }
+  },
+  "glossary": []
+}
