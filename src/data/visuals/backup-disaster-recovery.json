@@ -1,0 +1,78 @@
+{
+  "diagrams": {
+    "backup-flow": {
+      "label": "AWS Backup 백업 흐름 도식",
+      "svgLabel": "AWS Backup 백업 흐름",
+      "idleCaption": "시나리오를 골라 백업 대상부터 사본·검증·감사까지 무엇을 판단하는지 살펴본다.",
+      "legend": "파랑: AWS 관리 기능 · 회색: 백업 원본과 사본 위치",
+      "nodes": {
+        "org-policy": "Organizations 백업 정책",
+        "ec2": "EC2 인스턴스",
+        "ebs": "EBS 볼륨",
+        "rds": "RDS",
+        "dynamodb": "DynamoDB",
+        "s3": "S3",
+        "plan": "백업 계획",
+        "restore-test": "복원 테스트 계획",
+        "audit": "Backup Audit Manager",
+        "other-region": "다른 리전",
+        "other-account": "다른 계정"
+      },
+      "groups": {
+        "source": "원본 계정",
+        "backup": "AWS Backup",
+        "copies": "사본"
+      },
+      "scenarios": [
+        {
+          "id": "b1",
+          "label": "보존 기간",
+          "caption": "자체 백업 35일 초과·리전 간 복사 시 계획으로 일정·보존·복사·만료 삭제를 정한다.",
+          "sources": ["backup-disaster-recovery.backup-long-term-retention"]
+        },
+        {
+          "id": "b2",
+          "label": "대상 지정",
+          "caption": "볼륨만 고르면 구성은 빠진다. 인스턴스를 지정해야 구성과 연결 볼륨을 함께 백업한다.",
+          "sources": ["backup-disaster-recovery.backup-ec2-resource-assignment"]
+        },
+        {
+          "id": "b3",
+          "label": "조직 전체",
+          "caption": "조직에서 정한 백업 계획을 회원 계정에 적용하며, 새 계정도 같은 계획을 따른다.",
+          "sources": ["backup-disaster-recovery.organizations-backup-policy"]
+        },
+        {
+          "id": "b4",
+          "label": "연속 백업",
+          "caption": "S3 연속 백업은 원하는 시점으로 복원해 하루 한 번보다 데이터 손실 구간을 줄인다.",
+          "sources": ["backup-disaster-recovery.backup-s3-continuous-backup"]
+        },
+        {
+          "id": "b5",
+          "label": "사본 위치",
+          "caption": "다른 리전의 사본은 리전 장애에, 다른 계정의 사본은 계정 침해·실수 삭제에 대비한다.",
+          "sources": ["backup-disaster-recovery.backup-cross-account-copy"]
+        },
+        {
+          "id": "b6",
+          "label": "복원 검증",
+          "caption": "통제된 복원 시험으로 백업을 자동 검증하므로 검증 함수를 직접 작성하지 않아도 된다.",
+          "sources": ["backup-disaster-recovery.backup-restore-testing-plan"]
+        },
+        {
+          "id": "b7",
+          "label": "감사",
+          "caption": "프레임워크로 규정·암호화를 감사해 보고한다. AWS Audit Manager와는 다르다.",
+          "sources": ["backup-disaster-recovery.backup-audit-manager"]
+        }
+      ],
+      "sources": [
+        "backup-disaster-recovery.backup",
+        "backup-disaster-recovery.backup-long-term-retention"
+      ]
+    }
+  },
+  "tables": {},
+  "glossary": []
+}

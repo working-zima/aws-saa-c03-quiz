@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
@@ -23,6 +24,7 @@ import {
 // 개념 id → 그 개념 본문 바로 뒤에 붙는 도식.
 // step 1~5가 여기에 한 줄씩 더한다.
 export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]> = {
+  'backup-disaster-recovery.backup-audit-manager': BackupFlowDiagram,
   'vpc-networking.comparison': [VpcPathsDiagram, VpcDestinationDiagram],
   'vpc-networking.internet-gateway-is-not-per-az': VpcScopeDiagram,
   'vpc-networking.nat-gateway-count-by-environment': NatCountDiagram,
