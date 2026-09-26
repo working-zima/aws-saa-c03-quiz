@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "paths-extension",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-26T10:50:00+0900",
+      "summary": "VPC 통신 경로 문구를 diagrams[\"vpc-paths\"]로 분리하고 인터페이스 엔드포인트·PrivateLink·VPC 피어링·Transit Gateway 시나리오 추가; 최종 viewBox 0 0 280 1120, 노드 19개·시나리오 11개·경로 22개; interface-endpoint·pl-endpoint는 폭 232의 전체 줄로 배치(기존 vgw·endpoint도 폭 232 유지), 기존 좌표 보존을 위해 VPC 하단에 프라이빗 서브넷 박스 추가; s10은 왼쪽 x=22, s11은 오른쪽 x=266 통로를 쓰고 다른 VPC 앱의 도착 x=122/158도 분리; TDD 실패 확인 후 관문 5·6·7 및 JSON 시나리오 ID 일치 통과; 기존 캡션 7개·노드 14개 좌표·경로 14개 문자열과 DiagramFrame.tsx·topics.json·questions.json 바이트 보존 확인; Node 18.17.1에서 build·lint·전체 테스트 760개·구조 검사 통과, 교차 검사 전체 노드 96개·경로 98개 교차 0건; 브라우저 검증은 로컬 주소 접근 권한 거부로 미실시.",
+      "completed_at": "2026-09-26T10:57:26+0900"
     },
     {
       "step": 2,
