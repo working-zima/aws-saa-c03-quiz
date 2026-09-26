@@ -55,7 +55,8 @@
       "name": "comparison-tables",
       "status": "completed",
       "started_at": "2026-09-26T11:18:38+0900",
-      "summary": "ComparisonTableFigure(DiagramFrame과 같은 figure 틀·헤딩 없는 text-sm text-title 제목·table-fixed w-full break-keep·행 머리 th scope=row·border-disabled 구분선, overflow-x-auto·colSpan 없음)와 vpcTables.tsx 래퍼 다섯을 추가하고 JSON tables에 표 다섯을 채움 — attach-targets→s3-is-regional, endpoint-types→endpoint-pricing, nat-instance-vs-gateway→nat-instance, private-connectivity→privatelink-endpoint-service('두 VPC 전체' 근거로 comparison을 sources에 추가, Transit Gateway 라우팅 칸은 '—'), flow-logs-vs-cloudtrail→vpc-flow-logs; 모두 3열, 가장 긴 칸은 nat-instance-vs-gateway의 '사양에 묶여 병목이 되고 뒤의 Lambda·EC2가 간헐적으로 타임아웃을 낸다'(43자); 판정 '가능'/'불가'는 글자+font-medium만, 정답/오답 토큰(correct·incorrect)·green·red 클래스 없음; VPN vs Direct Connect 표 없음; TDD 실패(import 실패) 확인 후 테스트 22개 통과; DiagramFrame.tsx·topics.json 무변경; Node 18.17.1에서 build·lint·전체 테스트 857개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 320px 브라우저 실측은 미실시."
+      "summary": "ComparisonTableFigure(DiagramFrame과 같은 figure 틀·헤딩 없는 text-sm text-title 제목·table-fixed w-full break-keep·행 머리 th scope=row·border-disabled 구분선, overflow-x-auto·colSpan 없음)와 vpcTables.tsx 래퍼 다섯을 추가하고 JSON tables에 표 다섯을 채움 — attach-targets→s3-is-regional, endpoint-types→endpoint-pricing, nat-instance-vs-gateway→nat-instance, private-connectivity→privatelink-endpoint-service('두 VPC 전체' 근거로 comparison을 sources에 추가, Transit Gateway 라우팅 칸은 '—'), flow-logs-vs-cloudtrail→vpc-flow-logs; 모두 3열, 가장 긴 칸은 nat-instance-vs-gateway의 '사양에 묶여 병목이 되고 뒤의 Lambda·EC2가 간헐적으로 타임아웃을 낸다'(43자); 판정 '가능'/'불가'는 글자+font-medium만, 정답/오답 토큰(correct·incorrect)·green·red 클래스 없음; VPN vs Direct Connect 표 없음; TDD 실패(import 실패) 확인 후 테스트 22개 통과; DiagramFrame.tsx·topics.json 무변경; Node 18.17.1에서 build·lint·전체 테스트 857개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 320px 브라우저 실측은 미실시.",
+      "completed_at": "2026-09-26T11:20:48+0900"
     },
     {
       "step": 7,
