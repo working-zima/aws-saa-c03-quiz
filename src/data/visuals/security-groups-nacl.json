@@ -1,0 +1,110 @@
+{
+  "diagrams": {
+    "sg-nacl-layers": {
+      "label": "보안 그룹·NACL·WAF 층 도식",
+      "svgLabel": "보안 그룹·NACL·WAF 층",
+      "idleCaption": "시나리오를 고르면 각 층이 어떤 요청을 거르는지 볼 수 있다.",
+      "legend": "파랑: AWS 관리 서비스 · 청록: 보안 그룹과 그 안의 리소스 · 회색: 서브넷 경계·NACL·바깥",
+      "nodes": {
+        "internet": "인터넷",
+        "nacl-public": "NACL",
+        "alb": "ALB",
+        "waf": "WAF",
+        "nacl-private": "NACL",
+        "ec2": "EC2"
+      },
+      "groups": {
+        "public": "퍼블릭 서브넷",
+        "alb-sg": "ALB 보안 그룹",
+        "private": "프라이빗 서브넷",
+        "ec2-sg": "EC2 보안 그룹"
+      },
+      "notes": {
+        "waf-attach": "ALB에 붙음",
+        "sg-source": "소스 =\nALB 보안 그룹"
+      },
+      "scenarios": [
+        {
+          "id": "flow",
+          "label": "요청 흐름",
+          "caption": "서브넷의 NACL과 리소스별 보안 그룹을 통과한 요청이 EC2에 도착한다.",
+          "sources": ["security-groups-nacl.security-group", "security-groups-nacl.nacl"]
+        },
+        {
+          "id": "waf",
+          "label": "WAF",
+          "caption": "WAF는 SQL Injection·XSS 공격과 요청이 온 국가를 기준으로 거른다.",
+          "sources": ["waf-shield.waf", "waf-shield.waf-attach-targets"]
+        },
+        {
+          "id": "nacl",
+          "label": "NACL",
+          "caption": "NACL은 서브넷 경계에서 IP로 허용·차단하며, 응답 방향의 규칙도 필요하다.",
+          "sources": ["security-groups-nacl.nacl", "security-groups-nacl.security-group-stateful-vs-nacl-stateless"]
+        },
+        {
+          "id": "sg-ref",
+          "label": "보안 그룹 참조",
+          "caption": "EC2의 인바운드 소스를 ALB 보안 그룹 ID로 두면 ALB를 거친 요청만 받는다.",
+          "sources": ["security-groups-nacl.security-group-referencing", "security-groups-nacl.alb-security-group-outbound-and-health-check-port"]
+        },
+        {
+          "id": "block-ip",
+          "label": "IP 하나 막기",
+          "caption": "보안 그룹에는 차단 규칙이 없으므로, 특정 IP 차단은 NACL이나 WAF가 맡는다.",
+          "sources": ["security-groups-nacl.security-group-stateful-vs-nacl-stateless", "security-groups-nacl.nacl-rule-limit"]
+        }
+      ],
+      "sources": [
+        "security-groups-nacl.security-group",
+        "security-groups-nacl.nacl",
+        "security-groups-nacl.web-acl-vs-nacl",
+        "elastic-load-balancing.elb"
+      ]
+    }
+  },
+  "tables": {
+    "sg-vs-nacl": {
+      "label": "보안 그룹과 NACL 비교",
+      "columns": ["", "보안 그룹", "NACL"],
+      "rows": [
+        {
+          "header": "적용 위치",
+          "cells": ["리소스 · 서브넷에 매이지 않음", "서브넷"]
+        },
+        {
+          "header": "허용 규칙",
+          "cells": ["가능", "가능"]
+        },
+        {
+          "header": "차단 규칙",
+          "cells": ["불가", "가능"]
+        },
+        {
+          "header": "상태 기억",
+          "cells": ["함 · 응답은 규칙 없이 나감", "안 함 · 양방향에 규칙 필요"]
+        },
+        {
+          "header": "규칙 대상 IP",
+          "cells": ["가능", "가능"]
+        },
+        {
+          "header": "다른 보안 그룹 참조",
+          "cells": ["가능", "불가"]
+        },
+        {
+          "header": "기본 규칙",
+          "cells": ["인바운드 차단 · 아웃바운드 허용", "양방향 허용"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": [
+        "security-groups-nacl.security-group",
+        "security-groups-nacl.nacl",
+        "security-groups-nacl.security-group-referencing",
+        "security-groups-nacl.security-group-stateful-vs-nacl-stateless"
+      ]
+    }
+  },
+  "glossary": []
+}
