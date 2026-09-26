@@ -195,6 +195,6 @@ describe('BackupFlowDiagram', () => {
     const figure = screen.getByRole('figure', { name: 'AWS Backup 백업 흐름 도식' })
     expect(figure.closest('article')).toHaveAttribute('id', 'backup-disaster-recovery.backup-audit-manager')
     expect(figure.previousElementSibling?.textContent).toBe(concepts[7].paragraphs.join(''))
-    expect(screen.getAllByRole('figure')).toHaveLength(1)
+    expect(screen.getAllByRole('img')).toHaveLength(1)
   })
 })

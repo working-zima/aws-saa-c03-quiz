@@ -73,6 +73,62 @@
       ]
     }
   },
-  "tables": {},
+  "tables": {
+    "ec2-assignment": {
+      "label": "백업 대상 지정 비교",
+      "columns": ["", "EBS 볼륨만 지정", "EC2 인스턴스 지정"],
+      "rows": [
+        {
+          "header": "담기는 것",
+          "cells": ["볼륨에 저장된 데이터", "인스턴스 설정과 모든 연결 볼륨"]
+        },
+        {
+          "header": "복구할 때",
+          "cells": ["인스턴스 재구성 정보 없음", "구성과 볼륨을 한 번에 복구, 다른 리전도 바로 복구"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": [
+        "backup-disaster-recovery.backup-ec2-resource-assignment",
+        "backup-disaster-recovery.backup-long-term-retention"
+      ]
+    },
+    "backup-policy-scope": {
+      "label": "백업 정책 적용 범위 비교",
+      "columns": ["", "계정마다 설정", "Organizations 백업 정책"],
+      "rows": [
+        {
+          "header": "계획을 정하는 곳",
+          "cells": ["계정별 AWS Backup", "조직 단위"]
+        },
+        {
+          "header": "관리 지점",
+          "cells": ["계정마다 한 곳", "중앙 한 곳"]
+        },
+        {
+          "header": "새 계정",
+          "cells": ["—", "기존과 같은 백업 규칙 적용"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": ["backup-disaster-recovery.organizations-backup-policy"]
+    },
+    "copy-destination": {
+      "label": "백업 사본 목적지 비교",
+      "columns": ["", "다른 리전", "다른 계정"],
+      "rows": [
+        {
+          "header": "막는 사고",
+          "cells": ["리전 전체 장애", "계정 침해·실수로 삭제"]
+        },
+        {
+          "header": "계정이 침해되면",
+          "cells": ["원본과 같은 계정이면 사본도 노출", "관리 주체를 나눠 함께 지우는 경로 차단"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": ["backup-disaster-recovery.backup-cross-account-copy"]
+    }
+  },
   "glossary": []
 }
