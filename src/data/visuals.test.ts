@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { markFirstOccurrences } from '../lib/glossary'
 import { topics, visualsByTopicId } from './index'
 
 describe('시각 요소 데이터 무결성', () => {
@@ -59,5 +60,25 @@ describe('시각 요소 데이터 무결성', () => {
       const terms = visuals.glossary.map(({ term }) => term)
       expect(new Set(terms).size, topicId).toBe(terms.length)
     }
+  })
+
+  it('약어마다 그 주제의 개념 본문(요약·문단)에 단어로 한 번 이상 나온다', () => {
+    for (const [topicId, visuals] of Object.entries(visualsByTopicId)) {
+      const topic = topics.find(({ id }) => id === topicId)!
+      const marked = new Set(
+        topic.concepts.flatMap(({ summary, paragraphs }) =>
+          markFirstOccurrences([summary, ...paragraphs], visuals.glossary.map(({ term }) => term))
+            .flat()
+            .flatMap(({ term }) => (term ? [term] : [])),
+        ),
+      )
+      for (const { term } of visuals.glossary) {
+        expect(marked.has(term), `${topicId}: ${term}`).toBe(true)
+      }
+    }
+  })
+
+  it('VPC 주제의 약어는 IAM·EC2·ACL·VPN 넷이다', () => {
+    expect(visualsByTopicId['vpc-networking'].glossary.map(({ term }) => term)).toEqual(['IAM', 'EC2', 'ACL', 'VPN'])
   })
 })

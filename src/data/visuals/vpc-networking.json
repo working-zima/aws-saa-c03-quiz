@@ -557,5 +557,29 @@
       ]
     }
   },
-  "glossary": []
+  "glossary": [
+    {
+      "term": "IAM",
+      "expansion": "Identity And Access Management",
+      "meaning": "AWS 리소스를 누가 쓸 수 있는지 접근 권한을 관리하는 서비스다.",
+      "sourceConceptId": "iam-permissions.iam"
+    },
+    {
+      "term": "EC2",
+      "expansion": "Elastic Compute Cloud",
+      "meaning": "AWS에서 빌려 쓰는 컴퓨터로, 기본 단위는 컴퓨터 한 대다.",
+      "sourceConceptId": "aws-core-services.ec2"
+    },
+    {
+      "term": "ACL",
+      "expansion": "Access Control List",
+      "meaning": "접근을 허용하거나 막는 규칙을 모아 둔 목록이다.",
+      "sourceConceptId": "security-groups-nacl.nacl"
+    },
+    {
+      "term": "VPN",
+      "meaning": "인터넷 위에 암호화된 통신 경로를 만들어 네트워크를 잇는다.",
+      "sourceConceptId": "hybrid-connectivity.site-to-site-vpn"
+    }
+  ]
 }
