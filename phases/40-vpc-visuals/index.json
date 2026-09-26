@@ -63,7 +63,8 @@
       "name": "glossary-tooltip",
       "status": "completed",
       "started_at": "2026-09-26T11:21:13+0900",
-      "summary": "약어 넷(IAM→vpc-endpoint-policy, EC2→nat-instance·comparison, ACL→s3-is-regional, VPN→vpc-peering-scaling-limit; VPN만 expansion 없음)을 JSON glossary에 넣고 src/lib/glossary.ts(markFirstOccurrences: 영문·숫자 경계·대소문자 구분·**강조** 안 제외, clampTooltipLeft)와 GlossaryTerm(점선 밑줄 button·role=tooltip fixed·가장자리 8px 고정·애니메이션/색 변화 없음·Escape/바깥 누르기/blur/스크롤로 닫힘)을 추가; EmphasizedText에 선택 prop glossary({segments, terms}), ConceptList에 선택 prop glossary?: GlossaryTerm[]를 더해 개념마다 요약+문단을 한 번에 표시하고 ConceptReadPage·QuizRunner가 visualsByTopicId[topic.id]?.glossary를 넘김(VPC 밖은 undefined라 렌더 불변); 약어 사전 패널·도식/표 툴팁 없음, topics.json 무변경; TDD 실패 확인 후 glossary 9·GlossaryTerm 6·ConceptList 2·ConceptReadPage 1·visuals 2개 테스트 추가; Node 18.17.1에서 build·lint·전체 테스트 877개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시."
+      "summary": "약어 넷(IAM→vpc-endpoint-policy, EC2→nat-instance·comparison, ACL→s3-is-regional, VPN→vpc-peering-scaling-limit; VPN만 expansion 없음)을 JSON glossary에 넣고 src/lib/glossary.ts(markFirstOccurrences: 영문·숫자 경계·대소문자 구분·**강조** 안 제외, clampTooltipLeft)와 GlossaryTerm(점선 밑줄 button·role=tooltip fixed·가장자리 8px 고정·애니메이션/색 변화 없음·Escape/바깥 누르기/blur/스크롤로 닫힘)을 추가; EmphasizedText에 선택 prop glossary({segments, terms}), ConceptList에 선택 prop glossary?: GlossaryTerm[]를 더해 개념마다 요약+문단을 한 번에 표시하고 ConceptReadPage·QuizRunner가 visualsByTopicId[topic.id]?.glossary를 넘김(VPC 밖은 undefined라 렌더 불변); 약어 사전 패널·도식/표 툴팁 없음, topics.json 무변경; TDD 실패 확인 후 glossary 9·GlossaryTerm 6·ConceptList 2·ConceptReadPage 1·visuals 2개 테스트 추가; Node 18.17.1에서 build·lint·전체 테스트 877개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시.",
+      "completed_at": "2026-09-26T11:25:25+0900"
     }
   ],
   "created_at": "2026-09-26T10:43:55+0900"
