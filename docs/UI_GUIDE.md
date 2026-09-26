@@ -510,10 +510,11 @@ step 1의 폭 계산은 `DiagramFrame`의 패딩과 테두리를 빠뜨렸고, s
 | 320px | 320px | 1.143 | 11.43px | 10.29px |
 | 390px·1280px | 380px | 1.357 | 13.57px | 12.21px |
 
-열세 도식과 비교표 다섯 모두 320·390·1280px에서 가로 넘침이 없었고 버튼 최소 높이는 44px이었다.
+열다섯 도식과 비교표 여덟 모두 320·390·1280px에서 가로 넘침이 없었고 버튼 최소 높이는 44px이었다.
 phase 38의 다섯 장은 위 기록에서, phase 39가 메시징 주제에 더한 네 장은
 [phase 39 실측 기록](../phases/39-messaging-diagrams/measurements.md)에서, phase 40이 VPC 주제에 더한
-네 장과 비교표는 [phase 40 실측 기록](../phases/40-vpc-visuals/measurements.md)에서 같은 방법으로 쟀고
+네 장과 비교표는 [phase 40 실측 기록](../phases/40-vpc-visuals/measurements.md)에서, phase 41이 백업 주제에 더한
+두 장과 비교표 셋은 [phase 41 실측 기록](../phases/41-backup-visuals/measurements.md)에서 같은 방법으로 쟀고
 표시 폭·배율·라벨 크기가 위 표와 같았다. 도식별 버튼 줄 높이와 도식 전체 높이는 각 기록의
 「도식별」 표를 본다. 다시 재기 전에는 새 숫자를 쓰지 마라.
 
