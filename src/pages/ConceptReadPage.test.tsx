@@ -335,4 +335,27 @@ describe('ConceptReadPage', () => {
       expect(article).toHaveClass('scroll-mt-24')
     })
   })
+
+  it('실제 데이터의 VPC 주제에는 약어 버튼이 있고 다른 주제에는 없다', () => {
+    const vpc = render(
+      <MemoryRouter initialEntries={['/topic/vpc-networking']}>
+        <Routes>
+          <Route element={<ConceptReadPage markRead={vi.fn()} />} path="/topic/:topicId" />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expect(screen.getAllByRole('button', { name: 'IAM' })).toHaveLength(1)
+    vpc.unmount()
+
+    const { container } = render(
+      <MemoryRouter initialEntries={['/topic/lambda']}>
+        <Routes>
+          <Route element={<ConceptReadPage markRead={vi.fn()} />} path="/topic/:topicId" />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expect(screen.getAllByText(/IAM/, { selector: 'p' }).length).toBeGreaterThan(0)
+    expect(screen.queryByRole('button', { name: 'IAM' })).not.toBeInTheDocument()
+    expect(container.querySelectorAll('button.decoration-dotted')).toHaveLength(0)
+  })
 })

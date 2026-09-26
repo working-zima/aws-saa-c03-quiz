@@ -1,0 +1,72 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "40-vpc-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "visual-slots",
+      "status": "completed",
+      "summary": "src/types/visuals.ts, src/data/visuals/vpc-networking.json(빈 데이터), src/data/visuals.test.ts, src/data/index.test.ts(로더 TDD 가드 충족) 생성; visualsByTopicId: Record<string, TopicVisuals>를 정적 import로 export; registry와 ConceptList의 diagrams를 ComponentType | ComponentType[]로 확장해 단일 값은 유지하고 배열은 map으로 본문 뒤에 순서대로 렌더; 데이터 검사 5항목: 주제 키 존재, 비어 있지 않은 sources와 모든 근거 개념 id 존재, 표 열 3개 이하·행 셀 수 일치, 도식별 시나리오 id 유일·caption 20자 초과, 주제별 약어 term 중복 없음; Node 18.17.1에서 build·lint·전체 테스트 741개·구조 검사·경로 교차 검사 모두 통과.",
+      "started_at": "2026-09-26T10:43:55+0900",
+      "completed_at": "2026-09-26T10:49:37+0900"
+    },
+    {
+      "step": 1,
+      "name": "paths-extension",
+      "status": "completed",
+      "started_at": "2026-09-26T10:50:00+0900",
+      "summary": "VPC 통신 경로 문구를 diagrams[\"vpc-paths\"]로 분리하고 인터페이스 엔드포인트·PrivateLink·VPC 피어링·Transit Gateway 시나리오 추가; 최종 viewBox 0 0 280 1120, 노드 19개·시나리오 11개·경로 22개; interface-endpoint·pl-endpoint는 폭 232의 전체 줄로 배치(기존 vgw·endpoint도 폭 232 유지), 기존 좌표 보존을 위해 VPC 하단에 프라이빗 서브넷 박스 추가; s10은 왼쪽 x=22, s11은 오른쪽 x=266 통로를 쓰고 다른 VPC 앱의 도착 x=122/158도 분리; TDD 실패 확인 후 관문 5·6·7 및 JSON 시나리오 ID 일치 통과; 기존 캡션 7개·노드 14개 좌표·경로 14개 문자열과 DiagramFrame.tsx·topics.json·questions.json 바이트 보존 확인; Node 18.17.1에서 build·lint·전체 테스트 760개·구조 검사 통과, 교차 검사 전체 노드 96개·경로 98개 교차 0건; 브라우저 검증은 로컬 주소 접근 권한 거부로 미실시.",
+      "completed_at": "2026-09-26T10:57:26+0900"
+    },
+    {
+      "step": 2,
+      "name": "destination-tree",
+      "status": "completed",
+      "started_at": "2026-09-26T10:57:57+0900",
+      "summary": "VpcDestinationDiagram과 diagrams[\"vpc-destination\"] 문구를 추가; 최종 viewBox 0 0 280 800, 무채색 목적지 그룹 4개·240×44 두 줄 노드 12개·시나리오 4개, 경로 없음; 가장 빠듯한 줄은 app-routing의 답 '피어링·Transit Gateway와 다른 점'(글자 크기 10, 추정 폭 169 + 여백 12 = 181, 노드 폭 240에서 59 여유); registry의 'vpc-networking.comparison'은 [VpcPathsDiagram, VpcDestinationDiagram] 배열로 지도 다음 목적지 도식 표시; TDD 실패 확인 후 초기·선택·전체 복귀·두 줄 넘침·그룹 포함·h2/h4 본문 순서 테스트 14개 통과, 기존 통합 테스트의 figure 수를 2로 갱신; Node 18.17.1에서 build·lint·전체 테스트 774개·구조 검사·경로 교차 검사(노드 108개·경로 98개, 교차 0건) 모두 통과.",
+      "completed_at": "2026-09-26T11:04:40+0900"
+    },
+    {
+      "step": 3,
+      "name": "resource-scope",
+      "status": "completed",
+      "started_at": "2026-09-26T11:08:09+0900",
+      "summary": "VpcScopeDiagram과 diagrams[\"vpc-scope\"] 문구(scenarios 빈 배열, 캡션 세 문장, 범례 한 줄)를 추가하고 registry에 'vpc-networking.internet-gateway-is-not-per-az' 한 줄 매핑; 최종 viewBox 0 0 280 372, 그룹 8개·노드 6개·경로 없음, 그룹 중첩 깊이 4(리전 > VPC > 가용 영역 > 서브넷, 노드까지 5단); 가용 영역 A·B는 VPC 안에서 위아래로 쌓고 각 영역에 퍼블릭·프라이빗 서브넷 두 열; TDD 실패 확인 후 테스트 11개 통과 — 버튼 0개, igw가 VPC 안이고 az-a·az-b와 교집합 넓이 0, nat-a·nat-b가 각 public 서브넷 안, s3가 region 안이고 vpc와 교집합 넓이 0, 관문 5·6·7 모두 통과; DiagramFrame.tsx·topics.json 무변경; Node 18.17.1에서 build·lint·전체 테스트 785개·구조 검사·경로 교차 검사(노드 114개·경로 98개, 교차 0건) 통과; 브라우저 실측은 미실시.",
+      "completed_at": "2026-09-26T11:10:26+0900"
+    },
+    {
+      "step": 4,
+      "name": "nat-count",
+      "status": "completed",
+      "started_at": "2026-09-26T11:10:53+0900",
+      "summary": "NatCountDiagram과 diagrams[\"nat-count\"] 문구(시나리오 n1~n4, 곁말 notes: 퍼블릭·프라이빗 서브넷·장애 — VisualDiagramText에 선택 필드 notes 추가)를 더하고 registry에 'vpc-networking.nat-gateway-count-by-environment' 한 줄 매핑; 최종 viewBox 0 0 280 424, 그룹 4개(VPC·가용 영역 A·B·C를 위아래 세 행)·노드 8개·경로 9개; 서브넷은 박스 없이 각 행의 두 열 위치와 곁말(9)로 가름; n2의 세 경로는 EC2 A가 NAT A 오른쪽 면 중앙(y180), EC2 B가 NAT·EC2 사이 통로 x=157로 올라가 오른쪽 면 y188, EC2 C가 통로 x=145로 올라가 행 아래 여백 y208을 지나 NAT A 아래 면(x88)으로 들어가 서로 겹치거나 교차하지 않음; 아래 행 NAT→인터넷 게이트웨이는 가용 영역 밖 왼쪽 통로 x=21·12로 분리; n3·n4에서만 가용 영역 A 라벨 옆에 곁말 '장애', 빨강·애니메이션·새 입력 컨트롤 없음; TDD 실패 확인 후 테스트 23개 통과; DiagramFrame.tsx·topics.json 무변경; Node 18.17.1에서 build·lint·전체 테스트 808개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시.",
+      "completed_at": "2026-09-26T11:15:12+0900"
+    },
+    {
+      "step": 5,
+      "name": "peering-scale",
+      "status": "completed",
+      "summary": "src/lib/peering.ts(meshConnectionCount n(n-1)/2·hubAttachmentCount n·ringPoints 12시 시작 시계 방향)와 PeeringScaleDiagram·diagrams[\"peering-scale\"] 문구를 추가하고 registry에 'vpc-networking.vpc-peering-scaling-limit' 한 줄 매핑; 최종 viewBox 0 0 280 440, 위 mesh(VPC 피어링)·아래 hub(Transit Gateway) 그룹 272×212, 두 원 모두 반지름 72, VPC 상자 32×20, 가운데 Transit Gateway 100×32(파랑은 이 노드 테두리에만); 선은 stroke-disabled 1px 사선, 전체는 VPC 4개(메시 6·허브 4), p3·p6·p10은 메시 3·15·45·허브 3·6·10이고 곁말 '연결 N개'·캡션 숫자가 같음; 전제 '모든 VPC가 서로 통신해야 한다면'은 idleCaption과 캡션 셋에 모두 있음; 슬라이더·애니메이션·강조색 선 없음; TDD 실패 확인 후 peering 12개·도식 15개 테스트 통과(p10 상자 쌍 교집합 0, Transit Gateway와도 0, 관문 5·6·7); DiagramFrame.tsx·topics.json·교차 검사기 무변경; Node 18.17.1에서 build·lint·전체 테스트 835개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시.",
+      "started_at": "2026-09-26T11:15:35+0900",
+      "completed_at": "2026-09-26T11:18:15+0900"
+    },
+    {
+      "step": 6,
+      "name": "comparison-tables",
+      "status": "completed",
+      "started_at": "2026-09-26T11:18:38+0900",
+      "summary": "ComparisonTableFigure(DiagramFrame과 같은 figure 틀·헤딩 없는 text-sm text-title 제목·table-fixed w-full break-keep·행 머리 th scope=row·border-disabled 구분선, overflow-x-auto·colSpan 없음)와 vpcTables.tsx 래퍼 다섯을 추가하고 JSON tables에 표 다섯을 채움 — attach-targets→s3-is-regional, endpoint-types→endpoint-pricing, nat-instance-vs-gateway→nat-instance, private-connectivity→privatelink-endpoint-service('두 VPC 전체' 근거로 comparison을 sources에 추가, Transit Gateway 라우팅 칸은 '—'), flow-logs-vs-cloudtrail→vpc-flow-logs; 모두 3열, 가장 긴 칸은 nat-instance-vs-gateway의 '사양에 묶여 병목이 되고 뒤의 Lambda·EC2가 간헐적으로 타임아웃을 낸다'(43자); 판정 '가능'/'불가'는 글자+font-medium만, 정답/오답 토큰(correct·incorrect)·green·red 클래스 없음; VPN vs Direct Connect 표 없음; TDD 실패(import 실패) 확인 후 테스트 22개 통과; DiagramFrame.tsx·topics.json 무변경; Node 18.17.1에서 build·lint·전체 테스트 857개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 320px 브라우저 실측은 미실시.",
+      "completed_at": "2026-09-26T11:20:48+0900"
+    },
+    {
+      "step": 7,
+      "name": "glossary-tooltip",
+      "status": "completed",
+      "started_at": "2026-09-26T11:21:13+0900",
+      "summary": "약어 넷(IAM→vpc-endpoint-policy, EC2→nat-instance·comparison, ACL→s3-is-regional, VPN→vpc-peering-scaling-limit; VPN만 expansion 없음)을 JSON glossary에 넣고 src/lib/glossary.ts(markFirstOccurrences: 영문·숫자 경계·대소문자 구분·**강조** 안 제외, clampTooltipLeft)와 GlossaryTerm(점선 밑줄 button·role=tooltip fixed·가장자리 8px 고정·애니메이션/색 변화 없음·Escape/바깥 누르기/blur/스크롤로 닫힘)을 추가; EmphasizedText에 선택 prop glossary({segments, terms}), ConceptList에 선택 prop glossary?: GlossaryTerm[]를 더해 개념마다 요약+문단을 한 번에 표시하고 ConceptReadPage·QuizRunner가 visualsByTopicId[topic.id]?.glossary를 넘김(VPC 밖은 undefined라 렌더 불변); 약어 사전 패널·도식/표 툴팁 없음, topics.json 무변경; TDD 실패 확인 후 glossary 9·GlossaryTerm 6·ConceptList 2·ConceptReadPage 1·visuals 2개 테스트 추가; Node 18.17.1에서 build·lint·전체 테스트 877개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시.",
+      "completed_at": "2026-09-26T11:25:25+0900"
+    }
+  ],
+  "created_at": "2026-09-26T10:43:55+0900",
+  "completed_at": "2026-09-26T11:25:25+0900"
+}

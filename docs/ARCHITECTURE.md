@@ -10,6 +10,7 @@ src/
 ├── components/        # 재사용 UI 컴포넌트
 │   └── diagrams/      # 개념 본문 안에 들어가는 SVG 도식. 레이아웃이 서로 달라 도식마다 컴포넌트 하나.
 ├── data/              # 빌드 타임 정적 학습 데이터 (JSON)
+│   └── visuals/       # 주제별 시각 요소의 문구(도식 캡션·표·약어). 좌표는 컴포넌트에 둔다(ADR-037).
 ├── types/             # TypeScript 타입 정의 (단일 출처)
 └── lib/               # 순수 로직. React 의존 없음.
 ```
@@ -49,6 +50,11 @@ interface Question {
   explanation: string;
 }
 ```
+
+**시각 요소의 문구는 `src/types/visuals.ts`가 정의한다**(ADR-037). 지금은 `vpc-networking` 주제만
+`src/data/visuals/vpc-networking.json`을 가진다. 도식 캡션·비교표 행·약어 뜻풀이가 여기 있고,
+각 항목의 `sources`(또는 `sourceConceptId`)가 근거 개념 id를 가리킨다. 좌표와 경로는 도식
+컴포넌트에 남는다. phase 38·39의 다른 도식 여덟 장은 문구를 컴포넌트 안에 둔 채다.
 
 **주제 안의 개념 배열은 서비스 블록 순서다.** 근거는 ADR-033이고, ADR-023의 3단 정렬을 개정한 것이다.
 
@@ -120,8 +126,8 @@ interface Progress {
 ### 헤더는 모든 화면에서 같다
 
 `Layout`의 헤더는 로고 + "검색" + "복습" 고정이다. **어느 화면인지 판별하는 분기를
-두지 마라.** `Layout`이 지금 쓰는 라우터 훅은 스크롤 복원용 `useLocation().key`와
-`useNavigationType()` 둘뿐이다.
+두지 마라.** `Layout`이 지금 쓰는 라우터 훅은 스크롤 복원용 `useLocation()`과 `useNavigationType()`뿐이고,
+`useLocation()`에서 읽는 것은 `key`와 앵커 예외용 `hash` 둘이다(아래 "화면 전환 시 스크롤").
 
 전에는 확인 문제 화면에서만 "근거 개념" 링크(→ `/topic/:topicId`)를 띄우고 "검색"을
 빼는 분기가 있었다. 그 링크가 **문항 화면을 언마운트시켜 진행 위치와 고른 보기를
@@ -413,7 +419,7 @@ UI_GUIDE "돌아가기"에 있다. 새 탭이나 공유 링크로 이 화면을 
 ## 데이터 흐름
 
 ```
-docs/source/concepts-raw.md          (원본 PDF 추출본, 커밋됨)
+docs/source/concepts-raw.md          (원본 PDF 추출본, gitignore — 로컬에만 둔다. ADR-009)
         │
         │  빌드 전 1회. harness step에서 사람이 검수하며 생성한다.
         │  앱 런타임이나 npm 스크립트에서 자동 생성하지 않는다.

@@ -1,0 +1,184 @@
+{
+  "diagrams": {
+    "dr-choice": {
+      "label": "재해 복구 방식 선택 도식",
+      "svgLabel": "재해 복구 방식 선택",
+      "idleCaption": "방식을 눌러 원본 위치와 복구 시간 목표에 따른 선택 경로를 살펴본다.",
+      "legend": "파랑: 재해 복구 방식 · 회색: 원본 위치와 복구 시간 목표",
+      "nodes": {
+        "onprem": "온프레미스",
+        "aws": "AWS",
+        "rto-hours": "몇 시간",
+        "rto-seconds": "60초처럼 짧음",
+        "backup-restore": "백업 및 복원",
+        "warm-standby": "대기 리전",
+        "drs": "Elastic Disaster Recovery"
+      },
+      "nodeNotes": {
+        "backup-restore": "이미지·백업만 복사, 컴퓨팅은 꺼 둠",
+        "warm-standby": "로드 밸런서·최소 인스턴스 켬·리전 간 데이터 복제",
+        "drs": "디스크 변경을 블록 단위로 계속 복제"
+      },
+      "groups": {
+        "source": "원본 위치",
+        "rto": "복구 시간 목표",
+        "strategy": "재해 복구 방식"
+      },
+      "scenarios": [
+        {
+          "id": "r1",
+          "label": "백업 및 복원",
+          "caption": "재해 후 CloudFormation 템플릿으로 재구축한다. 평소 운영 비용이 가장 낮다.",
+          "sources": ["backup-disaster-recovery.backup-and-restore-dr"]
+        },
+        {
+          "id": "r2",
+          "label": "대기 리전",
+          "caption": "상태 점검 기반 DNS 장애 조치로 자동 전환한다. 장애 후에 켜는 절차는 없다.",
+          "sources": ["backup-disaster-recovery.warm-standby-for-low-rto"]
+        },
+        {
+          "id": "r3",
+          "label": "Elastic Disaster Recovery",
+          "caption": "복제본으로 인스턴스를 시작해 15분 RTO에 대응하며, 장애 조치 없이 시험한다.",
+          "sources": ["backup-disaster-recovery.elastic-disaster-recovery"]
+        }
+      ],
+      "sources": [
+        "backup-disaster-recovery.backup-and-restore-dr",
+        "backup-disaster-recovery.warm-standby-for-low-rto",
+        "backup-disaster-recovery.elastic-disaster-recovery"
+      ]
+    },
+    "backup-flow": {
+      "label": "AWS Backup 백업 흐름 도식",
+      "svgLabel": "AWS Backup 백업 흐름",
+      "idleCaption": "시나리오를 골라 백업 대상부터 사본·검증·감사까지 무엇을 판단하는지 살펴본다.",
+      "legend": "파랑: AWS 관리 기능 · 회색: 백업 원본과 사본 위치",
+      "nodes": {
+        "org-policy": "Organizations 백업 정책",
+        "ec2": "EC2 인스턴스",
+        "ebs": "EBS 볼륨",
+        "rds": "RDS",
+        "dynamodb": "DynamoDB",
+        "s3": "S3",
+        "plan": "백업 계획",
+        "restore-test": "복원 테스트 계획",
+        "audit": "Backup Audit Manager",
+        "other-region": "다른 리전",
+        "other-account": "다른 계정"
+      },
+      "groups": {
+        "source": "원본 계정",
+        "backup": "AWS Backup",
+        "copies": "사본"
+      },
+      "scenarios": [
+        {
+          "id": "b1",
+          "label": "보존 기간",
+          "caption": "자체 백업 35일 초과·리전 간 복사 시 계획으로 일정·보존·복사·만료 삭제를 정한다.",
+          "sources": ["backup-disaster-recovery.backup-long-term-retention"]
+        },
+        {
+          "id": "b2",
+          "label": "대상 지정",
+          "caption": "볼륨만 고르면 구성은 빠진다. 인스턴스를 지정해야 구성과 연결 볼륨을 함께 백업한다.",
+          "sources": ["backup-disaster-recovery.backup-ec2-resource-assignment"]
+        },
+        {
+          "id": "b3",
+          "label": "조직 전체",
+          "caption": "조직에서 정한 백업 계획을 회원 계정에 적용하며, 새 계정도 같은 계획을 따른다.",
+          "sources": ["backup-disaster-recovery.organizations-backup-policy"]
+        },
+        {
+          "id": "b4",
+          "label": "연속 백업",
+          "caption": "S3 연속 백업은 원하는 시점으로 복원해 하루 한 번보다 데이터 손실 구간을 줄인다.",
+          "sources": ["backup-disaster-recovery.backup-s3-continuous-backup"]
+        },
+        {
+          "id": "b5",
+          "label": "사본 위치",
+          "caption": "다른 리전의 사본은 리전 장애에, 다른 계정의 사본은 계정 침해·실수 삭제에 대비한다.",
+          "sources": ["backup-disaster-recovery.backup-cross-account-copy"]
+        },
+        {
+          "id": "b6",
+          "label": "복원 검증",
+          "caption": "통제된 복원 시험으로 백업을 자동 검증하므로 검증 함수를 직접 작성하지 않아도 된다.",
+          "sources": ["backup-disaster-recovery.backup-restore-testing-plan"]
+        },
+        {
+          "id": "b7",
+          "label": "감사",
+          "caption": "프레임워크로 규정·암호화를 감사해 보고한다. AWS Audit Manager와는 다르다.",
+          "sources": ["backup-disaster-recovery.backup-audit-manager"]
+        }
+      ],
+      "sources": [
+        "backup-disaster-recovery.backup",
+        "backup-disaster-recovery.backup-long-term-retention"
+      ]
+    }
+  },
+  "tables": {
+    "ec2-assignment": {
+      "label": "백업 대상 지정 비교",
+      "columns": ["", "EBS 볼륨만 지정", "EC2 인스턴스 지정"],
+      "rows": [
+        {
+          "header": "담기는 것",
+          "cells": ["볼륨에 저장된 데이터", "인스턴스 설정과 모든 연결 볼륨"]
+        },
+        {
+          "header": "복구할 때",
+          "cells": ["인스턴스 재구성 정보 없음", "구성과 볼륨을 한 번에 복구, 다른 리전도 바로 복구"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": [
+        "backup-disaster-recovery.backup-ec2-resource-assignment",
+        "backup-disaster-recovery.backup-long-term-retention"
+      ]
+    },
+    "backup-policy-scope": {
+      "label": "백업 정책 적용 범위 비교",
+      "columns": ["", "계정마다 설정", "Organizations 백업 정책"],
+      "rows": [
+        {
+          "header": "계획을 정하는 곳",
+          "cells": ["계정별 AWS Backup", "조직 단위"]
+        },
+        {
+          "header": "관리 지점",
+          "cells": ["계정마다 한 곳", "중앙 한 곳"]
+        },
+        {
+          "header": "새 계정",
+          "cells": ["—", "기존과 같은 백업 규칙 적용"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": ["backup-disaster-recovery.organizations-backup-policy"]
+    },
+    "copy-destination": {
+      "label": "백업 사본 목적지 비교",
+      "columns": ["", "다른 리전", "다른 계정"],
+      "rows": [
+        {
+          "header": "막는 사고",
+          "cells": ["리전 전체 장애", "계정 침해·실수로 삭제"]
+        },
+        {
+          "header": "계정이 침해되면",
+          "cells": ["원본과 같은 계정이면 사본도 노출", "관리 주체를 나눠 함께 지우는 경로 차단"]
+        }
+      ],
+      "columnWidths": ["24%", "38%", "38%"],
+      "sources": ["backup-disaster-recovery.backup-cross-account-copy"]
+    }
+  },
+  "glossary": []
+}
