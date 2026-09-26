@@ -37,7 +37,9 @@
     {
       "step": 4,
       "name": "nat-count",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-26T11:10:53+0900",
+      "summary": "NatCountDiagram과 diagrams[\"nat-count\"] 문구(시나리오 n1~n4, 곁말 notes: 퍼블릭·프라이빗 서브넷·장애 — VisualDiagramText에 선택 필드 notes 추가)를 더하고 registry에 'vpc-networking.nat-gateway-count-by-environment' 한 줄 매핑; 최종 viewBox 0 0 280 424, 그룹 4개(VPC·가용 영역 A·B·C를 위아래 세 행)·노드 8개·경로 9개; 서브넷은 박스 없이 각 행의 두 열 위치와 곁말(9)로 가름; n2의 세 경로는 EC2 A가 NAT A 오른쪽 면 중앙(y180), EC2 B가 NAT·EC2 사이 통로 x=157로 올라가 오른쪽 면 y188, EC2 C가 통로 x=145로 올라가 행 아래 여백 y208을 지나 NAT A 아래 면(x88)으로 들어가 서로 겹치거나 교차하지 않음; 아래 행 NAT→인터넷 게이트웨이는 가용 영역 밖 왼쪽 통로 x=21·12로 분리; n3·n4에서만 가용 영역 A 라벨 옆에 곁말 '장애', 빨강·애니메이션·새 입력 컨트롤 없음; TDD 실패 확인 후 테스트 23개 통과; DiagramFrame.tsx·topics.json 무변경; Node 18.17.1에서 build·lint·전체 테스트 808개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시."
     },
     {
       "step": 5,

@@ -253,6 +253,72 @@
         "vpc-networking.nat-gateway-per-az",
         "vpc-networking.s3-is-regional"
       ]
+    },
+    "nat-count": {
+      "label": "환경별 NAT 게이트웨이 수 도식",
+      "svgLabel": "환경별 NAT 게이트웨이 수",
+      "idleCaption": "환경과 장애 상황을 골라 NAT 게이트웨이 수에 따라 나가는 길이 어떻게 달라지는지 본다.",
+      "legend": "청록: 서브넷 자원 · 회색: 외부·연결 지점",
+      "nodes": {
+        "internet": "인터넷",
+        "igw": "인터넷 게이트웨이",
+        "nat-a": "NAT 게이트웨이",
+        "ec2-a": "EC2",
+        "nat-b": "NAT 게이트웨이",
+        "ec2-b": "EC2",
+        "nat-c": "NAT 게이트웨이",
+        "ec2-c": "EC2"
+      },
+      "groups": {
+        "vpc": "VPC",
+        "az-a": "가용 영역 A",
+        "az-b": "가용 영역 B",
+        "az-c": "가용 영역 C"
+      },
+      "notes": {
+        "public": "퍼블릭 서브넷",
+        "private": "프라이빗 서브넷",
+        "failure": "장애"
+      },
+      "scenarios": [
+        {
+          "id": "n1",
+          "label": "프로덕션",
+          "caption": "가용 영역마다 자기 쪽 NAT 게이트웨이로 나간다. 시간당 요금은 게이트웨이 개수만큼 붙는다.",
+          "sources": [
+            "vpc-networking.nat-gateway-per-az",
+            "vpc-networking.nat-gateway-count-by-environment"
+          ]
+        },
+        {
+          "id": "n2",
+          "label": "개발",
+          "caption": "모든 프라이빗 서브넷의 기본 경로를 게이트웨이 하나로 모아 요금을 한 개분으로 줄인다.",
+          "sources": [
+            "vpc-networking.nat-gateway-count-by-environment"
+          ]
+        },
+        {
+          "id": "n3",
+          "label": "프로덕션 · AZ A 장애",
+          "caption": "가용 영역 하나가 무너져도 나머지 가용 영역은 자기 쪽 게이트웨이로 계속 나간다.",
+          "sources": [
+            "vpc-networking.nat-gateway-per-az"
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "개발 · AZ A 장애",
+          "caption": "게이트웨이가 있던 가용 영역이 무너지면 살아 있는 가용 영역도 인터넷을 잃는다. 고가용성이 필요 없는 환경이라면 감수할 대가다.",
+          "sources": [
+            "vpc-networking.nat-gateway-per-az",
+            "vpc-networking.nat-gateway-count-by-environment"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.nat-gateway-count-by-environment"
+      ]
     }
   },
   "tables": {},

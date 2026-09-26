@@ -15,6 +15,7 @@ export interface VisualDiagramText {
   nodes: Record<string, string> // 노드 id → 라벨
   nodeNotes?: Record<string, string> // 두 줄 노드의 윗줄(조건). UI_GUIDE 「두 줄 노드」
   groups?: Record<string, string> // 그룹 박스 id → 라벨
+  notes?: Record<string, string> // 박스 없이 붙는 곁말(9). 예: 서브넷 열 이름, 장애 표시
   scenarios: VisualScenarioText[] // 정적 도식이면 빈 배열
   sources: string[] // idleCaption·노드 배치의 근거 개념 id
 }
