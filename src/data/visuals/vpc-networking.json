@@ -370,6 +370,192 @@
       ]
     }
   },
-  "tables": {},
+  "tables": {
+    "attach-targets": {
+      "label": "무엇을 어디에 붙이나",
+      "columns": [
+        "붙이는 것 → 대상",
+        "판정",
+        "이유"
+      ],
+      "rows": [
+        {
+          "header": "엘라스틱 IP → NAT 게이트웨이",
+          "cells": [
+            "가능",
+            "만들 때 하나를 연결해야 나갈 출구가 생긴다"
+          ]
+        },
+        {
+          "header": "엘라스틱 IP → 인터넷 게이트웨이",
+          "cells": [
+            "불가",
+            "VPC에 연결하는 장치라 주소를 붙이지 않는다"
+          ]
+        },
+        {
+          "header": "NAT 게이트웨이 → 프라이빗 서브넷",
+          "cells": [
+            "불가",
+            "퍼블릭 서브넷에 둔다"
+          ]
+        },
+        {
+          "header": "엔드포인트 정책 → VPC 엔드포인트",
+          "cells": [
+            "가능",
+            "그 경로로 닿을 주체와 리소스를 좁힌다"
+          ]
+        },
+        {
+          "header": "보안 그룹 → S3",
+          "cells": [
+            "불가",
+            "S3는 버킷 정책이나 ACL로 막는다"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.nat-gateway-elastic-ip",
+        "vpc-networking.nat-gateway",
+        "vpc-networking.vpc-endpoint-policy",
+        "vpc-networking.s3-is-regional"
+      ]
+    },
+    "endpoint-types": {
+      "label": "게이트웨이 엔드포인트와 인터페이스 엔드포인트",
+      "columns": [
+        "",
+        "게이트웨이",
+        "인터페이스"
+      ],
+      "rows": [
+        {
+          "header": "대상",
+          "cells": [
+            "S3·DynamoDB. DynamoDB는 이 유형으로만 닿는다",
+            "그 밖의 AWS 서비스. S3도 닿는다"
+          ]
+        },
+        {
+          "header": "비용",
+          "cells": [
+            "무료",
+            "시간당 요금. 데이터 처리 비용은 NAT보다 싸다"
+          ]
+        },
+        {
+          "header": "고를 때",
+          "cells": [
+            "S3에 비용 효율로 닿을 때",
+            "여러 종류의 서비스에 닿아야 할 때"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.vpc-endpoint",
+        "vpc-networking.endpoint-pricing"
+      ]
+    },
+    "nat-instance-vs-gateway": {
+      "label": "NAT 인스턴스와 NAT 게이트웨이",
+      "columns": [
+        "",
+        "NAT 인스턴스",
+        "NAT 게이트웨이"
+      ],
+      "rows": [
+        {
+          "header": "운영",
+          "cells": [
+            "EC2로 직접 운영한다",
+            "관리형이다"
+          ]
+        },
+        {
+          "header": "트래픽이 몰리면",
+          "cells": [
+            "사양에 묶여 병목이 되고 뒤의 Lambda·EC2가 간헐적으로 타임아웃을 낸다",
+            "인스턴스 사양에 묶이지 않는다"
+          ]
+        },
+        {
+          "header": "확장·장애 조치",
+          "cells": [
+            "사람이 떠안는다",
+            "사람이 떠안지 않는다"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.nat-instance",
+        "vpc-networking.nat-gateway-count-by-environment"
+      ]
+    },
+    "private-connectivity": {
+      "label": "PrivateLink, VPC 피어링, Transit Gateway",
+      "columns": [
+        "",
+        "열어 주는 범위",
+        "라우팅 테이블"
+      ],
+      "rows": [
+        {
+          "header": "PrivateLink",
+          "cells": [
+            "애플리케이션 하나. 엔드포인트 정책으로 좁힌다",
+            "건드리지 않는다"
+          ]
+        },
+        {
+          "header": "VPC 피어링",
+          "cells": [
+            "두 VPC 전체",
+            "VPC가 늘수록 연결과 경로가 함께 는다"
+          ]
+        },
+        {
+          "header": "Transit Gateway",
+          "cells": [
+            "연결을 열 뿐 애플리케이션 단위로 제한하지 않는다",
+            "—"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.privatelink-endpoint-service",
+        "vpc-networking.vpc-peering",
+        "vpc-networking.comparison",
+        "hybrid-connectivity.transit-gateway"
+      ]
+    },
+    "flow-logs-vs-cloudtrail": {
+      "label": "VPC 플로우 로그와 CloudTrail",
+      "columns": [
+        "",
+        "플로우 로그",
+        "CloudTrail"
+      ],
+      "rows": [
+        {
+          "header": "기록하는 것",
+          "cells": [
+            "네트워크 인터페이스를 오가는 트래픽의 메타데이터. 패킷 내용은 아니다",
+            "누가 어떤 API를 불렀는가"
+          ]
+        },
+        {
+          "header": "쌓이는 곳",
+          "cells": [
+            "CloudWatch Logs 같은 로그 대상",
+            "트레일. 플로우 로그는 여기 실리지 않는다"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.vpc-flow-logs"
+      ]
+    }
+  },
   "glossary": []
 }
