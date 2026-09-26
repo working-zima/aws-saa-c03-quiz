@@ -37,4 +37,27 @@ describe('ConceptList', () => {
     expect(within(neighbor).queryByRole('figure')).not.toBeInTheDocument()
     expect(screen.getAllByRole('figure')).toHaveLength(1)
   })
+
+  it.each([2, 4] as const)('h%i 화면에서 배열로 준 도식을 모든 문단 뒤에 배열 순서대로 붙인다', (headingLevel) => {
+    const FirstDiagram = () => <figure aria-label="첫 도식" />
+    const SecondDiagram = () => <figure aria-label="둘째 도식" />
+
+    render(
+      <ConceptList
+        concepts={concepts}
+        diagrams={{ 'x.y': [FirstDiagram, SecondDiagram] }}
+        headingLevel={headingLevel}
+      />,
+    )
+
+    const [first, neighbor] = screen.getAllByRole('article')
+    const firstDiagram = within(first).getByRole('figure', { name: '첫 도식' })
+    const secondDiagram = within(first).getByRole('figure', { name: '둘째 도식' })
+    expect(screen.getByRole('heading', { name: '첫 개념', level: headingLevel })).toBeInTheDocument()
+    expect(within(first).getAllByRole('figure')).toEqual([firstDiagram, secondDiagram])
+    expect(firstDiagram.previousElementSibling?.lastElementChild).toBe(screen.getByText('마지막 문단'))
+    expect(firstDiagram.nextElementSibling).toBe(secondDiagram)
+    expect(first.lastElementChild).toBe(secondDiagram)
+    expect(within(neighbor).queryByRole('figure')).not.toBeInTheDocument()
+  })
 })

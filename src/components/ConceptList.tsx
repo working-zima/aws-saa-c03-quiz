@@ -8,7 +8,7 @@ interface ConceptListProps {
   // 개념 읽기 화면은 주제 제목이 h1이라 개념이 h2다. 확인 문제의 펼치기는 제목·문제문·
   // 주제 제목이 h1·h2·h3를 쓰고 있어 개념이 h4가 된다.
   headingLevel: 2 | 4
-  diagrams?: Record<string, ComponentType>
+  diagrams?: Record<string, ComponentType | ComponentType[]>
 }
 
 // 개념 읽기 화면과 확인 문제의 개념 펼치기가 같은 본문을 렌더한다.
@@ -34,7 +34,9 @@ export function ConceptList({ concepts, headingLevel, diagrams = diagramsByConce
                 </p>
               ))}
             </div>
-            {Diagram && <Diagram />}
+            {Array.isArray(Diagram)
+              ? Diagram.map((Component, index) => <Component key={index} />)
+              : Diagram && <Diagram />}
           </article>
         )
       })}
