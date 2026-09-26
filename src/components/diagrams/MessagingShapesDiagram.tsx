@@ -26,6 +26,7 @@ const paths: Record<string, string> = {
   'app-topic': 'M132 52 H140 V152 H204 V196',
   'topic-subscribers': 'M204 228 V240 H272 V404 H204 V420',
   'aws-service-bus': 'M204 68 V80 H272 V240 H140 V252',
+  'saas-bus': 'M76 124 V136 H8 V240 H76 V252',
   'bus-targets': 'M260 268 H272 V492 H260',
   'legacy-app-broker': 'M204 124 V152 H272 V296 H76 V308',
   'broker-legacy-consumer': 'M76 340 V368 H8 V548 H20',
@@ -45,7 +46,7 @@ const scenarios: DiagramScenario[] = [
   },
   {
     id: 's3', label: 'EventBridge', caption: '규칙에 맞는 이벤트만 보낸다. 순서 보장과 24시간 초과 보관은 하지 않는다.',
-    nodes: ['aws-service', 'saas', 'bus', 'targets'], paths: ['aws-service-bus', 'bus-targets'],
+    nodes: ['aws-service', 'saas', 'bus', 'targets'], paths: ['aws-service-bus', 'saas-bus', 'bus-targets'],
   },
   {
     id: 's4', label: 'Amazon MQ', caption: '표준 프로토콜을 유지해, 앱의 메시징 방식을 바꾸지 않고 옮길 수 있다.',

@@ -88,19 +88,19 @@ describe('MessagingShapesDiagram', () => {
   })
 
   it.each([
-    ['SQS', ['app', 'queue', 'worker']],
-    ['SNS', ['app', 'topic', 'subscribers']],
-    ['EventBridge', ['aws-service', 'bus', 'targets']],
-    ['Amazon MQ', ['legacy-app', 'broker', 'legacy-consumer']],
-    ['SES', ['app', 'ses', 'inbox']],
-  ])('%s는 지정한 경로만 그리고 EventBridge의 SaaS는 선 없이 선명하게 둔다', async (label, route) => {
+    ['SQS', ['app', 'queue', 'worker'], ['app-queue', 'queue-worker']],
+    ['SNS', ['app', 'topic', 'subscribers'], ['app-topic', 'topic-subscribers']],
+    ['EventBridge', ['aws-service', 'saas', 'bus', 'targets'], ['aws-service-bus', 'saas-bus', 'bus-targets']],
+    ['Amazon MQ', ['legacy-app', 'broker', 'legacy-consumer'], ['legacy-app-broker', 'broker-legacy-consumer']],
+    ['SES', ['app', 'ses', 'inbox'], ['app-ses', 'ses-inbox']],
+  ])('%s는 선명한 노드마다 경로가 닿고 지정한 경로만 그린다', async (label, route, expectedPaths) => {
     render(<MessagingShapesDiagram />)
     await selectScenario(label)
 
     const nodes = Array.from(diagram().querySelectorAll('[data-node][opacity="1"]'), (node) => node.getAttribute('data-node'))
-    expect(nodes.sort()).toEqual([...route, ...(label === 'EventBridge' ? ['saas'] : [])].sort())
+    expect(nodes.sort()).toEqual([...route].sort())
     const paths = Array.from(diagram().querySelectorAll('[data-path]'))
-    expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(route.slice(1).map((to, i) => `${route[i]}-${to}`))
+    expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(expectedPaths)
     for (const path of paths) {
       expect(path).toHaveAttribute('stroke-width', '2')
       expect(path).toHaveAttribute('marker-end')
