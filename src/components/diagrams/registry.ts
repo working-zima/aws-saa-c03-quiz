@@ -4,6 +4,7 @@ import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
+import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
 import { SgNaclBoundaryDiagram } from './SgNaclBoundaryDiagram'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
@@ -18,6 +19,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'vpc-networking.comparison': [VpcPathsDiagram, VpcDestinationDiagram],
   'vpc-networking.internet-gateway-is-not-per-az': VpcScopeDiagram,
   'vpc-networking.nat-gateway-count-by-environment': NatCountDiagram,
+  'vpc-networking.vpc-peering-scaling-limit': PeeringScaleDiagram,
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
   'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,

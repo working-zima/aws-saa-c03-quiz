@@ -45,7 +45,9 @@
     {
       "step": 5,
       "name": "peering-scale",
-      "status": "pending"
+      "status": "completed",
+      "summary": "src/lib/peering.ts(meshConnectionCount n(n-1)/2·hubAttachmentCount n·ringPoints 12시 시작 시계 방향)와 PeeringScaleDiagram·diagrams[\"peering-scale\"] 문구를 추가하고 registry에 'vpc-networking.vpc-peering-scaling-limit' 한 줄 매핑; 최종 viewBox 0 0 280 440, 위 mesh(VPC 피어링)·아래 hub(Transit Gateway) 그룹 272×212, 두 원 모두 반지름 72, VPC 상자 32×20, 가운데 Transit Gateway 100×32(파랑은 이 노드 테두리에만); 선은 stroke-disabled 1px 사선, 전체는 VPC 4개(메시 6·허브 4), p3·p6·p10은 메시 3·15·45·허브 3·6·10이고 곁말 '연결 N개'·캡션 숫자가 같음; 전제 '모든 VPC가 서로 통신해야 한다면'은 idleCaption과 캡션 셋에 모두 있음; 슬라이더·애니메이션·강조색 선 없음; TDD 실패 확인 후 peering 12개·도식 15개 테스트 통과(p10 상자 쌍 교집합 0, Transit Gateway와도 0, 관문 5·6·7); DiagramFrame.tsx·topics.json·교차 검사기 무변경; Node 18.17.1에서 build·lint·전체 테스트 835개·구조 검사·경로 교차 검사(노드 122개·경로 107개, 교차 0건) 통과; 브라우저 실측은 미실시.",
+      "started_at": "2026-09-26T11:15:35+0900"
     },
     {
       "step": 6,

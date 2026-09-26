@@ -319,6 +319,55 @@
       "sources": [
         "vpc-networking.nat-gateway-count-by-environment"
       ]
+    },
+    "peering-scale": {
+      "label": "VPC 피어링과 Transit Gateway의 연결 수 도식",
+      "svgLabel": "VPC 수에 따른 피어링과 Transit Gateway의 연결 수",
+      "idleCaption": "모든 VPC가 서로 통신해야 한다면 몇 개의 연결이 필요한지, VPC 수를 골라 피어링과 Transit Gateway를 나란히 비교한다. 지금 그림은 VPC 4개다.",
+      "legend": "파랑: AWS 관리 · 회색: VPC·연결",
+      "nodes": {
+        "vpc": "VPC",
+        "tgw": "Transit Gateway"
+      },
+      "groups": {
+        "mesh": "VPC 피어링",
+        "hub": "Transit Gateway"
+      },
+      "notes": {
+        "count": "연결 {count}개"
+      },
+      "scenarios": [
+        {
+          "id": "p3",
+          "label": "VPC 3개",
+          "caption": "모든 VPC가 서로 통신해야 한다면 피어링은 쌍마다 하나씩 3개, Transit Gateway는 VPC마다 하나씩 3개다. 셋까지는 두 방식의 연결 수가 같다.",
+          "sources": [
+            "vpc-networking.vpc-peering",
+            "vpc-networking.vpc-peering-scaling-limit"
+          ]
+        },
+        {
+          "id": "p6",
+          "label": "VPC 6개",
+          "caption": "모든 VPC가 서로 통신해야 한다면 피어링은 1:1 연결이라 쌍마다 하나씩 15개가 필요하고, Transit Gateway는 6개다. 피어링 연결은 VPC 수보다 빠르게 늘어난다.",
+          "sources": [
+            "vpc-networking.vpc-peering-scaling-limit"
+          ]
+        },
+        {
+          "id": "p10",
+          "label": "VPC 10개",
+          "caption": "모든 VPC가 서로 통신해야 한다면 피어링은 45개, Transit Gateway는 10개다. 수백 개로 늘릴 계획이면 피어링은 관리할 수 없게 되므로 VPC마다 허브에 한 번 붙는 Transit Gateway를 쓴다.",
+          "sources": [
+            "vpc-networking.vpc-peering-scaling-limit",
+            "hybrid-connectivity.transit-gateway"
+          ]
+        }
+      ],
+      "sources": [
+        "vpc-networking.vpc-peering-scaling-limit",
+        "hybrid-connectivity.transit-gateway"
+      ]
     }
   },
   "tables": {},
