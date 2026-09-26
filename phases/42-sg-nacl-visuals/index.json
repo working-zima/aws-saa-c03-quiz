@@ -2,7 +2,23 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "42-sg-nacl-visuals",
   "steps": [
-    { "step": 0, "name": "sg-nacl-table", "status": "pending" },
-    { "step": 1, "name": "layer-diagram", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "sg-nacl-table",
+      "status": "completed",
+      "summary": "src/data/visuals/security-groups-nacl.json과 visualsByTopicId['security-groups-nacl'] 로더 키에 7행 sg-vs-nacl 표를 추가하고 security-groups-nacl.security-group-stateful-vs-nacl-stateless 앵커를 [SgNaclBoundaryDiagram, SgNaclCompareTable] 순서로 등록했다. 최장 칸은 '인바운드 차단 · 아웃바운드 허용' 18자(공백·기호 포함)이며, 기존 SgNaclBoundaryDiagram 테스트의 figure 1개 단언 한 줄만 figure 2개·첫째 경계 도식 단언으로 변경했다. TDD 실패 확인 후 Node 18.17.1에서 build·lint·전체 936개 테스트·구조 검사·경로 교차 검사를 통과했다.",
+      "started_at": "2026-09-26T18:55:52+0900",
+      "completed_at": "2026-09-26T19:00:08+0900"
+    },
+    {
+      "step": 1,
+      "name": "layer-diagram",
+      "status": "completed",
+      "summary": "SgNaclLayersDiagram과 JSON sg-nacl-layers 문구를 추가하고 web-acl-vs-nacl 본문 뒤에 등록했다. 최종 viewBox는 0 0 280 464이며 WAF는 서브넷 밖 (204,180), 폭 68·높이 32로 ALB와 같은 높이에 두고 화살표 없는 연결선 (164,196)→(204,196)을 썼다. waf-attach 곁말은 (204,228), sg-source는 (200,404)·(200,418)에 '소스 =' / 'ALB 보안 그룹' 두 줄로 배치했다. 캡션 길이는 flow 41·waf 46·nacl 44·sg-ref 47·block-ip 47자다. TDD 실패 확인 후 새 테스트 17개와 Node 18.17.1의 build·lint·전체 953개 테스트·구조 검사를 통과했고, 경로 교차 검사는 전체 노드 146개·경로 125개에서 교차 0건이다. 금지된 기존 파일과 step 0 표는 변경하지 않았다. 브라우저 승인 검토가 로컬 페이지 접근을 권한 거절로 차단해 실제 화면과 320px 캡션 줄 수는 미측정이다.",
+      "started_at": "2026-09-26T19:00:08+0900",
+      "completed_at": "2026-09-26T19:07:49+0900"
+    }
+  ],
+  "created_at": "2026-09-26T18:55:52+0900",
+  "completed_at": "2026-09-26T19:07:49+0900"
 }

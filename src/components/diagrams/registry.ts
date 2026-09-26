@@ -10,6 +10,8 @@ import { NatCountDiagram } from './NatCountDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
 import { SgNaclBoundaryDiagram } from './SgNaclBoundaryDiagram'
+import { SgNaclLayersDiagram } from './SgNaclLayersDiagram'
+import { SgNaclCompareTable } from './sgNaclTables'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
 import { VpcDestinationDiagram } from './VpcDestinationDiagram'
@@ -43,7 +45,8 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
   'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,
-  'security-groups-nacl.security-group-stateful-vs-nacl-stateless': SgNaclBoundaryDiagram,
+  'security-groups-nacl.security-group-stateful-vs-nacl-stateless': [SgNaclBoundaryDiagram, SgNaclCompareTable],
+  'security-groups-nacl.web-acl-vs-nacl': SgNaclLayersDiagram,
   'sqs-sns-eventbridge.sqs': MessagingShapesDiagram,
   'sqs-sns-eventbridge.eventbridge': EventBridgeRoutingDiagram,
   'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer': SnsFanoutDiagram,

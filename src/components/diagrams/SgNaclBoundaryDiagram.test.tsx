@@ -208,7 +208,7 @@ describe('SgNaclBoundaryDiagram', () => {
     const figure = screen.getByRole('figure', { name: '보안 그룹과 네트워크 ACL 경계 도식' })
     expect(figure.closest('article')).toHaveAttribute('id', 'security-groups-nacl.security-group-stateful-vs-nacl-stateless')
     expect(figure.previousElementSibling).toHaveTextContent('비교 본문')
-    expect(screen.getAllByRole('figure')).toHaveLength(1)
+    expect(screen.getAllByRole('figure')).toEqual([figure, expect.any(HTMLElement)])
   })
 
   it('여러 번 렌더해도 화살표 마커가 다른 도식과 충돌하지 않는다', async () => {
