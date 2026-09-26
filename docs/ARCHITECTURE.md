@@ -10,6 +10,7 @@ src/
 ├── components/        # 재사용 UI 컴포넌트
 │   └── diagrams/      # 개념 본문 안에 들어가는 SVG 도식. 레이아웃이 서로 달라 도식마다 컴포넌트 하나.
 ├── data/              # 빌드 타임 정적 학습 데이터 (JSON)
+│   └── visuals/       # 주제별 시각 요소의 문구(도식 캡션·표·약어). 좌표는 컴포넌트에 둔다(ADR-037).
 ├── types/             # TypeScript 타입 정의 (단일 출처)
 └── lib/               # 순수 로직. React 의존 없음.
 ```
@@ -49,6 +50,11 @@ interface Question {
   explanation: string;
 }
 ```
+
+**시각 요소의 문구는 `src/types/visuals.ts`가 정의한다**(ADR-037). 지금은 `vpc-networking` 주제만
+`src/data/visuals/vpc-networking.json`을 가진다. 도식 캡션·비교표 행·약어 뜻풀이가 여기 있고,
+각 항목의 `sources`(또는 `sourceConceptId`)가 근거 개념 id를 가리킨다. 좌표와 경로는 도식
+컴포넌트에 남는다. phase 38·39의 다른 도식 여덟 장은 문구를 컴포넌트 안에 둔 채다.
 
 **주제 안의 개념 배열은 서비스 블록 순서다.** 근거는 ADR-033이고, ADR-023의 3단 정렬을 개정한 것이다.
 

@@ -1,0 +1,46 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "40-vpc-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "visual-slots",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "paths-extension",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "destination-tree",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "resource-scope",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "nat-count",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "peering-scale",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "comparison-tables",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "glossary-tooltip",
+      "status": "pending"
+    }
+  ]
+}
