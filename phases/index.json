@@ -204,6 +204,10 @@
       "dir": "40-vpc-visuals",
       "status": "completed",
       "completed_at": "2026-09-26T11:25:25+0900"
+    },
+    {
+      "dir": "41-backup-visuals",
+      "status": "pending"
     }
   ]
 }
