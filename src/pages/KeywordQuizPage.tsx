@@ -9,7 +9,9 @@ import {
   KEYWORD_QUIZ_ALL,
   KEYWORD_QUIZ_COUNTS,
   KEYWORD_QUIZ_MODES,
+  listKeywordSections,
   resolveKeywordCount,
+  selectKeywords,
   type KeywordQuizCount,
 } from '../lib/keyword-quiz'
 import type { EncryptedKeywords, Keyword, KeywordQuestion, KeywordQuizMode } from '../types/keywords'
@@ -44,6 +46,8 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
   const [keywords, setKeywords] = useState<Keyword[] | null>(null)
   const [mode, setMode] = useState<KeywordQuizMode>(KEYWORD_QUIZ_MODES[0])
   const [count, setCount] = useState<KeywordQuizCount>(COUNT_CHOICES[0])
+  // null이면 전체 단원. 문항 수는 고른 단원 안에서 적용한다.
+  const [section, setSection] = useState<string | null>(null)
   const [round, setRound] = useState<Round | null>(null)
   // "한 판 더"는 러너를 새 key로 다시 마운트해 처음부터 시작한다.
   const [roundKey, setRoundKey] = useState(0)
@@ -78,10 +82,11 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
 
   function start() {
     if (!keywords) return
-    const total = resolveKeywordCount(count, keywords.length)
+    const scoped = selectKeywords(keywords, section)
+    const total = resolveKeywordCount(count, scoped.length)
     setRound(mode === 'flashcard'
-      ? { mode, cards: buildFlashcards(keywords, total, rng) }
-      : { mode, questions: buildKeywordQuestions(keywords, mode, total, rng) })
+      ? { mode, cards: buildFlashcards(scoped, total, rng) }
+      : { mode, questions: buildKeywordQuestions(keywords, mode, total, rng, section) })
     setRoundKey((key) => key + 1)
   }
 
@@ -92,13 +97,18 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
         <form className="space-y-3" onSubmit={open}>
           <label className="block text-xs text-neutral-500" htmlFor="keyword-passphrase">암호</label>
           <input
-            autoComplete="current-password"
+            // 입력한 글자를 그대로 보여 준다(사용자 결정). 일반 입력칸은 브라우저가 입력 기록으로
+            // 남길 수 있으므로 자동완성·자동 대문자·맞춤법 검사를 끈다.
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
             autoFocus
             className="w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-[15px] text-neutral-100 placeholder:text-neutral-500 focus:border-neutral-600 focus:outline-none"
             id="keyword-passphrase"
             onChange={(event) => setPassphrase(event.target.value)}
             ref={inputRef}
-            type="password"
+            spellCheck={false}
+            type="text"
             value={passphrase}
           />
           {error && <p className="text-[15px] leading-7 text-neutral-300" role="alert">{error}</p>}
@@ -129,7 +139,21 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold text-title">키워드 퀴즈</h1>
-        <p className="text-[15px] leading-7 text-neutral-300">키워드 {keywords.length}개</p>
+        <p className="text-[15px] leading-7 text-neutral-300">키워드 {selectKeywords(keywords, section).length}개</p>
+      </div>
+      <div className="space-y-3">
+        <label className="block text-xs text-neutral-500" htmlFor="keyword-section">단원</label>
+        <select
+          className="w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-[15px] text-neutral-100 focus:border-neutral-600 focus:outline-none"
+          id="keyword-section"
+          onChange={(event) => setSection(event.target.value === '' ? null : event.target.value)}
+          value={section ?? ''}
+        >
+          <option value="">전체 단원 ({keywords.length})</option>
+          {listKeywordSections(keywords).map((option) => (
+            <option key={option.section} value={option.section}>{option.section} ({option.count})</option>
+          ))}
+        </select>
       </div>
       <div aria-label="모드" className="flex flex-wrap gap-3" role="group">
         {KEYWORD_QUIZ_MODES.map((option) => (
