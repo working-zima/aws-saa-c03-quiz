@@ -7,7 +7,8 @@
       "name": "keyword-source",
       "status": "completed",
       "started_at": "2026-09-27T20:46:28+0900",
-      "summary": "키워드 107개·단원 22개(✅ 97개 중 키워드 80·풂 6→27·합침 8·뺌 3, 뺀 하위 항목 0) — docs/source/keywords-raw.json(gitignore), scripts/check-keywords.mjs, phases/47-keyword-egg/keywords-report.md"
+      "summary": "키워드 107개·단원 22개(✅ 97개 중 키워드 80·풂 6→27·합침 8·뺌 3, 뺀 하위 항목 0) — docs/source/keywords-raw.json(gitignore), scripts/check-keywords.mjs, phases/47-keyword-egg/keywords-report.md",
+      "completed_at": "2026-09-27T20:52:39+0900"
     },
     {
       "step": 1,
