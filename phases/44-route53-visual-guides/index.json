@@ -2,9 +2,28 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "44-route53-visual-guides",
   "steps": [
-    { "step": 0, "name": "diagram-question", "status": "pending" },
-    { "step": 1, "name": "health-examples", "status": "pending" },
-    { "step": 2, "name": "alias-examples", "status": "pending" },
-    { "step": 3, "name": "hybrid-dns-examples", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "diagram-question",
+      "status": "completed",
+      "started_at": "2026-09-27T17:50:26+0900",
+      "summary": "VisualDiagramText·DiagramFrameProps에 선택 필드 question을 더하고, 값이 있을 때만 figure 첫 자식(시나리오 버튼 줄 위)에 <p className=\"text-sm text-title\">로 렌더한다(헤딩 아님, aria-label은 label 그대로). DiagramFrame.test.tsx에 테스트 3개 추가, 기존 도식·JSON 변경 없음"
+    },
+    {
+      "step": 1,
+      "name": "health-examples",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "alias-examples",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "hybrid-dns-examples",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-09-27T17:50:26+0900"
 }
