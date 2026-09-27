@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { describe, expect, it } from 'vitest'
-import type { Keyword, KeywordPairMode } from '../types/keywords'
+import type { Keyword, KeywordChoiceMode } from '../types/keywords'
 import {
   KEYWORD_QUIZ_MODES,
   LOGO_TAP_COUNT,
@@ -9,6 +9,7 @@ import {
   buildFlashcards,
   buildFeatureQuestions,
   buildKeywordQuestions,
+  buildTermQuestions,
   listKeywordFeatures,
   listKeywordSections,
   registerLogoTap,
@@ -40,20 +41,21 @@ const keywords: Keyword[] = [
 ]
 
 const byId = new Map(keywords.map((k) => [k.id, k]))
-const modes: KeywordPairMode[] = ['summary-to-term', 'term-to-summary']
+const modes: KeywordChoiceMode[] = ['summary-to-term', 'term-to-summary']
 
-function field(mode: KeywordPairMode) {
+function field(mode: KeywordChoiceMode) {
   return mode === 'summary-to-term' ? ('term' as const) : ('summary' as const)
 }
 
-function choiceKeywords(mode: KeywordPairMode, choices: string[]) {
+function choiceKeywords(mode: KeywordChoiceMode, choices: string[]) {
   const f = field(mode)
   return choices.map((c) => keywords.find((k) => k[f] === c)!)
 }
 
 describe('KEYWORD_QUIZ_MODES', () => {
-  it('네 형식을 정한 순서로 둔다', () => {
-    expect(KEYWORD_QUIZ_MODES).toEqual(['summary-to-term', 'term-to-summary', 'feature-to-term', 'flashcard'])
+  // 특징 문항은 따로 모드를 두지 않고 요약 보고 키워드 고르기에 섞는다(사용자 결정).
+  it('세 형식을 정한 순서로 둔다', () => {
+    expect(KEYWORD_QUIZ_MODES).toEqual(['summary-to-term', 'term-to-summary', 'flashcard'])
   })
 })
 
@@ -232,6 +234,36 @@ describe('특징 보고 키워드 고르기', () => {
 
   it('같은 시드면 결과가 같다', () => {
     expect(buildFeatureQuestions(family, 10, lcg(9))).toEqual(buildFeatureQuestions(family, 10, lcg(9)))
+  })
+})
+
+describe('buildTermQuestions', () => {
+  it('요약 문항과 특징 문항을 모두 낸다', () => {
+    const questions = buildTermQuestions(family, lcg(1))
+    expect(questions).toHaveLength(family.length + 3)
+    expect(questions.map((q) => q.prompt).sort()).toEqual(
+      [...family.map((k) => k.summary), 'p 특징 1', 'p 특징 2', 'q1 특징'].sort(),
+    )
+    for (const q of questions) {
+      expect(q.choices[q.answerIndex]).toBe(familyById.get(q.keywordId)!.term)
+    }
+  })
+
+  it('단원을 주면 그 단원의 키워드 요약과 그 단원에 나온 특징만 낸다', () => {
+    expect(buildTermQuestions(family, lcg(2), 'Q').map((q) => q.prompt).sort()).toEqual(
+      ['p 특징 2', 'r1 요약', 'r2 요약', 'r3 요약'],
+    )
+    expect(buildTermQuestions(keywords, lcg(2), 'B')).toHaveLength(2)
+  })
+
+  it('특징 문항을 뒤에 몰지 않고 섞는다', () => {
+    const featureFirst = Array.from({ length: 20 }, (_, seed) => buildTermQuestions(family, lcg(seed)))
+      .some((questions) => questions[0].prompt.includes('특징'))
+    expect(featureFirst).toBe(true)
+  })
+
+  it('같은 시드면 결과가 같다', () => {
+    expect(buildTermQuestions(family, lcg(9))).toEqual(buildTermQuestions(family, lcg(9)))
   })
 })
 
