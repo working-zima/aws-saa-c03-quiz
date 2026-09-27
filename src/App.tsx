@@ -2,6 +2,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { Layout } from './components/Layout'
 import { ConceptReadPage } from './pages/ConceptReadPage'
+import { KeywordQuizPage } from './pages/KeywordQuizPage'
 import { QuizPage } from './pages/QuizPage'
 import { RandomQuizPage } from './pages/RandomQuizPage'
 import { RandomStartPage } from './pages/RandomStartPage'
@@ -23,6 +24,7 @@ export function AppRoutes() {
         <Route path="search" element={<SearchPage />} />
         <Route path="random" element={<RandomStartPage />} />
         <Route path="random/:count" element={<RandomQuizPage />} />
+        <Route path="keywords" element={<KeywordQuizPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

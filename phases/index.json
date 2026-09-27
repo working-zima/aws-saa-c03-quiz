@@ -234,6 +234,11 @@
       "dir": "46-dns-lb-basic-terms",
       "status": "completed",
       "completed_at": "2026-09-27T19:07:01+0900"
+    },
+    {
+      "dir": "47-keyword-egg",
+      "status": "completed",
+      "completed_at": "2026-09-27T21:04:07+0900"
     }
   ]
 }

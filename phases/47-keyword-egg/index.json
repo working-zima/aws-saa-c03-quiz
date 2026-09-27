@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "47-keyword-egg",
+  "steps": [
+    {
+      "step": 0,
+      "name": "keyword-source",
+      "status": "completed",
+      "started_at": "2026-09-27T20:46:28+0900",
+      "summary": "키워드 107개·단원 22개(✅ 97개 중 키워드 80·풂 6→27·합침 8·뺌 3, 뺀 하위 항목 0) — docs/source/keywords-raw.json(gitignore), scripts/check-keywords.mjs, phases/47-keyword-egg/keywords-report.md",
+      "completed_at": "2026-09-27T20:52:39+0900"
+    },
+    {
+      "step": 1,
+      "name": "keyword-crypto",
+      "status": "completed",
+      "started_at": "2026-09-27T20:53:54+0900",
+      "summary": "키워드 107개 암호화 — src/types/keywords.ts(Keyword·EncryptedKeywords), src/lib/keyword-crypto.ts(WrongPassphraseError, decryptKeywords(payload, passphrase): Promise<Keyword[]>), scripts/encrypt-keywords.mjs(encryptKeywords(keywords, passphrase, { iterations = 600000 })), src/data/keywords.enc.json, 테스트 셋. Node 18은 globalThis.crypto가 기본이 아니라 스크립트·테스트만 node:crypto의 webcrypto로 채운다(lib은 globalThis.crypto.subtle만 씀)",
+      "completed_at": "2026-09-27T20:57:04+0900"
+    },
+    {
+      "step": 2,
+      "name": "keyword-quiz-lib",
+      "status": "completed",
+      "started_at": "2026-09-27T20:57:04+0900",
+      "summary": "src/lib/keyword-quiz.ts — KEYWORD_QUIZ_MODES·KEYWORD_QUIZ_COUNTS=[10,20]·KEYWORD_QUIZ_ALL='all'·KeywordQuizCount, resolveKeywordCount(choice,total), buildKeywordQuestions(keywords,mode,count,rng): KeywordQuestion[], buildFlashcards(keywords,count,rng): Keyword[], LOGO_TAP_COUNT=5·LOGO_TAP_WINDOW_MS=1500·registerLogoTap(taps,now): {taps,unlocked}; 타입 KeywordQuizMode·KeywordChoiceMode·KeywordQuestion은 src/types/keywords.ts. 오답 셋은 같은 section을 섞어 먼저 뽑고 모자라면 다른 단원에서 채우며, 정답과 term·summary가 (공백 제거 후) 같은 키워드는 빼고 보기 문자열도 서로 겹치지 않게 한다. 무작위는 shuffle(rng)만 쓴다",
+      "completed_at": "2026-09-27T20:59:04+0900"
+    },
+    {
+      "step": 3,
+      "name": "keyword-quiz-ui",
+      "status": "completed",
+      "started_at": "2026-09-27T20:59:05+0900",
+      "summary": "src/components/KeywordQuizRunner.tsx — KeywordQuizRunner({ mode: KeywordChoiceMode, questions: KeywordQuestion[], keywords: Keyword[], onRestart, onExit }): 보기를 누르면 네 보기 모두 비활성, 정답 border-green-500/60·고른 오답 border-red-500/60(QuizRunner 클래스), 아래에 '정답/오답'과 정답 키워드 term·summary, '다음'(마지막은 '결과 보기') → 완료 화면 '맞힌 수 c / n'·'한 판 더'·'처음으로'. src/components/KeywordFlashcards.tsx — KeywordFlashcards({ cards: Keyword[], onRestart, onExit }): 앞면 term, '뒤집기' 뒤에만 summary와 '알았음'·'몰랐음', 끝나면 '알았음 a · 몰랐음 b'. 둘 다 내부 상태를 props로 재설정하지 않는다 — '한 판 더'는 step 4의 부모가 새 문항/카드를 만들고 key를 바꿔 다시 마운트하는 방식이다. 테스트 둘(12개), 저장·src/data·keyword-crypto import 없음",
+      "completed_at": "2026-09-27T21:01:24+0900"
+    },
+    {
+      "step": 4,
+      "name": "keyword-page",
+      "status": "completed",
+      "started_at": "2026-09-27T21:01:24+0900",
+      "summary": "#/keywords 라우트(Layout 안, * 앞) + src/pages/KeywordQuizPage.tsx({ encrypted?, rng? }) — 단계 셋(잠김: 암호 password 입력·'열기'/'여는 중' → 선택: '키워드 N개'·모드 셋·문항 수 10/20/전체 aria-pressed·'시작' → 풀기: KeywordQuizRunner/KeywordFlashcards, 한 판 더=새 판+key 교체, 처음으로=선택 단계), 에러 문구 셋('암호가 맞지 않습니다.'(입력 비우고 포커스)·'이 주소에서는 열 수 없습니다. HTTPS나 localhost에서 열어 주세요.'(crypto.subtle 없음, 복호화 안 부름)·'열 수 없습니다.'), 상태는 useState에만. Layout 로고 NavLink onClick이 useRef 탭 배열로 registerLogoTap을 부르고 unlocked면 preventDefault+navigate('/keywords'). 테스트: KeywordQuizPage.test.tsx 12개(decryptKeywords mock·stubGlobal crypto·setItem spy), Layout.test.tsx 로고 탭 3개(fake timers), App.test.tsx /keywords 1개",
+      "completed_at": "2026-09-27T21:04:07+0900"
+    }
+  ],
+  "created_at": "2026-09-27T20:45:15+0900",
+  "completed_at": "2026-09-27T21:04:07+0900"
+}
