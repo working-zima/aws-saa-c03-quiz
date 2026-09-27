@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Keyword } from '../types/keywords'
 
-// 키워드 퀴즈(ADR-040)의 플래시카드. 알았음·몰랐음은 이 화면의 개수로만 쓰고 모으거나 저장하지 않는다.
+// 키워드 퀴즈(ADR-040)의 플래시카드. 알았음·몰랐음은 이 화면의 개수와 완료 화면의 몰랐던 카드 목록에만 쓰고 저장하지 않는다.
 // "한 판 더"는 부모가 새 카드와 함께 key를 바꿔 다시 마운트하는 방식으로 처음부터 시작한다.
 interface KeywordFlashcardsProps {
   cards: Keyword[]
@@ -29,6 +29,8 @@ export function KeywordFlashcards({ cards, onRestart, onExit }: KeywordFlashcard
   // 뒤집은 카드의 인덱스. 판정한 카드는 되돌아가면 뒤집힌 채로 보인다.
   const [flippedIndex, setFlippedIndex] = useState<number | null>(null)
   const knownCount = verdicts.filter((verdict) => verdict === true).length
+  // 끝나면 몰랐음으로 고른 카드를 한 번에 펼쳐 다시 읽게 한다(사용자 결정).
+  const unknownCards = cards.filter((_, index) => verdicts[index] === false)
 
   if (cardIndex >= cards.length) {
     return (
@@ -37,6 +39,16 @@ export function KeywordFlashcards({ cards, onRestart, onExit }: KeywordFlashcard
           <h1 className="text-2xl font-semibold text-title">플래시카드 완료</h1>
           <p className="text-[15px] leading-7 text-neutral-300">알았음 {knownCount} · 몰랐음 {cards.length - knownCount}</p>
         </div>
+        {unknownCards.length > 0 && (
+          <ul aria-label="몰랐던 카드" className="space-y-3">
+            {unknownCards.map((unknownCard) => (
+              <li className="space-y-1 rounded-lg border border-neutral-800 bg-[#141414] p-5" key={unknownCard.id}>
+                <p className="text-base font-medium text-neutral-100">{unknownCard.term}</p>
+                <p className="text-[15px] leading-7 text-neutral-300">{unknownCard.summary}</p>
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="flex flex-wrap gap-3">
           <button className={primaryButtonClass} onClick={onRestart} type="button">한 판 더</button>
           <button className={ghostButtonClass} onClick={onExit} type="button">처음으로</button>
