@@ -214,6 +214,10 @@
       "dir": "42-sg-nacl-visuals",
       "status": "completed",
       "completed_at": "2026-09-26T19:07:49+0900"
+    },
+    {
+      "dir": "43-route53-visuals",
+      "status": "pending"
     }
   ]
 }
