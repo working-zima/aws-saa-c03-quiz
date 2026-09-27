@@ -71,7 +71,6 @@ describe('KeywordQuizRunner', () => {
     const right = screen.getByRole('button', { name: '가짜 용어 1' })
     expect(wrong).toHaveClass('border-red-500/60')
     expect(right).toHaveClass('border-green-500/60')
-    expect(screen.getByText('오답')).toBeInTheDocument()
 
     await user.click(wrong)
     await user.click(screen.getByRole('button', { name: '가짜 용어 3' }))
@@ -81,7 +80,7 @@ describe('KeywordQuizRunner', () => {
     expect(screen.getByText('1 / 2')).toBeInTheDocument()
   })
 
-  it('공개한 뒤 정답 키워드의 용어와 정의를 함께 보여 준다', async () => {
+  it('정답을 고르면 정답 키워드의 용어와 정의를 함께 보여 준다', async () => {
     const user = userEvent.setup()
     renderRunner({ mode: 'term-to-summary', questions: [{
       keywordId: 'k2',
@@ -91,13 +90,14 @@ describe('KeywordQuizRunner', () => {
       answerIndex: 1,
     }] })
     expect(screen.queryByTestId('keyword-answer')).not.toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: '가짜 정의 3' }))
+    await user.click(screen.getByRole('button', { name: '가짜 정의 2' }))
     const answer = screen.getByTestId('keyword-answer')
     expect(answer).toHaveTextContent('가짜 용어 2')
     expect(answer).toHaveTextContent('가짜 정의 2')
   })
 
-  it('오답을 고르면 고른 보기가 어느 키워드인지 용어와 정의를 함께 보여 준다', async () => {
+  // 정답은 초록 테두리로 이미 보이므로, 오답일 때는 고른 보기의 짝만 풀어 준다(사용자 결정).
+  it('오답을 고르면 고른 보기의 용어와 정의만 보여 주고, 정답 짝과 오답 글자는 띄우지 않는다', async () => {
     const user = userEvent.setup()
     renderRunner()
     expect(screen.queryByTestId('keyword-picked')).not.toBeInTheDocument()
@@ -106,7 +106,8 @@ describe('KeywordQuizRunner', () => {
     expect(picked).toHaveTextContent('고른 보기')
     expect(picked).toHaveTextContent('가짜 용어 3')
     expect(picked).toHaveTextContent('가짜 정의 3')
-    expect(screen.getByTestId('keyword-answer')).toHaveTextContent('가짜 용어 1')
+    expect(screen.queryByTestId('keyword-answer')).not.toBeInTheDocument()
+    expect(screen.queryByText('오답')).not.toBeInTheDocument()
   })
 
   it('키워드 보고 요약 고르기에서도 고른 오답의 용어를 보여 준다', async () => {
@@ -168,7 +169,7 @@ describe('KeywordQuizRunner', () => {
     expect(screen.getByRole('button', { name: '가짜 용어 2' })).toHaveClass('border-red-500/60')
     expect(screen.getByRole('button', { name: '가짜 용어 2' })).toBeDisabled()
     expect(screen.getByRole('button', { name: '가짜 용어 1' })).toHaveClass('border-green-500/60')
-    expect(screen.getByText('오답')).toBeInTheDocument()
+    expect(screen.getByTestId('keyword-picked')).toHaveTextContent('가짜 용어 2')
 
     // 되돌아간 문항에서 정답을 누르는 것은 채점이 아니라 이동이다.
     await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
