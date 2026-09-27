@@ -1,0 +1,51 @@
+{
+  "diagrams": {},
+  "tables": {
+    "routing-policies": {
+      "label": "Route 53 라우팅 정책 비교",
+      "columns": ["정책", "응답을 고르는 기준"],
+      "rows": [
+        {
+          "header": "단순",
+          "cells": ["리소스 하나 · 상태 검사로 거르지 않음"]
+        },
+        {
+          "header": "페일오버",
+          "cells": ["주 대상 · 비정상이면 보조 대상"]
+        },
+        {
+          "header": "지리적 위치",
+          "cells": ["사용자의 국가"]
+        },
+        {
+          "header": "지리적 근접",
+          "cells": ["사용자와 리소스 사이의 거리"]
+        },
+        {
+          "header": "지연 시간",
+          "cells": ["지연이 가장 짧은 리전"]
+        },
+        {
+          "header": "가중치",
+          "cells": ["미리 정한 가중치"]
+        },
+        {
+          "header": "다중값 응답",
+          "cells": ["정상 레코드 최대 8개를 무작위로 · 위치는 보지 않음"]
+        },
+        {
+          "header": "IP 기반",
+          "cells": ["클라이언트 IP가 속한 CIDR 범위"]
+        }
+      ],
+      "columnWidths": ["30%", "70%"],
+      "sources": [
+        "route53.routing-policies",
+        "route53.route53-failover-routing",
+        "route53.multivalue-answer-details",
+        "route53.multi-region-failover-for-region-outage"
+      ]
+    }
+  },
+  "glossary": []
+}
