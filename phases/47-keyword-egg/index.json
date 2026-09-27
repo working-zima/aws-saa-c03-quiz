@@ -1,0 +1,31 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "47-keyword-egg",
+  "steps": [
+    {
+      "step": 0,
+      "name": "keyword-source",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "keyword-crypto",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "keyword-quiz-lib",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "keyword-quiz-ui",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "keyword-page",
+      "status": "pending"
+    }
+  ]
+}
