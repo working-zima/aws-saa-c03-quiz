@@ -1,0 +1,28 @@
+# AWS 공식 문서에서 가져온 기초 용어 (ADR-039)
+
+두 원본(`concepts-raw.md`, `exam-gaps.md`)과 덤프 원문이 **쓰기만 하고 정의하지 않는** 기초 용어의 근거다. 여기 적힌 용어만
+이 파일을 근거로 개념 본문에 풀이할 수 있다. 목록을 늘리려면 ADR-039를 고친다.
+
+원문은 옮기지 않는다(ADR-009). 아래 "가져온 사실"은 문서를 읽고 직접 쓴 요약이다. 확인한 날: 2026-09-27.
+
+## 호스팅 영역 (hosted zone)
+
+- 출처: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-working-with.html
+- 가져온 사실: 레코드를 담는 그릇이다. 도메인(예: example.com)과 그 하위 도메인으로 가는 트래픽을 어떻게 보낼지에 대한 레코드를
+  담고, 이름은 그 도메인과 같다. 퍼블릭 호스팅 영역은 인터넷에서의 트래픽을, 프라이빗 호스팅 영역은 VPC 안의 트래픽을 다루는
+  레코드를 담는다.
+
+## 레코드 (record)
+
+- 출처: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/rrsets-working-with.html
+- 가져온 사실: 호스팅 영역을 만든 뒤, 그 도메인의 트래픽을 어떻게 보낼지 DNS에 알려 주려고 만든다. 레코드 하나에는 도메인이나
+  하위 도메인 이름, 레코드 유형, 그 유형에 맞는 값이 들어간다.
+- 출처: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html
+- 가져온 사실: 레코드를 만들 때 라우팅 정책을 고르고, 그 정책이 Route 53이 질의에 어떻게 답할지를 정한다.
+
+## 대상 그룹 (target group)
+
+- 출처: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html
+- 가져온 사실: EC2 인스턴스 같은 등록된 대상으로 요청을 보내는 단위다. 상태 검사는 대상 그룹마다 설정하고, 로드 밸런서는 등록된
+  대상 가운데 정상인 것으로 요청을 보낸다. 수요가 늘면 대상을 더 등록하고, 줄거나 점검이 필요하면 등록을 해제한다. 로드 밸런서는
+  클라이언트가 접속하는 단일 지점이다.

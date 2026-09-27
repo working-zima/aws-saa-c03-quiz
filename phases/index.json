@@ -229,6 +229,10 @@
       "dir": "45-q614-rewrite",
       "status": "completed",
       "completed_at": "2026-09-27T18:11:41+0900"
+    },
+    {
+      "dir": "46-dns-lb-basic-terms",
+      "status": "pending"
     }
   ]
 }

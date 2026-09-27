@@ -1,0 +1,7 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "46-dns-lb-basic-terms",
+  "steps": [
+    { "step": 0, "name": "basic-terms", "status": "pending" }
+  ]
+}
