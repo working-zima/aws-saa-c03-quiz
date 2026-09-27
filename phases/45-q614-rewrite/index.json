@@ -11,5 +11,6 @@
       "summary": "q614의 prompt·choices·explanation을 판단형 문구로 교체(id·topicId·conceptId·answerIndex 1 유지), questionsSha256을 22e50f55d44d13982b04cd1da8fad037a5b1f91abc3e3e0d26cf623511c14cdc로 갱신, data.test.ts 끝에 q614 판단형 단언 테스트 1개 추가"
     }
   ],
-  "created_at": "2026-09-27T18:10:23+0900"
+  "created_at": "2026-09-27T18:10:23+0900",
+  "completed_at": "2026-09-27T18:11:41+0900"
 }
