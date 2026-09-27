@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Link, MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Layout } from './Layout'
 
@@ -221,5 +221,72 @@ describe('Layout', () => {
     const nav = screen.getByRole('navigation', { name: '주요 내비게이션' })
 
     expect(within(nav).getAllByRole('link').length).toBeLessThanOrEqual(2)
+  })
+
+  // ADR-040. 로고를 1.5초 안에 다섯 번 누르면 숨은 키워드 퀴즈로 간다.
+  describe('로고 연속 탭', () => {
+    function CurrentPath() {
+      return <output aria-label="현재 경로">{useLocation().pathname}</output>
+    }
+
+    function renderWithKeywords() {
+      return render(
+        <MemoryRouter>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route index element={<p>주제 목록</p>} />
+              <Route path="keywords" element={<p>키워드 퀴즈</p>} />
+            </Route>
+          </Routes>
+          <CurrentPath />
+        </MemoryRouter>,
+      )
+    }
+
+    function setup() {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-09-27T12:00:00Z'))
+      return userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    }
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('짧은 간격으로 다섯 번 누르면 /keywords에 도착한다', async () => {
+      const user = setup()
+      renderWithKeywords()
+
+      for (let i = 0; i < 5; i++) {
+        await user.click(screen.getByRole('link', { name: 'AWS SAA-C03' }))
+        vi.advanceTimersByTime(100)
+      }
+
+      expect(screen.getByLabelText('현재 경로')).toHaveTextContent('/keywords')
+    })
+
+    it('네 번이면 /에 머문다', async () => {
+      const user = setup()
+      renderWithKeywords()
+
+      for (let i = 0; i < 4; i++) {
+        await user.click(screen.getByRole('link', { name: 'AWS SAA-C03' }))
+        vi.advanceTimersByTime(100)
+      }
+
+      expect(screen.getByLabelText('현재 경로').textContent).toBe('/')
+    })
+
+    it('간격이 1.5초 이상이면 다섯 번을 눌러도 /에 머문다', async () => {
+      const user = setup()
+      renderWithKeywords()
+
+      for (let i = 0; i < 5; i++) {
+        await user.click(screen.getByRole('link', { name: 'AWS SAA-C03' }))
+        vi.advanceTimersByTime(1500)
+      }
+
+      expect(screen.getByLabelText('현재 경로').textContent).toBe('/')
+    })
   })
 })
