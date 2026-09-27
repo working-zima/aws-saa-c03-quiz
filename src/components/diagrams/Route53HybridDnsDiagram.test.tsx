@@ -42,22 +42,22 @@ const notes = {
 const expectedScenarios = [
   {
     id: 'outbound', label: '아웃바운드', nodes: ['ec2-a', 'outbound', 'onprem-dns'],
-    paths: ['ec2-a-outbound', 'outbound-onprem-dns'], notes: ['corp-domain', 'rule'],
+    paths: ['ec2-a-outbound', 'outbound-onprem-dns'], notes: ['corp-domain', 'aws-domain', 'rule'],
     sources: ['route53.resolver', 'route53.route53-resolver-forward-rule'],
   },
   {
     id: 'inbound', label: '인바운드', nodes: ['onprem-server', 'inbound', 'phz'],
-    paths: ['onprem-server-inbound', 'inbound-phz'], notes: ['aws-domain'],
+    paths: ['onprem-server-inbound', 'inbound-phz'], notes: ['corp-domain', 'aws-domain'],
     sources: ['route53.resolver', 'route53.private-hosted-zone-vpc-only'],
   },
   {
     id: 'forward-rule', label: '규칙 공유', nodes: ['ec2-a', 'ec2-b', 'outbound', 'onprem-dns'],
-    paths: ['ec2-a-outbound', 'ec2-b-outbound', 'outbound-onprem-dns'], notes: ['rule', 'rule-vpc-a', 'rule-vpc-b'],
+    paths: ['ec2-a-outbound', 'ec2-b-outbound', 'outbound-onprem-dns'], notes: ['corp-domain', 'aws-domain', 'rule', 'rule-vpc-a', 'rule-vpc-b'],
     sources: ['route53.route53-resolver-forward-rule'],
   },
   {
     id: 'phz', label: '프라이빗 호스팅 영역', nodes: ['phz', 'ec2-a', 'ec2-b'],
-    paths: [], notes: ['vpc-only'],
+    paths: [], notes: ['corp-domain', 'aws-domain', 'vpc-only'],
     sources: ['route53.private-hosted-zone', 'route53.private-hosted-zone-vpc-only'],
   },
 ]
@@ -94,13 +94,15 @@ function endpoints(d: string) {
 }
 
 describe('Route53HybridDnsDiagram', () => {
-  it('처음에는 노드 일곱이 선명하고 경로·곁말 없이 선택 안내가 나온다', () => {
+  it('처음에는 노드 일곱이 선명하고 경로 없이 예시 곁말 둘과 선택 안내가 나온다', () => {
     const { container } = render(<Route53HybridDnsDiagram />)
     const nodes = diagram().querySelectorAll('[data-node]')
 
     expect(Array.from(nodes, (node) => node.getAttribute('data-node')).sort()).toEqual(Object.keys(labels).sort())
     for (const node of nodes) expect(node).toHaveAttribute('opacity', '1')
-    expect(diagram().querySelectorAll('[data-path], [data-note]')).toHaveLength(0)
+    expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+    expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note')).sort())
+      .toEqual(['aws-domain', 'corp-domain'])
     expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'true')
     expect(container.querySelector('figcaption')!.textContent).toBe(visualsByTopicId.route53.diagrams['hybrid-dns'].idleCaption)
   })
@@ -158,14 +160,51 @@ describe('Route53HybridDnsDiagram', () => {
     }
   })
 
-  it('시나리오를 바꾸면 이전 곁말이 사라지고 전체에서는 노드만 남는다', async () => {
+  it('시나리오를 바꾸면 이전 곁말이 사라지고 전체에서는 노드와 예시 곁말 둘만 남는다', async () => {
     render(<Route53HybridDnsDiagram />)
     for (const label of ['아웃바운드', '인바운드', '규칙 공유', '프라이빗 호스팅 영역']) await selectScenario(label)
-    expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note'))).toEqual(['vpc-only'])
+    expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note')).sort())
+      .toEqual(['aws-domain', 'corp-domain', 'vpc-only'])
     await selectScenario('전체')
 
     for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
-    expect(diagram().querySelectorAll('[data-path], [data-note]')).toHaveLength(0)
+    expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+    expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note')).sort())
+      .toEqual(['aws-domain', 'corp-domain'])
+  })
+
+  it('물음형 제목이 시나리오 버튼보다 앞에 보인다', () => {
+    render(<Route53HybridDnsDiagram />)
+    const question = screen.getByText('VPC와 사내망은 서로의 이름을 어떻게 찾을까?')
+    expect(visualsByTopicId.route53.diagrams['hybrid-dns'].question).toBe('VPC와 사내망은 서로의 이름을 어떻게 찾을까?')
+    expect(question.compareDocumentPosition(screen.getByRole('button', { name: '전체' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it.each(['전체', '아웃바운드', '인바운드', '규칙 공유', '프라이빗 호스팅 영역'])('%s: 예시 이름 둘이 보인다', async (label) => {
+    render(<Route53HybridDnsDiagram />)
+    await selectScenario(label)
+    expect(diagram().querySelector('[data-note="corp-domain"]')!.textContent).toBe('db.corp.local')
+    expect(diagram().querySelector('[data-note="aws-domain"]')!.textContent).toBe('app.internal.aws')
+  })
+
+  it.each([
+    ['인바운드', '0.25', '1'],
+    ['아웃바운드', '1', '0.25'],
+  ])('%s: 예시 곁말은 붙은 노드의 opacity를 따른다', async (label, corp, aws) => {
+    render(<Route53HybridDnsDiagram />)
+    await selectScenario(label)
+    const opacity = (id: string) => diagram().querySelector(id)!.getAttribute('opacity')
+    expect(opacity('[data-note="corp-domain"]')).toBe(corp)
+    expect(opacity('[data-node="onprem-dns"]')).toBe(corp)
+    expect(opacity('[data-note="aws-domain"]')).toBe(aws)
+    expect(opacity('[data-node="phz"]')).toBe(aws)
+  })
+
+  it('프라이빗 호스팅 영역 시나리오에서 vpc-only와 aws-domain 두 줄이 겹치지 않는다', async () => {
+    render(<Route53HybridDnsDiagram />)
+    await selectScenario('프라이빗 호스팅 영역')
+    const y = (id: string) => Number(diagram().querySelector(`[data-note="${id}"]`)!.getAttribute('y'))
+    expect(Math.abs(y('vpc-only') - y('aws-domain'))).toBeGreaterThanOrEqual(9)
   })
 
   it('노드는 자기 그룹 안에 있고 엔드포인트는 VPC와, 프라이빗 호스팅 영역은 어느 그룹과도 겹치지 않는다', () => {

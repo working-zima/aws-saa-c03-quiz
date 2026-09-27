@@ -10,6 +10,7 @@ export interface VisualScenarioText {
 export interface VisualDiagramText {
   label: string // figure aria-label
   svgLabel: string // svg aria-label
+  question?: string // 화면에 보이는 물음형 제목. 버튼 위에 표시한다. ADR-038
   idleCaption: string
   legend?: string
   nodes: Record<string, string> // 노드 id → 라벨

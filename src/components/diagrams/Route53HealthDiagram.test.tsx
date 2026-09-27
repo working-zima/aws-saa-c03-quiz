@@ -6,8 +6,9 @@ import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { Route53HealthDiagram, route53HealthScenarios, paths as healthPaths } from './Route53HealthDiagram'
 
-const labels = { user: '사용자', route53: 'Route 53', 'region-a': '리전 A', 'region-b': '리전 B' }
-const notes = { unhealthy: '비정상', primary: '주 · 상태 검사', secondary: '보조', dropped: '응답에서 빠짐' }
+const labels = { user: '사용자', route53: 'Route 53', 'region-a': '리전 A의 ALB', 'region-b': '리전 B의 ALB' }
+const notes = { unhealthy: '비정상', primary: '주 · 상태 검사', secondary: '보조', dropped: '응답에서 빠짐', query: 'www.example.com의 주소는?' }
+const question = '리전 A가 멈추면 Route 53은 어디를 알려 줄까?'
 const expectedScenarios = [
   {
     id: 'simple', label: '단순', nodes: ['user', 'route53'],
@@ -43,13 +44,14 @@ function readBox(rect: Element) {
 }
 
 describe('Route53HealthDiagram', () => {
-  it('처음에는 노드 넷이 모두 선명하고 경로·곁말 없이 선택 안내가 나온다', () => {
+  it('처음에는 노드 넷이 모두 선명하고 경로 없이 예시 곁말만 두고 선택 안내가 나온다', () => {
     const { container } = render(<Route53HealthDiagram />)
     const nodes = diagram().querySelectorAll('[data-node]')
 
     expect(Array.from(nodes, (node) => node.getAttribute('data-node')).sort()).toEqual(Object.keys(labels).sort())
     for (const node of nodes) expect(node).toHaveAttribute('opacity', '1')
-    expect(diagram().querySelectorAll('[data-path], [data-note]')).toHaveLength(0)
+    expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+    expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note'))).toEqual(['query'])
     expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'true')
     expect(container.querySelector('figcaption')!.textContent).toBe(visualsByTopicId.route53.diagrams['health-answers'].idleCaption)
   })
@@ -71,8 +73,9 @@ describe('Route53HealthDiagram', () => {
       expect(path).toHaveClass('stroke-title')
       expect(path.closest('[opacity]')).toBeNull()
     }
-    const visibleNotes = Array.from(diagram().querySelectorAll('[data-note]'))
-    expect(visibleNotes.map((note) => note.getAttribute('data-note')).sort()).toEqual([...scenario.notes].sort())
+    const allNotes = Array.from(diagram().querySelectorAll('[data-note]'))
+    expect(allNotes.map((note) => note.getAttribute('data-note')).sort()).toEqual([...scenario.notes, 'query'].sort())
+    const visibleNotes = allNotes.filter((note) => note.getAttribute('data-note') !== 'query')
     expect(diagram().querySelector('[data-note="unhealthy"]')).toHaveTextContent('비정상')
     const [minX, minY, width, height] = diagram().getAttribute('viewBox')!.split(' ').map(Number)
     for (const note of visibleNotes) {
@@ -97,16 +100,48 @@ describe('Route53HealthDiagram', () => {
     expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('정책을 연달아 바꿔도 이전 곁말이 남지 않고 전체에서 경로·곁말을 모두 숨긴다', async () => {
+  it('정책을 연달아 바꿔도 이전 곁말이 남지 않고 전체에서 경로를 숨기고 예시 곁말만 남긴다', async () => {
     render(<Route53HealthDiagram />)
     for (const label of ['페일오버', '다중값 응답', '단순']) await selectScenario(label)
 
-    expect(diagram().querySelectorAll('[data-note]')).toHaveLength(1)
+    expect(diagram().querySelectorAll('[data-note]')).toHaveLength(2)
     expect(diagram().querySelector('[data-path="route53-region-a"]')).toBeInTheDocument()
     expect(diagram().querySelector('[data-path="route53-region-b"]')).toBeNull()
     await selectScenario('전체')
     for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
-    expect(diagram().querySelectorAll('[data-path], [data-note]')).toHaveLength(0)
+    expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+    expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note'))).toEqual(['query'])
+  })
+
+  it('물음형 제목이 시나리오 버튼보다 앞에 보인다', () => {
+    render(<Route53HealthDiagram />)
+    const title = screen.getByText(question)
+
+    expect(visualsByTopicId.route53.diagrams['health-answers'].question).toBe(question)
+    expect(title.compareDocumentPosition(screen.getByRole('button', { name: '전체' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(title.tagName).toBe('P')
+  })
+
+  it.each(['전체', '단순', '페일오버', '다중값 응답'])('%s: 예시 곁말이 질의 화살표 오른쪽에 보이고 viewBox 안에 있다', async (label) => {
+    render(<Route53HealthDiagram />)
+    if (label !== '전체') await selectScenario(label)
+    const query = diagram().querySelector('[data-note="query"]')!
+    const [minX, minY, width, height] = diagram().getAttribute('viewBox')!.split(' ').map(Number)
+    const user = readBox(diagram().querySelector('[data-node="user"] rect')!)
+    const route53 = readBox(diagram().querySelector('[data-node="route53"] rect')!)
+    const x = Number(query.getAttribute('x')), y = Number(query.getAttribute('y'))
+
+    expect(query.textContent).toBe(notes.query)
+    expect(query).toHaveAttribute('font-size', '9')
+    expect(query).toHaveClass('fill-muted')
+    expect(query).toHaveAttribute('text-anchor', 'start')
+    expect(query).toHaveAttribute('opacity', diagram().querySelector('[data-node="user"]')!.getAttribute('opacity'))
+    expect(x).toBeGreaterThan(140)
+    expect(x).toBeGreaterThanOrEqual(minX)
+    expect(x + estimateTextWidth(notes.query, 9)).toBeLessThanOrEqual(minX + width)
+    expect(y - 9).toBeGreaterThanOrEqual(user.y + user.height)
+    expect(y).toBeLessThanOrEqual(route53.y)
+    expect(y).toBeLessThanOrEqual(minY + height)
   })
 
   it('관문 5·7: 네 상자가 폭 280의 viewBox 안에 있고 모바일 너비 보정을 유지한다', () => {

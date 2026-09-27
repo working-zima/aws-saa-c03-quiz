@@ -25,6 +25,9 @@ const notes = [
   { id: 'dropped', x: 66, y: 160, scenarios: ['multivalue'] },
 ]
 
+// 예시 곁말은 시나리오와 상관없이 늘 보인다. 질의 화살표(x 140) 오른쪽, 두 노드 사이에 두고 user의 opacity를 따른다.
+const queryNote = { id: 'query', x: 148, y: 63, node: 'user' }
+
 export const route53HealthScenarios: DiagramScenario[] = [
   // 단순 라우팅은 비정상인 A를 흐리게 표시해도 그곳을 가리키는 응답 경로가 남는다.
   { id: 'simple', nodes: ['user', 'route53'], paths: ['user-route53', 'route53-region-a'] },
@@ -42,6 +45,7 @@ export function Route53HealthDiagram() {
   return (
     <DiagramFrame
       label={text.label}
+      question={text.question}
       idleCaption={text.idleCaption}
       legend={text.legend}
       scenarios={route53HealthScenarios}
@@ -82,6 +86,17 @@ export function Route53HealthDiagram() {
               {text.notes![note.id]}
             </text>
           ))}
+          <text
+            data-note={queryNote.id}
+            x={queryNote.x}
+            y={queryNote.y}
+            textAnchor="start"
+            className="fill-muted"
+            fontSize="9"
+            opacity={active && !active.nodes.includes(queryNote.node) ? 0.25 : 1}
+          >
+            {text.notes![queryNote.id]}
+          </text>
         </svg>
       </div>
     </DiagramFrame>

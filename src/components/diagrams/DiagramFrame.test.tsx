@@ -105,4 +105,30 @@ describe('DiagramFrame', () => {
     rerender(<DiagramFrame {...frameProps} />)
     expect(screen.queryByText('도식 범례')).not.toBeInTheDocument()
   })
+  it('question을 넘기면 시나리오 버튼 줄보다 앞에 비교표 제목과 같은 모양으로 보인다', () => {
+    render(<DiagramFrame {...frameProps} question="어디로 가는가?" />)
+    const figure = screen.getByRole('figure', { name: '테스트 도식' })
+    const question = within(figure).getByText('어디로 가는가?')
+    const group = within(figure).getByRole('group', { name: '통신 시나리오' })
+
+    expect(question.tagName).toBe('P')
+    expect(question).toHaveClass('text-sm', 'text-title')
+    expect(figure.firstElementChild).toBe(question)
+    expect(question.compareDocumentPosition(group) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('question이 있어도 헤딩을 만들지 않고 figure의 접근성 이름은 label 그대로다', () => {
+    render(<DiagramFrame {...frameProps} question="어디로 가는가?" />)
+    const figure = screen.getByRole('figure', { name: '테스트 도식' })
+
+    expect(figure).toHaveAccessibleName('테스트 도식')
+    expect(within(figure).queryByRole('heading')).not.toBeInTheDocument()
+  })
+
+  it('question이 없으면 figure의 첫 자식은 지금처럼 버튼 줄이다', () => {
+    render(<DiagramFrame {...frameProps} />)
+    const figure = screen.getByRole('figure', { name: '테스트 도식' })
+
+    expect(figure.firstElementChild).toBe(within(figure).getByRole('group', { name: '통신 시나리오' }))
+  })
 })
