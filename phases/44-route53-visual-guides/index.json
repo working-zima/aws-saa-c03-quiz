@@ -1,0 +1,10 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "44-route53-visual-guides",
+  "steps": [
+    { "step": 0, "name": "diagram-question", "status": "pending" },
+    { "step": 1, "name": "health-examples", "status": "pending" },
+    { "step": 2, "name": "alias-examples", "status": "pending" },
+    { "step": 3, "name": "hybrid-dns-examples", "status": "pending" }
+  ]
+}
