@@ -16,12 +16,14 @@ const questions: KeywordQuestion[] = [
     keywordId: 'k1',
     prompt: '가짜 정의 1',
     choices: ['가짜 용어 2', '가짜 용어 1', '가짜 용어 3', '가짜 용어 4'],
+    choiceKeywordIds: ['k2', 'k1', 'k3', 'k4'],
     answerIndex: 1,
   },
   {
     keywordId: 'k3',
     prompt: '가짜 정의 3',
     choices: ['가짜 용어 3', '가짜 용어 1', '가짜 용어 2', '가짜 용어 4'],
+    choiceKeywordIds: ['k3', 'k1', 'k2', 'k4'],
     answerIndex: 0,
   },
 ]
@@ -61,7 +63,7 @@ describe('KeywordQuizRunner', () => {
     expect(screen.getByText('정답')).toBeInTheDocument()
   })
 
-  it('오답을 누르면 오답 표시와 정답 표시를 함께 하고, 다시 눌러도 바뀌지 않는다', async () => {
+  it('오답을 누르면 오답 표시와 정답 표시를 함께 하고, 다른 보기를 눌러도 바뀌지 않는다', async () => {
     const user = userEvent.setup()
     renderRunner()
     await user.click(screen.getByRole('button', { name: '가짜 용어 2' }))
@@ -71,7 +73,7 @@ describe('KeywordQuizRunner', () => {
     expect(right).toHaveClass('border-green-500/60')
     expect(screen.getByText('오답')).toBeInTheDocument()
 
-    await user.click(right)
+    await user.click(wrong)
     await user.click(screen.getByRole('button', { name: '가짜 용어 3' }))
     expect(wrong).toHaveClass('border-red-500/60')
     expect(right).toHaveClass('border-green-500/60')
@@ -85,6 +87,7 @@ describe('KeywordQuizRunner', () => {
       keywordId: 'k2',
       prompt: '가짜 용어 2',
       choices: ['가짜 정의 1', '가짜 정의 2', '가짜 정의 3', '가짜 정의 4'],
+      choiceKeywordIds: ['k1', 'k2', 'k3', 'k4'],
       answerIndex: 1,
     }] })
     expect(screen.queryByTestId('keyword-answer')).not.toBeInTheDocument()
@@ -94,19 +97,104 @@ describe('KeywordQuizRunner', () => {
     expect(answer).toHaveTextContent('가짜 정의 2')
   })
 
-  it('공개하기 전에는 다음 버튼이 없다', () => {
+  it('오답을 고르면 고른 보기가 어느 키워드인지 용어와 정의를 함께 보여 준다', async () => {
+    const user = userEvent.setup()
     renderRunner()
+    expect(screen.queryByTestId('keyword-picked')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '가짜 용어 3' }))
+    const picked = screen.getByTestId('keyword-picked')
+    expect(picked).toHaveTextContent('고른 보기')
+    expect(picked).toHaveTextContent('가짜 용어 3')
+    expect(picked).toHaveTextContent('가짜 정의 3')
+    expect(screen.getByTestId('keyword-answer')).toHaveTextContent('가짜 용어 1')
+  })
+
+  it('키워드 보고 요약 고르기에서도 고른 오답의 용어를 보여 준다', async () => {
+    const user = userEvent.setup()
+    renderRunner({ mode: 'term-to-summary', questions: [{
+      keywordId: 'k2',
+      prompt: '가짜 용어 2',
+      choices: ['가짜 정의 1', '가짜 정의 2', '가짜 정의 3', '가짜 정의 4'],
+      choiceKeywordIds: ['k1', 'k2', 'k3', 'k4'],
+      answerIndex: 1,
+    }] })
+    await user.click(screen.getByRole('button', { name: '가짜 정의 4' }))
+    const picked = screen.getByTestId('keyword-picked')
+    expect(picked).toHaveTextContent('가짜 용어 4')
+    expect(picked).toHaveTextContent('가짜 정의 4')
+  })
+
+  it('정답을 고르면 고른 보기 설명을 따로 띄우지 않는다', async () => {
+    const user = userEvent.setup()
+    renderRunner()
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    expect(screen.queryByTestId('keyword-picked')).not.toBeInTheDocument()
+  })
+
+  it('공개한 뒤에는 정답 보기만 활성이고, 정답을 한 번 더 누르면 다음 문항으로 간다', async () => {
+    const user = userEvent.setup()
+    renderRunner()
+    await user.click(screen.getByRole('button', { name: '가짜 용어 2' }))
+    expect(screen.getByRole('button', { name: '가짜 용어 1' })).toBeEnabled()
+    for (const name of ['가짜 용어 2', '가짜 용어 3', '가짜 용어 4']) {
+      expect(screen.getByRole('button', { name })).toBeDisabled()
+    }
+    expect(screen.getByText('정답을 한 번 더 누르면 다음 문제로 넘어갑니다')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '다음' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    expect(screen.getByText('2 / 2')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '가짜 정의 3' })).toBeInTheDocument()
+  })
+
+  it('마지막 문항에서는 정답을 한 번 더 누르면 결과를 본다고 안내한다', async () => {
+    const user = userEvent.setup()
+    renderRunner({ questions: [questions[0]] })
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    expect(screen.getByText('정답을 한 번 더 누르면 결과를 봅니다')).toBeInTheDocument()
+  })
+
+  it('첫 문항에는 이전 문제 버튼이 없고, 되돌아간 문항은 고른 답이 남은 읽기 전용이다', async () => {
+    const user = userEvent.setup()
+    const { onRestart } = renderRunner()
+    expect(screen.queryByRole('button', { name: '이전 문제' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '가짜 용어 2' }))
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    expect(screen.getByText('2 / 2')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '이전 문제' }))
+    expect(screen.getByText('1 / 2')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '가짜 용어 2' })).toHaveClass('border-red-500/60')
+    expect(screen.getByRole('button', { name: '가짜 용어 2' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '가짜 용어 1' })).toHaveClass('border-green-500/60')
+    expect(screen.getByText('오답')).toBeInTheDocument()
+
+    // 되돌아간 문항에서 정답을 누르는 것은 채점이 아니라 이동이다.
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    expect(screen.getByText('2 / 2')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '가짜 용어 3' }))
+    await user.click(screen.getByRole('button', { name: '가짜 용어 3' }))
+    expect(screen.getByText('맞힌 수 1 / 2')).toBeInTheDocument()
+    expect(onRestart).not.toHaveBeenCalled()
+  })
+
+  it('풀던 중에 돌아가기를 누르면 onExit를 부른다', async () => {
+    const user = userEvent.setup()
+    const { onExit } = renderRunner()
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    await user.click(screen.getByRole('button', { name: '돌아가기' }))
+    expect(onExit).toHaveBeenCalledTimes(1)
   })
 
   it('끝까지 풀면 맞힌 수를 보이고 두 버튼이 각 콜백을 부른다', async () => {
     const user = userEvent.setup()
     const { onRestart, onExit } = renderRunner()
     await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
-    await user.click(screen.getByRole('button', { name: '다음' }))
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
     expect(screen.getByText('2 / 2')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '가짜 용어 4' }))
-    await user.click(screen.getByRole('button', { name: '결과 보기' }))
+    await user.click(screen.getByRole('button', { name: '가짜 용어 3' }))
 
     expect(screen.getByText('맞힌 수 1 / 2')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '한 판 더' }))
@@ -125,7 +213,7 @@ describe('KeywordQuizRunner', () => {
     for (const button of screen.getAllByRole('button')) {
       expect(button).toHaveClass('min-h-[44px]')
     }
-    await user.click(screen.getByRole('button', { name: '결과 보기' }))
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
     for (const button of screen.getAllByRole('button')) {
       expect(button).toHaveClass('min-h-[44px]')
     }

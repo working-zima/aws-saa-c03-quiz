@@ -8,8 +8,10 @@ import {
   LOGO_TAP_WINDOW_MS,
   buildFlashcards,
   buildKeywordQuestions,
+  listKeywordSections,
   registerLogoTap,
   resolveKeywordCount,
+  selectKeywords,
 } from './keyword-quiz'
 
 function lcg(seed: number) {
@@ -113,11 +115,51 @@ describe('buildKeywordQuestions', () => {
         }
       })
 
+      it('보기마다 그 보기가 가리키는 키워드 id를 같은 순서로 싣는다', () => {
+        const f = field(mode)
+        for (const q of buildKeywordQuestions(keywords, mode, keywords.length, lcg(7))) {
+          expect(q.choiceKeywordIds).toHaveLength(4)
+          expect(q.choiceKeywordIds[q.answerIndex]).toBe(q.keywordId)
+          q.choiceKeywordIds.forEach((id, i) => {
+            expect(byId.get(id)![f]).toBe(q.choices[i])
+          })
+        }
+      })
+
       it('같은 시드면 결과가 같다', () => {
         expect(buildKeywordQuestions(keywords, mode, 5, lcg(42))).toEqual(
           buildKeywordQuestions(keywords, mode, 5, lcg(42)),
         )
       })
+    })
+  }
+})
+
+describe('단원별로 풀기', () => {
+  it('listKeywordSections는 단원을 처음 나온 순서로, 키워드 수와 함께 낸다', () => {
+    expect(listKeywordSections(keywords)).toEqual([
+      { section: 'A', count: 5 },
+      { section: 'B', count: 2 },
+      { section: 'C', count: 1 },
+    ])
+  })
+
+  it('selectKeywords는 단원이 null이면 전체를, 아니면 그 단원만 낸다', () => {
+    expect(selectKeywords(keywords, null)).toEqual(keywords)
+    expect(selectKeywords(keywords, 'B').map((k) => k.id)).toEqual(['b1', 'b2'])
+  })
+
+  for (const mode of modes) {
+    it(`${mode}: 단원을 주면 정답은 그 단원에서만 나오고, 오답은 전체에서 채운다`, () => {
+      for (let seed = 0; seed < 20; seed += 1) {
+        const questions = buildKeywordQuestions(keywords, mode, 10, lcg(seed), 'C')
+        expect(questions.map((q) => q.keywordId)).toEqual(['c1'])
+        const wrong = questions[0].choiceKeywordIds.filter((_, i) => i !== questions[0].answerIndex)
+        expect(wrong).toHaveLength(3)
+        expect(wrong.every((id) => byId.get(id)!.section !== 'C')).toBe(true)
+      }
+      const inB = buildKeywordQuestions(keywords, mode, 10, lcg(3), 'B')
+      expect(inB.map((q) => q.keywordId).sort()).toEqual(['b1', 'b2'])
     })
   }
 })

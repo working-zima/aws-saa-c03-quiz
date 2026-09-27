@@ -24,5 +24,6 @@ export interface KeywordQuestion {
   keywordId: string
   prompt: string
   choices: [string, string, string, string]
+  choiceKeywordIds: [string, string, string, string] // 보기마다 그 보기가 가리키는 키워드. 고른 오답을 풀어 보여 주는 데 쓴다.
   answerIndex: 0 | 1 | 2 | 3
 }

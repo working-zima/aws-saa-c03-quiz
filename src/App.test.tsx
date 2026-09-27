@@ -76,7 +76,7 @@ describe('App routes', () => {
     renderAt('/keywords')
 
     expect(screen.getByRole('heading', { name: '키워드 퀴즈' })).toBeInTheDocument()
-    expect(screen.getByLabelText('암호')).toHaveAttribute('type', 'password')
+    expect(screen.getByLabelText('암호')).toHaveAttribute('type', 'text')
     for (const link of within(screen.getByRole('banner')).getAllByRole('link')) {
       expect(link).not.toHaveAttribute('href', '/keywords')
     }
