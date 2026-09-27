@@ -121,19 +121,27 @@ describe('KeywordQuizPage', () => {
     expect(screen.getByRole('button', { name: '요약 보고 키워드 고르기' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: '키워드 보고 요약 고르기' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: '플래시카드' })).toHaveAttribute('aria-pressed', 'false')
-    expect(screen.getByRole('button', { name: '10' })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: '20' })).toHaveAttribute('aria-pressed', 'false')
-    expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'false')
   })
 
-  it('요약 보고 키워드 고르기로 시작하면 4지선다가 10문항으로 나온다', async () => {
+  // 문항 수는 고르지 않는다. 고른 범위의 키워드를 모두 섞어 한 판으로 푼다(사용자 결정).
+  it('문항 수 선택은 없다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+
+    expect(screen.queryByRole('group', { name: '문항 수' })).toBeNull()
+    for (const name of ['10', '20', '전체']) {
+      expect(screen.queryByRole('button', { name })).toBeNull()
+    }
+  })
+
+  it('요약 보고 키워드 고르기로 시작하면 전체 키워드가 4지선다로 나온다', async () => {
     const user = userEvent.setup()
     await unlock(user)
 
     await user.click(screen.getByRole('button', { name: '시작' }))
 
     expect(screen.getByRole('heading', { name: '정의 보고 용어 고르기' })).toBeInTheDocument()
-    expect(screen.getByText('1 / 10')).toBeInTheDocument()
+    expect(screen.getByText('1 / 12')).toBeInTheDocument()
   })
 
   it('키워드 보고 요약 고르기로 시작하면 해당 러너가 나온다', async () => {
@@ -141,7 +149,6 @@ describe('KeywordQuizPage', () => {
     await unlock(user)
 
     await user.click(screen.getByRole('button', { name: '키워드 보고 요약 고르기' }))
-    await user.click(screen.getByRole('button', { name: '전체' }))
     await user.click(screen.getByRole('button', { name: '시작' }))
 
     expect(screen.getByRole('heading', { name: '용어 보고 정의 고르기' })).toBeInTheDocument()
@@ -156,7 +163,7 @@ describe('KeywordQuizPage', () => {
     await user.click(screen.getByRole('button', { name: '시작' }))
 
     expect(screen.getByRole('heading', { name: '플래시카드' })).toBeInTheDocument()
-    expect(screen.getByText('1 / 10')).toBeInTheDocument()
+    expect(screen.getByText('1 / 12')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '뒤집기' })).toBeInTheDocument()
   })
 
@@ -166,7 +173,7 @@ describe('KeywordQuizPage', () => {
     await user.click(screen.getByRole('button', { name: '플래시카드' }))
     await user.click(screen.getByRole('button', { name: '시작' }))
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
       await user.click(screen.getByRole('button', { name: '뒤집기' }))
       await user.click(screen.getByRole('button', { name: '알았음' }))
     }
@@ -182,7 +189,7 @@ describe('KeywordQuizPage', () => {
     await unlock(user)
     await user.click(screen.getByRole('button', { name: '플래시카드' }))
     await user.click(screen.getByRole('button', { name: '시작' }))
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
       await user.click(screen.getByRole('button', { name: '뒤집기' }))
       await user.click(screen.getByRole('button', { name: '몰랐음' }))
     }
@@ -190,10 +197,10 @@ describe('KeywordQuizPage', () => {
     await user.click(screen.getByRole('button', { name: '한 판 더' }))
 
     expect(screen.getByRole('heading', { name: '플래시카드' })).toBeInTheDocument()
-    expect(screen.getByText('1 / 10')).toBeInTheDocument()
+    expect(screen.getByText('1 / 12')).toBeInTheDocument()
   })
 
-  it('단원을 고르면 그 단원의 키워드 수를 보이고, 문항 수는 그 단원 안에서 적용한다', async () => {
+  it('단원을 고르면 그 단원의 키워드 수를 보이고, 그 단원 키워드를 모두 푼다', async () => {
     const user = userEvent.setup()
     await unlock(user)
     const select = screen.getByLabelText('단원')

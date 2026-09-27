@@ -10,7 +10,6 @@ import {
   buildKeywordQuestions,
   listKeywordSections,
   registerLogoTap,
-  resolveKeywordCount,
   selectKeywords,
 } from './keyword-quiz'
 
@@ -53,15 +52,6 @@ function choiceKeywords(mode: KeywordChoiceMode, choices: string[]) {
 describe('KEYWORD_QUIZ_MODES', () => {
   it('세 형식을 정한 순서로 둔다', () => {
     expect(KEYWORD_QUIZ_MODES).toEqual(['summary-to-term', 'term-to-summary', 'flashcard'])
-  })
-})
-
-describe('resolveKeywordCount', () => {
-  it('숫자는 전체를 넘지 않고, all은 전체다', () => {
-    expect(resolveKeywordCount(10, 107)).toBe(10)
-    expect(resolveKeywordCount(20, 107)).toBe(20)
-    expect(resolveKeywordCount('all', 107)).toBe(107)
-    expect(resolveKeywordCount(20, 8)).toBe(8)
   })
 })
 

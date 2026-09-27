@@ -14,18 +14,6 @@ export const KEYWORD_QUIZ_MODES: readonly KeywordQuizMode[] = [
   'flashcard',
 ]
 
-export const KEYWORD_QUIZ_COUNTS = [10, 20] as const
-
-export const KEYWORD_QUIZ_ALL = 'all'
-
-export type KeywordQuizCount =
-  | (typeof KEYWORD_QUIZ_COUNTS)[number]
-  | typeof KEYWORD_QUIZ_ALL
-
-export function resolveKeywordCount(choice: KeywordQuizCount, total: number): number {
-  return choice === KEYWORD_QUIZ_ALL ? total : Math.min(choice, total)
-}
-
 // 단원별로 풀기. 단원은 PDF에 처음 나오는 순서(키워드 id 순서)를 따른다.
 export function listKeywordSections(keywords: Keyword[]): { section: string; count: number }[] {
   const counts = new Map<string, number>()
