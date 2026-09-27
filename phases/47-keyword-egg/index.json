@@ -16,7 +16,7 @@
       "status": "completed",
       "started_at": "2026-09-27T20:53:54+0900",
       "summary": "키워드 107개 암호화 — src/types/keywords.ts(Keyword·EncryptedKeywords), src/lib/keyword-crypto.ts(WrongPassphraseError, decryptKeywords(payload, passphrase): Promise<Keyword[]>), scripts/encrypt-keywords.mjs(encryptKeywords(keywords, passphrase, { iterations = 600000 })), src/data/keywords.enc.json, 테스트 셋. Node 18은 globalThis.crypto가 기본이 아니라 스크립트·테스트만 node:crypto의 webcrypto로 채운다(lib은 globalThis.crypto.subtle만 씀)",
-      "completed_at": "2026-09-27T20:57:30+0900"
+      "completed_at": "2026-09-27T20:57:04+0900"
     },
     {
       "step": 2,
