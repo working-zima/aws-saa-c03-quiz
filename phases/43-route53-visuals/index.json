@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "health-diagram",
-      "status": "pending"
+      "status": "completed",
+      "summary": "Route53HealthDiagram과 health-answers JSON을 route53.multivalue-answer-details에 연결; viewBox=0 0 280 244, 노드(x,y,w,h): user(88,8,104,32)·route53(88,80,104,32)·region-a(8,176,116,32)·region-b(156,176,116,32), 곁말(x,y,중앙 정렬): unhealthy(66,228)·primary(66,160)·secondary(214,160)·dropped(66,160); 캡션 단순 35자·페일오버 41자·다중값 42자(공백 포함); TDD 12개·전체 971개 테스트와 AC 5종 통과, 교차 검사 150노드·128경로 교차 없음, 보호 파일·step 0 표 변경 없음; 브라우저 도구 승인 정책 제한으로 320px 실측은 미실행.",
+      "started_at": "2026-09-27T16:58:49+0900",
+      "completed_at": "2026-09-27T17:05:59+0900"
     },
     {
       "step": 2,
