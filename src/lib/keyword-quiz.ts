@@ -1,6 +1,7 @@
 import type {
   Keyword,
-  KeywordChoiceMode,
+  KeywordFeature,
+  KeywordPairMode,
   KeywordQuestion,
   KeywordQuizMode,
 } from '../types/keywords'
@@ -11,6 +12,7 @@ import { shuffle } from './shuffle'
 export const KEYWORD_QUIZ_MODES: readonly KeywordQuizMode[] = [
   'summary-to-term',
   'term-to-summary',
+  'feature-to-term',
   'flashcard',
 ]
 
@@ -32,25 +34,33 @@ function normalize(text: string): string {
   return text.replace(/\s/g, '')
 }
 
+// 부모와 그 하위 항목(Aurora와 Global Database 등)은 서로의 오답이 되면 정답이 둘로 읽힌다.
+function related(a: Keyword, b: Keyword): boolean {
+  return a.parentId === b.id || b.parentId === a.id
+}
+
 // 오답은 같은 단원에서 먼저 고른다. 헷갈리는 것끼리 구분하는 연습이 목적이다.
-// 정답과 용어나 요약이 같은 키워드는 빼고, 보기 문자열이 서로 겹치지 않게 한다.
+// 정답과 용어나 요약이 같은 키워드와 정답의 부모·하위 항목은 빼고, 보기 문자열이 서로 겹치지 않게 한다.
+// section은 오답을 먼저 뽑을 단원이다. 특징 문항은 특징이 나온 단원을 준다.
 function pickDistractors(
   answer: Keyword,
   keywords: Keyword[],
   choiceOf: (keyword: Keyword) => string,
   rng: () => number,
+  section: string = answer.section,
 ): Keyword[] {
   const term = normalize(answer.term)
   const summary = normalize(answer.summary)
   const candidates = keywords.filter(
     (k) =>
       k.id !== answer.id &&
+      !related(k, answer) &&
       normalize(k.term) !== term &&
       normalize(k.summary) !== summary,
   )
   const ordered = [
-    ...shuffle(candidates.filter((k) => k.section === answer.section), rng),
-    ...shuffle(candidates.filter((k) => k.section !== answer.section), rng),
+    ...shuffle(candidates.filter((k) => k.section === section), rng),
+    ...shuffle(candidates.filter((k) => k.section !== section), rng),
   ]
 
   const seen = new Set([normalize(choiceOf(answer))])
@@ -69,9 +79,24 @@ function pickDistractors(
   return picked
 }
 
+function toQuestion(
+  answer: Keyword,
+  prompt: string,
+  options: Keyword[],
+  choiceOf: (keyword: Keyword) => string,
+): KeywordQuestion {
+  return {
+    keywordId: answer.id,
+    prompt,
+    choices: options.map(choiceOf) as [string, string, string, string],
+    choiceKeywordIds: options.map((option) => option.id) as [string, string, string, string],
+    answerIndex: options.indexOf(answer) as 0 | 1 | 2 | 3,
+  }
+}
+
 export function buildKeywordQuestions(
   keywords: Keyword[],
-  mode: KeywordChoiceMode,
+  mode: KeywordPairMode,
   count: number,
   rng: () => number,
   section: string | null = null,
@@ -87,13 +112,37 @@ export function buildKeywordQuestions(
         [answer, ...pickDistractors(answer, keywords, choiceOf, rng)],
         rng,
       )
-      return {
-        keywordId: answer.id,
-        prompt: promptOf(answer),
-        choices: options.map(choiceOf) as [string, string, string, string],
-        choiceKeywordIds: options.map((option) => option.id) as [string, string, string, string],
-        answerIndex: options.indexOf(answer) as 0 | 1 | 2 | 3,
-      }
+      return toQuestion(answer, promptOf(answer), options, choiceOf)
+    })
+}
+
+// [특징] 문장과 그 키워드. section이 null이면 전체이고, 아니면 특징이 나온 단원으로 거른다.
+export function listKeywordFeatures(
+  keywords: Keyword[],
+  section: string | null,
+): { keyword: Keyword; feature: KeywordFeature }[] {
+  return keywords.flatMap((keyword) => (keyword.features ?? [])
+    .filter((feature) => section === null || feature.section === section)
+    .map((feature) => ({ keyword, feature })))
+}
+
+// 특징 문장을 보고 키워드를 고른다. 특징 하나가 한 문항이다.
+export function buildFeatureQuestions(
+  keywords: Keyword[],
+  count: number,
+  rng: () => number,
+  section: string | null = null,
+): KeywordQuestion[] {
+  const termOf = (k: Keyword) => k.term
+
+  return shuffle(listKeywordFeatures(keywords, section), rng)
+    .slice(0, count)
+    .map(({ keyword, feature }) => {
+      const options = shuffle(
+        [keyword, ...pickDistractors(keyword, keywords, termOf, rng, feature.section)],
+        rng,
+      )
+      return toQuestion(keyword, feature.text, options, termOf)
     })
 }
 

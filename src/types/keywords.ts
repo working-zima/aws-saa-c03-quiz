@@ -4,6 +4,15 @@ export interface Keyword {
   summary: string
   section: string
   page: number
+  parentId?: string // 묶음 제목·[기능]·[유형] 아래의 하위 항목이면 그 부모 키워드
+  features?: KeywordFeature[] // [특징] 문장. 키워드 이름은 ○○로 가려져 있다.
+}
+
+// [특징] 문장 하나. 부모 키워드와 다른 단원에 나올 수 있어서(Lambda) 단원을 따로 든다.
+export interface KeywordFeature {
+  text: string
+  section: string
+  page: number
 }
 
 // 키워드 퀴즈의 암호문 파일 형식. 규약은 ADR-040이다.
@@ -17,8 +26,10 @@ export interface EncryptedKeywords {
   ciphertext: string // base64. AES-GCM 인증 태그를 포함한다(Web Crypto의 기본 출력 그대로).
 }
 
-export type KeywordQuizMode = 'summary-to-term' | 'term-to-summary' | 'flashcard'
+export type KeywordQuizMode = 'summary-to-term' | 'term-to-summary' | 'feature-to-term' | 'flashcard'
 export type KeywordChoiceMode = Exclude<KeywordQuizMode, 'flashcard'>
+// 키워드 하나의 용어·요약 짝으로 내는 모드. feature-to-term은 특징 문장으로 낸다.
+export type KeywordPairMode = Exclude<KeywordChoiceMode, 'feature-to-term'>
 
 export interface KeywordQuestion {
   keywordId: string

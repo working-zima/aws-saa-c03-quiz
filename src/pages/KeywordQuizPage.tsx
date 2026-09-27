@@ -4,9 +4,11 @@ import { KeywordQuizRunner } from '../components/KeywordQuizRunner'
 import defaultEncrypted from '../data/keywords.enc.json'
 import { decryptKeywords, WrongPassphraseError } from '../lib/keyword-crypto'
 import {
+  buildFeatureQuestions,
   buildFlashcards,
   buildKeywordQuestions,
   KEYWORD_QUIZ_MODES,
+  listKeywordFeatures,
   listKeywordSections,
   selectKeywords,
 } from '../lib/keyword-quiz'
@@ -26,6 +28,7 @@ type Round =
 const MODE_LABELS: Record<KeywordQuizMode, string> = {
   'summary-to-term': '요약 보고 키워드 고르기',
   'term-to-summary': '키워드 보고 요약 고르기',
+  'feature-to-term': '특징 보고 키워드 고르기',
   flashcard: '플래시카드',
 }
 
@@ -76,9 +79,15 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
   function start() {
     if (!keywords) return
     const scoped = selectKeywords(keywords, section)
-    setRound(mode === 'flashcard'
-      ? { mode, cards: buildFlashcards(scoped, scoped.length, rng) }
-      : { mode, questions: buildKeywordQuestions(keywords, mode, scoped.length, rng, section) })
+    if (mode === 'flashcard') {
+      setRound({ mode, cards: buildFlashcards(scoped, scoped.length, rng) })
+    } else if (mode === 'feature-to-term') {
+      const total = listKeywordFeatures(keywords, section).length
+      if (total === 0) return
+      setRound({ mode, questions: buildFeatureQuestions(keywords, total, rng, section) })
+    } else {
+      setRound({ mode, questions: buildKeywordQuestions(keywords, mode, scoped.length, rng, section) })
+    }
     setRoundKey((key) => key + 1)
   }
 
@@ -127,11 +136,17 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
       )
   }
 
+  // 특징 모드는 특징 문장 하나가 한 문항이라 키워드 수 대신 특징 수를 보인다.
+  const featureCount = listKeywordFeatures(keywords, section).length
+  const noFeatures = mode === 'feature-to-term' && featureCount === 0
+
   return (
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold text-title">키워드 퀴즈</h1>
-        <p className="text-[15px] leading-7 text-neutral-300">키워드 {selectKeywords(keywords, section).length}개</p>
+        <p className="text-[15px] leading-7 text-neutral-300">
+          {mode === 'feature-to-term' ? `특징 ${featureCount}개` : `키워드 ${selectKeywords(keywords, section).length}개`}
+        </p>
       </div>
       <div className="space-y-3">
         <label className="block text-xs text-neutral-500" htmlFor="keyword-section">단원</label>
@@ -160,7 +175,8 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
           </button>
         ))}
       </div>
-      <button className={primaryButtonClass} onClick={start} type="button">시작</button>
+      {noFeatures && <p className="text-[15px] leading-7 text-neutral-300">이 단원에는 특징이 없습니다.</p>}
+      <button className={primaryButtonClass} disabled={noFeatures} onClick={start} type="button">시작</button>
     </section>
   )
 }
