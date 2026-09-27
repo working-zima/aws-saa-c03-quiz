@@ -236,7 +236,8 @@ describe('Route53AliasDiagram', () => {
     const figure = screen.getByRole('figure', { name: '별칭 레코드 도식' })
 
     expect(figure.closest('article')).toHaveAttribute('id', concept.id)
-    expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.join(''))
+    // 본문의 **강조**는 <strong>으로 렌더돼 마커가 빠진다(ADR-039가 대상 그룹 풀이에 강조를 넣었다).
+    expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.join('').replace(/\*\*/g, ''))
     expect(figure.closest('article')!.lastElementChild).toBe(figure)
     expect(within(figure).queryByRole('heading')).toBeNull()
   })
