@@ -2,6 +2,13 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "46-dns-lb-basic-terms",
   "steps": [
-    { "step": 0, "name": "basic-terms", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "basic-terms",
+      "status": "completed",
+      "started_at": "2026-09-27T19:04:08+0900",
+      "summary": "topics.json 세 개념의 paragraphs만 바꿈 — route53.route53 문단 1→2(호스팅 영역·레코드·라우팅 정책 정의), route53.route53-alias-record 첫 문단에 대상 그룹 풀이 한 문장(2개 그대로), elastic-load-balancing.elb 문단 3→4(대상 그룹·상태 검사). 기존 단언: ELB 문단 수 3→4(주석 추가). data.test.ts에 ADR-039 describe 테스트 4개 추가. 명세 밖 수정 1건: Route53AliasDiagram.test.tsx:240이 원문과 렌더 텍스트를 비교해 **에서 깨져 비교 쪽에서 ** 마커를 지우도록 고침(stop hook의 green 요구로 적용, 단언 의도는 유지)."
+    }
+  ],
+  "created_at": "2026-09-27T19:04:08+0900"
 }

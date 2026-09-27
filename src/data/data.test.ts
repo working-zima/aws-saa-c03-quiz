@@ -6137,7 +6137,8 @@ describe('학습 데이터 무결성', () => {
     )
 
     // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
-    expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(3)
+    // ADR-039가 대상 그룹 정의 문단을 더해 4가 됐다. phase 13의 편집 범위 단언이었다.
+    expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(4)
     expect(byId['elastic-load-balancing.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
     expect(byId['cloudfront-global-accelerator.global-accelerator-protocols'].paragraphs).toHaveLength(2)
     expect(byId['cloudfront-global-accelerator.cloudfront-ttl'].paragraphs).toHaveLength(2)
@@ -6565,5 +6566,55 @@ describe('q614 — 프라이빗 호스팅 영역 제안을 판단하는 문항',
 
     expect(JSON.stringify(questions)).not.toContain('corp.example.local')
     expect(JSON.stringify(topics)).not.toContain('corp.example.local')
+  })
+})
+
+describe('ADR-039 — 레코드·호스팅 영역·대상 그룹의 정의', () => {
+  const byId = Object.fromEntries(
+    topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+  )
+
+  it('Route 53 개념이 호스팅 영역·레코드·라우팅 정책을 정의한다', () => {
+    const concept = byId['route53.route53']
+
+    expect(concept.paragraphs).toHaveLength(2)
+    expect(concept.paragraphs[0].startsWith('Route53은')).toBe(true)
+    expect(concept.paragraphs[1]).toContain('**호스팅 영역**(hosted zone)')
+    expect(concept.paragraphs[1]).toContain('**레코드**(record)')
+    expect(concept.paragraphs[1]).toContain('라우팅 정책')
+  })
+
+  it('별칭 레코드 개념이 대상 그룹을 처음 쓰는 자리 앞에서 풀이한다', () => {
+    const concept = byId['route53.route53-alias-record']
+    const first = concept.paragraphs[0]
+    const gloss = first.indexOf('**대상 그룹**(target group)은 로드 밸런서가 요청을 넘길')
+
+    expect(concept.paragraphs).toHaveLength(2)
+    expect(gloss).toBeGreaterThanOrEqual(0)
+    // ADR-029 — 주제 안에서 처음 나오는 자리에서 풀이한다.
+    expect(gloss).toBeLessThan(first.indexOf('대상 그룹이 인스턴스 등록을 맡으므로'))
+  })
+
+  it('ELB 개념의 넷째 문단이 대상 그룹을 정의한다', () => {
+    const concept = byId['elastic-load-balancing.elb']
+
+    expect(concept.paragraphs).toHaveLength(4)
+    expect(
+      concept.paragraphs[3].startsWith('로드 밸런서가 요청을 넘길 곳은 **대상 그룹**(target group)'),
+    ).toBe(true)
+    expect(concept.paragraphs[3]).toContain('상태 검사도 대상 그룹마다')
+  })
+
+  it('세 개념의 요약은 그대로다', () => {
+    // ADR-010 — 풀이는 paragraphs에만 들어간다.
+    expect(byId['route53.route53'].summary).toBe(
+      'Route 53은 도메인 이름을 IP 주소로 바꾸고 트래픽의 전달 방향을 정한다.',
+    )
+    expect(byId['route53.route53-alias-record'].summary).toBe(
+      '도메인 이름을 ALB 같은 AWS 리소스에 직접 겨누는 레코드라, 뒤에 있는 인스턴스가 바뀌어도 DNS를 고칠 일이 없다.',
+    )
+    expect(byId['elastic-load-balancing.elb'].summary).toBe(
+      'ELB는 들어오는 트래픽을 여러 서버에 자동으로 나눠 보내는 서비스다.',
+    )
   })
 })
