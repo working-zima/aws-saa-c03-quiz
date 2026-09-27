@@ -23,7 +23,8 @@
       "name": "alias-examples",
       "status": "completed",
       "started_at": "2026-09-27T17:53:15+0900",
-      "summary": "alias-record에 question(인스턴스를 바꿔도 DNS 레코드를 고치지 않으려면?)·record 라벨 'www.example.com'·direct-ip 전용 곁말 public-ip('공용 IP 52.123.25.11')·legend의 파랑 설명 'Route 53 레코드(www.example.com)'를 더함. record 노드 폭 112 그대로(라벨 추정 82.5+12=94.5), public-ip는 x 198·y 232·textAnchor middle·크기 9·fill-muted로 ec2 아래 tg 그룹 안(추정 폭 ≈97, 149~247), 좌표·경로 변경 없음, viewBox 0 0 280 256 그대로. 고친 기존 단언: labels·notes 상수, direct-ip 곁말 집합에 public-ip 포함, 곁말 위치 분기에 public-ip를 replaced와 같은 EC2 아래 쪽으로 포함. 새 테스트: 물음이 버튼보다 앞, record 라벨, public-ip가 direct-ip에서만 tg 안에 보임. 교차 검사: 노드 161·경로 137 교차 없음"
+      "summary": "alias-record에 question(인스턴스를 바꿔도 DNS 레코드를 고치지 않으려면?)·record 라벨 'www.example.com'·direct-ip 전용 곁말 public-ip('공용 IP 52.123.25.11')·legend의 파랑 설명 'Route 53 레코드(www.example.com)'를 더함. record 노드 폭 112 그대로(라벨 추정 82.5+12=94.5), public-ip는 x 198·y 232·textAnchor middle·크기 9·fill-muted로 ec2 아래 tg 그룹 안(추정 폭 ≈97, 149~247), 좌표·경로 변경 없음, viewBox 0 0 280 256 그대로. 고친 기존 단언: labels·notes 상수, direct-ip 곁말 집합에 public-ip 포함, 곁말 위치 분기에 public-ip를 replaced와 같은 EC2 아래 쪽으로 포함. 새 테스트: 물음이 버튼보다 앞, record 라벨, public-ip가 direct-ip에서만 tg 안에 보임. 교차 검사: 노드 161·경로 137 교차 없음",
+      "completed_at": "2026-09-27T17:54:47+0900"
     },
     {
       "step": 3,
