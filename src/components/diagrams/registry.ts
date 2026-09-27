@@ -8,6 +8,7 @@ import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
+import { Route53HealthDiagram } from './Route53HealthDiagram'
 import { Route53PolicyTable } from './route53Tables'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
 import { SgNaclBoundaryDiagram } from './SgNaclBoundaryDiagram'
@@ -45,6 +46,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'vpc-networking.vpc-flow-logs': FlowLogsVsCloudTrailTable,
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
   'route53.routing-policies': Route53PolicyTable,
+  'route53.multivalue-answer-details': Route53HealthDiagram,
   'cloudfront-global-accelerator.global-accelerator-vs-dns-failover': EdgeToOriginDiagram,
   's3-storage-classes.s3-storage-class-cost-order': S3ClassMapDiagram,
   'security-groups-nacl.security-group-stateful-vs-nacl-stateless': [SgNaclBoundaryDiagram, SgNaclCompareTable],

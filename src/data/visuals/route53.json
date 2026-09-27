@@ -1,5 +1,57 @@
 {
-  "diagrams": {},
+  "diagrams": {
+    "health-answers": {
+      "label": "상태 검사와 Route 53 응답 도식",
+      "svgLabel": "상태 검사와 Route 53 응답",
+      "idleCaption": "리전 A가 비정상일 때 무엇을 응답하는지 정책을 골라 비교하세요.",
+      "legend": "파랑: Route 53 · 청록: 리전에 배포한 대상 · 회색: 사용자. 위 화살표는 질의, 아래 화살표는 Route 53이 응답으로 가리키는 대상이다.",
+      "nodes": {
+        "user": "사용자",
+        "route53": "Route 53",
+        "region-a": "리전 A",
+        "region-b": "리전 B"
+      },
+      "notes": {
+        "unhealthy": "비정상",
+        "primary": "주 · 상태 검사",
+        "secondary": "보조",
+        "dropped": "응답에서 빠짐"
+      },
+      "scenarios": [
+        {
+          "id": "simple",
+          "label": "단순",
+          "caption": "상태를 확인하지 않아 비정상인 리전 A 하나를 그대로 응답한다.",
+          "sources": [
+            "route53.routing-policies",
+            "route53.multivalue-answer-details",
+            "route53.multi-region-failover-for-region-outage"
+          ]
+        },
+        {
+          "id": "failover",
+          "label": "페일오버",
+          "caption": "주 레코드만 검사한다. 비정상이면 보조로 응답하며 보조 검사는 필요 없다.",
+          "sources": [
+            "route53.route53-failover-routing",
+            "route53.multi-region-failover-for-region-outage"
+          ]
+        },
+        {
+          "id": "multivalue",
+          "label": "다중값 응답",
+          "caption": "위치와 무관하게 정상 레코드만 최대 8개 무작위로 응답해 리전 A는 빠진다.",
+          "sources": ["route53.multivalue-answer-details"]
+        }
+      ],
+      "sources": [
+        "route53.route53",
+        "route53.routing-policies",
+        "route53.route53-failover-routing",
+        "route53.multi-region-failover-for-region-outage"
+      ]
+    }
+  },
   "tables": {
     "routing-policies": {
       "label": "Route 53 라우팅 정책 비교",
