@@ -1,0 +1,40 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "43-route53-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "policy-table",
+      "status": "completed",
+      "summary": "src/data/visuals/route53.json과 visualsByTopicId['route53'] 로더 키 추가, routing-policies 표(8행·2열)를 Route53PolicyTable로 route53.routing-policies 앵커에 연결; 가장 긴 칸 30자(공백 포함), TDD 6개 및 전체 959개 테스트와 AC 5종 통과.",
+      "started_at": "2026-09-27T16:55:00+0900",
+      "completed_at": "2026-09-27T16:58:49+0900"
+    },
+    {
+      "step": 1,
+      "name": "health-diagram",
+      "status": "completed",
+      "summary": "Route53HealthDiagram과 health-answers JSON을 route53.multivalue-answer-details에 연결; viewBox=0 0 280 244, 노드(x,y,w,h): user(88,8,104,32)·route53(88,80,104,32)·region-a(8,176,116,32)·region-b(156,176,116,32), 곁말(x,y,중앙 정렬): unhealthy(66,228)·primary(66,160)·secondary(214,160)·dropped(66,160); 캡션 단순 35자·페일오버 41자·다중값 42자(공백 포함); TDD 12개·전체 971개 테스트와 AC 5종 통과, 교차 검사 150노드·128경로 교차 없음, 보호 파일·step 0 표 변경 없음; 브라우저 도구 승인 정책 제한으로 320px 실측은 미실행.",
+      "started_at": "2026-09-27T16:58:49+0900",
+      "completed_at": "2026-09-27T17:05:59+0900"
+    },
+    {
+      "step": 2,
+      "name": "alias-diagram",
+      "status": "completed",
+      "summary": "Route53AliasDiagram과 alias-record JSON을 route53.route53-alias-record에 연결; viewBox=0 0 280 256, 공용 IP 직접 연결은 오른쪽 옆 통로 x=264로 내려가 EC2 오른쪽에 연결; 캡션 별칭 49자·교체 49자·직접 연결 54자(공백 포함); TDD 13개·전체 984개 테스트와 Node 18.17.1 AC 5종 통과, 교차 검사 154노드·132경로 교차 없음, 보호 파일·step 0·1 산출물 변경 없음; 브라우저 도구 승인 정책 제한으로 실측은 미실행.",
+      "started_at": "2026-09-27T17:05:59+0900",
+      "completed_at": "2026-09-27T17:11:51+0900"
+    },
+    {
+      "step": 3,
+      "name": "hybrid-dns-diagram",
+      "status": "completed",
+      "started_at": "2026-09-27T17:11:51+0900",
+      "summary": "Route53HybridDnsDiagram과 hybrid-dns JSON을 route53.private-hosted-zone-vpc-only에 연결; viewBox=0 0 280 340, 행 사이 통로 y=184(ec2-b-outbound: M204 220 V184 H76 V150), 가운데 통로 x=140(inbound-phz: M152 150 V176 H140 V284, VPC A 8..132·VPC B 148..272 사이), 엔드포인트 노드 폭 120(아웃바운드 x16·인바운드 x144, Resolver 그룹 안, VPC 밖), phz–VPC 연결은 화살표 없는 정적 line 둘(x100·x180); 캡션 아웃바운드 57자·인바운드 55자·규칙 공유 52자·프라이빗 호스팅 영역 53자(공백 포함); TDD 16개·전체 1000개 테스트와 Node 18.17.1 AC 5종 통과, 교차 검사 161노드·137경로 교차 없음, DiagramFrame·topics.json·step 0~2 산출물 변경 없음; 브라우저 실측은 미실행.",
+      "completed_at": "2026-09-27T17:23:38+0900"
+    }
+  ],
+  "created_at": "2026-09-27T16:55:00+0900",
+  "completed_at": "2026-09-27T17:23:38+0900"
+}
