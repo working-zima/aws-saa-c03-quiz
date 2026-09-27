@@ -57,7 +57,12 @@ describe('KeywordQuizPage', () => {
     renderPage()
 
     expect(screen.getByRole('heading', { name: '키워드 퀴즈' })).toBeInTheDocument()
-    expect(screen.getByLabelText('암호')).toHaveAttribute('type', 'password')
+    // 입력한 글자를 그대로 보여 준다(사용자 결정). 대신 브라우저가 입력 기록으로 남기지 않게 자동완성을 끈다.
+    const input = screen.getByLabelText('암호')
+    expect(input).toHaveAttribute('type', 'text')
+    expect(input).toHaveAttribute('autocomplete', 'off')
+    expect(input).toHaveAttribute('autocapitalize', 'off')
+    expect(input).toHaveAttribute('spellcheck', 'false')
     expect(screen.getByRole('button', { name: '열기' })).toBeInTheDocument()
     expect(screen.queryByText(/용어1|요약1/)).toBeNull()
     expect(screen.queryByText(/키워드 \d+개/)).toBeNull()

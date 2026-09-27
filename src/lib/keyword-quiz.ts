@@ -87,6 +87,7 @@ export function buildKeywordQuestions(
         keywordId: answer.id,
         prompt: promptOf(answer),
         choices: options.map(choiceOf) as [string, string, string, string],
+        choiceKeywordIds: options.map((option) => option.id) as [string, string, string, string],
         answerIndex: options.indexOf(answer) as 0 | 1 | 2 | 3,
       }
     })

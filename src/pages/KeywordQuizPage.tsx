@@ -92,13 +92,18 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
         <form className="space-y-3" onSubmit={open}>
           <label className="block text-xs text-neutral-500" htmlFor="keyword-passphrase">암호</label>
           <input
-            autoComplete="current-password"
+            // 입력한 글자를 그대로 보여 준다(사용자 결정). 일반 입력칸은 브라우저가 입력 기록으로
+            // 남길 수 있으므로 자동완성·자동 대문자·맞춤법 검사를 끈다.
+            autoCapitalize="off"
+            autoComplete="off"
+            autoCorrect="off"
             autoFocus
             className="w-full rounded-md border border-neutral-800 bg-[#141414] px-4 py-3 text-[15px] text-neutral-100 placeholder:text-neutral-500 focus:border-neutral-600 focus:outline-none"
             id="keyword-passphrase"
             onChange={(event) => setPassphrase(event.target.value)}
             ref={inputRef}
-            type="password"
+            spellCheck={false}
+            type="text"
             value={passphrase}
           />
           {error && <p className="text-[15px] leading-7 text-neutral-300" role="alert">{error}</p>}

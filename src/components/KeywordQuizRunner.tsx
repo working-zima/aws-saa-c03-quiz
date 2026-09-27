@@ -17,6 +17,14 @@ const choiceCorrectClass = 'border-green-500/60 bg-green-500/5'
 const choiceIncorrectClass = 'border-red-500/60 bg-red-500/5'
 const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white'
 const ghostButtonClass = 'inline-flex min-h-[44px] items-center rounded-md px-4 py-2 text-neutral-400 transition-colors hover:text-neutral-100'
+// 풀던 중에 선택 화면으로 나가는 버튼. 모양은 BackButton과 같다.
+const exitButtonClass = '-ml-4 inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 py-2 text-sm text-neutral-400 transition-colors hover:text-neutral-100'
+
+const backIcon = (
+  <svg aria-hidden="true" fill="none" height="20" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" width="20">
+    <path d="M15 19l-7-7 7-7" />
+  </svg>
+)
 
 export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit }: KeywordQuizRunnerProps) {
   const [questionIndex, setQuestionIndex] = useState(0)
@@ -46,7 +54,12 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
   const selectedChoice = selections[questionIndex]
   const revealed = selectedChoice !== null
   const answerKeyword = keywords.find((keyword) => keyword.id === question.keywordId)
+  // 오답을 골랐으면 그 보기가 어느 키워드였는지도 풀어 보여 준다. 헷갈린 짝을 함께 보게 하려는 것이다.
+  const pickedKeyword = revealed && selectedChoice !== question.answerIndex
+    ? keywords.find((keyword) => keyword.id === question.choiceKeywordIds[selectedChoice])
+    : undefined
   const isLast = questionIndex === questions.length - 1
+  const advanceInstructionId = `keyword-advance-instruction-${questionIndex}`
 
   function selectChoice(choiceIndex: number) {
     if (revealed) return
@@ -65,12 +78,29 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
 
   return (
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
+      <button className={exitButtonClass} onClick={onExit} type="button">
+        {backIcon}
+        돌아가기
+      </button>
       <header className="space-y-3">
         <div className="flex min-h-[44px] items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">
             {mode === 'summary-to-term' ? '정의 보고 용어 고르기' : '용어 보고 정의 고르기'}
           </h1>
-          <span className="text-xs text-neutral-500">{questionIndex + 1} / {questions.length}</span>
+          {/* 이동 규칙은 확인 문제와 같다(UI_GUIDE 「문항 사이 이동」). 되돌아간 문항은 읽기 전용이다. */}
+          <div className="flex items-center gap-3">
+            {questionIndex > 0 && (
+              <button
+                aria-label="이전 문제"
+                className={ghostButtonClass}
+                onClick={() => setQuestionIndex((index) => index - 1)}
+                type="button"
+              >
+                {backIcon}
+              </button>
+            )}
+            <span className="text-xs text-neutral-500">{questionIndex + 1} / {questions.length}</span>
+          </div>
         </div>
         <h2 className="text-lg font-medium text-neutral-100">{question.prompt}</h2>
       </header>
@@ -80,12 +110,15 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
           const correctChoice = revealed && choiceIndex === question.answerIndex
           const selectedIncorrectChoice = revealed && selectedChoice === choiceIndex && !correctChoice
           const resultClass = correctChoice ? choiceCorrectClass : selectedIncorrectChoice ? choiceIncorrectClass : ''
+          const advanceClass = correctChoice ? 'cursor-pointer hover:border-green-500' : ''
+          // 공개한 뒤에는 정답 보기만 남기고, 그것을 한 번 더 누르면 넘어간다(UI_GUIDE 「보기 버튼」).
           return (
             <button
-              className={`${choiceBaseClass} ${resultClass}`}
-              disabled={revealed}
+              aria-describedby={correctChoice ? advanceInstructionId : undefined}
+              className={`${choiceBaseClass} ${resultClass} ${advanceClass}`}
+              disabled={revealed && !correctChoice}
               key={`${question.keywordId}-${choiceIndex}`}
-              onClick={() => selectChoice(choiceIndex)}
+              onClick={() => revealed ? advance() : selectChoice(choiceIndex)}
               type="button"
             >
               {choice}
@@ -103,9 +136,16 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
               <p className="text-[15px] leading-7 text-neutral-300">{answerKeyword.summary}</p>
             </div>
           )}
-          <button className={primaryButtonClass} onClick={advance} type="button">
-            {isLast ? '결과 보기' : '다음'}
-          </button>
+          {pickedKeyword && (
+            <div className="space-y-1 pt-2" data-testid="keyword-picked">
+              <p className="text-xs text-neutral-500">고른 보기</p>
+              <p className="text-base font-medium text-neutral-100">{pickedKeyword.term}</p>
+              <p className="text-[15px] leading-7 text-neutral-300">{pickedKeyword.summary}</p>
+            </div>
+          )}
+          <p className="text-xs text-neutral-500" id={advanceInstructionId}>
+            {isLast ? '정답을 한 번 더 누르면 결과를 봅니다' : '정답을 한 번 더 누르면 다음 문제로 넘어갑니다'}
+          </p>
         </div>
       )}
     </section>

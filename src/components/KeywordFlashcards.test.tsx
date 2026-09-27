@@ -62,6 +62,46 @@ describe('KeywordFlashcards', () => {
     expect(onExit).toHaveBeenCalledTimes(1)
   })
 
+  it('첫 카드에는 이전 카드 버튼이 없고, 되돌아간 카드는 뒤집힌 채 고른 판정을 보여 준다', async () => {
+    const user = userEvent.setup()
+    renderCards()
+    expect(screen.queryByRole('button', { name: '이전 카드' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '뒤집기' }))
+    await user.click(screen.getByRole('button', { name: '알았음' }))
+    await user.click(screen.getByRole('button', { name: '이전 카드' }))
+
+    expect(screen.getByText('1 / 3')).toBeInTheDocument()
+    expect(screen.getByText('가짜 정의 1')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '뒤집기' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '알았음' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: '몰랐음' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('되돌아간 카드의 판정을 바꾸면 다음 카드로 가고, 개수는 마지막 판정으로 센다', async () => {
+    const user = userEvent.setup()
+    renderCards()
+    await user.click(screen.getByRole('button', { name: '뒤집기' }))
+    await user.click(screen.getByRole('button', { name: '알았음' }))
+    await user.click(screen.getByRole('button', { name: '이전 카드' }))
+    await user.click(screen.getByRole('button', { name: '몰랐음' }))
+    expect(screen.getByText('2 / 3')).toBeInTheDocument()
+    expect(screen.queryByText('가짜 정의 2')).not.toBeInTheDocument()
+
+    for (const verdict of ['알았음', '알았음']) {
+      await user.click(screen.getByRole('button', { name: '뒤집기' }))
+      await user.click(screen.getByRole('button', { name: verdict }))
+    }
+    expect(screen.getByText('알았음 2 · 몰랐음 1')).toBeInTheDocument()
+  })
+
+  it('넘기던 중에 돌아가기를 누르면 onExit를 부른다', async () => {
+    const user = userEvent.setup()
+    const { onExit } = renderCards()
+    await user.click(screen.getByRole('button', { name: '돌아가기' }))
+    expect(onExit).toHaveBeenCalledTimes(1)
+  })
+
   it('누를 수 있는 버튼은 모두 터치 영역을 확보한다', async () => {
     const user = userEvent.setup()
     renderCards()

@@ -113,6 +113,17 @@ describe('buildKeywordQuestions', () => {
         }
       })
 
+      it('보기마다 그 보기가 가리키는 키워드 id를 같은 순서로 싣는다', () => {
+        const f = field(mode)
+        for (const q of buildKeywordQuestions(keywords, mode, keywords.length, lcg(7))) {
+          expect(q.choiceKeywordIds).toHaveLength(4)
+          expect(q.choiceKeywordIds[q.answerIndex]).toBe(q.keywordId)
+          q.choiceKeywordIds.forEach((id, i) => {
+            expect(byId.get(id)![f]).toBe(q.choices[i])
+          })
+        }
+      })
+
       it('같은 시드면 결과가 같다', () => {
         expect(buildKeywordQuestions(keywords, mode, 5, lcg(42))).toEqual(
           buildKeywordQuestions(keywords, mode, 5, lcg(42)),
