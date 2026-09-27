@@ -31,7 +31,8 @@
       "name": "hybrid-dns-examples",
       "status": "completed",
       "started_at": "2026-09-27T17:54:47+0900",
-      "summary": "hybrid-dns에 question(VPC와 사내망은 서로의 이름을 어떻게 찾을까?)을 더하고, corp-domain(db.corp.local)·aws-domain(app.internal.aws)을 시나리오 곁말에서 예시 곁말(exampleNotes)로 옮겨 전체 포함 늘 보이게 함. corp-domain은 onprem-dns, aws-domain은 phz의 opacity를 따름. 예시 곁말 좌표는 그대로(corp-domain x 120·y 88, aws-domain x 140·y 332, middle·크기 9·fill-muted). 같은 자리(140,332)에 있던 vpc-only를 y 332→346으로 내리고 viewBox를 0 0 280 340→352로 늘림 — phz 시나리오에서 vpc-only와 aws-domain 간격 14. 문구·캡션·idleCaption·legend·sources 변경 없음. 고친 기존 단언: 처음 상태 '경로·곁말 없이'→경로 없고 예시 곁말 둘(이름 변경), expectedScenarios 네 시나리오의 곁말 집합에 예시 둘 포함, 연속 전환 테스트의 phz 곁말 집합·전체에서 예시 둘만 남음(이름 변경). 새 테스트: 물음이 버튼보다 앞, 전체+네 시나리오에서 예시 둘 보임, 인바운드/아웃바운드에서 예시 곁말 opacity가 붙은 노드와 같음, phz에서 두 줄 y 간격 ≥9. 교차 검사: 노드 161·경로 137 교차 없음"
+      "summary": "hybrid-dns에 question(VPC와 사내망은 서로의 이름을 어떻게 찾을까?)을 더하고, corp-domain(db.corp.local)·aws-domain(app.internal.aws)을 시나리오 곁말에서 예시 곁말(exampleNotes)로 옮겨 전체 포함 늘 보이게 함. corp-domain은 onprem-dns, aws-domain은 phz의 opacity를 따름. 예시 곁말 좌표는 그대로(corp-domain x 120·y 88, aws-domain x 140·y 332, middle·크기 9·fill-muted). 같은 자리(140,332)에 있던 vpc-only를 y 332→346으로 내리고 viewBox를 0 0 280 340→352로 늘림 — phz 시나리오에서 vpc-only와 aws-domain 간격 14. 문구·캡션·idleCaption·legend·sources 변경 없음. 고친 기존 단언: 처음 상태 '경로·곁말 없이'→경로 없고 예시 곁말 둘(이름 변경), expectedScenarios 네 시나리오의 곁말 집합에 예시 둘 포함, 연속 전환 테스트의 phz 곁말 집합·전체에서 예시 둘만 남음(이름 변경). 새 테스트: 물음이 버튼보다 앞, 전체+네 시나리오에서 예시 둘 보임, 인바운드/아웃바운드에서 예시 곁말 opacity가 붙은 노드와 같음, phz에서 두 줄 y 간격 ≥9. 교차 검사: 노드 161·경로 137 교차 없음",
+      "completed_at": "2026-09-27T17:56:44+0900"
     }
   ],
   "created_at": "2026-09-27T17:50:26+0900"
