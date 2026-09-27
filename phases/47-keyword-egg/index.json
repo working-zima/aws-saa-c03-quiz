@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "keyword-quiz-lib",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-27T20:57:04+0900",
+      "summary": "src/lib/keyword-quiz.ts — KEYWORD_QUIZ_MODES·KEYWORD_QUIZ_COUNTS=[10,20]·KEYWORD_QUIZ_ALL='all'·KeywordQuizCount, resolveKeywordCount(choice,total), buildKeywordQuestions(keywords,mode,count,rng): KeywordQuestion[], buildFlashcards(keywords,count,rng): Keyword[], LOGO_TAP_COUNT=5·LOGO_TAP_WINDOW_MS=1500·registerLogoTap(taps,now): {taps,unlocked}; 타입 KeywordQuizMode·KeywordChoiceMode·KeywordQuestion은 src/types/keywords.ts. 오답 셋은 같은 section을 섞어 먼저 뽑고 모자라면 다른 단원에서 채우며, 정답과 term·summary가 (공백 제거 후) 같은 키워드는 빼고 보기 문자열도 서로 겹치지 않게 한다. 무작위는 shuffle(rng)만 쓴다",
+      "completed_at": "2026-09-27T20:59:00+0900"
     },
     {
       "step": 3,

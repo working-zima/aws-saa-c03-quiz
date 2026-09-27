@@ -16,3 +16,13 @@ export interface EncryptedKeywords {
   iv: string // base64, 12바이트
   ciphertext: string // base64. AES-GCM 인증 태그를 포함한다(Web Crypto의 기본 출력 그대로).
 }
+
+export type KeywordQuizMode = 'summary-to-term' | 'term-to-summary' | 'flashcard'
+export type KeywordChoiceMode = Exclude<KeywordQuizMode, 'flashcard'>
+
+export interface KeywordQuestion {
+  keywordId: string
+  prompt: string
+  choices: [string, string, string, string]
+  answerIndex: 0 | 1 | 2 | 3
+}
