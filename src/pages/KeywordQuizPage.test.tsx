@@ -45,7 +45,7 @@ async function unlock(user: ReturnType<typeof userEvent.setup>) {
   decrypt.mockResolvedValueOnce(keywords)
   renderPage()
   await user.type(screen.getByLabelText('암호'), '맞는암호{Enter}')
-  await screen.findByText('키워드 12개')
+  await screen.findByLabelText('단원')
 }
 
 beforeEach(() => {
@@ -127,6 +127,8 @@ describe('KeywordQuizPage', () => {
     expect(screen.getByRole('button', { name: '요약 보고 키워드 고르기' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: '키워드 보고 요약 고르기' })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByRole('button', { name: '플래시카드' })).toHaveAttribute('aria-pressed', 'false')
+    // 특징 문항은 요약 보고 키워드 고르기에 섞였으므로 따로 모드가 없다(사용자 결정).
+    expect(screen.queryByRole('button', { name: '특징 보고 키워드 고르기' })).toBeNull()
   })
 
   // 문항 수는 고르지 않는다. 고른 범위의 키워드를 모두 섞어 한 판으로 푼다(사용자 결정).
@@ -140,14 +142,25 @@ describe('KeywordQuizPage', () => {
     }
   })
 
-  it('요약 보고 키워드 고르기로 시작하면 전체 키워드가 4지선다로 나온다', async () => {
+  it('요약 보고 키워드 고르기는 키워드 수와 특징 수를 보이고, 요약 문항과 특징 문항을 섞어 낸다', async () => {
     const user = userEvent.setup()
     await unlock(user)
+    expect(screen.getByText('키워드 12개 · 특징 3개')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: '시작' }))
 
     expect(screen.getByRole('heading', { name: '정의 보고 용어 고르기' })).toBeInTheDocument()
-    expect(screen.getByText('1 / 12')).toBeInTheDocument()
+    expect(screen.getByText('1 / 15')).toBeInTheDocument()
+  })
+
+  it('다른 모드에서는 특징 수를 보이지 않는다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+
+    await user.click(screen.getByRole('button', { name: '키워드 보고 요약 고르기' }))
+    expect(screen.getByText('키워드 12개')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '플래시카드' }))
+    expect(screen.getByText('키워드 12개')).toBeInTheDocument()
   })
 
   it('키워드 보고 요약 고르기로 시작하면 해당 러너가 나온다', async () => {
@@ -243,30 +256,14 @@ describe('KeywordQuizPage', () => {
     expect(screen.getByText('키워드 6개')).toBeInTheDocument()
   })
 
-  it('특징 보고 키워드 고르기를 고르면 특징 수를 보이고, 특징마다 한 문항으로 푼다', async () => {
+  it('특징이 있는 단원을 고르면 그 단원에 나온 특징도 함께 푼다', async () => {
     const user = userEvent.setup()
     await unlock(user)
-    await user.click(screen.getByRole('button', { name: '특징 보고 키워드 고르기' }))
-    expect(screen.getByText('특징 3개')).toBeInTheDocument()
+    await user.selectOptions(screen.getByLabelText('단원'), '단원A')
+    expect(screen.getByText('키워드 6개 · 특징 3개')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: '시작' }))
-    expect(screen.getByRole('heading', { name: '특징 보고 용어 고르기' })).toBeInTheDocument()
-    expect(screen.getByText('1 / 3')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 2 }).textContent).toMatch(/^특징\d-\d$/)
-  })
-
-  it('특징이 없는 단원이면 특징 모드로 시작할 수 없다고 알린다', async () => {
-    const user = userEvent.setup()
-    await unlock(user)
-    await user.click(screen.getByRole('button', { name: '특징 보고 키워드 고르기' }))
-    await user.selectOptions(screen.getByLabelText('단원'), '단원B')
-
-    expect(screen.getByText('이 단원에는 특징이 없습니다.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '시작' })).toBeDisabled()
-
-    await user.click(screen.getByRole('button', { name: '요약 보고 키워드 고르기' }))
-    expect(screen.getByRole('button', { name: '시작' })).toBeEnabled()
-    expect(screen.getByText('키워드 6개')).toBeInTheDocument()
+    expect(screen.getByText('1 / 9')).toBeInTheDocument()
   })
 
   it('localStorage에 아무것도 쓰지 않는다', async () => {

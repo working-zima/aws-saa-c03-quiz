@@ -29,7 +29,6 @@ const backIcon = (
 const TITLES: Record<KeywordChoiceMode, string> = {
   'summary-to-term': '정의 보고 용어 고르기',
   'term-to-summary': '용어 보고 정의 고르기',
-  'feature-to-term': '특징 보고 용어 고르기',
 }
 
 export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit }: KeywordQuizRunnerProps) {
