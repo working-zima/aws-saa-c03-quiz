@@ -129,18 +129,18 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
 
       {revealed && (
         <div className="animate-[fade-in_0.2s_ease-out] space-y-3 border-t border-neutral-800 pt-5">
-          <p className="text-xs text-neutral-500">{selectedChoice === question.answerIndex ? '정답' : '오답'}</p>
-          {answerKeyword && (
-            <div className="space-y-1" data-testid="keyword-answer">
-              <p className="text-base font-medium text-neutral-100">{answerKeyword.term}</p>
-              <p className="text-[15px] leading-7 text-neutral-300">{answerKeyword.summary}</p>
-            </div>
-          )}
-          {pickedKeyword && (
-            <div className="space-y-1 pt-2" data-testid="keyword-picked">
+          {/* 오답이면 고른 보기의 짝만 보여 준다. 정답은 초록 테두리로 이미 보인다(사용자 결정). */}
+          {pickedKeyword ? (
+            <div className="space-y-1" data-testid="keyword-picked">
               <p className="text-xs text-neutral-500">고른 보기</p>
               <p className="text-base font-medium text-neutral-100">{pickedKeyword.term}</p>
               <p className="text-[15px] leading-7 text-neutral-300">{pickedKeyword.summary}</p>
+            </div>
+          ) : answerKeyword && (
+            <div className="space-y-1" data-testid="keyword-answer">
+              <p className="text-xs text-neutral-500">정답</p>
+              <p className="text-base font-medium text-neutral-100">{answerKeyword.term}</p>
+              <p className="text-[15px] leading-7 text-neutral-300">{answerKeyword.summary}</p>
             </div>
           )}
           <p className="text-xs text-neutral-500" id={advanceInstructionId}>
