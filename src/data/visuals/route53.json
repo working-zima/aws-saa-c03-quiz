@@ -3,10 +3,11 @@
     "alias-record": {
       "label": "별칭 레코드 도식",
       "svgLabel": "별칭 레코드와 공용 IP 직접 연결",
+      "question": "인스턴스를 바꿔도 DNS 레코드를 고치지 않으려면?",
       "idleCaption": "시나리오를 고르면 인스턴스가 바뀔 때 별칭 레코드와 공용 IP 직접 연결의 차이를 볼 수 있다.",
-      "legend": "파랑: Route 53 레코드 · 청록: 로드 밸런서와 대상 그룹 안 인스턴스.",
+      "legend": "파랑: Route 53 레코드(www.example.com) · 청록: 로드 밸런서와 대상 그룹 안 인스턴스.",
       "nodes": {
-        "record": "도메인 이름",
+        "record": "www.example.com",
         "alb": "ALB",
         "ec2": "EC2",
         "ec2-new": "새 EC2"
@@ -17,7 +18,8 @@
       "notes": {
         "replaced": "교체됨",
         "record-same": "레코드 그대로",
-        "record-edit": "교체마다 수정"
+        "record-edit": "교체마다 수정",
+        "public-ip": "공용 IP 52.123.25.11"
       },
       "scenarios": [
         {

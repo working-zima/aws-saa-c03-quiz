@@ -6,8 +6,8 @@ import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { Route53AliasDiagram, route53AliasScenarios, paths as aliasPaths } from './Route53AliasDiagram'
 
-const labels = { record: '도메인 이름', alb: 'ALB', ec2: 'EC2', 'ec2-new': '새 EC2' }
-const notes = { replaced: '교체됨', 'record-same': '레코드 그대로', 'record-edit': '교체마다 수정' }
+const labels = { record: 'www.example.com', alb: 'ALB', ec2: 'EC2', 'ec2-new': '새 EC2' }
+const notes = { replaced: '교체됨', 'record-same': '레코드 그대로', 'record-edit': '교체마다 수정', 'public-ip': '공용 IP 52.123.25.11' }
 const expectedScenarios = [
   {
     id: 'alias', label: '별칭 레코드', nodes: ['record', 'alb', 'ec2'],
@@ -21,7 +21,7 @@ const expectedScenarios = [
   },
   {
     id: 'direct-ip', label: '공용 IP에 직접', nodes: ['record', 'ec2'],
-    paths: ['record-ec2'], notes: ['record-edit'],
+    paths: ['record-ec2'], notes: ['record-edit', 'public-ip'],
     sources: ['route53.route53-alias-record'],
   },
 ]
@@ -86,7 +86,7 @@ describe('Route53AliasDiagram', () => {
       expect(x + halfWidth).toBeLessThanOrEqual(minX + width)
       expect(y - 9).toBeGreaterThanOrEqual(minY)
       expect(y).toBeLessThanOrEqual(minY + height)
-      if (id === 'replaced') {
+      if (id === 'replaced' || id === 'public-ip') {
         const ec2 = readBox(diagram().querySelector('[data-node="ec2"] rect')!)
         expect(x).toBe(ec2.x + ec2.width / 2)
         expect(y - 9).toBeGreaterThan(ec2.y + ec2.height)
@@ -99,6 +99,40 @@ describe('Route53AliasDiagram', () => {
     expect(container.querySelector('figcaption')!.textContent).toBe(wording.caption)
     expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
     expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('물음형 제목이 시나리오 버튼보다 앞에 보인다', () => {
+    render(<Route53AliasDiagram />)
+    const question = screen.getByText('인스턴스를 바꿔도 DNS 레코드를 고치지 않으려면?')
+    const firstButton = screen.getByRole('button', { name: '전체' })
+
+    expect(question.compareDocumentPosition(firstButton) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('레코드 노드의 라벨이 예시 이름 www.example.com이다', () => {
+    render(<Route53AliasDiagram />)
+    expect(diagram().querySelector('[data-node="record"] text')!.textContent).toBe('www.example.com')
+  })
+
+  it('공용 IP 52.123.25.11 곁말은 공용 IP에 직접에서만 대상 그룹 안에 보인다', async () => {
+    render(<Route53AliasDiagram />)
+    expect(diagram().querySelector('[data-note="public-ip"]')).toBeNull()
+    for (const label of ['별칭 레코드', '인스턴스 교체']) {
+      await selectScenario(label)
+      expect(diagram().querySelector('[data-note="public-ip"]')).toBeNull()
+    }
+    await selectScenario('공용 IP에 직접')
+    const note = diagram().querySelector('[data-note="public-ip"]')!
+    expect(note.textContent).toBe('공용 IP 52.123.25.11')
+    const group = readBox(diagram().querySelector('[data-group="tg"]')!)
+    const halfWidth = estimateTextWidth(note.textContent!, 9) / 2
+    const x = Number(note.getAttribute('x')), y = Number(note.getAttribute('y'))
+    expect(x - halfWidth).toBeGreaterThan(group.x)
+    expect(x + halfWidth).toBeLessThan(group.x + group.width)
+    expect(y - 9).toBeGreaterThan(group.y)
+    expect(y).toBeLessThan(group.y + group.height)
+    await selectScenario('전체')
+    expect(diagram().querySelector('[data-note="public-ip"]')).toBeNull()
   })
 
   it('공용 IP 직접 연결에서는 ALB를 흐리게 하고 옆 통로 하나만 표시한다', async () => {
