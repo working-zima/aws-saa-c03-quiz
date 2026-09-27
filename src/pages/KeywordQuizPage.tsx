@@ -6,13 +6,9 @@ import { decryptKeywords, WrongPassphraseError } from '../lib/keyword-crypto'
 import {
   buildFlashcards,
   buildKeywordQuestions,
-  KEYWORD_QUIZ_ALL,
-  KEYWORD_QUIZ_COUNTS,
   KEYWORD_QUIZ_MODES,
   listKeywordSections,
-  resolveKeywordCount,
   selectKeywords,
-  type KeywordQuizCount,
 } from '../lib/keyword-quiz'
 import type { EncryptedKeywords, Keyword, KeywordQuestion, KeywordQuizMode } from '../types/keywords'
 
@@ -33,8 +29,6 @@ const MODE_LABELS: Record<KeywordQuizMode, string> = {
   flashcard: '플래시카드',
 }
 
-const COUNT_CHOICES: readonly KeywordQuizCount[] = [...KEYWORD_QUIZ_COUNTS, KEYWORD_QUIZ_ALL]
-
 const optionClass = 'inline-flex min-h-[44px] items-center rounded-md border border-neutral-800 bg-[#141414] px-4 py-2 text-neutral-300 transition-colors hover:border-neutral-700 hover:text-neutral-100'
 const optionSelectedClass = 'border-neutral-600 bg-[#1f1f1f] text-neutral-100'
 const primaryButtonClass = 'inline-flex min-h-[44px] items-center rounded-md bg-neutral-100 px-4 py-2 text-neutral-900 transition-colors hover:bg-white disabled:opacity-50'
@@ -45,8 +39,7 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
   const [error, setError] = useState<string | null>(null)
   const [keywords, setKeywords] = useState<Keyword[] | null>(null)
   const [mode, setMode] = useState<KeywordQuizMode>(KEYWORD_QUIZ_MODES[0])
-  const [count, setCount] = useState<KeywordQuizCount>(COUNT_CHOICES[0])
-  // null이면 전체 단원. 문항 수는 고른 단원 안에서 적용한다.
+  // null이면 전체 단원. 한 판은 고른 범위의 키워드 전부다(문항 수는 고르지 않는다).
   const [section, setSection] = useState<string | null>(null)
   const [round, setRound] = useState<Round | null>(null)
   // "한 판 더"는 러너를 새 key로 다시 마운트해 처음부터 시작한다.
@@ -83,10 +76,9 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
   function start() {
     if (!keywords) return
     const scoped = selectKeywords(keywords, section)
-    const total = resolveKeywordCount(count, scoped.length)
     setRound(mode === 'flashcard'
-      ? { mode, cards: buildFlashcards(scoped, total, rng) }
-      : { mode, questions: buildKeywordQuestions(keywords, mode, total, rng, section) })
+      ? { mode, cards: buildFlashcards(scoped, scoped.length, rng) }
+      : { mode, questions: buildKeywordQuestions(keywords, mode, scoped.length, rng, section) })
     setRoundKey((key) => key + 1)
   }
 
@@ -165,19 +157,6 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
             type="button"
           >
             {MODE_LABELS[option]}
-          </button>
-        ))}
-      </div>
-      <div aria-label="문항 수" className="flex flex-wrap gap-3" role="group">
-        {COUNT_CHOICES.map((option) => (
-          <button
-            aria-pressed={count === option}
-            className={`${optionClass} ${count === option ? optionSelectedClass : ''}`}
-            key={option}
-            onClick={() => setCount(option)}
-            type="button"
-          >
-            {option === KEYWORD_QUIZ_ALL ? '전체' : option}
           </button>
         ))}
       </div>
