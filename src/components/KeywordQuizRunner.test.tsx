@@ -125,6 +125,11 @@ describe('KeywordQuizRunner', () => {
     expect(picked).toHaveTextContent('가짜 정의 4')
   })
 
+  it('특징 보고 고르기 모드의 제목을 보여 준다', () => {
+    renderRunner({ mode: 'feature-to-term' })
+    expect(screen.getByRole('heading', { level: 1, name: '특징 보고 용어 고르기' })).toBeInTheDocument()
+  })
+
   it('정답을 고르면 고른 보기 설명을 따로 띄우지 않는다', async () => {
     const user = userEvent.setup()
     renderRunner()

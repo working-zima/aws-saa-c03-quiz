@@ -19,6 +19,9 @@ import { dirname, join } from 'node:path'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const SOURCE = 'docs/source/keywords-raw.json'
 const FIELDS = ['id', 'term', 'summary', 'section', 'page']
+// 하위 항목은 parentId로 부모 키워드를, [특징] 문장은 features로 들고 있을 수 있다.
+const OPTIONAL_FIELDS = ['parentId', 'features']
+const FEATURE_FIELDS = ['page', 'section', 'text']
 const MAX_SUMMARY = 200
 const MIN_SECTIONS = 3
 
@@ -59,9 +62,11 @@ items.forEach((item, i) => {
     errors.push(`${at}: 객체가 아니다`)
     return
   }
-  const keys = Object.keys(item).sort()
-  if (keys.join() !== [...FIELDS].sort().join()) {
-    errors.push(`${at}: 필드가 ${FIELDS.join('·')}가 아니다 (${keys.join(', ')})`)
+  const keys = Object.keys(item)
+  const missing = FIELDS.filter((f) => !keys.includes(f))
+  const unknown = keys.filter((k) => !FIELDS.includes(k) && !OPTIONAL_FIELDS.includes(k))
+  if (missing.length > 0 || unknown.length > 0) {
+    errors.push(`${at}: 필드가 ${FIELDS.join('·')}(+${OPTIONAL_FIELDS.join('·')})가 아니다 (${keys.join(', ')})`)
   }
   for (const f of ['id', 'term', 'summary', 'section']) {
     if (typeof item[f] !== 'string' || item[f].trim() === '') errors.push(`${at}: ${f}가 비었거나 문자열이 아니다`)
@@ -117,7 +122,49 @@ for (const item of valid) {
   }
 }
 
-// 7. 단원 수
+// 7. parentId는 자기 아닌 다른 키워드를 가리킨다
+const ids = new Set(valid.map((item) => item.id))
+for (const item of valid) {
+  if (!('parentId' in item)) continue
+  if (typeof item.parentId !== 'string' || !ids.has(item.parentId) || item.parentId === item.id) {
+    errors.push(`${item.id}: parentId가 다른 키워드를 가리키지 않는다 (${item.parentId})`)
+  }
+}
+
+// 8. features — 모양, 단원, 길이, 중복, 자기 term이 가려졌는지
+const sections = new Set(valid.map((item) => item.section))
+const seenFeature = new Map()
+let featureCount = 0
+for (const item of valid) {
+  if (!('features' in item)) continue
+  if (!Array.isArray(item.features) || item.features.length === 0) {
+    errors.push(`${item.id}: features가 비어 있지 않은 배열이 아니다`)
+    continue
+  }
+  const { name, full } = splitTerm(item.term)
+  item.features.forEach((feature, i) => {
+    const at = `${item.id} features[${i}]`
+    featureCount += 1
+    if (feature === null || typeof feature !== 'object' || Object.keys(feature).sort().join() !== FEATURE_FIELDS.join()) {
+      errors.push(`${at}: 필드가 ${FEATURE_FIELDS.join('·')}가 아니다`)
+      return
+    }
+    if (typeof feature.text !== 'string' || feature.text.trim() === '') errors.push(`${at}: text가 비었다`)
+    else if (feature.text.length > MAX_SUMMARY) errors.push(`${at}: text가 ${MAX_SUMMARY}자를 넘는다 (${feature.text.length}자)`)
+    if (!sections.has(feature.section)) errors.push(`${at}: section이 키워드의 단원 가운데 하나가 아니다`)
+    if (!Number.isInteger(feature.page) || feature.page < 1 || feature.page > 50) errors.push(`${at}: page가 1~50의 정수가 아니다`)
+    if (typeof feature.text !== 'string') return
+    const key = norm(feature.text)
+    if (seenFeature.has(key)) errors.push(`${at}: text가 ${seenFeature.get(key)}와 같다`)
+    else seenFeature.set(key, at)
+    for (const part of [name, full]) {
+      if (!part || norm(part).length <= 2) continue
+      if (key.includes(norm(part))) errors.push(`${at}: text에 키워드 이름이 남아 있다`)
+    }
+  })
+}
+
+// 9. 단원 수
 const bySection = new Map()
 for (const item of valid) bySection.set(item.section, (bySection.get(item.section) ?? 0) + 1)
 if (bySection.size < MIN_SECTIONS) errors.push(`단원이 ${MIN_SECTIONS}개 미만이다 (${bySection.size}개)`)
@@ -128,5 +175,5 @@ if (errors.length > 0) {
   process.exit(1)
 }
 
-console.log(`${items.length}개 통과 — 단원 ${bySection.size}개`)
+console.log(`${items.length}개 통과 — 단원 ${bySection.size}개, 특징 ${featureCount}개`)
 for (const [section, count] of bySection) console.log(`- ${count}개  ${section}`)
