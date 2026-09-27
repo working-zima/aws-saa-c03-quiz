@@ -6547,3 +6547,23 @@ describe('학습 데이터 무결성', () => {
     })
   })
 })
+
+describe('q614 — 프라이빗 호스팅 영역 제안을 판단하는 문항', () => {
+  it('상황을 살린 판단형으로, 정답이 VPC에만 연결된다는 사실이다', () => {
+    const question = questions.find((item) => item.id === 'q614')
+    if (!question) throw new Error('q614가 없다')
+
+    expect(question.conceptId).toBe('route53.private-hosted-zone-vpc-only')
+    expect(question.prompt).toContain('db.corp.local')
+    expect(question.prompt).toContain('온프레미스 네트워크에 연결')
+    expect(question.choices[question.answerIndex]).toContain('VPC에만 연결')
+
+    question.choices.forEach((choice) => {
+      expect(choice.startsWith('적절하다.') || choice.startsWith('부적절하다.')).toBe(true)
+    })
+    expect(question.choices.filter((choice) => choice.startsWith('적절하다.'))).toHaveLength(1)
+
+    expect(JSON.stringify(questions)).not.toContain('corp.example.local')
+    expect(JSON.stringify(topics)).not.toContain('corp.example.local')
+  })
+})

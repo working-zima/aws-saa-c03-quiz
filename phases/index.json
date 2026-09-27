@@ -224,6 +224,11 @@
       "dir": "44-route53-visual-guides",
       "status": "completed",
       "completed_at": "2026-09-27T17:56:45+0900"
+    },
+    {
+      "dir": "45-q614-rewrite",
+      "status": "completed",
+      "completed_at": "2026-09-27T18:11:41+0900"
     }
   ]
 }
