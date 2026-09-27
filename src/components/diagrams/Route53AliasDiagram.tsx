@@ -23,6 +23,8 @@ const notes = [
   { id: 'replaced', x: 198, y: 232, scenarios: ['replace'] },
   { id: 'record-same', x: 194, y: 56, scenarios: ['replace'] },
   { id: 'record-edit', x: 194, y: 56, scenarios: ['direct-ip'] },
+  // 본문 예시 IP. EC2 아래 대상 그룹 안에 두며, 같은 자리의 replaced와 시나리오가 달라 겹치지 않는다.
+  { id: 'public-ip', x: 198, y: 232, scenarios: ['direct-ip'] },
 ]
 
 export const route53AliasScenarios: DiagramScenario[] = [
@@ -41,6 +43,7 @@ export function Route53AliasDiagram() {
   return (
     <DiagramFrame
       label={text.label}
+      question={text.question}
       idleCaption={text.idleCaption}
       legend={text.legend}
       scenarios={route53AliasScenarios}

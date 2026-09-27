@@ -2,9 +2,39 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "44-route53-visual-guides",
   "steps": [
-    { "step": 0, "name": "diagram-question", "status": "pending" },
-    { "step": 1, "name": "health-examples", "status": "pending" },
-    { "step": 2, "name": "alias-examples", "status": "pending" },
-    { "step": 3, "name": "hybrid-dns-examples", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "diagram-question",
+      "status": "completed",
+      "started_at": "2026-09-27T17:50:26+0900",
+      "summary": "VisualDiagramText·DiagramFrameProps에 선택 필드 question을 더하고, 값이 있을 때만 figure 첫 자식(시나리오 버튼 줄 위)에 <p className=\"text-sm text-title\">로 렌더한다(헤딩 아님, aria-label은 label 그대로). DiagramFrame.test.tsx에 테스트 3개 추가, 기존 도식·JSON 변경 없음",
+      "completed_at": "2026-09-27T17:51:31+0900"
+    },
+    {
+      "step": 1,
+      "name": "health-examples",
+      "status": "completed",
+      "started_at": "2026-09-27T17:51:31+0900",
+      "summary": "health-answers에 question(리전 A가 멈추면 Route 53은 어디를 알려 줄까?)·리전 라벨 '리전 A의 ALB'/'리전 B의 ALB'·예시 곁말 query(www.example.com의 주소는?)를 더함. query는 x 148·y 63·textAnchor start·크기 9·fill-muted로 늘 보이며 user opacity를 따름(추정 폭 ≈120, 우끝 ≈268≤280). 리전 노드 폭 116 그대로(라벨 추정 ≈75), 좌표 변경 없음, viewBox 0 0 280 244 그대로. 고친 기존 단언: labels·notes 상수, 초기 상태 '경로·곁말 없이'→예시 곁말만, 시나리오별 곁말 집합에 query 포함(곁말 속성 루프는 query 제외), 연속 전환 테스트의 곁말 개수 1→2·전체에서 query만 남음(이름 변경). 새 테스트: 물음이 버튼보다 앞, query가 전체+세 시나리오에서 viewBox 안. 교차 검사: 노드 161·경로 137 교차 없음",
+      "completed_at": "2026-09-27T17:53:15+0900"
+    },
+    {
+      "step": 2,
+      "name": "alias-examples",
+      "status": "completed",
+      "started_at": "2026-09-27T17:53:15+0900",
+      "summary": "alias-record에 question(인스턴스를 바꿔도 DNS 레코드를 고치지 않으려면?)·record 라벨 'www.example.com'·direct-ip 전용 곁말 public-ip('공용 IP 52.123.25.11')·legend의 파랑 설명 'Route 53 레코드(www.example.com)'를 더함. record 노드 폭 112 그대로(라벨 추정 82.5+12=94.5), public-ip는 x 198·y 232·textAnchor middle·크기 9·fill-muted로 ec2 아래 tg 그룹 안(추정 폭 ≈97, 149~247), 좌표·경로 변경 없음, viewBox 0 0 280 256 그대로. 고친 기존 단언: labels·notes 상수, direct-ip 곁말 집합에 public-ip 포함, 곁말 위치 분기에 public-ip를 replaced와 같은 EC2 아래 쪽으로 포함. 새 테스트: 물음이 버튼보다 앞, record 라벨, public-ip가 direct-ip에서만 tg 안에 보임. 교차 검사: 노드 161·경로 137 교차 없음",
+      "completed_at": "2026-09-27T17:54:47+0900"
+    },
+    {
+      "step": 3,
+      "name": "hybrid-dns-examples",
+      "status": "completed",
+      "started_at": "2026-09-27T17:54:47+0900",
+      "summary": "hybrid-dns에 question(VPC와 사내망은 서로의 이름을 어떻게 찾을까?)을 더하고, corp-domain(db.corp.local)·aws-domain(app.internal.aws)을 시나리오 곁말에서 예시 곁말(exampleNotes)로 옮겨 전체 포함 늘 보이게 함. corp-domain은 onprem-dns, aws-domain은 phz의 opacity를 따름. 예시 곁말 좌표는 그대로(corp-domain x 120·y 88, aws-domain x 140·y 332, middle·크기 9·fill-muted). 같은 자리(140,332)에 있던 vpc-only를 y 332→346으로 내리고 viewBox를 0 0 280 340→352로 늘림 — phz 시나리오에서 vpc-only와 aws-domain 간격 14. 문구·캡션·idleCaption·legend·sources 변경 없음. 고친 기존 단언: 처음 상태 '경로·곁말 없이'→경로 없고 예시 곁말 둘(이름 변경), expectedScenarios 네 시나리오의 곁말 집합에 예시 둘 포함, 연속 전환 테스트의 phz 곁말 집합·전체에서 예시 둘만 남음(이름 변경). 새 테스트: 물음이 버튼보다 앞, 전체+네 시나리오에서 예시 둘 보임, 인바운드/아웃바운드에서 예시 곁말 opacity가 붙은 노드와 같음, phz에서 두 줄 y 간격 ≥9. 교차 검사: 노드 161·경로 137 교차 없음",
+      "completed_at": "2026-09-27T17:56:44+0900"
+    }
+  ],
+  "created_at": "2026-09-27T17:50:26+0900",
+  "completed_at": "2026-09-27T17:56:45+0900"
 }

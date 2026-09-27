@@ -34,12 +34,16 @@ export const paths: Record<string, string> = {
 }
 
 const notes = [
-  { id: 'corp-domain', x: 120, y: 88, scenarios: ['outbound'] },
   { id: 'rule', x: 112, y: 174, scenarios: ['outbound', 'forward-rule'] },
   { id: 'rule-vpc-a', x: 96, y: 210, scenarios: ['forward-rule'] },
   { id: 'rule-vpc-b', x: 236, y: 210, scenarios: ['forward-rule'] },
-  { id: 'aws-domain', x: 140, y: 332, scenarios: ['inbound'] },
-  { id: 'vpc-only', x: 140, y: 332, scenarios: ['phz'] },
+  { id: 'vpc-only', x: 140, y: 346, scenarios: ['phz'] },
+]
+
+// 본문의 예시 이름은 시나리오와 상관없이 늘 보이고, 붙은 노드의 opacity를 따른다.
+const exampleNotes = [
+  { id: 'corp-domain', x: 120, y: 88, node: 'onprem-dns' },
+  { id: 'aws-domain', x: 140, y: 332, node: 'phz' },
 ]
 
 export const route53HybridDnsScenarios: DiagramScenario[] = [
@@ -64,6 +68,7 @@ export function Route53HybridDnsDiagram() {
   return (
     <DiagramFrame
       label={text.label}
+      question={text.question}
       idleCaption={text.idleCaption}
       legend={text.legend}
       scenarios={route53HybridDnsScenarios}
@@ -71,7 +76,7 @@ export function Route53HybridDnsDiagram() {
       onSelect={setActive}
     >
       <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox="0 0 280 340">
+        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox="0 0 280 352">
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">
               <path className="fill-title" d="M0 0 L6 3 L0 6 Z" />
@@ -112,6 +117,11 @@ export function Route53HybridDnsDiagram() {
 
           {active && notes.filter((note) => note.scenarios.includes(active.id)).map((note) => (
             <text key={note.id} data-note={note.id} x={note.x} y={note.y} textAnchor="middle" className="fill-muted" fontSize="9">
+              {text.notes![note.id]}
+            </text>
+          ))}
+          {exampleNotes.map((note) => (
+            <text key={note.id} data-note={note.id} x={note.x} y={note.y} textAnchor="middle" className="fill-muted" fontSize="9" opacity={opacityOf(note.node)}>
               {text.notes![note.id]}
             </text>
           ))}
