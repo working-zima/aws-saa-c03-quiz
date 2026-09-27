@@ -164,3 +164,90 @@
 
 ### 검토 보정 (step 0 이후)
 - `S3 Standard-IA` — 덧붙인 구분 구절의 지시어가 원문의 앞 문장(Glacier 쪽 구절)을 가리켜서, 따로 떼어 놓으면 뜻이 끊겼다. 그 지시어를 앞 문장의 명사구로 풀었다. 사실은 그대로다.
+
+## 대괄호 제목 확장 (2026-09-27)
+
+사용자 결정: `[기능]`·`[유형]`·`[부가 기능]`·`[요금별 유형]` 아래의 이름 붙은 항목은 키워드로, `[특징]` 문장은 부모 키워드의 `features`로 넣는다.
+`[암기 Tip]`·`[공통점]`·`[차이점]`·`[사용 예시]`와 분류 표는 이번에 넣지 않는다.
+
+- 키워드 147개(새로 40개), 특징 40개
+- 하위 항목에는 `parentId`로 부모 키워드를 적었다. 기존 하위 항목 27개(S3 스토리지 클래스·SSE 종류·RDS 스토리지 유형과 기능·Route53 라우팅 정책)에도 달았다. 부모와 하위 항목은 서로의 오답 보기로 나오지 않는다.
+
+### 새 키워드
+
+| id | 키워드 | 부모 | PDF 쪽 |
+|---|---|---|---|
+| kw-108 | 파일 게이트웨이 | Storage Gateway | 18 |
+| kw-109 | 볼륨 게이트웨이 | Storage Gateway | 18 |
+| kw-110 | 테이프 게이트웨이 | Storage Gateway | 18 |
+| kw-111 | Global Database (글로벌 데이터베이스) | Aurora | 21 |
+| kw-112 | Aurora Auto Scaling (오토스케일링) | Aurora | 21 |
+| kw-113 | DynamoDB Streams | DynamoDB | 21 |
+| kw-114 | DynamoDB Accelerator (DAX) | DynamoDB | 21 |
+| kw-115 | EC2 오토 스케일링 (Auto Scaling) | EC2 (Elastic Compute Cloud) | 22 |
+| kw-116 | 대상 추적 정책 (Target Tracking Policy) | EC2 (Elastic Compute Cloud) | 22 |
+| kw-117 | EC2 온디맨드 인스턴스 | EC2 (Elastic Compute Cloud) | 22 |
+| kw-118 | EC2 스팟 인스턴스 | EC2 (Elastic Compute Cloud) | 22 |
+| kw-119 | EC2 예약 인스턴스 | EC2 (Elastic Compute Cloud) | 22 |
+| kw-120 | 애플리케이션 로드 밸런서 (ALB, Application Load Balancer) | ELB (Elastic Load Balancer) | 23 |
+| kw-121 | 네트워크 로드 밸런서 (NLB, Network Load Balancer) | ELB (Elastic Load Balancer) | 23 |
+| kw-122 | 게이트웨이 로드 밸런서 (GLB, Gateway Load Balancer) | ELB (Elastic Load Balancer) | 23 |
+| kw-123 | EC2 기반의 ECS | ECS | 25 |
+| kw-124 | Fargate 기반의 ECS | ECS | 25 |
+| kw-125 | API Gateway REST API | API Gateway | 26 |
+| kw-126 | API Gateway HTTP API | API Gateway | 26 |
+| kw-127 | 엣지 최적화 (Edge-optimized) | API Gateway | 26 |
+| kw-128 | 표준 대기열 (Standard Queue) | SQS (Simple Queue Service) | 27 |
+| kw-129 | 선입선출 대기열 (FIFO Queue) | SQS (Simple Queue Service) | 27 |
+| kw-130 | 게이트웨이 VPC 엔드포인트 | VPC Endpoint | 32 |
+| kw-131 | 인터페이스 VPC 엔드포인트 | VPC Endpoint | 33 |
+| kw-132 | IP 기반 차단 및 허용 기능 (IP Set 활용) | WAF (Web Application Firewall) | 45 |
+| kw-133 | 국가 기반 차단 | WAF (Web Application Firewall) | 45 |
+| kw-134 | OAC (Origin Access Control) | CloudFront | 46 |
+| kw-135 | 캐시 무효화 (Invalidation) | CloudFront | 46 |
+| kw-136 | 멀티 오리진 (Multi-origin) | CloudFront | 46 |
+| kw-137 | IAM 사용자 (User) | IAM (Identity And Access Management) | 48 |
+| kw-138 | IAM 역할 (Role) | IAM (Identity And Access Management) | 48 |
+| kw-139 | 로그인 처리 | Identity Center | 48 |
+| kw-140 | 권한 인가 | Identity Center | 48 |
+| kw-141 | 그룹 단위 권한 부여 | Identity Center | 48 |
+| kw-142 | 외부 IdP와 연동 가능 | Identity Center | 48 |
+| kw-143 | MFA 설정을 강제 | Identity Center | 48 |
+| kw-144 | 컴퓨팅 절약 플랜 (Compute Savings Plan) | 절약 플랜 (Savings Plan) | 50 |
+| kw-145 | EC2 인스턴스 절약 플랜 (EC2 Instance Savings Plan) | 절약 플랜 (Savings Plan) | 50 |
+| kw-146 | AWS Budgets 비용 태그 | AWS Budgets | 50 |
+| kw-147 | Cost Explorer 비용 태그 | Cost Explorer | 50 |
+
+### 특징을 붙인 키워드
+
+| 키워드 | 특징 수 |
+|---|---|
+| Lambda | 4 |
+| EBS (Elastic Block Store) | 2 |
+| EFS (Elastic File System) | 4 |
+| 인스턴스 스토어 (Instance Store) | 1 |
+| Transfer Family | 1 |
+| Storage Gateway | 2 |
+| ElastiCache | 2 |
+| Step Functions | 3 |
+| SQS (Simple Queue Service) | 3 |
+| NAT 게이트웨이 | 1 |
+| Direct Connect | 1 |
+| Spark | 1 |
+| 보안 그룹 (Security Group) | 5 |
+| NACL (Network Access Control List, 네트워크 ACL) | 3 |
+| KMS (Key Management Service) | 2 |
+| WAF (Web Application Firewall) | 2 |
+| GuardDuty | 1 |
+| STS (Security Token Service) | 1 |
+| CloudTrail | 1 |
+
+### 판단이 필요했던 곳
+- 이름이 겹쳐 부모 이름을 앞에 붙였다: `Aurora Auto Scaling`·`EC2 오토 스케일링`(둘 다 원문은 오토스케일링), `AWS Budgets 비용 태그`·`Cost Explorer 비용 태그`(둘 다 원문은 비용 태그).
+- 설명이 없어 뺀 하위 항목: WAF `[기능]`의 SQL Injection·XSS 방어.
+- 요약은 이름 뒤의 설명을, 설명이 다음 줄에 있으면 그 첫 줄을 썼다(기존 RDS `기능`과 같은 규칙). Identity Center의 외부 IdP·MFA 항목은 요약 안의 그 이름을 `○○`로 가렸다.
+- 뺀 `[특징]` 문장 — 같은 단원의 다른 키워드에도 들어맞아 정답이 둘로 읽히는 것: EBS 1건(고성능 유형), EFS 1건(고성능 여부), ElastiCache 1건(읽기 성능), Lambda 1건(서버리스 정의 — Fargate와 겹침), SQS 1건(결합도 — SNS·EventBridge와 겹침), Spark 1건(실시간 분석 부적합).
+- 뺀 `[특징]` 문장 — 특징이 아닌 것: Transfer Family 1건(그림 설명), NAT 게이트웨이의 셋째 문장(저자의 추측), Direct Connect의 둘째 문장(인터넷 경유 통신의 설명).
+- NACL `[특징]`은 원문에서 쪽이 넘어가 43쪽에 이어진다. 43쪽의 세 문장을 썼다.
+- 원문 오기는 고치지 않았다: 보안 그룹·NACL 특징의 `접근 차단(Allow)`은 `(Deny)`가 맞는 문맥이지만 원문 그대로 두었다.
+- 특징 문항의 오답은 그 특징이 나온 단원에서 먼저 뽑는다. Lambda의 특징은 [간단 요약]이 아니라 `ECS, Lambda, Step Functions, API Gateway` 단원에 있어서 그 단원을 따른다.

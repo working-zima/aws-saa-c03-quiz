@@ -13,12 +13,18 @@ vi.mock('../lib/keyword-crypto', async () => {
 const { decryptKeywords, WrongPassphraseError } = await import('../lib/keyword-crypto')
 const decrypt = vi.mocked(decryptKeywords)
 
+// 특징은 단원A에만 셋 있다(k1에 둘, k2에 하나). 단원B에는 특징이 없다.
 const keywords: Keyword[] = Array.from({ length: 12 }, (_, index) => ({
   id: `k${index + 1}`,
   term: `용어${index + 1}`,
   summary: `요약${index + 1}`,
   section: index < 6 ? '단원A' : '단원B',
   page: index + 1,
+  ...(index === 0 && { features: [
+    { text: '특징1-1', section: '단원A', page: 1 },
+    { text: '특징1-2', section: '단원A', page: 1 },
+  ] }),
+  ...(index === 1 && { features: [{ text: '특징2-1', section: '단원A', page: 2 }] }),
 }))
 
 const encrypted: EncryptedKeywords = {
@@ -234,6 +240,32 @@ describe('KeywordQuizPage', () => {
     await user.click(screen.getByRole('button', { name: '돌아가기' }))
 
     expect(screen.getByLabelText('단원')).toHaveValue('단원B')
+    expect(screen.getByText('키워드 6개')).toBeInTheDocument()
+  })
+
+  it('특징 보고 키워드 고르기를 고르면 특징 수를 보이고, 특징마다 한 문항으로 푼다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+    await user.click(screen.getByRole('button', { name: '특징 보고 키워드 고르기' }))
+    expect(screen.getByText('특징 3개')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: '시작' }))
+    expect(screen.getByRole('heading', { name: '특징 보고 용어 고르기' })).toBeInTheDocument()
+    expect(screen.getByText('1 / 3')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toMatch(/^특징\d-\d$/)
+  })
+
+  it('특징이 없는 단원이면 특징 모드로 시작할 수 없다고 알린다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+    await user.click(screen.getByRole('button', { name: '특징 보고 키워드 고르기' }))
+    await user.selectOptions(screen.getByLabelText('단원'), '단원B')
+
+    expect(screen.getByText('이 단원에는 특징이 없습니다.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '시작' })).toBeDisabled()
+
+    await user.click(screen.getByRole('button', { name: '요약 보고 키워드 고르기' }))
+    expect(screen.getByRole('button', { name: '시작' })).toBeEnabled()
     expect(screen.getByText('키워드 6개')).toBeInTheDocument()
   })
 

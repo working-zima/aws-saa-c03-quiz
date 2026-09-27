@@ -26,6 +26,12 @@ const backIcon = (
   </svg>
 )
 
+const TITLES: Record<KeywordChoiceMode, string> = {
+  'summary-to-term': '정의 보고 용어 고르기',
+  'term-to-summary': '용어 보고 정의 고르기',
+  'feature-to-term': '특징 보고 용어 고르기',
+}
+
 export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit }: KeywordQuizRunnerProps) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [selections, setSelections] = useState<(number | null)[]>(() => questions.map(() => null))
@@ -85,7 +91,7 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
       <header className="space-y-3">
         <div className="flex min-h-[44px] items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold text-title">
-            {mode === 'summary-to-term' ? '정의 보고 용어 고르기' : '용어 보고 정의 고르기'}
+            {TITLES[mode]}
           </h1>
           {/* 이동 규칙은 확인 문제와 같다(UI_GUIDE 「문항 사이 이동」). 되돌아간 문항은 읽기 전용이다. */}
           <div className="flex items-center gap-3">
