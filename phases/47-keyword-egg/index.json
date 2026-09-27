@@ -5,7 +5,10 @@
     {
       "step": 0,
       "name": "keyword-source",
-      "status": "pending"
+      "status": "error",
+      "started_at": "2026-09-27T20:45:15+0900",
+      "error_message": "[3회 시도 후 실패] Step did not update status",
+      "failed_at": "2026-09-27T20:45:24+0900"
     },
     {
       "step": 1,
@@ -27,5 +30,6 @@
       "name": "keyword-page",
       "status": "pending"
     }
-  ]
+  ],
+  "created_at": "2026-09-27T20:45:15+0900"
 }
