@@ -122,6 +122,7 @@ interface Progress {
 | `/random` | 랜덤 문제 시작 — 문항 수(10·20·30·50·100·전체) 선택 |
 | `/random/:count` | 랜덤 문제 — 전체 문항에서 뽑은 `count`개. `count`가 `all`이면 문제 은행 전부 |
 | `/search` | 개념·주제 검색. 질의는 `?q=`에 담긴다 |
+| `/keywords` | 키워드 퀴즈(숨은 화면). 암호 입력 → 모드·문항 수 선택 → 풀기. 링크 없이 로고 연속 탭으로만 들어온다(ADR-040) |
 
 ### 헤더는 모든 화면에서 같다
 
@@ -138,6 +139,9 @@ interface Progress {
 **되살리려 한다면 두 가지를 먼저 풀어야 한다.** 진행 위치를 어디에 보관할지(ADR-011·012와
 아래 "확인 문제 안의 문항 이동"이 금지한다)와, 320px에서 링크 세 개가 로고를 눌러
 두 줄로 접는 파손(UI_GUIDE "헤더 안의 링크"의 실측 표)이다.
+
+**로고 연속 탭은 화면 분기가 아니다.** 로고를 1.5초 안에 다섯 번 누르면 `/keywords`로 간다(ADR-040). 로고의 `onClick`이
+탭 시각만 세고, 판정은 `lib/keyword-quiz.ts`의 순수 함수가 한다. 헤더의 모양과 링크는 어느 화면에서나 그대로다.
 
 **`useParams()`로 화면을 판별하지 마라.** `Layout`이 path 없는 레이아웃 라우트인데도
 `useParams()`는 자식 라우트의 `topicId`를 그대로 돌려준다 — 실제로 확인한 동작이다.
@@ -440,6 +444,8 @@ pages/*  ──읽기──▶  lib/progress.ts  ──▶  localStorage
 - 학습 데이터: import한 상수. 불변. 전역 상태 라이브러리를 쓰지 않는다.
 - 진행 상태: `lib/progress.ts`가 localStorage를 읽고 쓴다. 화면에서는 `useProgress` 훅으로 접근한다.
 - 화면 내 일시 상태(선택한 보기, 정답 공개 여부 등): `useState`. 그 이상 필요 없다.
+- 키워드 퀴즈: 복호화한 키워드와 결과는 `KeywordQuizPage`의 `useState`에만 둔다. **어떤 저장소에도 쓰지 않는다**(ADR-040).
+  화면을 벗어나면 사라지므로 다시 들어오면 암호를 또 입력한다.
 
 `lib/`는 localStorage에 직접 접근하는 유일한 계층이다. 컴포넌트에서
 `localStorage`를 직접 부르지 마라. 이유: 저장소 접근을 DOM 없이 테스트하기 위해서다.
@@ -451,4 +457,5 @@ pages/*  ──읽기──▶  lib/progress.ts  ──▶  localStorage
 | `lib/*` (채점·진행률·저장소) | Vitest 단위 테스트. DOM 불필요. |
 | `src/data/*.json` | 스키마 검증 테스트 — 타입 일치, id 유일성, `conceptId` 참조 무결성, `answerIndex` 범위, **개념 커버리지 100%**(개념 618개가 모두 문항 하나 이상을 갖는가), 문항 id의 연속성 |
 | `pages/`, `components/` | @testing-library/react. 사용자 관점 동작만. |
+| `lib/keyword-crypto.ts` | `@vitest-environment node`. jsdom에는 `crypto.subtle`이 없다. 화면 테스트에서는 이 모듈을 mock한다. |
 | `components/diagrams/*` | @testing-library/react + 좌표 단언. 시나리오 동작에 더해 **viewBox 넘침과 라벨 넘침을 `src/lib/svg-bounds.ts`로 기계 검사**한다. 브라우저가 없는 환경에서 레이아웃 회귀를 잡는 유일한 장치다. |

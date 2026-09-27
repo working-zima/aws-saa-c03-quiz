@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter, useLocation } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 import { AppRoutes } from './App'
@@ -70,4 +70,19 @@ describe('App routes', () => {
     expect(screen.getByRole('heading', { name: '주제 목록' })).toBeInTheDocument()
     expect(screen.getByLabelText('현재 경로')).toHaveTextContent('/')
   })
+
+  // ADR-040. 숨은 화면이라 헤더에서 이 화면으로 가는 링크를 두지 않는다.
+  it('/keywords에서 암호 입력 화면을 렌더링하고 헤더에는 그 링크가 없다', () => {
+    renderAt('/keywords')
+
+    expect(screen.getByRole('heading', { name: '키워드 퀴즈' })).toBeInTheDocument()
+    expect(screen.getByLabelText('암호')).toHaveAttribute('type', 'password')
+    for (const link of within(screen.getByRole('banner')).getAllByRole('link')) {
+      expect(link).not.toHaveAttribute('href', '/keywords')
+    }
+    for (const link of within(screen.getByRole('navigation', { name: '주요 내비게이션' })).getAllByRole('link')) {
+      expect(link).not.toHaveAttribute('href', '/keywords')
+    }
+  })
 })
+
