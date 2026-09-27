@@ -13,7 +13,9 @@
     {
       "step": 1,
       "name": "health-examples",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-09-27T17:51:31+0900",
+      "summary": "health-answers에 question(리전 A가 멈추면 Route 53은 어디를 알려 줄까?)·리전 라벨 '리전 A의 ALB'/'리전 B의 ALB'·예시 곁말 query(www.example.com의 주소는?)를 더함. query는 x 148·y 63·textAnchor start·크기 9·fill-muted로 늘 보이며 user opacity를 따름(추정 폭 ≈120, 우끝 ≈268≤280). 리전 노드 폭 116 그대로(라벨 추정 ≈75), 좌표 변경 없음, viewBox 0 0 280 244 그대로. 고친 기존 단언: labels·notes 상수, 초기 상태 '경로·곁말 없이'→예시 곁말만, 시나리오별 곁말 집합에 query 포함(곁말 속성 루프는 query 제외), 연속 전환 테스트의 곁말 개수 1→2·전체에서 query만 남음(이름 변경). 새 테스트: 물음이 버튼보다 앞, query가 전체+세 시나리오에서 viewBox 안. 교차 검사: 노드 161·경로 137 교차 없음"
     },
     {
       "step": 2,
