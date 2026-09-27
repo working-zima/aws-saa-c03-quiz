@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import type { Keyword } from '../types/keywords'
@@ -93,6 +93,33 @@ describe('KeywordFlashcards', () => {
       await user.click(screen.getByRole('button', { name: verdict }))
     }
     expect(screen.getByText('알았음 2 · 몰랐음 1')).toBeInTheDocument()
+  })
+
+  it('끝나면 몰랐음으로 고른 카드만 용어와 정의를 한 번에 펼쳐 보여 준다', async () => {
+    const user = userEvent.setup()
+    renderCards()
+    for (const verdict of ['몰랐음', '알았음', '몰랐음']) {
+      await user.click(screen.getByRole('button', { name: '뒤집기' }))
+      await user.click(screen.getByRole('button', { name: verdict }))
+    }
+    const list = screen.getByRole('list', { name: '몰랐던 카드' })
+    const items = within(list).getAllByRole('listitem')
+    expect(items).toHaveLength(2)
+    expect(items[0]).toHaveTextContent('가짜 용어 1')
+    expect(items[0]).toHaveTextContent('가짜 정의 1')
+    expect(items[1]).toHaveTextContent('가짜 용어 3')
+    expect(items[1]).toHaveTextContent('가짜 정의 3')
+    expect(list).not.toHaveTextContent('가짜 용어 2')
+  })
+
+  it('몰랐음이 없으면 몰랐던 카드 목록을 두지 않는다', async () => {
+    const user = userEvent.setup()
+    renderCards()
+    for (let i = 0; i < cards.length; i += 1) {
+      await user.click(screen.getByRole('button', { name: '뒤집기' }))
+      await user.click(screen.getByRole('button', { name: '알았음' }))
+    }
+    expect(screen.queryByRole('list', { name: '몰랐던 카드' })).not.toBeInTheDocument()
   })
 
   it('넘기던 중에 돌아가기를 누르면 onExit를 부른다', async () => {

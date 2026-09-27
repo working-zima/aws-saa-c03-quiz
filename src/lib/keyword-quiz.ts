@@ -1,7 +1,7 @@
 import type {
   Keyword,
+  KeywordChoiceMode,
   KeywordFeature,
-  KeywordPairMode,
   KeywordQuestion,
   KeywordQuizMode,
 } from '../types/keywords'
@@ -12,7 +12,6 @@ import { shuffle } from './shuffle'
 export const KEYWORD_QUIZ_MODES: readonly KeywordQuizMode[] = [
   'summary-to-term',
   'term-to-summary',
-  'feature-to-term',
   'flashcard',
 ]
 
@@ -96,7 +95,7 @@ function toQuestion(
 
 export function buildKeywordQuestions(
   keywords: Keyword[],
-  mode: KeywordPairMode,
+  mode: KeywordChoiceMode,
   count: number,
   rng: () => number,
   section: string | null = null,
@@ -144,6 +143,28 @@ export function buildFeatureQuestions(
       )
       return toQuestion(keyword, feature.text, options, termOf)
     })
+}
+
+// 요약 보고 키워드 고르기의 한 판. 고른 범위의 요약 문항과 특징 문항을 모두 섞어 낸다.
+export function buildTermQuestions(
+  keywords: Keyword[],
+  rng: () => number,
+  section: string | null = null,
+): KeywordQuestion[] {
+  const summaryQuestions = buildKeywordQuestions(
+    keywords,
+    'summary-to-term',
+    selectKeywords(keywords, section).length,
+    rng,
+    section,
+  )
+  const featureQuestions = buildFeatureQuestions(
+    keywords,
+    listKeywordFeatures(keywords, section).length,
+    rng,
+    section,
+  )
+  return shuffle([...summaryQuestions, ...featureQuestions], rng)
 }
 
 export function buildFlashcards(
