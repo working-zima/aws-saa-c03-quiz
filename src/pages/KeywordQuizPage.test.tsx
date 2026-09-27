@@ -193,6 +193,43 @@ describe('KeywordQuizPage', () => {
     expect(screen.getByText('1 / 10')).toBeInTheDocument()
   })
 
+  it('단원을 고르면 그 단원의 키워드 수를 보이고, 문항 수는 그 단원 안에서 적용한다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+    const select = screen.getByLabelText('단원')
+    expect(select).toHaveValue('')
+    expect(screen.getByRole('option', { name: '전체 단원 (12)' })).toBeInTheDocument()
+
+    await user.selectOptions(select, '단원B')
+    expect(screen.getByText('키워드 6개')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '시작' }))
+
+    expect(screen.getByText('1 / 6')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toMatch(/^요약(7|8|9|10|11|12)$/)
+  })
+
+  it('단원을 골라 플래시카드를 넘기면 그 단원 카드만 나온다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+    await user.selectOptions(screen.getByLabelText('단원'), '단원A')
+    await user.click(screen.getByRole('button', { name: '플래시카드' }))
+    await user.click(screen.getByRole('button', { name: '시작' }))
+
+    expect(screen.getByText('1 / 6')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toMatch(/^용어[1-6]$/)
+  })
+
+  it('돌아가기로 선택 화면에 오면 고른 단원이 그대로다', async () => {
+    const user = userEvent.setup()
+    await unlock(user)
+    await user.selectOptions(screen.getByLabelText('단원'), '단원B')
+    await user.click(screen.getByRole('button', { name: '시작' }))
+    await user.click(screen.getByRole('button', { name: '돌아가기' }))
+
+    expect(screen.getByLabelText('단원')).toHaveValue('단원B')
+    expect(screen.getByText('키워드 6개')).toBeInTheDocument()
+  })
+
   it('localStorage에 아무것도 쓰지 않는다', async () => {
     const setItem = vi.spyOn(Storage.prototype, 'setItem')
     const user = userEvent.setup()

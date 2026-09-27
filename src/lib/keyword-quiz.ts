@@ -26,6 +26,20 @@ export function resolveKeywordCount(choice: KeywordQuizCount, total: number): nu
   return choice === KEYWORD_QUIZ_ALL ? total : Math.min(choice, total)
 }
 
+// 단원별로 풀기. 단원은 PDF에 처음 나오는 순서(키워드 id 순서)를 따른다.
+export function listKeywordSections(keywords: Keyword[]): { section: string; count: number }[] {
+  const counts = new Map<string, number>()
+  for (const keyword of keywords) {
+    counts.set(keyword.section, (counts.get(keyword.section) ?? 0) + 1)
+  }
+  return [...counts].map(([section, count]) => ({ section, count }))
+}
+
+// section이 null이면 전체다.
+export function selectKeywords(keywords: Keyword[], section: string | null): Keyword[] {
+  return section === null ? keywords : keywords.filter((keyword) => keyword.section === section)
+}
+
 function normalize(text: string): string {
   return text.replace(/\s/g, '')
 }
@@ -72,11 +86,13 @@ export function buildKeywordQuestions(
   mode: KeywordChoiceMode,
   count: number,
   rng: () => number,
+  section: string | null = null,
 ): KeywordQuestion[] {
   const promptOf = (k: Keyword) => (mode === 'summary-to-term' ? k.summary : k.term)
   const choiceOf = (k: Keyword) => (mode === 'summary-to-term' ? k.term : k.summary)
 
-  return shuffle(keywords, rng)
+  // 정답은 고른 단원에서만 내고, 오답은 전체에서 고른다. 키워드가 적은 단원도 보기 넷을 채우기 위해서다.
+  return shuffle(selectKeywords(keywords, section), rng)
     .slice(0, count)
     .map((answer) => {
       const options = shuffle(
