@@ -45,6 +45,8 @@ function related(a: Keyword, b: Keyword): boolean {
 }
 
 // 오답은 같은 단원에서 먼저 고른다. 헷갈리는 것끼리 구분하는 연습이 목적이다.
+// 단원 안에서도 같은 종류(같은 부모의 하위 항목끼리, 부모 없는 키워드끼리)를 먼저 고른다.
+// 스토리지 클래스 문항에 S3 기능이 섞이면 종류만 보고 답이 나오기 때문이다.
 // 정답과 용어나 요약이 같은 키워드와 정답의 부모·하위 항목은 빼고, 보기 문자열이 서로 겹치지 않게 한다.
 // section은 오답을 먼저 뽑을 단원이다. 특징 문항은 특징이 나온 단원을 준다.
 function pickDistractors(
@@ -63,8 +65,10 @@ function pickDistractors(
       normalize(k.term) !== term &&
       normalize(k.summary) !== summary,
   )
+  const sameKind = (k: Keyword) => (k.parentId ?? null) === (answer.parentId ?? null)
   const ordered = [
-    ...shuffle(candidates.filter((k) => k.section === section), rng),
+    ...shuffle(candidates.filter((k) => k.section === section && sameKind(k)), rng),
+    ...shuffle(candidates.filter((k) => k.section === section && !sameKind(k)), rng),
     ...shuffle(candidates.filter((k) => k.section !== section), rng),
   ]
 
