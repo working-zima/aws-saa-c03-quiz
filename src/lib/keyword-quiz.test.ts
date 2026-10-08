@@ -14,6 +14,7 @@ import {
   listKeywordSections,
   registerLogoTap,
   selectKeywords,
+  termName,
 } from './keyword-quiz'
 
 function lcg(seed: number) {
@@ -264,6 +265,39 @@ describe('buildTermQuestions', () => {
 
   it('같은 시드면 결과가 같다', () => {
     expect(buildTermQuestions(family, lcg(9))).toEqual(buildTermQuestions(family, lcg(9)))
+  })
+})
+
+// 괄호 풀이는 요약과 같은 말일 때가 많아 답을 알려 준다. 답을 보기 전에는 뗀다(사용자 결정).
+describe('괄호 풀이 숨기기', () => {
+  it('termName은 끝의 괄호 풀이를 떼고, 괄호가 없으면 그대로 둔다', () => {
+    expect(termName('가 (Ga Long Name)')).toBe('가')
+    expect(termName('나 다 (Na, 나 풀이)')).toBe('나 다')
+    expect(termName('라 마')).toBe('라 마')
+  })
+
+  const glossed: Keyword[] = [
+    { ...kw('g1', 'G'), term: 'g1 (G One)' },
+    { ...kw('g2', 'G'), term: 'g2 (G Two)', features: [{ text: 'g2 특징', section: 'G', page: 1 }] },
+    { ...kw('g3', 'G'), term: 'g3 (G Three)' },
+    kw('g4', 'G'),
+  ]
+  const glossedById = new Map(glossed.map((k) => [k.id, k]))
+
+  it('요약 보고 키워드 고르기는 요약 문항과 특징 문항 모두 보기에서 괄호 풀이를 뗀다', () => {
+    for (let seed = 0; seed < 10; seed += 1) {
+      for (const q of buildTermQuestions(glossed, lcg(seed))) {
+        q.choiceKeywordIds.forEach((id, i) => expect(q.choices[i]).toBe(termName(glossedById.get(id)!.term)))
+        expect(q.choices.join('')).not.toContain('(')
+      }
+    }
+  })
+
+  it('키워드 보고 요약 고르기는 문제문에서 괄호 풀이를 뗀다', () => {
+    for (const q of buildKeywordQuestions(glossed, 'term-to-summary', glossed.length, lcg(1))) {
+      expect(q.prompt).toBe(termName(glossedById.get(q.keywordId)!.term))
+      expect(q.prompt).not.toContain('(')
+    }
   })
 })
 

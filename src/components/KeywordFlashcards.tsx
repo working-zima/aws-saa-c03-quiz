@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { termName } from '../lib/keyword-quiz'
 import type { Keyword } from '../types/keywords'
 
 // 키워드 퀴즈(ADR-040)의 플래시카드. 알았음·몰랐음은 이 화면의 개수와 완료 화면의 몰랐던 카드 목록에만 쓰고 저장하지 않는다.
@@ -91,7 +92,8 @@ export function KeywordFlashcards({ cards, onRestart, onExit }: KeywordFlashcard
       </header>
 
       <div className="space-y-3 rounded-lg border border-neutral-800 bg-[#141414] p-5">
-        <h2 className="text-lg font-medium text-neutral-100">{card.term}</h2>
+        {/* 괄호 풀이는 정의를 알려 주므로 뒤집은 뒤에만 붙인다. */}
+        <h2 className="text-lg font-medium text-neutral-100">{flipped ? card.term : termName(card.term)}</h2>
         {flipped && (
           <p className="text-[15px] leading-7 text-neutral-300">{card.summary}</p>
         )}
