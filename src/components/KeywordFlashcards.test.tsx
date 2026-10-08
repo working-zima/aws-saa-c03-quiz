@@ -122,6 +122,23 @@ describe('KeywordFlashcards', () => {
     expect(screen.queryByRole('list', { name: '몰랐던 카드' })).not.toBeInTheDocument()
   })
 
+  // 괄호 풀이는 답을 알려 주므로 앞면에서는 떼고, 뒤집은 뒤와 몰랐던 카드 목록에서는 다 보인다(사용자 결정).
+  it('앞면에는 괄호 풀이를 뗀 이름만, 뒤집으면 괄호 풀이까지 보여 준다', async () => {
+    const user = userEvent.setup()
+    render(
+      <KeywordFlashcards
+        cards={[{ id: 'g1', term: '가짜 이름 (Fake Gloss)', summary: '가짜 정의', section: '단원 A', page: 1 }]}
+        onExit={vi.fn()}
+        onRestart={vi.fn()}
+      />,
+    )
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(/^가짜 이름$/)
+    await user.click(screen.getByRole('button', { name: '뒤집기' }))
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(/^가짜 이름 \(Fake Gloss\)$/)
+    await user.click(screen.getByRole('button', { name: '몰랐음' }))
+    expect(screen.getByRole('list', { name: '몰랐던 카드' })).toHaveTextContent('가짜 이름 (Fake Gloss)')
+  })
+
   it('넘기던 중에 돌아가기를 누르면 onExit를 부른다', async () => {
     const user = userEvent.setup()
     const { onExit } = renderCards()

@@ -125,6 +125,17 @@ describe('KeywordQuizRunner', () => {
     expect(picked).toHaveTextContent('가짜 정의 4')
   })
 
+  // 보기에서는 괄호 풀이를 떼지만(buildKeywordQuestions), 답을 본 뒤의 풀이에는 다 보인다(사용자 결정).
+  it('보기에 괄호 풀이가 없어도 풀이에는 괄호 풀이까지 붙은 용어를 보여 준다', async () => {
+    const user = userEvent.setup()
+    renderRunner({
+      keywords: [{ ...keywords[0], term: '가짜 용어 1 (Fake Gloss)' }, ...keywords.slice(1)],
+      questions: [questions[0]],
+    })
+    await user.click(screen.getByRole('button', { name: '가짜 용어 1' }))
+    expect(screen.getByTestId('keyword-answer')).toHaveTextContent('가짜 용어 1 (Fake Gloss)')
+  })
+
   it('정답을 고르면 고른 보기 설명을 따로 띄우지 않는다', async () => {
     const user = userEvent.setup()
     renderRunner()
