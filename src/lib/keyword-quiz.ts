@@ -29,6 +29,12 @@ export function selectKeywords(keywords: Keyword[], section: string | null): Key
   return section === null ? keywords : keywords.filter((keyword) => keyword.section === section)
 }
 
+// `이름 (풀이)`에서 이름만 남긴다. 풀이가 요약과 같은 말일 때가 많아 답을 알려 주므로
+// 답을 보기 전에 보이는 용어는 이것으로 낸다. 답을 본 뒤의 풀이에는 term을 그대로 쓴다.
+export function termName(term: string): string {
+  return term.replace(/\s*\(.*\)\s*$/, '')
+}
+
 function normalize(text: string): string {
   return text.replace(/\s/g, '')
 }
@@ -100,8 +106,8 @@ export function buildKeywordQuestions(
   rng: () => number,
   section: string | null = null,
 ): KeywordQuestion[] {
-  const promptOf = (k: Keyword) => (mode === 'summary-to-term' ? k.summary : k.term)
-  const choiceOf = (k: Keyword) => (mode === 'summary-to-term' ? k.term : k.summary)
+  const promptOf = (k: Keyword) => (mode === 'summary-to-term' ? k.summary : termName(k.term))
+  const choiceOf = (k: Keyword) => (mode === 'summary-to-term' ? termName(k.term) : k.summary)
 
   // 정답은 고른 단원에서만 내고, 오답은 전체에서 고른다. 키워드가 적은 단원도 보기 넷을 채우기 위해서다.
   return shuffle(selectKeywords(keywords, section), rng)
@@ -132,7 +138,7 @@ export function buildFeatureQuestions(
   rng: () => number,
   section: string | null = null,
 ): KeywordQuestion[] {
-  const termOf = (k: Keyword) => k.term
+  const termOf = (k: Keyword) => termName(k.term)
 
   return shuffle(listKeywordFeatures(keywords, section), rng)
     .slice(0, count)
