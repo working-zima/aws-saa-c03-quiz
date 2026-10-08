@@ -192,6 +192,49 @@ describe('부모와 하위 항목', () => {
   }
 })
 
+// 같은 단원 안에서도 같은 종류부터 오답으로 낸다. 단원을 합친 뒤(S3) 스토리지 클래스 문항에 S3 기능이 섞여 답이 뻔해졌다.
+// 단원 K: 부모 없는 m1~m4, m1의 하위 c1~c4, m2의 하위 d1·d2. m3에 특징 하나.
+const kinds: Keyword[] = [
+  kw('m1', 'K'),
+  kw('m2', 'K'),
+  { ...kw('m3', 'K'), features: [{ text: 'm3 특징', section: 'K', page: 1 }] },
+  kw('m4', 'K'),
+  ...['c1', 'c2', 'c3', 'c4'].map((id) => ({ ...kw(id, 'K'), parentId: 'm1' })),
+  ...['d1', 'd2'].map((id) => ({ ...kw(id, 'K'), parentId: 'm2' })),
+]
+
+describe('같은 종류부터 오답 고르기', () => {
+  function wrongIds(q: { choiceKeywordIds: string[]; answerIndex: number }) {
+    return q.choiceKeywordIds.filter((_, i) => i !== q.answerIndex)
+  }
+
+  for (const mode of modes) {
+    it(`${mode}: 하위 항목이면 같은 부모의 다른 하위 항목부터 낸다`, () => {
+      for (let seed = 0; seed < 40; seed += 1) {
+        for (const q of buildKeywordQuestions(kinds, mode, kinds.length, lcg(seed))) {
+          const wrong = wrongIds(q)
+          if (q.keywordId === 'c1') expect(wrong.sort()).toEqual(['c2', 'c3', 'c4'])
+          if (q.keywordId === 'd1') expect(wrong).toContain('d2')
+        }
+      }
+    })
+
+    it(`${mode}: 부모 없는 키워드면 같은 단원의 부모 없는 키워드부터 낸다`, () => {
+      for (let seed = 0; seed < 40; seed += 1) {
+        const q = buildKeywordQuestions(kinds, mode, kinds.length, lcg(seed)).find((item) => item.keywordId === 'm3')!
+        expect(wrongIds(q).sort()).toEqual(['m1', 'm2', 'm4'])
+      }
+    })
+  }
+
+  it('특징 문항도 같은 종류부터 낸다', () => {
+    for (let seed = 0; seed < 40; seed += 1) {
+      const [q] = buildFeatureQuestions(kinds, 10, lcg(seed))
+      expect(wrongIds(q).sort()).toEqual(['m1', 'm2', 'm4'])
+    }
+  })
+})
+
 describe('특징 보고 키워드 고르기', () => {
   it('listKeywordFeatures는 특징이 나온 단원으로 거른다', () => {
     expect(listKeywordFeatures(family, null).map((f) => f.feature.text)).toEqual(['p 특징 1', 'p 특징 2', 'q1 특징'])
