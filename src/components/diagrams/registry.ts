@@ -8,6 +8,7 @@ import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
+import { IdentityCenterAccessDiagram } from './IdentityCenterAccessDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
@@ -54,6 +55,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'governance-iac.cloudformation-drift-detection': DriftScopeDiagram,
   'governance-iac.control-tower-controls': ControlTimingDiagram,
   'hybrid-connectivity.vpn-vs-direct-connect': HybridPathsDiagram,
+  'identity-federation.identity-center-permission-set': IdentityCenterAccessDiagram,
   'organizations-cloudtrail-config.scp-attachment-targets': OrgScpScopeDiagram,
   'route53.routing-policies': Route53PolicyTable,
   'route53.multivalue-answer-details': Route53HealthDiagram,
