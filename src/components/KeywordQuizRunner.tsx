@@ -134,8 +134,15 @@ export function KeywordQuizRunner({ mode, questions, keywords, onRestart, onExit
 
       {revealed && (
         <div className="animate-[fade-in_0.2s_ease-out] space-y-3 border-t border-neutral-800 pt-5">
-          {/* 오답이면 고른 보기의 짝만 보여 준다. 정답은 초록 테두리로 이미 보인다(사용자 결정). */}
-          {pickedKeyword ? (
+          {/* 옳지 않은 것 고르기는 보기가 모두 한 키워드의 설명이라, 짝 대신 가짜 보기가 바꾼 원래 문장을 보여 준다.
+              그 밖에는 오답이면 고른 보기의 짝만 보여 준다. 정답은 초록 테두리로 이미 보인다(사용자 결정). */}
+          {question.correction ? (
+            <div className="space-y-1" data-testid="keyword-correction">
+              <p className="text-xs text-neutral-500">실제로는</p>
+              <p className="text-base font-medium text-neutral-100">{answerKeyword?.term}</p>
+              <p className="text-[15px] leading-7 text-neutral-300">{question.correction}</p>
+            </div>
+          ) : pickedKeyword ? (
             <div className="space-y-1" data-testid="keyword-picked">
               <p className="text-xs text-neutral-500">고른 보기</p>
               <p className="text-base font-medium text-neutral-100">{pickedKeyword.term}</p>

@@ -126,11 +126,12 @@ export function buildKeywordQuestions(
 }
 
 // [특징] 문장과 그 키워드. section이 null이면 전체이고, 아니면 특징이 나온 단원으로 거른다.
+// 가짜 보기가 있는 키워드의 특징은 옳지 않은 것 고르기로만 내므로 뺀다.
 export function listKeywordFeatures(
   keywords: Keyword[],
   section: string | null,
 ): { keyword: Keyword; feature: KeywordFeature }[] {
-  return keywords.flatMap((keyword) => (keyword.features ?? [])
+  return keywords.flatMap((keyword) => (keyword.falseFeature ? [] : keyword.features ?? [])
     .filter((feature) => section === null || feature.section === section)
     .map((feature) => ({ keyword, feature })))
 }
@@ -175,6 +176,57 @@ export function buildTermQuestions(
     section,
   )
   return shuffle([...summaryQuestions, ...featureQuestions], rng)
+}
+
+// 옳지 않은 것 고르기를 낼 키워드. 단원은 가짜 보기가 바꾼 특징이 나온 단원을 따른다.
+export function listFalseFeatureKeywords(keywords: Keyword[], section: string | null): Keyword[] {
+  return keywords.filter(({ falseFeature, features }) => falseFeature
+    && (section === null || features?.[falseFeature.replaces]?.section === section))
+}
+
+// 키워드를 보고 옳지 않은 설명을 고른다. 보기는 가짜 보기 하나와, 요약과 바꾸지 않은 특징에서 고른 옳은 설명 셋이다.
+// 특징만 보고는 어느 키워드인지 알 수 없는 것이 많아 키워드를 먼저 보여 준다(사용자 결정).
+export function buildFalseFeatureQuestions(
+  keywords: Keyword[],
+  rng: () => number,
+  section: string | null = null,
+): KeywordQuestion[] {
+  return shuffle(listFalseFeatureKeywords(keywords, section), rng).flatMap((keyword) => {
+    const { falseFeature, features = [] } = keyword
+    if (!falseFeature) return []
+    const truths = shuffle(
+      [keyword.summary, ...features.filter((_, index) => index !== falseFeature.replaces).map((feature) => feature.text)],
+      rng,
+    ).slice(0, 3)
+    if (truths.length < 3) {
+      throw new Error(`옳은 보기를 셋 채우지 못했다: ${keyword.id}`)
+    }
+    const choices = shuffle([falseFeature.text, ...truths], rng) as [string, string, string, string]
+    return [{
+      keywordId: keyword.id,
+      prompt: `${termName(keyword.term)}에 대한 설명으로 옳지 않은 것은?`,
+      choices,
+      choiceKeywordIds: [keyword.id, keyword.id, keyword.id, keyword.id],
+      answerIndex: choices.indexOf(falseFeature.text) as 0 | 1 | 2 | 3,
+      correction: features[falseFeature.replaces].text,
+    }]
+  })
+}
+
+// 키워드 보고 요약 고르기의 한 판. 고른 범위의 요약 문항과 옳지 않은 것 고르기 문항을 모두 섞어 낸다.
+export function buildSummaryQuestions(
+  keywords: Keyword[],
+  rng: () => number,
+  section: string | null = null,
+): KeywordQuestion[] {
+  const summaryQuestions = buildKeywordQuestions(
+    keywords,
+    'term-to-summary',
+    selectKeywords(keywords, section).length,
+    rng,
+    section,
+  )
+  return shuffle([...summaryQuestions, ...buildFalseFeatureQuestions(keywords, rng, section)], rng)
 }
 
 export function buildFlashcards(

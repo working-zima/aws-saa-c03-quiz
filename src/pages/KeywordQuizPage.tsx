@@ -5,9 +5,10 @@ import defaultEncrypted from '../data/keywords.enc.json'
 import { decryptKeywords, WrongPassphraseError } from '../lib/keyword-crypto'
 import {
   buildFlashcards,
-  buildKeywordQuestions,
+  buildSummaryQuestions,
   buildTermQuestions,
   KEYWORD_QUIZ_MODES,
+  listFalseFeatureKeywords,
   listKeywordFeatures,
   listKeywordSections,
   selectKeywords,
@@ -83,7 +84,7 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
     } else if (mode === 'summary-to-term') {
       setRound({ mode, questions: buildTermQuestions(keywords, rng, section) })
     } else {
-      setRound({ mode, questions: buildKeywordQuestions(keywords, mode, scoped.length, rng, section) })
+      setRound({ mode, questions: buildSummaryQuestions(keywords, rng, section) })
     }
     setRoundKey((key) => key + 1)
   }
@@ -133,16 +134,23 @@ export function KeywordQuizPage({ encrypted = defaultEncrypted as EncryptedKeywo
       )
   }
 
-  // 요약 보고 키워드 고르기는 특징 문장도 한 문항씩 섞어 내므로 특징 수를 함께 보인다.
+  // 고르기 두 모드는 요약 문항 말고도 섞어 내는 문항이 있어 그 수를 함께 보인다.
+  // 요약 보고 키워드 고르기는 특징 문장을, 키워드 보고 요약 고르기는 옳지 않은 것 고르기를 섞는다.
   const keywordCount = selectKeywords(keywords, section).length
   const featureCount = mode === 'summary-to-term' ? listKeywordFeatures(keywords, section).length : 0
+  const falseFeatureCount = mode === 'term-to-summary' ? listFalseFeatureKeywords(keywords, section).length : 0
+  const countText = featureCount > 0
+    ? `키워드 ${keywordCount}개 · 특징 ${featureCount}개`
+    : falseFeatureCount > 0
+      ? `키워드 ${keywordCount}개 · 옳지 않은 것 고르기 ${falseFeatureCount}개`
+      : `키워드 ${keywordCount}개`
 
   return (
     <section className="max-w-2xl space-y-8 break-keep break-anywhere">
       <div className="space-y-3">
         <h1 className="text-2xl font-semibold text-title">키워드 퀴즈</h1>
         <p className="text-[15px] leading-7 text-neutral-300">
-          {featureCount > 0 ? `키워드 ${keywordCount}개 · 특징 ${featureCount}개` : `키워드 ${keywordCount}개`}
+          {countText}
         </p>
       </div>
       <div className="space-y-3">
