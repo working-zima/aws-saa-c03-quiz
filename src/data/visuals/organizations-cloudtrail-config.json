@@ -1,0 +1,56 @@
+{
+  "diagrams": {
+    "scp-scope": {
+      "label": "조직과 SCP 적용 범위 도식",
+      "svgLabel": "SCP를 붙인 자리와 걸리는 계정",
+      "question": "SCP를 어디에 붙이면 어느 계정까지 걸릴까?",
+      "idleCaption": "붙이는 자리를 고르면 SCP가 걸리는 계정을 볼 수 있다.",
+      "legend": "파랑: SCP · 청록: 계정. 화살표는 SCP를 붙인 자리를 가리킨다. 바깥 박스는 조직의 루트, 안쪽 박스는 OU다.",
+      "nodes": {
+        "scp": "SCP",
+        "management": "관리 계정",
+        "account-a": "계정 A",
+        "account-b": "계정 B",
+        "account-c": "계정 C"
+      },
+      "groups": {
+        "root": "조직 · 루트",
+        "ou-1": "OU 1",
+        "ou-2": "OU 2"
+      },
+      "notes": {
+        "management-exempt": "SCP가 걸리지 않음"
+      },
+      "scenarios": [
+        {
+          "id": "root",
+          "label": "루트에 SCP",
+          "caption": "루트에 붙이면 제한할 생각이 없던 계정까지 모든 멤버 계정에 걸린다. 관리 계정은 예외다.",
+          "sources": ["organizations-cloudtrail-config.scp-attachment-targets"]
+        },
+        {
+          "id": "ou",
+          "label": "OU에 SCP",
+          "caption": "OU에 붙이면 안에 든 계정 전부에 한 번에 걸려, 계정마다 정책을 복사하지 않아도 된다.",
+          "sources": [
+            "organizations-cloudtrail-config.organizational-unit",
+            "organizations-cloudtrail-config.scp-attachment-targets"
+          ]
+        },
+        {
+          "id": "account",
+          "label": "계정 하나에 SCP",
+          "caption": "개별 멤버 계정에도 직접 붙일 수 있다. SCP는 붙인 자리 아래에만 적용된다.",
+          "sources": ["organizations-cloudtrail-config.scp-attachment-targets"]
+        }
+      ],
+      "sources": [
+        "organizations-cloudtrail-config.organizational-unit",
+        "organizations-cloudtrail-config.scp-attachment-targets",
+        "organizations-cloudtrail-config.organizations-consolidated-billing"
+      ]
+    }
+  },
+  "tables": {},
+  "glossary": []
+}
