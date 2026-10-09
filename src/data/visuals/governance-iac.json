@@ -1,5 +1,56 @@
 {
-  "diagrams": {},
+  "diagrams": {
+    "drift-scope": {
+      "label": "드리프트 감지와 AWS Config 범위 도식",
+      "svgLabel": "드리프트 감지와 AWS Config가 살피는 범위",
+      "question": "설정이 바뀐 리소스를 어디까지 잡아낼까?",
+      "idleCaption": "기능을 고르면 설정이 바뀐 리소스를 어디까지 살피는지 볼 수 있다.",
+      "legend": "파랑: 설정 변경을 살피는 기능 · 청록: 계정의 리소스 · 회색: 템플릿 파일. 위 화살표는 템플릿으로 배포한 것, 아래 화살표는 살피는 범위다.",
+      "nodes": {
+        "template": "템플릿",
+        "stack-a": "리소스",
+        "stack-b": "리소스",
+        "team-a": "팀 A의 리소스",
+        "team-b": "팀 B의 리소스",
+        "drift": "드리프트 감지",
+        "config": "AWS Config"
+      },
+      "groups": {
+        "account": "한 계정",
+        "stack": "스택",
+        "outside": "스택 밖"
+      },
+      "notes": {
+        "not-seen": "보지 못함",
+        "all-resources": "모든 지원 리소스"
+      },
+      "scenarios": [
+        {
+          "id": "drift",
+          "label": "드리프트 감지",
+          "caption": "스택으로 만든 리소스만 템플릿과 비교한다. 팀이 직접 만든 스택 밖 리소스는 빠진다.",
+          "sources": [
+            "governance-iac.cloudformation-drift-detection",
+            "governance-iac.cloudformation"
+          ]
+        },
+        {
+          "id": "config",
+          "label": "AWS Config",
+          "caption": "스택 안팎을 가리지 않고 계정의 모든 지원 리소스에서 설정 변경을 기록한다.",
+          "sources": [
+            "governance-iac.cloudformation-drift-detection",
+            "governance-iac.service-catalog"
+          ]
+        }
+      ],
+      "sources": [
+        "governance-iac.cloudformation",
+        "governance-iac.cloudformation-drift-detection",
+        "governance-iac.service-catalog"
+      ]
+    }
+  },
   "tables": {
     "tool-choice": {
       "label": "도구별 고를 때와 헷갈리는 짝",
