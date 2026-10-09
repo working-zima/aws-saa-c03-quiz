@@ -1,0 +1,32 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "48-governance-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "tool-table",
+      "status": "completed",
+      "summary": "src/data/visuals/governance-iac.json과 visualsByTopicId['governance-iac'] 로더 키를 추가하고, tool-choice 비교표(7행, 열 폭 41%·24%·35%)를 GovernanceToolTable 래퍼로 governance-iac.cloudformation 앵커에 연결했다. 새 테스트 6개와 전체 1,145개(64개 파일), build·lint·구조·경로 교차 검사를 모두 통과했다.",
+      "started_at": "2026-10-09T16:27:02+0900",
+      "completed_at": "2026-10-09T16:30:11+0900"
+    },
+    {
+      "step": 1,
+      "name": "drift-scope-diagram",
+      "status": "completed",
+      "summary": "DriftScopeDiagram과 drift-scope JSON 문구를 추가하고 governance-iac.cloudformation-drift-detection 본문 뒤에 연결했다. 최종 viewBox는 0 0 280 276이며 출발점 좌표 변경은 없다. 새 도식 노드 7개·경로 4개를 포함해 전체 노드 168개·경로 141개의 교차 검사를 통과했다. TDD로 추가한 테스트 14개와 전체 1,159개(65개 파일), build·lint·구조 검사를 모두 통과했고 공통 컴포넌트·학습 데이터·step 0 비교표는 그대로다.",
+      "started_at": "2026-10-09T16:30:11+0900",
+      "completed_at": "2026-10-09T16:34:36+0900"
+    },
+    {
+      "step": 2,
+      "name": "control-timing-diagram",
+      "status": "completed",
+      "summary": "ControlTimingDiagram과 control-timing JSON 문구를 추가하고 governance-iac.control-tower-controls 본문 뒤에 연결했다. 최종 viewBox는 0 0 280 240이며 출발점 좌표 변경은 없다. 새 도식 노드 5개·경로 4개를 포함해 전체 노드 173개·경로 145개의 교차 검사를 통과했다. TDD로 추가한 테스트 16개와 전체 1,175개(66개 파일), build·lint·구조 검사를 모두 통과했고 공통 컴포넌트·학습 데이터·step 0 비교표·step 1 도식과 문구는 그대로다.",
+      "started_at": "2026-10-09T16:34:37+0900",
+      "completed_at": "2026-10-09T16:38:51+0900"
+    }
+  ],
+  "created_at": "2026-10-09T16:27:02+0900",
+  "completed_at": "2026-10-09T16:38:51+0900"
+}
