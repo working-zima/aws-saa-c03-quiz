@@ -6,10 +6,13 @@ import {
   KEYWORD_QUIZ_MODES,
   LOGO_TAP_COUNT,
   LOGO_TAP_WINDOW_MS,
+  buildFalseFeatureQuestions,
   buildFlashcards,
   buildFeatureQuestions,
   buildKeywordQuestions,
+  buildSummaryQuestions,
   buildTermQuestions,
+  listFalseFeatureKeywords,
   listKeywordFeatures,
   listKeywordSections,
   registerLogoTap,
@@ -308,6 +311,103 @@ describe('buildTermQuestions', () => {
 
   it('같은 시드면 결과가 같다', () => {
     expect(buildTermQuestions(family, lcg(9))).toEqual(buildTermQuestions(family, lcg(9)))
+  })
+})
+
+// 특징 문장만 보고는 어느 키워드인지 알 수 없는 것이 많아, 특징을 키워드를 보고 옳지 않은 설명을 고르는 문항으로 낸다(사용자 결정).
+// f는 특징 셋째(단원 G에 나옴)를 바꾼 가짜 보기가 있다. 옳은 보기는 요약과 나머지 특징 둘, 딱 셋이다.
+// e는 특징 넷 가운데 첫째를 바꿨다. 옳은 보기 후보가 넷이라 셋을 고른다. g는 특징만 있다.
+const falsy: Keyword[] = [
+  { ...kw('f', 'F'), term: 'f 용어 (F Gloss)', features: [
+    { text: 'f 특징 1', section: 'G', page: 1 },
+    { text: 'f 특징 2', section: 'G', page: 1 },
+    { text: 'f 특징 3', section: 'G', page: 1 },
+  ], falseFeature: { text: 'f 가짜', replaces: 2 } },
+  { ...kw('e', 'F'), features: [
+    { text: 'e 특징 1', section: 'F', page: 1 },
+    { text: 'e 특징 2', section: 'F', page: 1 },
+    { text: 'e 특징 3', section: 'F', page: 1 },
+    { text: 'e 특징 4', section: 'F', page: 1 },
+  ], falseFeature: { text: 'e 가짜', replaces: 0 } },
+  { ...kw('g', 'F'), features: [{ text: 'g 특징', section: 'F', page: 1 }] },
+  kw('h', 'F'),
+  kw('i', 'G'),
+  kw('j', 'G'),
+  kw('l', 'G'),
+]
+
+describe('옳지 않은 것 고르기', () => {
+  it('가짜 보기가 있는 키워드의 특징은 특징 문항에서 빠진다', () => {
+    expect(listKeywordFeatures(falsy, null).map((f) => f.feature.text)).toEqual(['g 특징'])
+    expect(buildTermQuestions(falsy, lcg(1)).map((q) => q.prompt)).not.toContain('f 특징 1')
+  })
+
+  it('listFalseFeatureKeywords는 가짜 보기가 바꾼 특징이 나온 단원으로 거른다', () => {
+    expect(listFalseFeatureKeywords(falsy, null).map((k) => k.id)).toEqual(['f', 'e'])
+    expect(listFalseFeatureKeywords(falsy, 'G').map((k) => k.id)).toEqual(['f'])
+    expect(listFalseFeatureKeywords(falsy, 'F').map((k) => k.id)).toEqual(['e'])
+    expect(listFalseFeatureKeywords(keywords, null)).toEqual([])
+  })
+
+  it('문제문은 괄호 풀이를 뗀 키워드로 묻고, 정답은 가짜 보기, 나머지는 요약과 바꾸지 않은 특징이다', () => {
+    const q = buildFalseFeatureQuestions(falsy, lcg(1), 'G')[0]
+    expect(q.keywordId).toBe('f')
+    expect(q.prompt).toBe('f 용어에 대한 설명으로 옳지 않은 것은?')
+    expect(q.choices[q.answerIndex]).toBe('f 가짜')
+    expect([...q.choices].sort()).toEqual(['f 가짜', 'f 요약', 'f 특징 1', 'f 특징 2'])
+    expect(q.choiceKeywordIds).toEqual(['f', 'f', 'f', 'f'])
+  })
+
+  it('답을 본 뒤 보여 줄 원래 문장을 싣는다', () => {
+    const questions = buildFalseFeatureQuestions(falsy, lcg(1))
+    expect(questions.find((q) => q.keywordId === 'f')!.correction).toBe('f 특징 3')
+    expect(questions.find((q) => q.keywordId === 'e')!.correction).toBe('e 특징 1')
+  })
+
+  it('옳은 보기 후보가 넷 이상이면 셋을 고르고, 바꾼 특징은 보기에 내지 않는다', () => {
+    const seen = new Set<string>()
+    for (let seed = 0; seed < 40; seed += 1) {
+      const q = buildFalseFeatureQuestions(falsy, lcg(seed), 'F')[0]
+      expect(q.choices).toHaveLength(4)
+      expect(q.choices[q.answerIndex]).toBe('e 가짜')
+      expect(q.choices).not.toContain('e 특징 1')
+      q.choices.forEach((c) => seen.add(c))
+    }
+    expect([...seen].sort()).toEqual(['e 가짜', 'e 요약', 'e 특징 2', 'e 특징 3', 'e 특징 4'])
+  })
+
+  it('가짜 보기의 자리가 고정되지 않는다', () => {
+    const positions = new Set(
+      Array.from({ length: 20 }, (_, seed) => buildFalseFeatureQuestions(falsy, lcg(seed), 'G')[0].answerIndex),
+    )
+    expect(positions.size).toBeGreaterThan(1)
+  })
+
+  it('같은 시드면 결과가 같다', () => {
+    expect(buildFalseFeatureQuestions(falsy, lcg(9))).toEqual(buildFalseFeatureQuestions(falsy, lcg(9)))
+  })
+})
+
+describe('buildSummaryQuestions', () => {
+  it('요약 문항과 옳지 않은 것 고르기 문항을 모두 낸다', () => {
+    const questions = buildSummaryQuestions(falsy, lcg(1))
+    expect(questions).toHaveLength(falsy.length + 2)
+    expect(questions.filter((q) => q.correction).map((q) => q.keywordId).sort()).toEqual(['e', 'f'])
+  })
+
+  it('단원을 주면 그 단원의 키워드 요약 문항과 그 단원에 나온 옳지 않은 것 고르기 문항만 낸다', () => {
+    const questions = buildSummaryQuestions(falsy, lcg(2), 'G')
+    expect(questions.map((q) => q.prompt).sort()).toEqual(['f 용어에 대한 설명으로 옳지 않은 것은?', 'i 용어', 'j 용어', 'l 용어'])
+  })
+
+  it('옳지 않은 것 고르기 문항을 뒤에 몰지 않고 섞는다', () => {
+    const first = Array.from({ length: 20 }, (_, seed) => buildSummaryQuestions(falsy, lcg(seed)))
+      .some((questions) => questions[0].correction !== undefined)
+    expect(first).toBe(true)
+  })
+
+  it('같은 시드면 결과가 같다', () => {
+    expect(buildSummaryQuestions(falsy, lcg(9))).toEqual(buildSummaryQuestions(falsy, lcg(9)))
   })
 })
 

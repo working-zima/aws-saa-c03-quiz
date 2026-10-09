@@ -143,6 +143,31 @@ describe('KeywordQuizRunner', () => {
     expect(screen.queryByTestId('keyword-picked')).not.toBeInTheDocument()
   })
 
+  // 옳지 않은 것 고르기는 보기가 모두 한 키워드의 설명이라, 고른 보기의 짝 대신 가짜 보기가 바꾼 원래 문장을 보여 준다.
+  const falseFeatureQuestion: KeywordQuestion = {
+    keywordId: 'k2',
+    prompt: '가짜 용어 2에 대한 설명으로 옳지 않은 것은?',
+    choices: ['가짜 정의 2', '바꾼 문장', '옳은 특징 1', '옳은 특징 2'],
+    choiceKeywordIds: ['k2', 'k2', 'k2', 'k2'],
+    answerIndex: 1,
+    correction: '원래 문장',
+  }
+
+  for (const [label, pick] of [['정답', '바꾼 문장'], ['오답', '옳은 특징 1']] as const) {
+    it(`옳지 않은 것 고르기에서 ${label}을 고르면 실제로는 어떤 문장인지 보여 주고, 짝 풀이는 띄우지 않는다`, async () => {
+      const user = userEvent.setup()
+      renderRunner({ mode: 'term-to-summary', questions: [falseFeatureQuestion] })
+      expect(screen.queryByTestId('keyword-correction')).not.toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: pick }))
+      const correction = screen.getByTestId('keyword-correction')
+      expect(correction).toHaveTextContent('실제로는')
+      expect(correction).toHaveTextContent('가짜 용어 2')
+      expect(correction).toHaveTextContent('원래 문장')
+      expect(screen.queryByTestId('keyword-picked')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('keyword-answer')).not.toBeInTheDocument()
+    })
+  }
+
   it('공개한 뒤에는 정답 보기만 활성이고, 정답을 한 번 더 누르면 다음 문항으로 간다', async () => {
     const user = userEvent.setup()
     renderRunner()
