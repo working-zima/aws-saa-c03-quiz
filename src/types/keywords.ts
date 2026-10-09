@@ -6,6 +6,7 @@ export interface Keyword {
   page: number
   parentId?: string // 묶음 제목·[기능]·[유형] 아래의 하위 항목이면 그 부모 키워드
   features?: KeywordFeature[] // [특징] 문장. 키워드 이름은 ○○로 가려져 있다.
+  falseFeature?: KeywordFalseFeature // 있으면 특징을 옳지 않은 것 고르기 한 문항으로만 낸다.
 }
 
 // [특징] 문장 하나. 부모 키워드와 다른 단원에 나올 수 있어서(Lambda) 단원을 따로 든다.
@@ -13,6 +14,12 @@ export interface KeywordFeature {
   text: string
   section: string
   page: number
+}
+
+// 옳지 않은 것 고르기의 가짜 보기. features[replaces]를 바꿔 틀리게 만든 문장이고, 답을 본 뒤에는 원래 문장을 보여 준다.
+export interface KeywordFalseFeature {
+  text: string
+  replaces: number
 }
 
 // 키워드 퀴즈의 암호문 파일 형식. 규약은 ADR-040이다.
@@ -27,6 +34,7 @@ export interface EncryptedKeywords {
 }
 
 // summary-to-term은 [특징] 문장 문항도 섞어 낸다(buildTermQuestions).
+// term-to-summary는 옳지 않은 것 고르기 문항도 섞어 낸다(buildSummaryQuestions).
 export type KeywordQuizMode = 'summary-to-term' | 'term-to-summary' | 'flashcard'
 export type KeywordChoiceMode = Exclude<KeywordQuizMode, 'flashcard'>
 
@@ -36,4 +44,5 @@ export interface KeywordQuestion {
   choices: [string, string, string, string]
   choiceKeywordIds: [string, string, string, string] // 보기마다 그 보기가 가리키는 키워드. 고른 오답을 풀어 보여 주는 데 쓴다.
   answerIndex: 0 | 1 | 2 | 3
+  correction?: string // 옳지 않은 것 고르기에서 가짜 보기가 바꾼 원래 문장
 }
