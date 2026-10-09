@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "identity-center-diagram",
-      "status": "pending"
+      "status": "completed",
+      "summary": "src/data/visuals/identity-federation.json의 identity-center-access 문구와 visualsByTopicId['identity-federation'] 로더 키 추가, IdentityCenterAccessDiagram을 identity-center-permission-set 본문 뒤에 연결해 권한 세트 할당·계정마다 IAM 사용자 시나리오 표시, 최종 viewBox 0 0 280 256·출발점 좌표 변경 없음, 교차 검사 전체 노드 183개·경로 153개(신규 노드 5개·경로 5개) 교차 없음, 테스트 16개 추가 후 전체 1,216개 및 AC 5개 통과, 변경 금지 파일 13개 해시 일치, 브라우저 육안 검증은 미실시.",
+      "started_at": "2026-10-09T23:51:58+0900",
+      "completed_at": "2026-10-09T23:57:23+0900"
     }
   ],
   "created_at": "2026-10-09T23:44:23+0900"
