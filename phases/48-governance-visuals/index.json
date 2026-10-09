@@ -2,8 +2,24 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "48-governance-visuals",
   "steps": [
-    { "step": 0, "name": "tool-table", "status": "pending" },
-    { "step": 1, "name": "drift-scope-diagram", "status": "pending" },
-    { "step": 2, "name": "control-timing-diagram", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "tool-table",
+      "status": "completed",
+      "summary": "src/data/visuals/governance-iac.json과 visualsByTopicId['governance-iac'] 로더 키를 추가하고, tool-choice 비교표(7행, 열 폭 41%·24%·35%)를 GovernanceToolTable 래퍼로 governance-iac.cloudformation 앵커에 연결했다. 새 테스트 6개와 전체 1,145개(64개 파일), build·lint·구조·경로 교차 검사를 모두 통과했다.",
+      "started_at": "2026-10-09T16:27:02+0900",
+      "completed_at": "2026-10-09T16:30:11+0900"
+    },
+    {
+      "step": 1,
+      "name": "drift-scope-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "control-timing-diagram",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-10-09T16:27:02+0900"
 }
