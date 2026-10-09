@@ -1,0 +1,32 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "50-org-identity-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "source-sentences",
+      "status": "completed",
+      "summary": "identity-federation.identity-center-permission-set에 IAM 역할 생성·접근 문단 추가(2→3개), organizations-cloudtrail-config.scp-attachment-targets 첫 문단에 관리 계정 예외 추가(2개 유지), q718 choices[1]·explanation의 대상을 멤버 계정으로 수정하고 answerIndex 1 유지, questionsSha256만 갱신, 테스트 3개 추가 후 전체 1,183개 통과 및 AC 5개 통과.",
+      "started_at": "2026-10-09T23:44:23+0900",
+      "completed_at": "2026-10-09T23:47:02+0900"
+    },
+    {
+      "step": 1,
+      "name": "org-scp-diagram",
+      "status": "completed",
+      "summary": "src/data/visuals/organizations-cloudtrail-config.json의 scp-scope 문구와 visualsByTopicId['organizations-cloudtrail-config'] 로더 키 추가, OrgScpScopeDiagram을 scp-attachment-targets 본문 뒤에 연결해 루트·OU·개별 계정 시나리오와 관리 계정 예외 표시, 최종 viewBox 0 0 280 256·출발점 좌표 변경 없음, 교차 검사 전체 노드 178개·경로 148개(신규 노드 5개·경로 3개) 교차 없음, 테스트 17개 추가 후 전체 1,200개 및 AC 5개 통과, 변경 금지 파일 13개 해시 일치, Chrome 접근 승인 제한으로 브라우저 육안 검증은 미실시.",
+      "started_at": "2026-10-09T23:47:02+0900",
+      "completed_at": "2026-10-09T23:51:58+0900"
+    },
+    {
+      "step": 2,
+      "name": "identity-center-diagram",
+      "status": "completed",
+      "summary": "src/data/visuals/identity-federation.json의 identity-center-access 문구와 visualsByTopicId['identity-federation'] 로더 키 추가, IdentityCenterAccessDiagram을 identity-center-permission-set 본문 뒤에 연결해 권한 세트 할당·계정마다 IAM 사용자 시나리오 표시, 최종 viewBox 0 0 280 256·출발점 좌표 변경 없음, 교차 검사 전체 노드 183개·경로 153개(신규 노드 5개·경로 5개) 교차 없음, 테스트 16개 추가 후 전체 1,216개 및 AC 5개 통과, 변경 금지 파일 13개 해시 일치, 브라우저 육안 검증은 미실시.",
+      "started_at": "2026-10-09T23:51:58+0900",
+      "completed_at": "2026-10-09T23:57:23+0900"
+    }
+  ],
+  "created_at": "2026-10-09T23:44:23+0900",
+  "completed_at": "2026-10-09T23:57:23+0900"
+}

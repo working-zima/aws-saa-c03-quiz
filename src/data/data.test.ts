@@ -6675,3 +6675,48 @@ describe('ADR-039 확장 — Lambda 동시 실행 수와 예약된 동시성', (
     expect(body).toContain('그 함수가 요청을 동시에 몇 건까지 처리할지를 정해 두는 설정')
   })
 })
+
+describe('ADR-039 확장 — 권한 세트가 만드는 IAM 역할과 SCP의 관리 계정 예외', () => {
+  const byId = Object.fromEntries(
+    topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+  )
+
+  it('권한 세트의 기존 문단과 요약을 유지하고 둘째 문단에 IAM 역할 생성과 접근을 설명한다', () => {
+    const concept = byId['identity-federation.identity-center-permission-set']
+
+    expect(concept.paragraphs).toHaveLength(3)
+    expect(concept.paragraphs[0]).toBe(
+      '권한 세트는 사용자가 대상 계정에서 무엇을 할 수 있는지를 묶어 정의한 것이다. 사용자 개개인이 아니라 그룹에 할당하고, 그 그룹이 어느 계정에 접근할지를 정한다. 계정마다 IAM 사용자와 정책을 따로 만들지 않고도 팀 단위 접근이 서는 것이 이 구조 덕분이다.',
+    )
+    expect(concept.paragraphs[1]).toBe(
+      '권한 세트를 계정에 할당하면 IAM Identity Center가 그 계정 안에 IAM 역할을 만들고, 권한 세트에 담긴 정책을 그 역할에 붙인다. 사용자는 AWS 접근 포털이나 CLI에서 이 역할을 맡아 그 계정에 들어간다. 할당하지 않은 계정에는 이 역할이 생기지 않는다. 권한 세트를 고치면 Identity Center가 이미 만든 역할도 함께 고친다.',
+    )
+    expect(concept.paragraphs[2]).toBe(
+      '최소 권한 원칙이 조건으로 붙을 때 권한 세트가 답이 되는 이유는, 넓은 권한을 상시로 주는 대신 필요한 만큼만 담은 권한 세트를 여러 개 만들어 나눠 줄 수 있기 때문이다. 이미 IAM Identity Center를 쓰고 있는 환경이라면 IAM 사용자·역할을 새로 만드는 쪽은 중복이 된다.',
+    )
+    expect(concept.summary).toBe(
+      'AWS IAM Identity Center가 계정에 권한을 부여하는 단위이며, 그룹에 할당해 최소 권한을 적용한다.',
+    )
+  })
+
+  it('SCP 적용 범위의 첫 문단에 관리 계정 예외를 밝히고 문단 수를 유지한다', () => {
+    const concept = byId['organizations-cloudtrail-config.scp-attachment-targets']
+
+    expect(concept.paragraphs).toHaveLength(2)
+    expect(concept.paragraphs[0]).toBe(
+      'SCP를 붙일 수 있는 자리가 조직 단위(OU)만은 아니다. 조직의 루트, OU, 그리고 개별 멤버 계정에 연결할 수 있고 연결한 자리 아래에만 적용된다. 다만 관리 계정은 예외다. SCP는 멤버 계정에만 걸리고, 루트에 붙여도 관리 계정의 사용자와 역할은 제한하지 않는다.',
+    )
+  })
+
+  it('q718의 정답 위치를 유지하고 정답 보기와 해설의 적용 대상을 멤버 계정으로 한정한다', () => {
+    const question = questions.find((item) => item.id === 'q718')
+    if (!question) throw new Error('q718이 없다')
+
+    expect(question.answerIndex).toBe(1)
+    expect(question.choices[1]).toContain('조직의 모든 멤버 계정이 걸린다')
+    question.choices.forEach((choice) => {
+      expect(choice).not.toContain('조직의 모든 계정이')
+    })
+    expect(question.explanation).toContain('제한할 생각이 없던 멤버 계정까지')
+  })
+})

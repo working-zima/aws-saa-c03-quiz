@@ -1,0 +1,53 @@
+{
+  "diagrams": {
+    "identity-center-access": {
+      "label": "IAM Identity Center 접근 도식",
+      "svgLabel": "권한 세트 할당과 계정의 IAM 역할",
+      "question": "사용자는 여러 계정에 어떻게 들어갈까?",
+      "idleCaption": "방식을 고르면 사용자가 계정에 들어가는 길을 볼 수 있다.",
+      "legend": "파랑: IAM Identity Center의 권한 세트 · 청록: 계정 안의 IAM 역할과 IAM 사용자 · 회색: 사용자.",
+      "nodes": {
+        "user": "사용자",
+        "permission-set": "권한 세트",
+        "role-a": "IAM 역할",
+        "iam-user-a": "IAM 사용자",
+        "iam-user-b": "IAM 사용자"
+      },
+      "groups": {
+        "identity-center": "IAM Identity Center",
+        "account-a": "계정 A",
+        "account-b": "계정 B"
+      },
+      "notes": {
+        "creates-role": "역할을 만든다",
+        "assume-role": "역할을 맡아 접근",
+        "no-assignment": "할당 없음",
+        "per-account": "계정마다 신원을 따로 관리"
+      },
+      "scenarios": [
+        {
+          "id": "assign",
+          "label": "권한 세트 할당",
+          "caption": "할당하면 계정 A에 IAM 역할이 생기고, 사용자는 포털에서 그 역할을 맡아 들어간다.",
+          "sources": ["identity-federation.identity-center-permission-set"]
+        },
+        {
+          "id": "iam-users",
+          "label": "계정마다 IAM 사용자",
+          "caption": "계정마다 IAM 사용자를 만들면 관리할 신원이 계정 수만큼 늘어 확장되지 않는다.",
+          "sources": [
+            "identity-federation.identity-center-external-idp",
+            "identity-federation.identity-center-permission-set"
+          ]
+        }
+      ],
+      "sources": [
+        "identity-federation.identity-center",
+        "identity-federation.identity-center-permission-set",
+        "identity-federation.identity-center-external-idp"
+      ]
+    }
+  },
+  "tables": {},
+  "glossary": []
+}
