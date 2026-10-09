@@ -6618,3 +6618,60 @@ describe('ADR-039 — 레코드·호스팅 영역·대상 그룹의 정의', () 
     )
   })
 })
+
+describe('ADR-039 확장 — Lambda 동시 실행 수와 예약된 동시성', () => {
+  const byId = Object.fromEntries(
+    topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+  )
+  const questionById = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+  it('예약된 동시성의 요약이 무엇에서 확보하는지 밝힌다', () => {
+    expect(byId['lambda.lambda-reserved-concurrency'].summary).toBe(
+      '예약된 동시성은 계정의 동시 실행 한도 가운데 일부를 한 함수 전용으로 확보하는 값이고, 실행 환경을 미리 초기화해 두는 것은 프로비저닝된 동시성이다.',
+    )
+  })
+
+  it('첫 문단이 동시 실행 수와 계정 한도를 세운 뒤 예약된 동시성을 정의한다', () => {
+    const concept = byId['lambda.lambda-reserved-concurrency']
+
+    expect(concept.paragraphs).toHaveLength(3)
+    expect(concept.paragraphs[0].startsWith('Lambda의 **동시 실행 수**(concurrency)는')).toBe(true)
+    expect(concept.paragraphs[0]).toContain('**예약된 동시성**(reserved concurrency)은')
+    expect(concept.paragraphs[0]).toContain('리전마다 동시 실행 한도')
+    expect(concept.paragraphs[0]).toContain('요청을 동시에 100건까지 처리할 수 있다')
+    expect(concept.paragraphs[0]).toContain('남은 900만 나눠 쓴다')
+    expect(concept.paragraphs[1]).toContain('실행 환경은 요청이 온 뒤에 만든다')
+    expect(concept.paragraphs[1]).toContain('콜드 스타트는 그대로 남는다')
+    expect(concept.paragraphs[2]).toBe(
+      '피크 시간대에도 일관되게 낮은 지연이 필요하면 프로비저닝된 동시성을 쓴다. 예약된 동시성으로는 그 조건을 채울 수 없다.',
+    )
+  })
+
+  it('예약된 동시성 개념에 「떼어」가 남지 않는다', () => {
+    const concept = byId['lambda.lambda-reserved-concurrency']
+
+    expect(concept.summary).not.toContain('떼어')
+    concept.paragraphs.forEach((paragraph) => {
+      expect(paragraph).not.toContain('떼어')
+    })
+  })
+
+  it('네 해설이 계정 한도에서 확보한다고 쓰고 정답은 그대로다', () => {
+    const expectedAnswers: Record<string, number> = { q086: 0, q494: 1, q495: 2, q496: 0 }
+
+    Object.entries(expectedAnswers).forEach(([id, answerIndex]) => {
+      const question = questionById[id]
+
+      expect(question.explanation).toContain('계정의 동시 실행 한도 가운데 일부를 그 함수 전용으로 확보')
+      expect(question.explanation).not.toContain('떼어')
+      expect(question.answerIndex).toBe(answerIndex)
+    })
+  })
+
+  it('API Gateway 엔드포인트 개념이 예약된 동시성을 한도를 늘리는 설정으로 쓰지 않는다', () => {
+    const body = byId['api-gateway-step-functions.api-gateway-endpoint-types'].paragraphs.join(' ')
+
+    expect(body).not.toContain('감당하는 양을 늘리는')
+    expect(body).toContain('그 함수가 요청을 동시에 몇 건까지 처리할지를 정해 두는 설정')
+  })
+})
