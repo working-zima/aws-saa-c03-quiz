@@ -1,0 +1,9 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "48-governance-visuals",
+  "steps": [
+    { "step": 0, "name": "tool-table", "status": "pending" },
+    { "step": 1, "name": "drift-scope-diagram", "status": "pending" },
+    { "step": 2, "name": "control-timing-diagram", "status": "pending" }
+  ]
+}
