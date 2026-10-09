@@ -2,8 +2,24 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "50-org-identity-visuals",
   "steps": [
-    { "step": 0, "name": "source-sentences", "status": "pending" },
-    { "step": 1, "name": "org-scp-diagram", "status": "pending" },
-    { "step": 2, "name": "identity-center-diagram", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "source-sentences",
+      "status": "completed",
+      "summary": "identity-federation.identity-center-permission-set에 IAM 역할 생성·접근 문단 추가(2→3개), organizations-cloudtrail-config.scp-attachment-targets 첫 문단에 관리 계정 예외 추가(2개 유지), q718 choices[1]·explanation의 대상을 멤버 계정으로 수정하고 answerIndex 1 유지, questionsSha256만 갱신, 테스트 3개 추가 후 전체 1,183개 통과 및 AC 5개 통과.",
+      "started_at": "2026-10-09T23:44:23+0900",
+      "completed_at": "2026-10-09T23:47:02+0900"
+    },
+    {
+      "step": 1,
+      "name": "org-scp-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "identity-center-diagram",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-10-09T23:44:23+0900"
 }
