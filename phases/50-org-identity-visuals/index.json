@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "org-scp-diagram",
-      "status": "pending"
+      "status": "completed",
+      "summary": "src/data/visuals/organizations-cloudtrail-config.json의 scp-scope 문구와 visualsByTopicId['organizations-cloudtrail-config'] 로더 키 추가, OrgScpScopeDiagram을 scp-attachment-targets 본문 뒤에 연결해 루트·OU·개별 계정 시나리오와 관리 계정 예외 표시, 최종 viewBox 0 0 280 256·출발점 좌표 변경 없음, 교차 검사 전체 노드 178개·경로 148개(신규 노드 5개·경로 3개) 교차 없음, 테스트 17개 추가 후 전체 1,200개 및 AC 5개 통과, 변경 금지 파일 13개 해시 일치, Chrome 접근 승인 제한으로 브라우저 육안 검증은 미실시.",
+      "started_at": "2026-10-09T23:47:02+0900",
+      "completed_at": "2026-10-09T23:51:58+0900"
     },
     {
       "step": 2,
