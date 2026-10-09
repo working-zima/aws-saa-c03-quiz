@@ -1,0 +1,9 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "50-org-identity-visuals",
+  "steps": [
+    { "step": 0, "name": "source-sentences", "status": "pending" },
+    { "step": 1, "name": "org-scp-diagram", "status": "pending" },
+    { "step": 2, "name": "identity-center-diagram", "status": "pending" }
+  ]
+}

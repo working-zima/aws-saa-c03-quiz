@@ -44,3 +44,23 @@
   나눠 쓴다. 예약된 동시성을 설정하는 데는 추가 요금이 없다.
 - 이 파일을 근거로 쓰지 않는 것: 예약할 수 있는 최대치(한도에서 100을 뺀 값), 초당 요청 수 한도, 확장 속도. 본문의 1,000은
   "예를 들어"로 든 값이다.
+
+## 권한 세트 할당과 IAM 역할 (IAM Identity Center)
+
+확인한 날: 2026-10-09. 사용자가 Organizations를 이해하려고 "IAM Identity Center에서 계정 A에 권한을 할당하면 계정 A에 IAM 역할이
+자동으로 생기고 그 역할로 접근한다"는 그림을 가져왔다. 데이터에는 권한 세트를 사용자·그룹에 계정별로 할당한다는 것까지만 있다.
+
+- 출처: https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html
+- 가져온 사실: 권한 세트는 IAM 정책 여러 개를 묶어 정의해 두는 템플릿이다. 권한 세트를 사용자나 그룹에 할당하면 IAM Identity Center가
+  할당한 각 계정에 자기가 관리하는 IAM 역할을 만들고, 권한 세트에 담긴 정책을 그 역할에 붙인다. 권한을 받은 사용자는 접근 포털이나
+  AWS CLI에서 그 역할을 맡는다. 권한 세트를 고치면 Identity Center가 대응하는 역할과 정책도 함께 고친다.
+- 이 파일을 근거로 쓰지 않는 것: 역할 이름 규칙, 세션 지속 시간(기본 1시간·최대 12시간), 사전 정의 권한 세트 목록, account access manager.
+
+## SCP와 관리 계정 (AWS Organizations)
+
+확인한 날: 2026-10-09. 같은 요청에서 조직 구조와 SCP 범위 도식을 그리려면 관리 계정에 SCP가 걸리는지 정해야 했다. 데이터에는 SCP를 붙일
+수 있는 자리(루트·OU·멤버 계정)만 있다.
+
+- 출처: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html
+- 가져온 사실: SCP는 조직의 멤버 계정에만 걸리고, 관리 계정의 사용자와 역할에는 걸리지 않는다.
+- 이 파일을 근거로 쓰지 않는 것: 서비스 연결 역할 예외, 위임 관리자, RCP, SCP 최대 크기, FullAWSAccess 기본 정책.
