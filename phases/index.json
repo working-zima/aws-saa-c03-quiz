@@ -252,7 +252,8 @@
     },
     {
       "dir": "50-org-identity-visuals",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-09T23:57:23+0900"
     }
   ]
 }
