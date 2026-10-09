@@ -8,7 +8,7 @@ const concept = topics.find(({ id }) => id === 'governance-iac')!.concepts
   .find(({ id }) => id === 'governance-iac.cloudformation')!
 const expectedRows = [
   { header: 'CloudFormation', cells: ['인프라를 반복해 같게 만들 때', '계정 관리는 Organizations'] },
-  { header: 'CloudFormation 드리프트 감지', cells: ['템플릿과 달라졌는지 볼 때', '스택 밖까지는 AWS Config'] },
+  { header: 'CloudFormation 드리프트 감지', cells: ['템플릿과 다른지 볼 때', '스택 밖까지는 AWS Config'] },
   { header: 'Service Catalog', cells: ['허용된 구성만 배포하게 할 때', '변경 추적·감사는 AWS Config'] },
   { header: 'Control Tower 랜딩 존', cells: ['계정마다 같은 통제·로깅을 걸 때', '계정마다 따로 두는 사용자·역할'] },
   { header: 'Control Tower 사전 예방적 제어', cells: ['위반 배포를 막을 때', '만든 뒤 찾아 보고하는 탐지 제어'] },

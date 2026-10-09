@@ -107,7 +107,7 @@
         },
         {
           "header": "CloudFormation 드리프트 감지",
-          "cells": ["템플릿과 달라졌는지 볼 때", "스택 밖까지는 AWS Config"]
+          "cells": ["템플릿과 다른지 볼 때", "스택 밖까지는 AWS Config"]
         },
         {
           "header": "Service Catalog",
