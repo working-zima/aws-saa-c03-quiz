@@ -1,0 +1,146 @@
+{
+  "diagrams": {
+    "control-timing": {
+      "label": "Control Tower 제어 시점 도식",
+      "svgLabel": "사전 예방적 제어와 탐지 제어가 작동하는 시점",
+      "question": "규칙을 어기는 리소스는 언제 걸러질까?",
+      "idleCaption": "제어를 고르면 규칙을 어기는 배포가 어느 시점에 걸러지는지 볼 수 있다.",
+      "legend": "파랑: Control Tower의 제어 · 청록: 배포로 생기는 리소스 · 회색: 배포 요청과 거부. 위에서 내려가는 화살표는 배포가 지나가는 길, 탐지 제어의 화살표는 찾아내는 대상이다.",
+      "nodes": {
+        "request": "규칙을 어기는 배포",
+        "preventive": "사전 예방적 제어",
+        "reject": "스택 작업 거부",
+        "resource": "규정에 어긋난 리소스",
+        "detective": "탐지 제어"
+      },
+      "groups": {
+        "deploy-time": "배포 시점",
+        "after": "만들어진 뒤"
+      },
+      "notes": {
+        "not-created": "생기지 않음",
+        "report-only": "찾아서 보고 · 지우지 않음",
+        "exists-until-fixed": "고치기 전까지 존재",
+        "auto-fix": "탐지 뒤 자동 수정"
+      },
+      "scenarios": [
+        {
+          "id": "preventive",
+          "label": "사전 예방적 제어",
+          "caption": "배포 시점에 템플릿을 평가해 위반 스택 작업을 거부한다. 리소스가 아예 생기지 않는다.",
+          "sources": ["governance-iac.control-tower-controls"]
+        },
+        {
+          "id": "detective",
+          "label": "탐지 제어",
+          "caption": "이미 만들어진 리소스에서 규정 미준수를 찾아 보고한다. 찾은 것을 지우지는 않는다.",
+          "sources": ["governance-iac.control-tower-controls"]
+        },
+        {
+          "id": "auto-fix",
+          "label": "탐지 후 자동 수정",
+          "caption": "탐지한 뒤 자동으로 고치게 엮어도 고치기 전까지 위반 리소스가 존재한다. 방지가 아니다.",
+          "sources": ["governance-iac.control-tower-controls"]
+        }
+      ],
+      "sources": ["governance-iac.control-tower-controls"]
+    },
+    "drift-scope": {
+      "label": "드리프트 감지와 AWS Config 범위 도식",
+      "svgLabel": "드리프트 감지와 AWS Config가 살피는 범위",
+      "question": "설정이 바뀐 리소스를 어디까지 잡아낼까?",
+      "idleCaption": "기능을 고르면 설정이 바뀐 리소스를 어디까지 살피는지 볼 수 있다.",
+      "legend": "파랑: 설정 변경을 살피는 기능 · 청록: 계정의 리소스 · 회색: 템플릿 파일. 위 화살표는 템플릿으로 배포한 것, 아래 화살표는 살피는 범위다.",
+      "nodes": {
+        "template": "템플릿",
+        "stack-a": "리소스",
+        "stack-b": "리소스",
+        "team-a": "팀 A의 리소스",
+        "team-b": "팀 B의 리소스",
+        "drift": "드리프트 감지",
+        "config": "AWS Config"
+      },
+      "groups": {
+        "account": "한 계정",
+        "stack": "스택",
+        "outside": "스택 밖"
+      },
+      "notes": {
+        "not-seen": "보지 못함",
+        "all-resources": "모든 지원 리소스"
+      },
+      "scenarios": [
+        {
+          "id": "drift",
+          "label": "드리프트 감지",
+          "caption": "스택으로 만든 리소스만 템플릿과 비교한다. 팀이 직접 만든 스택 밖 리소스는 빠진다.",
+          "sources": [
+            "governance-iac.cloudformation-drift-detection",
+            "governance-iac.cloudformation"
+          ]
+        },
+        {
+          "id": "config",
+          "label": "AWS Config",
+          "caption": "스택 안팎을 가리지 않고 계정의 모든 지원 리소스에서 설정 변경을 기록한다.",
+          "sources": [
+            "governance-iac.cloudformation-drift-detection",
+            "governance-iac.service-catalog"
+          ]
+        }
+      ],
+      "sources": [
+        "governance-iac.cloudformation",
+        "governance-iac.cloudformation-drift-detection",
+        "governance-iac.service-catalog"
+      ]
+    }
+  },
+  "tables": {
+    "tool-choice": {
+      "label": "도구별 고를 때와 헷갈리는 짝",
+      "columns": ["도구", "고를 때", "헷갈리는 짝"],
+      "rows": [
+        {
+          "header": "CloudFormation",
+          "cells": ["인프라를 반복해 같게 만들 때", "계정 관리는 Organizations"]
+        },
+        {
+          "header": "CloudFormation 드리프트 감지",
+          "cells": ["템플릿과 다른지 볼 때", "스택 밖까지는 AWS Config"]
+        },
+        {
+          "header": "Service Catalog",
+          "cells": ["허용된 구성만 배포하게 할 때", "변경 추적·감사는 AWS Config"]
+        },
+        {
+          "header": "Control Tower 랜딩 존",
+          "cells": ["계정마다 같은 통제·로깅을 걸 때", "계정마다 따로 두는 사용자·역할"]
+        },
+        {
+          "header": "Control Tower 사전 예방적 제어",
+          "cells": ["위반 배포를 막을 때", "만든 뒤 찾아 보고하는 탐지 제어"]
+        },
+        {
+          "header": "RAM",
+          "cells": ["다른 계정과 리소스를 공유할 때", "사용자 인증은 못 한다"]
+        },
+        {
+          "header": "Workload Discovery",
+          "cells": ["리소스 관계를 그림으로 볼 때", "X-Ray는 요청 경로만 좇는다"]
+        }
+      ],
+      "columnWidths": ["41%", "24%", "35%"],
+      "sources": [
+        "governance-iac.cloudformation",
+        "governance-iac.cloudformation-drift-detection",
+        "governance-iac.service-catalog",
+        "governance-iac.control-tower-landing-zone",
+        "governance-iac.control-tower-controls",
+        "governance-iac.resource-access-manager",
+        "governance-iac.workload-discovery"
+      ]
+    }
+  },
+  "glossary": []
+}

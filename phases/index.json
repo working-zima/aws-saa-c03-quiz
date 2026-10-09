@@ -242,7 +242,8 @@
     },
     {
       "dir": "48-governance-visuals",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-09T16:38:51+0900"
     },
     {
       "dir": "49-lambda-concurrency-terms",
