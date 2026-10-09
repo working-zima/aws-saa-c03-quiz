@@ -243,6 +243,10 @@
     {
       "dir": "48-governance-visuals",
       "status": "pending"
+    },
+    {
+      "dir": "49-lambda-concurrency-terms",
+      "status": "pending"
     }
   ]
 }

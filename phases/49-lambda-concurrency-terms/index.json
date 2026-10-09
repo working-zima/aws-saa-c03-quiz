@@ -1,0 +1,7 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "49-lambda-concurrency-terms",
+  "steps": [
+    { "step": 0, "name": "concurrency-terms", "status": "pending" }
+  ]
+}
