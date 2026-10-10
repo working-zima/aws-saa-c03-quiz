@@ -218,7 +218,7 @@ describe('DriftScopeDiagram', () => {
     const figure = screen.getByRole('figure', { name: '드리프트 감지와 AWS Config 범위 도식' })
 
     expect(figure.closest('article')).toHaveAttribute('id', concept.id)
-    expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.join(''))
+    expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.join('').replace(/\*\*/g, ''))
     expect(figure.closest('article')!.lastElementChild).toBe(figure)
     expect(within(figure).queryByRole('heading')).toBeNull()
   })
