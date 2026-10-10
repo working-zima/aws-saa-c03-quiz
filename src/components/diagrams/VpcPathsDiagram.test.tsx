@@ -308,8 +308,10 @@ describe('VpcPathsDiagram', () => {
 
     const figure = screen.getByRole('figure', { name: 'VPC 통신 경로 도식' })
     expect(figure.closest('article')).toHaveAttribute('id', 'vpc-networking.comparison')
-    expect(figure.previousElementSibling).toHaveTextContent('비교 본문')
-    expect(screen.getAllByRole('figure')).toHaveLength(2)
+    const table = screen.getByRole('figure', { name: 'NAT 게이트웨이, VPC Endpoint, PrivateLink, VPC 피어링' })
+    expect(figure.previousElementSibling).toBe(table)
+    expect(table.previousElementSibling).toHaveTextContent('비교 본문')
+    expect(screen.getAllByRole('figure')).toHaveLength(3)
   })
 
   it('여러 번 렌더해도 화살표 마커가 다른 도식과 충돌하지 않는다', async () => {

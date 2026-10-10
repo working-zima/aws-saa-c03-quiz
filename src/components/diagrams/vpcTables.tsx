@@ -23,3 +23,7 @@ export function PrivateConnectivityTable() {
 export function FlowLogsVsCloudTrailTable() {
   return <ComparisonTableFigure table={tables['flow-logs-vs-cloudtrail']} />
 }
+
+export function ConnectionTargetsTable() {
+  return <ComparisonTableFigure table={tables['nat-endpoint-privatelink-peering']} />
+}

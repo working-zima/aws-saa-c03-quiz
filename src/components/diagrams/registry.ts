@@ -28,6 +28,7 @@ import { VpcPathsDiagram } from './VpcPathsDiagram'
 import { VpcScopeDiagram } from './VpcScopeDiagram'
 import {
   AttachTargetsTable,
+  ConnectionTargetsTable,
   EndpointTypesTable,
   FlowLogsVsCloudTrailTable,
   NatInstanceVsGatewayTable,
@@ -42,7 +43,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'backup-disaster-recovery.organizations-backup-policy': BackupPolicyScopeTable,
   'backup-disaster-recovery.backup-cross-account-copy': CopyDestinationTable,
   'backup-disaster-recovery.elastic-disaster-recovery': DrChoiceDiagram,
-  'vpc-networking.comparison': [VpcPathsDiagram, VpcDestinationDiagram],
+  'vpc-networking.comparison': [ConnectionTargetsTable, VpcPathsDiagram, VpcDestinationDiagram],
   'vpc-networking.internet-gateway-is-not-per-az': VpcScopeDiagram,
   'vpc-networking.nat-gateway-count-by-environment': NatCountDiagram,
   'vpc-networking.vpc-peering-scaling-limit': PeeringScaleDiagram,

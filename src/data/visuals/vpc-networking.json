@@ -538,9 +538,9 @@
         }
       ],
       "columnWidths": [
-        "24%",
-        "38%",
-        "38%"
+        "32%",
+        "34%",
+        "34%"
       ],
       "sources": [
         "vpc-networking.privatelink-endpoint-service",
@@ -579,6 +579,58 @@
       ],
       "sources": [
         "vpc-networking.vpc-flow-logs"
+      ]
+    },
+    "nat-endpoint-privatelink-peering": {
+      "label": "NAT 게이트웨이, VPC Endpoint, PrivateLink, VPC 피어링",
+      "columns": [
+        "",
+        "연결 대상",
+        "인터넷을 거치나"
+      ],
+      "rows": [
+        {
+          "header": "NAT 게이트웨이",
+          "cells": [
+            "인터넷. 프라이빗 서브넷에서 나가는 통신만 연다",
+            "거친다. AWS 서비스로 가도 공용 엔드포인트로 나간다"
+          ]
+        },
+        {
+          "header": "VPC Endpoint",
+          "cells": [
+            "AWS 서비스",
+            "거치지 않는다"
+          ]
+        },
+        {
+          "header": "PrivateLink",
+          "cells": [
+            "다른 VPC의 애플리케이션 하나",
+            "거치지 않는다"
+          ]
+        },
+        {
+          "header": "VPC 피어링",
+          "cells": [
+            "다른 VPC 전체",
+            "거치지 않는다"
+          ]
+        }
+      ],
+      "columnWidths": [
+        "32%",
+        "34%",
+        "34%"
+      ],
+      "sources": [
+        "vpc-networking.comparison",
+        "vpc-networking.nat-gateway",
+        "vpc-networking.nat-gateway-traffic-uses-public-endpoints",
+        "vpc-networking.vpc-endpoint",
+        "vpc-networking.privatelink",
+        "vpc-networking.privatelink-endpoint-service",
+        "vpc-networking.vpc-peering"
       ]
     }
   },
