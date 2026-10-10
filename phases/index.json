@@ -254,6 +254,10 @@
       "dir": "50-org-identity-visuals",
       "status": "completed",
       "completed_at": "2026-10-09T23:57:23+0900"
+    },
+    {
+      "dir": "51-cloudformation-stack-terms",
+      "status": "pending"
     }
   ]
 }

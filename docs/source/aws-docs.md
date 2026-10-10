@@ -64,3 +64,19 @@
 - 출처: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html
 - 가져온 사실: SCP는 조직의 멤버 계정에만 걸리고, 관리 계정의 사용자와 역할에는 걸리지 않는다.
 - 이 파일을 근거로 쓰지 않는 것: 서비스 연결 역할 예외, 위임 관리자, RCP, SCP 최대 크기, FullAWSAccess 기본 정책.
+
+## 템플릿·스택·드리프트 (AWS CloudFormation)
+
+확인한 날: 2026-10-10. 사용자가 드리프트 감지 요약 "스택으로 만든 리소스가 템플릿과 달라졌는지 보는 기능이라, 스택 밖 리소스는 보지 못한다"에서
+"스택으로 만들었다"가 무슨 뜻인지 모르겠다고 했다. 데이터는 `스택`과 `드리프트`를 쓰기만 하고 정의하지 않는다.
+
+- 출처: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-overview.html
+- 가져온 사실: 템플릿은 만들 AWS 리소스와 그 속성을 적어 둔 YAML·JSON 텍스트 파일이고, CloudFormation은 이것을 설계도로 삼아 리소스를 만든다.
+  스택은 관련된 리소스를 한 단위로 관리하는 묶음이다. 스택을 만들고 고치고 지우는 것으로 그 안의 리소스를 함께 만들고 고치고 지운다. 스택의
+  리소스는 모두 그 스택의 템플릿이 정의한다. 예: Auto Scaling 그룹·로드 밸런서·RDS 데이터베이스를 적은 템플릿을 제출해 스택을 만들면
+  CloudFormation이 그 리소스들을 모두 만든다.
+- 출처: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift.html
+- 가져온 사실: CloudFormation으로 관리하는 리소스도 사용자가 CloudFormation 밖에서(예: EC2 콘솔에서) 직접 바꿀 수 있다. 드리프트 감지는 스택의
+  실제 구성이 기대한 구성(템플릿과 템플릿 파라미터로 정한 값)과 달라졌는지, 즉 드리프트했는지를 찾는다. 속성 값이 바뀌었거나 지워진 리소스를
+  드리프트한 것으로 본다.
+- 이 파일을 근거로 쓰지 않는 것: 변경 세트, 중첩 스택, 드리프트 상태 코드, 드리프트 감지를 지원하지 않는 리소스·속성 목록, 스택 상태 조건.
