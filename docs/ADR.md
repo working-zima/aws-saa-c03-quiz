@@ -1772,7 +1772,7 @@ phase 50의 새 도식 둘(조직과 SCP 범위, IAM Identity Center 접근)에�
 - 원문 오기는 그대로 두던 원칙의 예외로, 보안 그룹·NACL 특징의 `접근 차단(Allow)` 두 곳을 `(Deny)`로 고친다. 옳지 않은 것
   고르기에서는 옳은 보기에 든 오기가 틀린 곳처럼 보여 오답을 부르기 때문이다(사용자 결정).
 
-### ADR-041: 딸린 개념을 머리 개념 아래로 들여써 보인다 (ADR-023 「층 필드」·ADR-033 「필드·표시」 개정)
+### ADR-041: 딸린 개념을 머리 개념 아래로 들여써 보인다 (ADR-023 「층 필드」·ADR-033 「필드·표시」 개정 / ADR-042로 「남은 자리」 개정)
 
 **결정**: 개념에 선택 필드 `parentId`를 둔다. 값은 **같은 주제 안 머리 개념의 id**다. 화면은 딸린 개념을 머리 개념 바로
 아래에 모아 왼쪽 세로선과 들여쓰기로 묶고, 제목을 한 단계 내린다(h2 → h3, 확인 문제 펼치기에서는 h4 → h5). 개념 순서·본문·
@@ -1854,3 +1854,69 @@ phase 50의 새 도식 둘(조직과 SCP 범위, IAM Identity Center 접근)에�
 
 2~5는 이번에 옮기지 않는다. 소개 개념이 없어 평평하게 둔 블록(ALB·NLB, Fargate, FSx for NetApp ONTAP, Systems Manager, IAM 하위 기능
 등)은 개념을 새로 쓰는 일이라 이 결정의 범위 밖이다.
+
+**ADR-042가 「남은 자리」를 개정했다.** 2·3·5는 순서를 옮겨 풀었고, 4는 옮기면 ADR-033 규칙 5를 어겨 목록에서 뺐다. 소개 개념이
+없던 블록 가운데 여덟에 기본 개념을 새로 세웠다(ALB·NLB, EC2 구매 옵션·Auto Scaling, IAM 사용자·역할, Fargate, FSx for NetApp ONTAP).
+
+### ADR-042: 소개 개념이 없던 블록에 기본 개념을 세운다 (ADR-041 「남은 자리」 개정)
+
+**결정**: ADR-041이 「소개 개념이 없어 평평하게 둔 블록」으로 남긴 자리 가운데, **같은 주제의 기존 개념만으로 소개를 쓸 수 있는
+여덟 블록**에 기본 개념(머리)을 새로 넣고 그 블록의 개념을 아래로 들여쓴다. 기존 개념 하나를 머리로 다시 판정하고, 순서를 옮기면
+묶이는 세 자리를 옮긴다. 머리는 102개에서 113개, 딸린 개념은 301개에서 342개가 된다(개념 626개 중 55%). 변경은
+`phases/54-block-heads/changes.json`에 글자 그대로 있고, 바뀐 주제 여덟의 트리는 같은 폴더의 `trees.md`다.
+
+사용자의 말을 옮긴다(2026-10-10, phase 53 배포 직후).
+
+> 이제 이런 식으로 모든 섹션을 해줘.
+
+들여쓰기는 이미 39개 주제 전부에 들어가 있었으므로, 평평하게 남은 개념 215개를 어떻게 할지를 물었다. 사용자가 고른 것: **소개
+개념을 새로 써서 묶는다**(주제 소개 개념 아래로 전부 넣어 세 단을 허용하는 안, 순서 이동 넷만 하는 안은 기각). 그 가운데 **새 사실이
+필요 없는 1단계만** 한다. AWS 공식 문서를 근거로 소개 일곱을 더 쓰는 2단계는 1단계를 화면으로 본 뒤 따로 정한다.
+
+**새 기본 개념 여덟**
+
+| 개념 | 딸린 개념 | 사실을 가져온 기존 개념 | 다시 잇는 문항 |
+|---|---|---|---|
+| `elastic-load-balancing.alb` | 6 | `elb` 첫 문단, `alb-l7-vs-nlb-l4`, `alb-routing-conditions`, `alb-cookie-stickiness`, `alb-listener-rule-fixed-response` | q079 |
+| `elastic-load-balancing.nlb` | 3 | `elb` 둘째 문단, `alb-l7-vs-nlb-l4`, `alb-routing-conditions`, `nlb-tls-listener`, `nlb-udp-listener`, `nlb-ip-targets` | q080 |
+| `ec2-autoscaling.ec2-purchase-options` | 2 | `ec2` 셋째~다섯째 문단 | q076·q077 |
+| `ec2-autoscaling.ec2-auto-scaling` | 9 | `ec2` 둘째 문단, `asg-single-instance-self-healing`, `elb-health-check-drives-asg-replacement`, `asg-on-demand-base-capacity`, `asg-instance-type-override` | q075 |
+| `iam-permissions.iam-user` | 3 | `iam` 첫째·둘째 문단, `iam-group-users-only`, `iam-group-policy-attachment`, `iam-user-is-account-scoped` | q157 |
+| `iam-permissions.iam-role` | 3 | `iam` 셋째 문단, `instance-profile`, `iam-roles-anywhere`, `cross-account-iam-role` | q156 |
+| `ecs-eks-fargate.fargate` | 4 | `ecs` 둘째 문단, `fargate-no-time-limit`, `fargate-per-second-billing` | q084 |
+| `efs-fsx.fsx-for-netapp-ontap` | 4 | `fsx` 둘째 문단, `fsx-ontap-iscsi-block`, `fsx-ontap-multi-az`, `fsx-ontap-snapmirror` | q046 |
+
+**사실은 같은 주제 안에서만 가져온다.** 새 개념의 문장은 직접 썼고(ADR-009), 사실은 위 표의 기존 개념에 이미 있는 것뿐이다. 그래서
+출처(ADR-008·021·039)를 넓히지 않는다.
+
+**소개 개념은 그대로 둔다.** `elb`·`ec2`·`iam`·`ecs`·`fsx`는 이미 그 유형들을 짧게 소개하고, 그 문단이 주제의 첫 소개다. 문단을 새
+머리로 옮기는 안은 기각했다. 문단 수와 문단 안의 위치를 못박은 기존 테스트(ADR-029의 첫 등장 풀이, ADR-039의 대상 그룹 문단, ADR-019의
+분류 문장)가 줄줄이 바뀌고, 그 문단을 근거로 적은 도식의 `sources`도 다시 봐야 한다. 같은 사실이 두 번 나오는 구성에는 선례가 있다 —
+`fsx`가 Lustre·Windows를 소개하고 `fsx-for-lustre`·`fsx-windows-file-server`가 다시 세우며, `elb`가 GLB를 소개하고
+`gateway-load-balancer`가 다시 세운다. 새 머리는 그 유형이 계열 안에서 무엇인지와 블록에서 다루는 기능을 한데 보여 준다.
+
+**문항은 새로 쓰지 않고 다시 잇는다.** ADR-026은 모든 개념에 문항을 요구한다. 새 머리의 사실을 그대로 묻는 기존 문항 아홉의
+`conceptId`만 옮긴다(위 표). 프롬프트·보기·정답·해설은 그대로이고, 원래 개념에는 문항이 하나 이상 남는다(`ec2` q074, `elb` q078,
+`iam` q155, `ecs` q083, `nlb-udp-listener` q456, `fsx-ontap-multi-protocol-tiering` q339).
+
+**기존 개념을 머리로 다시 판정한 것 하나**: `rds-storage-features.features`(RDS 기능)는 Multi AZ 배포·Multi AZ DB Cluster·Read
+Replica를 소개한다. 바로 뒤의 다중 AZ 세 개념과 `read-replica-vs-cache`를 그 아래에 둔다. ADR-041이 「거꾸로 읽힌다」고 든 예는 블록
+첫 개념(대기 인스턴스의 한계)을 머리로 삼을 때의 이야기이고, 그 앞의 `features`를 머리로 삼으면 기본이 먼저 온다.
+
+**「남은 자리」 개정**
+
+- 2 Aurora — `aurora-cross-region-read-replica`를 `aurora-global-database-write-region` 뒤로 옮겨, 쓰기 리전 개념을
+  `aurora-global-database-dr-targets` 아래에 둔다.
+- 3 Route 53 — `route53-alias-record`를 `private-hosted-zone-vpc-only` 뒤로 옮겨, 연결 대상 개념을 `private-hosted-zone` 아래에 둔다.
+- 5 IAM — `network-access-analyzer`를 `access-analyzer-delegated-administrator` 뒤로 옮겨, 위임 관리자를 `iam-access-analyzer`
+  아래에 둔다.
+- 셋 다 옮긴 개념과 사이의 개념이 서로를 전제로 쓰지 않는다. ADR-033 규칙 5를 본문으로 확인했다.
+- 4 VPC `nat-instance`는 **옮기지 않고 목록에서 뺀다.** `data.test.ts`의 VPC 순서 주석대로, NAT 인스턴스는 본문이 인터페이스·게이트웨이
+  엔드포인트를 대안으로 쓰기 때문에 엔드포인트 블록 뒤에 둔 개념이다. NAT 묶음 안으로 당기면 규칙 5를 어긴다.
+
+**남겨 둔 것**
+
+- 2단계 후보 — 원본에 소개할 정의가 없어 AWS 공식 문서가 필요한 일곱: IAM 정책(딸린 개념 6), 루트 사용자(2), Systems Manager(5),
+  EC2 인스턴스 제품군(3), RDS 백업과 스냅샷(4), 재해 복구 전략(2), EC2 배치 그룹(2). 쓰려면 ADR-039를 확장하고 새 문항 일곱이 필요하다.
+- 들여쓰지 않기로 한 것 — `s3-storage-classes`(클래스 여덟 → 갈림길 → 비용의 세 단 순서가 PRD 설계다), `aws-core-services`(같은 높이의
+  기초 용어), Lambda·DynamoDB·S3 접근 제어의 단발 기능과 비용·AI 서비스들(묶을 소개가 없다).

@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
- "conceptLineCount": 618,
- "questionsSha256": "912eed4f6a8ecf20304c9da4554454967c58581fcdafd6920c88ef0b5ec4efa0",
+ "conceptLineCount": 626,
+ "questionsSha256": "d8a9919e7397cf6ab715471a0016abb7dded57d8e72a120d23bd87e90fefcfa8",
  "topics": [
   {
    "id": "aws-core-services",
@@ -548,19 +548,27 @@
      "name": "FSx for Lustre의 데이터 리포지토리 연결"
     },
     {
+     "id": "efs-fsx.fsx-for-netapp-ontap",
+     "name": "Amazon FSx for NetApp ONTAP"
+    },
+    {
      "id": "efs-fsx.fsx-ontap-multi-az",
+     "parentId": "efs-fsx.fsx-for-netapp-ontap",
      "name": "FSx for NetApp ONTAP의 다중 AZ 배포"
     },
     {
      "id": "efs-fsx.fsx-ontap-multi-protocol-tiering",
+     "parentId": "efs-fsx.fsx-for-netapp-ontap",
      "name": "FSx for NetApp ONTAP의 NFS·SMB 동시 지원과 자동 계층화"
     },
     {
      "id": "efs-fsx.fsx-ontap-iscsi-block",
+     "parentId": "efs-fsx.fsx-for-netapp-ontap",
      "name": "FSx for NetApp ONTAP의 iSCSI 블록 스토리지"
     },
     {
      "id": "efs-fsx.fsx-ontap-snapmirror",
+     "parentId": "efs-fsx.fsx-for-netapp-ontap",
      "name": "FSx for NetApp ONTAP과 SnapMirror"
     },
     {
@@ -742,18 +750,22 @@
     },
     {
      "id": "rds-storage-features.multi-az-standby-limits",
+     "parentId": "rds-storage-features.features",
      "name": "다중 AZ 대기 인스턴스로는 할 수 없는 것"
     },
     {
      "id": "rds-storage-features.rds-multi-az-db-cluster",
+     "parentId": "rds-storage-features.features",
      "name": "다중 AZ DB 인스턴스 배포와 다중 AZ DB 클러스터 배포"
     },
     {
      "id": "rds-storage-features.rds-multi-az-failover-rto",
+     "parentId": "rds-storage-features.features",
      "name": "다중 AZ 장애 조치에 걸리는 시간"
     },
     {
      "id": "rds-storage-features.read-replica-vs-cache",
+     "parentId": "rds-storage-features.features",
      "name": "캐시가 효과를 내지 못하는 조건"
     },
     {
@@ -876,12 +888,13 @@
      "name": "Aurora 글로벌 데이터베이스가 채우는 RPO와 RTO"
     },
     {
-     "id": "aurora.aurora-cross-region-read-replica",
-     "name": "리전 간 Aurora 복제본"
+     "id": "aurora.aurora-global-database-write-region",
+     "parentId": "aurora.aurora-global-database-dr-targets",
+     "name": "Aurora Global Database에서 쓰기를 받는 리전"
     },
     {
-     "id": "aurora.aurora-global-database-write-region",
-     "name": "Aurora Global Database에서 쓰기를 받는 리전"
+     "id": "aurora.aurora-cross-region-read-replica",
+     "name": "리전 간 Aurora 복제본"
     },
     {
      "id": "aurora.aurora-continuous-backup-rpo",
@@ -1103,47 +1116,66 @@
      "name": "향상된 네트워킹"
     },
     {
+     "id": "ec2-autoscaling.ec2-purchase-options",
+     "name": "EC2 구매 옵션"
+    },
+    {
      "id": "ec2-autoscaling.reserved-instance-types",
+     "parentId": "ec2-autoscaling.ec2-purchase-options",
      "name": "표준 예약 인스턴스와 전환 가능 예약 인스턴스"
     },
     {
      "id": "ec2-autoscaling.spot-workload-fit",
+     "parentId": "ec2-autoscaling.ec2-purchase-options",
      "name": "스팟에 올릴 수 있는 워크로드"
     },
     {
+     "id": "ec2-autoscaling.ec2-auto-scaling",
+     "name": "EC2 Auto Scaling"
+    },
+    {
      "id": "ec2-autoscaling.scheduled-scaling",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "예약된 조정과 대상 추적의 갈림길"
     },
     {
      "id": "ec2-autoscaling.target-tracking-vs-simple-scaling",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "대상 추적과 단순 조정의 갈림길"
     },
     {
      "id": "ec2-autoscaling.predictive-scaling",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "예측 스케일링"
     },
     {
      "id": "ec2-autoscaling.spot-allocation-strategy",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "스팟 할당 전략"
     },
     {
      "id": "ec2-autoscaling.asg-instance-type-override",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "Auto Scaling 그룹의 인스턴스 유형 재정의"
     },
     {
      "id": "ec2-autoscaling.asg-on-demand-base-capacity",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "Auto Scaling 그룹의 온디맨드 기반 용량"
     },
     {
      "id": "ec2-autoscaling.warm-pool",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "Auto Scaling 웜 풀"
     },
     {
      "id": "ec2-autoscaling.asg-single-instance-self-healing",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "용량을 1로 고정한 오토 스케일링 그룹의 인스턴스 교체"
     },
     {
      "id": "ec2-autoscaling.elb-health-check-drives-asg-replacement",
+     "parentId": "ec2-autoscaling.ec2-auto-scaling",
      "name": "로드 밸런서 상태 검사와 인스턴스 교체"
     },
     {
@@ -1170,39 +1202,56 @@
      "name": "계층으로 나뉘는 ALB와 NLB"
     },
     {
+     "id": "elastic-load-balancing.alb",
+     "name": "ALB (Application Load Balancer)"
+    },
+    {
      "id": "elastic-load-balancing.alb-routing-conditions",
+     "parentId": "elastic-load-balancing.alb",
      "name": "ALB가 볼 수 있는 라우팅 조건"
     },
     {
      "id": "elastic-load-balancing.alb-cookie-stickiness",
+     "parentId": "elastic-load-balancing.alb",
      "name": "ALB의 쿠키 기반 스티키 세션"
     },
     {
      "id": "elastic-load-balancing.sticky-session-tradeoff",
+     "parentId": "elastic-load-balancing.alb",
      "name": "스티키 세션의 부작용"
     },
     {
      "id": "elastic-load-balancing.alb-least-outstanding-requests",
+     "parentId": "elastic-load-balancing.alb",
      "name": "ALB의 분산 알고리즘"
     },
     {
      "id": "elastic-load-balancing.alb-target-group-independent-scaling",
+     "parentId": "elastic-load-balancing.alb",
      "name": "경로별 타깃 그룹과 독립 확장"
     },
     {
      "id": "elastic-load-balancing.alb-listener-rule-fixed-response",
+     "parentId": "elastic-load-balancing.alb",
      "name": "ALB 리스너 규칙의 사용자 지정 응답"
     },
     {
+     "id": "elastic-load-balancing.nlb",
+     "name": "NLB (Network Load Balancer)"
+    },
+    {
      "id": "elastic-load-balancing.nlb-tls-listener",
+     "parentId": "elastic-load-balancing.nlb",
      "name": "NLB의 TLS 리스너"
     },
     {
      "id": "elastic-load-balancing.nlb-udp-listener",
+     "parentId": "elastic-load-balancing.nlb",
      "name": "NLB의 UDP 리스너"
     },
     {
      "id": "elastic-load-balancing.nlb-ip-targets",
+     "parentId": "elastic-load-balancing.nlb",
      "name": "NLB 대상 그룹의 IP 주소 등록"
     },
     {
@@ -1475,19 +1524,27 @@
      "name": "ECS 태스크 배치 전략"
     },
     {
+     "id": "ecs-eks-fargate.fargate",
+     "name": "AWS Fargate"
+    },
+    {
      "id": "ecs-eks-fargate.fargate-no-time-limit",
+     "parentId": "ecs-eks-fargate.fargate",
      "name": "실행 시간 제한이 없는 Fargate"
     },
     {
      "id": "ecs-eks-fargate.fargate-spot",
+     "parentId": "ecs-eks-fargate.fargate",
      "name": "Fargate Spot"
     },
     {
      "id": "ecs-eks-fargate.fargate-per-second-billing",
+     "parentId": "ecs-eks-fargate.fargate",
      "name": "Fargate의 최소 과금 단위"
     },
     {
      "id": "ecs-eks-fargate.fargate-efs-mount",
+     "parentId": "ecs-eks-fargate.fargate",
      "name": "Fargate 태스크의 EFS 마운트"
     },
     {
@@ -2199,12 +2256,13 @@
      "name": "DNS 호스팅을 Route 53으로 옮기는 절차"
     },
     {
-     "id": "route53.route53-alias-record",
-     "name": "별칭 레코드"
+     "id": "route53.private-hosted-zone-vpc-only",
+     "parentId": "route53.private-hosted-zone",
+     "name": "프라이빗 호스팅 영역의 연결 대상"
     },
     {
-     "id": "route53.private-hosted-zone-vpc-only",
-     "name": "프라이빗 호스팅 영역의 연결 대상"
+     "id": "route53.route53-alias-record",
+     "name": "별칭 레코드"
     },
     {
      "id": "route53.route53-query-logging",
@@ -2787,27 +2845,41 @@
      "name": "IAM (Identity And Access Management)"
     },
     {
+     "id": "iam-permissions.iam-user",
+     "name": "IAM 사용자"
+    },
+    {
      "id": "iam-permissions.iam-group-policy-attachment",
+     "parentId": "iam-permissions.iam-user",
      "name": "IAM 그룹에 붙이는 정책"
     },
     {
      "id": "iam-permissions.iam-group-users-only",
+     "parentId": "iam-permissions.iam-user",
      "name": "사용자 집합인 IAM 그룹"
     },
     {
      "id": "iam-permissions.iam-user-is-account-scoped",
+     "parentId": "iam-permissions.iam-user",
      "name": "계정 안에서만 존재하는 IAM 사용자"
     },
     {
+     "id": "iam-permissions.iam-role",
+     "name": "IAM 역할"
+    },
+    {
      "id": "iam-permissions.instance-profile",
+     "parentId": "iam-permissions.iam-role",
      "name": "IAM 인스턴스 프로파일"
     },
     {
      "id": "iam-permissions.iam-roles-anywhere",
+     "parentId": "iam-permissions.iam-role",
      "name": "IAM Roles Anywhere"
     },
     {
      "id": "iam-permissions.cross-account-iam-role",
+     "parentId": "iam-permissions.iam-role",
      "name": "계정 간 IAM 역할과 신뢰 정책"
     },
     {
@@ -2839,12 +2911,13 @@
      "name": "IAM Access Analyzer"
     },
     {
-     "id": "iam-permissions.network-access-analyzer",
-     "name": "Network Access Analyzer"
+     "id": "iam-permissions.access-analyzer-delegated-administrator",
+     "parentId": "iam-permissions.iam-access-analyzer",
+     "name": "Access Analyzer의 위임 관리자 계정"
     },
     {
-     "id": "iam-permissions.access-analyzer-delegated-administrator",
-     "name": "Access Analyzer의 위임 관리자 계정"
+     "id": "iam-permissions.network-access-analyzer",
+     "name": "Network Access Analyzer"
     },
     {
      "id": "iam-permissions.root-user-multiple-mfa",

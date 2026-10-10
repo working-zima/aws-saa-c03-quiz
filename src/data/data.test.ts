@@ -2602,8 +2602,9 @@ describe('학습 데이터 무결성', () => {
     // 더해 15·11로 세웠다.
     // step 20이 (주제 미정)의 workload-discovery를 governance-iac 1단에 넣어 7로
     // 늘리고, AI·ML 신규 6으로 ai-ml-services를 배열 끝에 세웠다.
+    // phase 54가 iam-permissions에 IAM 사용자·IAM 역할의 기본 개념 둘을 더해 18이 20이 됐다(ADR-041 개정).
     expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 20, 15, 11, 18, 11, 16, 17, 7, 7, 6,
+      13, 20, 16, 11, 11, 20, 15, 11, 20, 11, 16, 17, 7, 7, 6,
     ])
   })
 
@@ -2656,8 +2657,10 @@ describe('학습 데이터 무결성', () => {
     // 하이브리드 연결 9)을 더한 값이다.
     // step 20이 (주제 미정)의 parallelcluster를 ec2-autoscaling 3단 끝에,
     // amplify를 api-gateway-step-functions 1단에 넣어 17·19가 18·20이 됐다.
+    // phase 54가 기본 개념을 더해 ec2-autoscaling이 18에서 20(구매 옵션·Auto Scaling), elastic-load-balancing이
+    // 16에서 18(ALB·NLB), ecs-eks-fargate가 23에서 24(Fargate)가 됐다(ADR-041 개정).
     expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
-      21, 18, 18, 14, 18, 16, 24, 18, 23, 20, 33, 11, 20, 9, 19,
+      21, 18, 18, 14, 20, 18, 24, 18, 24, 20, 33, 11, 20, 9, 19,
     ])
   })
 
@@ -3169,9 +3172,9 @@ describe('학습 데이터 무결성', () => {
     // EFS: 기본 → 처리량 모드 둘·성능 모드·One Zone·POSIX 권한 → 수명 주기 관리와 그 세부 둘 →
     //   마운트 대상·계정 간 마운트·단방향 복제. 수명 주기 관리는 주요 기능이지만 자기 세부와
     //   붙이려고 갈림길 뒤에 둔다.
-    // FSx 개요: Windows·Lustre·ONTAP·OpenZFS를 한 번에 소개한다. ONTAP은 따로 기본 개념이 없어
-    //   이 개요가 그 자리를 맡는다.
-    // FSx for Windows File Server → FSx for Lustre → FSx for NetApp ONTAP.
+    // FSx 개요: Windows·Lustre·ONTAP·OpenZFS를 한 번에 소개한다.
+    // FSx for Windows File Server → FSx for Lustre → FSx for NetApp ONTAP. 세 블록 모두 유형의 기본 개념이 맨 앞에 선다.
+    //   ONTAP의 기본 개념은 phase 54가 더했다 — 세부 넷을 그 아래로 들여쓰려고(ADR-041 개정).
     // FSx File Gateway: FSx 파일 시스템이 아니라 온프레미스 쪽 접점이라 FSx 종류를 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'efs-fsx.efs',
@@ -3194,6 +3197,7 @@ describe('학습 데이터 무결성', () => {
       'efs-fsx.fsx-lustre-sub-millisecond-latency',
       'efs-fsx.fsx-lustre-persistent-deployment',
       'efs-fsx.fsx-lustre-s3-data-repository-association',
+      'efs-fsx.fsx-for-netapp-ontap',
       'efs-fsx.fsx-ontap-multi-az',
       'efs-fsx.fsx-ontap-multi-protocol-tiering',
       'efs-fsx.fsx-ontap-iscsi-block',
@@ -3347,6 +3351,8 @@ describe('학습 데이터 무결성', () => {
     // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
     // 블록: Aurora(1) → Aurora Serverless(2) → 복제본과 엔드포인트(4) → SQL Server에서 옮기기(2) → pgvector(1) → S3로
     //   내보내기(1) → 글로벌 데이터베이스와 리전 간 복제본(3) → 백업과 클론(2) → 스토리지 구성(1) → 확장 수단이 아닌 기능(1).
+    // 글로벌 데이터베이스와 리전 간 복제본 블록은 글로벌 데이터베이스 둘을 붙이고 리전 간 복제본을 뒤에 둔다. 쓰기 리전
+    //   개념을 RPO·RTO 개념 아래로 들여쓰려고 사이에 있던 복제본을 옮겼다(ADR-041 「남은 자리」 2, phase 54).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'aurora.aurora',
       'aurora.aurora-serverless-v2',
@@ -3360,8 +3366,8 @@ describe('학습 데이터 무결성', () => {
       'aurora.aurora-pgvector',
       'aurora.aurora-select-into-outfile-s3',
       'aurora.aurora-global-database-dr-targets',
-      'aurora.aurora-cross-region-read-replica',
       'aurora.aurora-global-database-write-region',
+      'aurora.aurora-cross-region-read-replica',
       'aurora.aurora-continuous-backup-rpo',
       'aurora.aurora-clone',
       'aurora.aurora-storage-configurations',
@@ -3441,8 +3447,10 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(3) → 구매 옵션(2) → 조정 정책(3) → 스팟과 혼합 구성(3) → Auto Scaling 운영(3) →
-    //   ParallelCluster(1).
+    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(3) → 구매 옵션(3) → Auto Scaling 기본(1) → 조정 정책(3) → 스팟과 혼합 구성(3) →
+    //   Auto Scaling 운영(3) → ParallelCluster(1).
+    // 구매 옵션과 Auto Scaling의 기본 개념은 phase 54가 더했다 — 구매 옵션 둘과 Auto Scaling 세 블록의 아홉을 그 아래로
+    //   들여쓰려고(ADR-041 개정). ec2 개념의 구매 옵션·Auto Scaling 문단은 주제의 첫 소개로 그대로 둔다.
     // 향상된 네트워킹은 인스턴스 유형이 지원해야 켜지는 기능이라 인스턴스 제품군 블록 끝에 둔다.
     // 스팟에 올릴 워크로드는 예약 인스턴스 유형과 함께 어떤 구매 옵션을 고를지의 갈림길이라 구매 옵션 블록에 둔다.
     // 스팟과 혼합 구성의 인스턴스 유형 재정의가 예약된 조정을 전제로 쓰므로 조정 정책 블록을 그 앞에 둔다(규칙 5).
@@ -3453,8 +3461,10 @@ describe('학습 데이터 무결성', () => {
       'ec2-autoscaling.memory-optimized-instance-family',
       'ec2-autoscaling.gpu-instance-family',
       'ec2-autoscaling.enhanced-networking',
+      'ec2-autoscaling.ec2-purchase-options',
       'ec2-autoscaling.reserved-instance-types',
       'ec2-autoscaling.spot-workload-fit',
+      'ec2-autoscaling.ec2-auto-scaling',
       'ec2-autoscaling.scheduled-scaling',
       'ec2-autoscaling.target-tracking-vs-simple-scaling',
       'ec2-autoscaling.predictive-scaling',
@@ -3472,19 +3482,23 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'elastic-load-balancing')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: ELB 개요와 ALB·NLB의 계층 갈림길(2) → ALB(6) → NLB(3) → Gateway Load Balancer(2) → 공통 설정(3).
+    // 블록: ELB 개요와 ALB·NLB의 계층 갈림길(2) → ALB(7) → NLB(4) → Gateway Load Balancer(2) → 공통 설정(3).
+    // ALB와 NLB의 기본 개념은 phase 54가 더했다 — Gateway Load Balancer처럼 유형마다 기본 개념을 블록 맨 앞에 세우고
+    //   세부를 그 아래로 들여쓰려고(ADR-041 개정). elb 개념의 세 유형 소개는 주제의 첫 소개로 그대로 둔다.
     // alb-l7-vs-nlb-l4는 비교 개념이지만 첫 개념 elb가 ALB·NLB를 이미 소개했고 ALB 블록의
     // alb-routing-conditions가 이 비교를 전제로 쓰므로 ALB 블록 앞에 둔다(규칙 5가 규칙 4보다 앞선다).
     // 공통 설정의 유휴 타임아웃이 Gateway Load Balancer를 언급하므로 공통 설정을 맨 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'elastic-load-balancing.elb',
       'elastic-load-balancing.alb-l7-vs-nlb-l4',
+      'elastic-load-balancing.alb',
       'elastic-load-balancing.alb-routing-conditions',
       'elastic-load-balancing.alb-cookie-stickiness',
       'elastic-load-balancing.sticky-session-tradeoff',
       'elastic-load-balancing.alb-least-outstanding-requests',
       'elastic-load-balancing.alb-target-group-independent-scaling',
       'elastic-load-balancing.alb-listener-rule-fixed-response',
+      'elastic-load-balancing.nlb',
       'elastic-load-balancing.nlb-tls-listener',
       'elastic-load-balancing.nlb-udp-listener',
       'elastic-load-balancing.nlb-ip-targets',
@@ -3647,9 +3661,10 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: ECS(5) → Fargate(4) → EKS(9) → ECR(1) → AWS Batch(2) → Elastic Beanstalk(1) →
+    // 블록: ECS(5) → Fargate(5) → EKS(9) → ECR(1) → AWS Batch(2) → Elastic Beanstalk(1) →
     //   App2Container(1).
-    // Fargate는 따로 기본 개념이 없고 ECS 첫 개념이 Fargate 기반 ECS를 소개하므로 ECS 바로 뒤에 둔다.
+    // ECS 첫 개념이 Fargate 기반 ECS를 소개하므로 Fargate 블록을 ECS 바로 뒤에 둔다. Fargate 블록의 기본 개념은
+    //   phase 54가 더했다 — 세부 넷을 그 아래로 들여쓰려고(ADR-041 개정).
     // EKS의 Fargate 파드 격리와 Batch의 Fargate 컴퓨팅 환경이 Fargate를 전제로 쓰므로 둘 다 Fargate 블록 뒤.
     // App2Container는 본문이 Elastic Beanstalk와 대비하므로 그 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
@@ -3658,6 +3673,7 @@ describe('학습 데이터 무결성', () => {
       'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
       'ecs-eks-fargate.ecs-awsvpc-mode',
       'ecs-eks-fargate.ecs-task-placement-strategy',
+      'ecs-eks-fargate.fargate',
       'ecs-eks-fargate.fargate-no-time-limit',
       'ecs-eks-fargate.fargate-spot',
       'ecs-eks-fargate.fargate-per-second-billing',
@@ -4364,6 +4380,8 @@ describe('학습 데이터 무결성', () => {
     // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
     // 블록: Route 53(1) → 라우팅 정책(5) → Resolver(2) → 호스팅 영역과 레코드(4) → 쿼리 로깅(1).
     // 프라이빗 호스팅 영역이 Resolver 아웃바운드 엔드포인트를 언급하므로 Resolver를 호스팅 영역 앞에 둔다(규칙 5).
+    // 호스팅 영역과 레코드 블록은 호스팅 영역 셋을 붙이고 별칭 레코드를 뒤에 둔다. 연결 대상 개념을 호스팅 영역 개념
+    //   아래로 들여쓰려고 사이에 있던 별칭 레코드를 옮겼다(ADR-041 「남은 자리」 3, phase 54).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'route53.route53',
       'route53.routing-policies',
@@ -4375,8 +4393,8 @@ describe('학습 데이터 무결성', () => {
       'route53.route53-resolver-forward-rule',
       'route53.private-hosted-zone',
       'route53.route53-zone-file-import',
-      'route53.route53-alias-record',
       'route53.private-hosted-zone-vpc-only',
+      'route53.route53-alias-record',
       'route53.route53-query-logging',
     ])
   })
@@ -4478,12 +4496,18 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'iam-permissions')
 
     // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
-    // 블록: IAM(1) → 사용자와 그룹(3) → 역할(3) → 정책 — 권한을 좁히는 장치와 평가 규칙(6) → 분석 도구(3) → 루트 사용자(2).
+    // 블록: IAM(1) → 사용자와 그룹(4) → 역할(4) → 정책 — 권한을 좁히는 장치와 평가 규칙(6) → 분석 도구(3) → 루트 사용자(2).
+    // 사용자와 그룹·역할의 기본 개념은 phase 54가 더했다 — 세부 셋씩을 그 아래로 들여쓰려고(ADR-041 개정). iam 개념의
+    //   사용자·역할 문단은 주제의 첫 소개로 그대로 둔다.
+    // 분석 도구 블록은 IAM Access Analyzer와 위임 관리자를 붙이고 Network Access Analyzer를 뒤에 둔다. 위임 관리자를
+    //   Access Analyzer 아래로 들여쓰려고 옮겼다(ADR-041 「남은 자리」 5, phase 54).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'iam-permissions.iam',
+      'iam-permissions.iam-user',
       'iam-permissions.iam-group-policy-attachment',
       'iam-permissions.iam-group-users-only',
       'iam-permissions.iam-user-is-account-scoped',
+      'iam-permissions.iam-role',
       'iam-permissions.instance-profile',
       'iam-permissions.iam-roles-anywhere',
       'iam-permissions.cross-account-iam-role',
@@ -4494,8 +4518,8 @@ describe('학습 데이터 무결성', () => {
       'iam-permissions.iam-notaction-deny',
       'iam-permissions.iam-requested-region-condition',
       'iam-permissions.iam-access-analyzer',
-      'iam-permissions.network-access-analyzer',
       'iam-permissions.access-analyzer-delegated-administrator',
+      'iam-permissions.network-access-analyzer',
       'iam-permissions.root-user-multiple-mfa',
       'iam-permissions.root-user-cannot-be-disabled',
     ])
