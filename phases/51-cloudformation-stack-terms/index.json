@@ -2,6 +2,14 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "51-cloudformation-stack-terms",
   "steps": [
-    { "step": 0, "name": "stack-terms", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "stack-terms",
+      "status": "completed",
+      "started_at": "2026-10-10T09:09:37+0900",
+      "summary": "governance-iac.cloudformation에 템플릿·스택 정의를, governance-iac.cloudformation-drift-detection에 드리프트 정의를 추가해 각각 문단 2→3개로 확장하고 드리프트 감지 요약을 수정했다. q296·q299·q301 해설의 지정 구절과 questionsSha256 기준선을 갱신했으며, 데이터 테스트 3개 추가와 DriftScopeDiagram 본문 비교 단언의 강조 마커 처리를 수정해 전체 1219개 테스트 및 build·lint·구조·전사 검사를 통과했다.",
+      "completed_at": "2026-10-10T09:14:52+0900"
+    }
+  ],
+  "created_at": "2026-10-10T09:09:37+0900"
 }
