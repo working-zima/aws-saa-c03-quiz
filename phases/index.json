@@ -264,6 +264,11 @@
       "dir": "52-vpc-comparison-table",
       "status": "completed",
       "completed_at": "2026-10-10T11:14:12+0900"
+    },
+    {
+      "dir": "53-concept-indent",
+      "status": "completed",
+      "completed_at": "2026-10-10T16:37:21+0900"
     }
   ]
 }

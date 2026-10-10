@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "53-concept-indent",
+  "steps": [
+    {
+      "step": 0,
+      "name": "concept-groups",
+      "status": "completed",
+      "summary": "src/types/content.ts에 Concept.parentId와 ConceptGroup을 정의하고 groupConcepts(concepts: Concept[]): ConceptGroup[] 및 hierarchyProblems(topic: Topic): string[]를 구현했다. groupConcepts는 입력 순서를 유지하며 parentId 없음·머리 부재·다른 묶음 개입·딸린 개념 참조를 평평한 묶음으로 둔다. 테스트를 먼저 작성해 실패를 확인했고 새 테스트 19개(단위 18개·전 주제 검사 1개), 전체 1,249개(70개 파일)와 AC 5개가 통과했다.",
+      "started_at": "2026-10-10T12:09:31+0900",
+      "completed_at": "2026-10-10T12:13:52+0900"
+    },
+    {
+      "step": 1,
+      "name": "indented-children",
+      "status": "completed",
+      "summary": "ConceptList가 groupConcepts와 개념 id를 key로 둔 Fragment로 머리 article 뒤에 딸린 무리를 그리며, 무리 div에 space-y-8 border-l border-border pl-4 max-sm:[&_figure]:-ml-[37px] 클래스를 적용했다. 딸린 제목은 h2→h3·h4→h5이고 글자 모양은 유지하며, article 마크업은 헤딩 태그를 받는 내부 renderConcept 함수 한 곳에 뒀다. 기존 테스트를 보존하고 새 테스트 12개를 먼저 작성해 실패를 확인한 뒤 구현했으며, 전체 1,261개 테스트(70개 파일)와 AC 6개가 Node 18.17.1에서 통과했다. 파일 해시 대조로 src/data·scripts·도식·페이지·QuizRunner 보존을 확인했고 빌드 CSS의 margin-left:-37px도 확인했다.",
+      "started_at": "2026-10-10T15:10:48+0900",
+      "completed_at": "2026-10-10T15:14:09+0900"
+    },
+    {
+      "step": 2,
+      "name": "sample-hierarchy",
+      "status": "completed",
+      "summary": "hierarchy.json의 승인된 짝대로 data-transfer-services 15개·sqs-sns-eventbridge 25개·vpc-networking 10개·lambda 5개·backup-disaster-recovery 7개, 총 62개 parentId를 topics.json과 topics-baseline.json에 텍스트 삽입만으로 적용했다. check-structure.mjs는 parentId 불일치를 검사하고 sync-baseline.mjs는 불일치 시 갱신을 거부하도록 고쳤으며 임시 복사본 검증 15건이 통과했다. backupTables.test.tsx의 지정된 제목 단언 한 곳만 headingLevel + 1과 ADR-041 주석으로 조정하고 데이터 적용 전 실패를 확인했다. Node 18.17.1에서 전체 테스트 1,261개(70개 파일)와 AC 6개가 통과했고 sync-baseline --dry-run은 갱신할 것이 없음을 보고했다. 파일 해시와 원문 대조로 문항·본문·순서 및 지정 범위 밖 파일 보존을 확인했으며, 나머지 34개 주제는 표본 화면 검수 전까지 적용하지 않았다.",
+      "started_at": "2026-10-10T15:14:09+0900",
+      "completed_at": "2026-10-10T15:17:17+0900"
+    },
+    {
+      "step": 3,
+      "name": "hierarchy-batch-a",
+      "status": "completed",
+      "summary": "hierarchy.json의 승인된 짝대로 17개 주제(aws-core-services 0개·s3-storage-classes 0개·s3-versioning-lifecycle 5개·s3-encryption-batch 10개·s3-access-control 4개·ebs-instance-store 10개·efs-fsx 16개·storage-gateway-migration 4개·rds-storage-features 4개·aurora 5개·dynamodb 9개·elasticache-purpose-built-db 8개·ec2-autoscaling 1개·elastic-load-balancing 1개·cloudfront-global-accelerator 18개·ecs-eks-fargate 13개·api-gateway-step-functions 17개)에 총 125개 parentId를 topics.json과 topics-baseline.json에 텍스트 삽입만으로 적용했다. 사전 검사는 해당 125개 누락만 보고했고, 적용 후 verify-hierarchy.mjs 3은 parentId 187개·적용 주제 22개를 확인했다. Node 18.17.1에서 전체 테스트 1,261개(70개 파일)와 AC 6개가 통과했고 sync-baseline --dry-run은 갱신할 것이 없음을 보고했다. 751개 파일 해시 및 줄 단위 대조로 데이터 두 파일의 지정된 삽입 외에 본문·순서·문항·코드·테스트·문서·승인 매핑을 보존했으며 일회성 스크립트를 저장소에 남기지 않았다.",
+      "started_at": "2026-10-10T15:30:59+0900",
+      "completed_at": "2026-10-10T15:33:57+0900"
+    },
+    {
+      "step": 4,
+      "name": "hierarchy-batch-b",
+      "status": "completed",
+      "summary": "hierarchy.json의 승인된 짝대로 마지막 17개 주제(security-groups-nacl 5개·hybrid-connectivity 8개·route53 6개·emr-glue-athena 14개·kinesis-streaming 10개·redshift-opensearch-quicksight 7개·cloudwatch-xray 7개·secrets-encryption 13개·waf-shield 11개·guardduty-macie-inspector 6개·iam-permissions 0개·identity-federation 5개·organizations-cloudtrail-config 12개·cost-management 7개·governance-iac 2개·systems-manager 0개·ai-ml-services 1개)에 총 114개 parentId를 topics.json과 topics-baseline.json에 줄 단위 삽입으로 적용했다. waf-shield.cloudfront를 주제 맨 앞(waf-shield.waf 앞)으로 옮겨 두 파일에서 줄·항목 자리만 맞바꿨고, data.test.ts의 WAF 순서 테스트 한 블록만 지정된 내용으로 바꿔 데이터 이동 전 그 테스트 하나의 실패를 먼저 확인했다. verify-hierarchy.mjs 4는 parentId 301개·적용 주제 39개를 확인했고, Node 18.17.1에서 build·lint·전체 테스트 1,261개(70개 파일)·check-structure가 통과했으며 sync-baseline --dry-run은 갱신할 것이 없음을 보고했다. 바뀐 파일은 데이터 두 파일과 data.test.ts뿐이고 일회성 치환 스크립트는 저장소 밖(/tmp)에서 쓰고 지웠다.",
+      "started_at": "2026-10-10T16:34:51+0900",
+      "completed_at": "2026-10-10T16:37:20+0900"
+    }
+  ],
+  "created_at": "2026-10-10T12:09:31+0900",
+  "completed_at": "2026-10-10T16:37:21+0900"
+}

@@ -10,9 +10,16 @@ export interface Topic {
 
 export interface Concept {
   id: string
+  parentId?: string // 딸린 개념만. 같은 주제 안 머리 개념의 id (ADR-041)
   name: string
   summary: string
   paragraphs: string[]
+}
+
+// 머리 개념 하나와 그 바로 뒤에 이어지는 딸린 개념들. 딸린 개념이 없으면 children은 빈 배열이다.
+export interface ConceptGroup {
+  concept: Concept
+  children: Concept[]
 }
 
 export interface Question {
