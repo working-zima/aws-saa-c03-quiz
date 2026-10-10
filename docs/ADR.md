@@ -1804,7 +1804,7 @@ phase 50의 새 도식 둘(조직과 SCP 범위, IAM Identity Center 접근)에�
 - 서비스가 하나뿐인 주제는 하위 기능 블록을 단위로 삼는다. `lambda`에서 「Lambda 함수 URL」 아래에 「함수 URL의 AWS_IAM 인증 유형」이
   들어가고, 주제 소개 개념 `lambda` 아래로 전부 넣지는 않는다.
 
-초안 판정은 머리 101개, 딸린 개념 293개다(618개 중 47%). 들여쓰기가 없는 주제가 넷이다 — `aws-core-services`·
+판정은 머리 102개, 딸린 개념 301개다(618개 중 49%, 아래 WAF 재배치 포함). 들여쓰기가 없는 주제가 넷이다 — `aws-core-services`·
 `s3-storage-classes`·`iam-permissions`·`systems-manager`. 넷 다 소개 개념 없이 같은 높이의 개념이 나란히 있다. 주제별 판정은
 `phases/53-concept-indent/hierarchy.json`(적용할 짝)과 `hierarchy.md`(사람이 읽는 트리)에 있다.
 
@@ -1840,10 +1840,13 @@ phase 50의 새 도식 둘(조직과 SCP 범위, IAM Identity Center 접근)에�
 잡기 위해서다.
 
 **남은 자리 — 순서 때문에 묶지 못한 다섯**: 머리와 딸린 개념 사이에 다른 개념이 끼어 있어 규칙 3을 지키면 묶을 수 없다.
+1만 순서를 옮겨 풀었다.
 
-1. `waf-shield` — 두 번째 자리의 `cloudfront`(phase 36 이동 후보) 때문에 WAF 세부 여덟이 `waf` 아래로 들어가지 못한다. 사용자가
-   `cloudfront`의 자리를 옮겨 풀기로 했다. 옮길 자리는 ADR-033 규칙 5(`waf-attach-targets`가 멀티 오리진 CloudFront를 전제로 쓴다)와
-   함께 후속 step에서 정한다.
+1. `waf-shield` — 두 번째 자리의 `cloudfront`(phase 36 이동 후보) 때문에 WAF 세부 여덟이 `waf` 아래로 들어가지 못했다.
+   **`cloudfront`를 주제 맨 앞, `waf` 앞으로 옮겨 풀었다**(2026-10-10 사용자 결정, step 4). 처음 권한 「WAF 묶음 뒤로」는 ADR-033
+   규칙 5를 어긴다 — `waf-attach-targets`가 멀티 오리진 CloudFront를 전제로 쓰므로 CloudFront가 그보다 앞에 있어야 한다. 맨 앞은
+   그 전제를 지키면서 `waf`와 세부 여덟을 붙인다. 대가로 주제가 CloudFront 소개로 시작한다. phase 36이 이 개념을
+   `cloudfront-global-accelerator`로 옮기라고 판정했으므로, 주제를 옮기는 phase가 오면 이 자리도 함께 사라진다.
 2. `aurora.aurora-global-database-write-region` — 사이에 `aurora-cross-region-read-replica`
 3. `route53.private-hosted-zone-vpc-only` — 사이에 `route53-alias-record`
 4. `vpc-networking.nat-instance` — VPC Endpoint 묶음 뒤

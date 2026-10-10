@@ -26,7 +26,8 @@ describe('백업 비교표', () => {
       const figure = screen.getByRole('figure', { name: tables[id].label })
       const article = figure.closest('article')!
       expect(article).toHaveAttribute('id', conceptId)
-      expect(within(article).getByRole('heading', { level: headingLevel, name: concept.name })).toBeInTheDocument()
+      // 세 표의 개념은 모두 backup 아래 딸린 개념이라 제목이 한 단계 아래다(ADR-041).
+      expect(within(article).getByRole('heading', { level: headingLevel + 1, name: concept.name })).toBeInTheDocument()
       expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.join(''))
       expect(article.lastElementChild).toBe(figure)
       expect(within(article).getAllByRole('figure')).toHaveLength(1)

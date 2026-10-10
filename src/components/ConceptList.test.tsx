@@ -89,3 +89,79 @@ describe('ConceptList', () => {
     expect(screen.getByText('EC2로 운영한다')).toBeInTheDocument()
   })
 })
+
+describe('딸린 개념 (ADR-041)', () => {
+  const A: Concept = { id: 'A', name: 'A', summary: 'A 요약', paragraphs: ['A 문단'] }
+  const B: Concept = { id: 'B', parentId: A.id, name: 'B', summary: 'B 요약', paragraphs: ['B 첫 문단', 'B 마지막 문단'] }
+  const C: Concept = { id: 'C', parentId: A.id, name: 'C', summary: 'C 요약', paragraphs: ['C 문단'] }
+  const D: Concept = { id: 'D', name: 'D', summary: 'D 요약', paragraphs: ['D 문단'] }
+
+  it.each([2, 4] as const)('h%i 화면에서 딸린 개념의 제목만 한 단계 내리고 글자 모양은 유지한다', (headingLevel) => {
+    render(<ConceptList concepts={[A, B, C, D]} diagrams={{}} headingLevel={headingLevel} />)
+
+    for (const concept of [A, D]) {
+      expect(screen.getByRole('heading', { level: headingLevel, name: concept.name }))
+        .toHaveClass('text-base font-medium text-neutral-100')
+    }
+    for (const concept of [B, C]) {
+      expect(screen.getByRole('heading', { level: headingLevel + 1, name: concept.name }))
+        .toHaveClass('text-base font-medium text-neutral-100')
+    }
+  })
+
+  it.each([2, 4] as const)('h%i 화면에서 딸린 무리를 머리 article 바로 뒤에 두고 개념 순서를 유지한다', (headingLevel) => {
+    render(<ConceptList concepts={[A, B, C, D]} diagrams={{}} headingLevel={headingLevel} />)
+
+    const articles = screen.getAllByRole('article')
+    const [head, firstChild, secondChild, nextHead] = articles
+    const list = head.parentElement!
+    const children = firstChild.parentElement!
+
+    expect(articles.map((article) => article.id)).toEqual(['A', 'B', 'C', 'D'])
+    expect(secondChild.parentElement).toBe(children)
+    expect(children.tagName).toBe('DIV')
+    expect(children.previousElementSibling).toBe(head)
+    expect(children.nextElementSibling).toBe(nextHead)
+    expect(children).toHaveClass('space-y-8', 'border-l', 'border-border', 'pl-4', 'max-sm:[&_figure]:-ml-[37px]')
+    expect(list).toHaveClass('space-y-8')
+    expect(nextHead.parentElement).toBe(list)
+    expect(Array.from(list.children)).toEqual([head, children, nextHead])
+    expect(Array.from(children.children)).toEqual([firstChild, secondChild])
+    for (const article of articles) expect(article).toHaveClass('space-y-3', 'scroll-mt-24')
+  })
+
+  it.each([2, 4] as const)('h%i 화면에서 딸린 개념의 도식도 해당 article의 마지막 문단 뒤에 둔다', (headingLevel) => {
+    render(<ConceptList concepts={[A, B, C, D]} diagrams={{ [B.id]: FakeDiagram }} headingLevel={headingLevel} />)
+
+    const child = screen.getAllByRole('article')[1]
+    const figure = within(child).getByRole('figure', { name: '가짜 도식' })
+    expect(figure.closest('article')).toBe(child)
+    expect(child.id).toBe(B.id)
+    expect(within(child).getByText(B.summary)).toBeInTheDocument()
+    expect(within(child).getByText('B 첫 문단')).toBeInTheDocument()
+    expect(child.lastElementChild).toBe(figure)
+    expect(figure.previousElementSibling?.lastElementChild).toBe(within(child).getByText('B 마지막 문단'))
+  })
+
+  it.each([2, 4] as const)('h%i 화면에서 머리 없이 딸린 개념만 받으면 평평하게 그린다', (headingLevel) => {
+    const { container } = render(<ConceptList concepts={[B]} diagrams={{}} headingLevel={headingLevel} />)
+
+    expect(screen.getByRole('heading', { level: headingLevel, name: B.name })).toBeInTheDocument()
+    expect(container.querySelector('.border-l')).toBeNull()
+  })
+
+  it.each([2, 4] as const)('h%i 화면에서 머리와 딸린 개념 사이에 다른 개념이 끼면 평평하게 그린다', (headingLevel) => {
+    const { container } = render(<ConceptList concepts={[A, D, B]} diagrams={{}} headingLevel={headingLevel} />)
+
+    expect(screen.getByRole('heading', { level: headingLevel, name: B.name })).toBeInTheDocument()
+    expect(container.querySelector('.border-l')).toBeNull()
+  })
+
+  it.each([2, 4] as const)('h%i 화면에서 parentId가 없는 목록에는 딸린 무리를 만들지 않는다', (headingLevel) => {
+    const { container } = render(<ConceptList concepts={[A, D]} diagrams={{}} headingLevel={headingLevel} />)
+
+    expect(container.querySelector('.border-l')).toBeNull()
+    const articles = screen.getAllByRole('article')
+    expect(Array.from(articles[0].parentElement!.children)).toEqual(articles)
+  })
+})

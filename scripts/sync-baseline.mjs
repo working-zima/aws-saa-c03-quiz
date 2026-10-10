@@ -15,6 +15,7 @@
  * | `questionsSha256` | 현재 파일 해시로 **갱신한다** |
  * | 주제 개수·id·title·importance·sourcePages | 다르면 **거부한다** |
  * | 개념 개수·순서·id | 다르면 **거부한다** |
+ * | 개념 parentId | 다르면 **거부한다** (ADR-041 — 구조다) |
  * | `conceptLineCount` | 다르면 **거부한다** (개념을 나누거나 합쳤다는 뜻이다) |
  *
  * 거부되는 것들은 문체 작업으로는 바뀔 수 없는 값이다. 그런 변경을 정말 의도했다면
@@ -81,6 +82,9 @@ baseline.topics.forEach((want, i) => {
     if (gc.id !== wc.id) {
       refusals.push(`주제 ${want.id} ${j}번 개념 id: "${wc.id}" → "${gc.id}"`)
       return
+    }
+    if (gc.parentId !== wc.parentId) {
+      refusals.push(`개념 ${wc.id} parentId: "${wc.parentId ?? '없음'}" → "${gc.parentId ?? '없음'}"`)
     }
     if (gc.name !== wc.name) renames.push([wc.id, wc.name, gc.name])
   })

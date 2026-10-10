@@ -10,10 +10,10 @@
  * | 검사 | 무엇을 보장하나 |
  * |---|---|
  * | questions.json 해시 | 문항 파일이 한 글자도 안 바뀌었다 |
- * | topics.json에서 `,"parentId":"…"`를 지운 해시 | 바뀐 것이 parentId 삽입뿐이다 — 재직렬화·본문 수정·순서 변경이 없다 |
+ * | topics.json에서 `,"parentId":"…"`를 지우고 WAF 이동을 되돌린 해시 | 바뀐 것이 parentId 삽입과 step 4의 WAF 이동 하나뿐이다 — 재직렬화·본문 수정·다른 순서 변경이 없다 |
  * | parentId 자리 | 개념 줄에서 `"id"` 바로 뒤에 있다 |
  * | parentId 짝 | 이 step까지 적용할 주제의 짝이 hierarchy.json과 정확히 같고, 나머지 주제에는 parentId가 없다 |
- * | topics-baseline.json에서 parentId 줄을 지운 해시 | 스냅샷도 parentId 줄 삽입만 바뀌었다 |
+ * | topics-baseline.json에서 parentId 줄을 지우고 WAF 이동을 되돌린 해시 | 스냅샷도 parentId 줄 삽입과 같은 WAF 이동만 바뀌었다 |
  * | 스냅샷의 parentId = topics.json의 parentId | 두 파일이 같은 관계를 적는다 |
  *
  * 규칙 세 가지(같은 주제·두 단·연속)는 src/data/data.test.ts가 hierarchyProblems로 검사한다.
@@ -38,7 +38,45 @@ const STEPS = [
   [],
   [],
   ['data-transfer-services', 'sqs-sns-eventbridge', 'vpc-networking', 'lambda', 'backup-disaster-recovery'],
+  [
+    'aws-core-services', 's3-storage-classes', 's3-versioning-lifecycle', 's3-encryption-batch', 's3-access-control',
+    'ebs-instance-store', 'efs-fsx', 'storage-gateway-migration', 'rds-storage-features', 'aurora', 'dynamodb',
+    'elasticache-purpose-built-db', 'ec2-autoscaling', 'elastic-load-balancing', 'cloudfront-global-accelerator',
+    'ecs-eks-fargate', 'api-gateway-step-functions',
+  ],
+  [
+    'security-groups-nacl', 'hybrid-connectivity', 'route53', 'emr-glue-athena', 'kinesis-streaming',
+    'redshift-opensearch-quicksight', 'cloudwatch-xray', 'secrets-encryption', 'waf-shield', 'guardduty-macie-inspector',
+    'iam-permissions', 'identity-federation', 'organizations-cloudtrail-config', 'cost-management', 'governance-iac',
+    'systems-manager', 'ai-ml-services',
+  ],
 ]
+
+/**
+ * 순서 변경은 하나만 허용한다 — step 4가 `waf-shield.cloudfront`를 주제 맨 앞(`waf-shield.waf` 앞)으로 옮긴다(ADR-041
+ * 「남은 자리」 1). 해시를 비교하기 전에 이 이동을 되돌린다. 이동 전 step에서 옮겨져 있거나, 이동 step 뒤에 안 옮겨져 있으면 실패다.
+ */
+const WAF_MOVE_STEP = 4
+const TOPIC_LINE = { waf: '      {"id":"waf-shield.waf",', cloudfront: '      {"id":"waf-shield.cloudfront",' }
+const BASELINE_BLOCK = {
+  waf: '    {\n     "id": "waf-shield.waf",\n     "name": "WAF (Web Application Firewall)"\n    },\n',
+  cloudfront: '    {\n     "id": "waf-shield.cloudfront",\n     "name": "CloudFront"\n    },\n',
+}
+
+function undoWafMoveInTopics(text) {
+  const lines = text.split('\n')
+  const w = lines.findIndex((l) => l.startsWith(TOPIC_LINE.waf))
+  const c = lines.findIndex((l) => l.startsWith(TOPIC_LINE.cloudfront))
+  const moved = c === w - 1
+  if (moved) [lines[c], lines[w]] = [lines[w], lines[c]]
+  return { moved, text: lines.join('\n') }
+}
+
+function undoWafMoveInBaseline(text) {
+  const movedPair = BASELINE_BLOCK.cloudfront + BASELINE_BLOCK.waf
+  const moved = text.includes(movedPair)
+  return { moved, text: moved ? text.replace(movedPair, BASELINE_BLOCK.waf + BASELINE_BLOCK.cloudfront) : text }
+}
 
 const step = Number(process.argv[2])
 if (!Number.isInteger(step) || step < 0 || step >= STEPS.length) {
@@ -53,10 +91,16 @@ const hierarchy = JSON.parse(read('phases/53-concept-indent/hierarchy.json'))
 // 1. 문항 파일
 if (sha(read('src/data/questions.json')) !== BASE.questions) problems.push('src/data/questions.json이 바뀌었다')
 
-// 2. topics.json — parentId를 지우면 착수 시점과 같아야 한다
+// 2. topics.json — parentId를 지우고 허용된 WAF 이동을 되돌리면 착수 시점과 같아야 한다
 const raw = read('src/data/topics.json')
-if (sha(raw.replace(/,"parentId":"[^"]*"/g, '')) !== BASE.topics) {
-  problems.push('topics.json에서 parentId 말고 바뀐 것이 있다 (본문·순서·재직렬화)')
+const topicsUndo = undoWafMoveInTopics(raw.replace(/,"parentId":"[^"]*"/g, ''))
+if (topicsUndo.moved !== step >= WAF_MOVE_STEP) {
+  problems.push(step >= WAF_MOVE_STEP
+    ? 'topics.json: waf-shield.cloudfront가 waf-shield.waf 바로 앞으로 옮겨져 있지 않다'
+    : `topics.json: step ${WAF_MOVE_STEP} 전인데 waf-shield.cloudfront가 옮겨져 있다`)
+}
+if (sha(topicsUndo.text) !== BASE.topics) {
+  problems.push('topics.json에서 parentId와 WAF 이동 말고 바뀐 것이 있다 (본문·순서·재직렬화)')
 }
 
 // 3. parentId 자리
@@ -95,8 +139,14 @@ for (const [child, [topicId, parent]] of got) {
 
 // 5. 스냅샷
 const baselineRaw = read('scripts/topics-baseline.json')
-if (sha(baselineRaw.replace(/^ {5}"parentId": "[^"]*",\n/gm, '')) !== BASE.baseline) {
-  problems.push('topics-baseline.json에서 parentId 줄 말고 바뀐 것이 있다')
+const baselineUndo = undoWafMoveInBaseline(baselineRaw.replace(/^ {5}"parentId": "[^"]*",\n/gm, ''))
+if (baselineUndo.moved !== step >= WAF_MOVE_STEP) {
+  problems.push(step >= WAF_MOVE_STEP
+    ? 'topics-baseline.json: waf-shield.cloudfront 항목이 waf-shield.waf 바로 앞으로 옮겨져 있지 않다'
+    : `topics-baseline.json: step ${WAF_MOVE_STEP} 전인데 waf-shield.cloudfront 항목이 옮겨져 있다`)
+}
+if (sha(baselineUndo.text) !== BASE.baseline) {
+  problems.push('topics-baseline.json에서 parentId 줄과 WAF 이동 말고 바뀐 것이 있다')
 }
 const baseline = JSON.parse(baselineRaw)
 for (const topic of baseline.topics) {
