@@ -33,6 +33,20 @@ describe('markFirstOccurrences', () => {
     ])
   })
 
+  it('백틱 안의 약어는 표시하지 않고 백틱 밖의 첫 자리를 표시한다', () => {
+    expect(markFirstOccurrences(['`ACM Certificate` 이벤트는 ACM이 낸다'], ['ACM'])).toEqual([
+      [{ text: '`ACM Certificate` 이벤트는 ' }, { text: 'ACM', term: 'ACM' }, { text: '이 낸다' }],
+    ])
+  })
+
+  it('백틱 조각이 있어도 조각들을 이으면 원문과 같다', () => {
+    const texts = ['`IAM` 정책은 IAM이 평가한다', '**VPN**과 `EC2:RunInstances`, EC2와 `ACL`']
+    const result = markFirstOccurrences(texts, ['IAM', 'EC2', 'ACL', 'VPN'])
+
+    expect(result.map(joined)).toEqual(texts)
+    expect(result.flat().filter(({ term }) => term).map(({ term }) => term)).toEqual(['IAM', 'EC2'])
+  })
+
   it('약어가 없는 텍스트는 조각 하나다', () => {
     expect(markFirstOccurrences(['약어가 없는 문장'], ['IAM', 'EC2'])).toEqual([[{ text: '약어가 없는 문장' }]])
   })
