@@ -32,7 +32,7 @@ const git = (...args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8'
 const P = { topics: 'src/data/topics.json', questions: 'src/data/questions.json', baseline: 'scripts/topics-baseline.json' }
 const STEP0 = [
   'src/components/EmphasizedText.tsx',
-  'src/components/ConceptList.test.tsx',
+  'src/components/EmphasizedText.test.tsx',
   'src/lib/glossary.ts',
   'src/lib/glossary.test.ts',
   'src/lib/search.ts',
