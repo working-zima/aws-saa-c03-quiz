@@ -539,26 +539,32 @@
     },
     {
      "id": "data-transfer-services.file-gateway-vs-datasync-continuous",
+     "parentId": "data-transfer-services.datasync",
      "name": "지속 수집과 예약 전송의 갈림길"
     },
     {
      "id": "data-transfer-services.datasync-scope-limits",
+     "parentId": "data-transfer-services.datasync",
      "name": "DataSync가 맡지 않는 일"
     },
     {
      "id": "data-transfer-services.datasync-in-transit-encryption",
+     "parentId": "data-transfer-services.datasync",
      "name": "DataSync의 전송 중 암호화"
     },
     {
      "id": "data-transfer-services.datasync-manifest",
+     "parentId": "data-transfer-services.datasync",
      "name": "전송 대상을 좁히는 DataSync 매니페스트"
     },
     {
      "id": "data-transfer-services.datasync-transfer-mode",
+     "parentId": "data-transfer-services.datasync",
      "name": "DataSync 태스크의 전송 모드"
     },
     {
      "id": "data-transfer-services.datasync-task-status-event",
+     "parentId": "data-transfer-services.datasync",
      "name": "DataSync 작업 실행 상태의 EventBridge 이벤트"
     },
     {
@@ -567,10 +573,12 @@
     },
     {
      "id": "data-transfer-services.snowball-edge-compute",
+     "parentId": "data-transfer-services.snowball-edge",
      "name": "Snowball Edge의 현장 컴퓨팅 기능"
     },
     {
      "id": "data-transfer-services.transfer-deadline-vs-bandwidth",
+     "parentId": "data-transfer-services.snowball-edge",
      "name": "전송 수단을 정하는 기한과 대역폭 계산"
     },
     {
@@ -579,26 +587,32 @@
     },
     {
      "id": "data-transfer-services.transfer-family-custom-hostname",
+     "parentId": "data-transfer-services.transfer-family",
      "name": "Transfer Family의 사용자 지정 DNS 이름"
     },
     {
      "id": "data-transfer-services.transfer-family-directory-service-identity-provider",
+     "parentId": "data-transfer-services.transfer-family",
      "name": "Transfer Family의 Directory Service ID 공급자"
     },
     {
      "id": "data-transfer-services.transfer-family-service-managed-users",
+     "parentId": "data-transfer-services.transfer-family",
      "name": "Transfer Family의 서비스 관리형 사용자"
     },
     {
      "id": "data-transfer-services.transfer-family-workflow",
+     "parentId": "data-transfer-services.transfer-family",
      "name": "Transfer Family의 업로드 후 워크플로"
     },
     {
      "id": "data-transfer-services.transfer-family-workflow-actions",
+     "parentId": "data-transfer-services.transfer-family",
      "name": "업로드 후 워크플로의 미리 정의된 액션"
     },
     {
      "id": "data-transfer-services.transfer-family-structured-logging",
+     "parentId": "data-transfer-services.transfer-family",
      "name": "Transfer Family의 구조화된 로깅"
     },
     {
@@ -607,6 +621,7 @@
     },
     {
      "id": "data-transfer-services.s3-multipart-upload",
+     "parentId": "data-transfer-services.s3-transfer-acceleration",
      "name": "멀티파트 업로드"
     }
    ]
@@ -1262,6 +1277,7 @@
     },
     {
      "id": "lambda.lambda-function-url-iam-auth",
+     "parentId": "lambda.lambda-function-url",
      "name": "함수 URL의 AWS_IAM 인증 유형"
     },
     {
@@ -1294,6 +1310,7 @@
     },
     {
      "id": "lambda.lambda-memory-ceiling",
+     "parentId": "lambda.lambda-memory-cpu-proportional",
      "name": "Lambda 한 번 실행의 메모리 상한"
     },
     {
@@ -1302,14 +1319,17 @@
     },
     {
      "id": "lambda.lambda-provisioned-concurrency-autoscaling",
+     "parentId": "lambda.lambda-reserved-concurrency",
      "name": "프로비저닝된 동시성의 Application Auto Scaling 조정"
     },
     {
      "id": "lambda.lambda-concurrency-limit-throttling",
+     "parentId": "lambda.lambda-reserved-concurrency",
      "name": "동시 실행 한도 초과와 TooManyRequestsException"
     },
     {
      "id": "lambda.lambda-snapstart",
+     "parentId": "lambda.lambda-reserved-concurrency",
      "name": "Lambda SnapStart"
     },
     {
@@ -1535,50 +1555,62 @@
     },
     {
      "id": "sqs-sns-eventbridge.dead-letter-queue",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "데드레터 큐(DLQ)"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-details",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "SQS의 보존 기간과 표준 대기열의 약점"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-queue-depth-scaling",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "대기열 깊이 기반 오토 스케일링"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-batch-and-polling",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "SQS의 배치·가시성 타임아웃·롱 폴링"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "가시성 타임아웃과 소비자의 처리 시간"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-message-size-limit",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "SQS 메시지의 크기 한계"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-message-group-id",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "FIFO 대기열의 순서 보장 단위인 메시지 그룹 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-fifo-deduplication-id",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "5분 동안 적용되는 FIFO 대기열의 중복 제거 ID"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-content-based-deduplication",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "FIFO 대기열의 콘텐츠 기반 중복 제거"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-queue-policy",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "큐에 직접 붙이는 리소스 기반 정책"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-encryption-and-consumer-kms-permission",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "SQS 큐 암호화와 소비자의 복호화 권한"
     },
     {
      "id": "sqs-sns-eventbridge.sqs-vpc-endpoint-and-queue-policy",
+     "parentId": "sqs-sns-eventbridge.sqs",
      "name": "SQS 인터페이스 VPC 엔드포인트와 큐 정책"
     },
     {
@@ -1587,14 +1619,17 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-fifo-topic",
+     "parentId": "sqs-sns-eventbridge.sns",
      "name": "SNS FIFO 주제"
     },
     {
      "id": "sqs-sns-eventbridge.sns-no-message-body-rewrite",
+     "parentId": "sqs-sns-eventbridge.sns",
      "name": "SNS의 메시지 본문 재작성 제약"
     },
     {
      "id": "sqs-sns-eventbridge.sns-encrypted-topic-publish-permissions",
+     "parentId": "sqs-sns-eventbridge.sns",
      "name": "암호화된 SNS 주제 게시에 필요한 세 가지 권한"
     },
     {
@@ -1615,38 +1650,47 @@
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-scheduler",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "EventBridge Scheduler"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "이벤트 라우팅과 워크플로 오케스트레이션"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-ordering-and-retention",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "EventBridge가 보장하지 않는 것"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "이벤트 패턴 규칙과 주기적 폴링"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-bus-types",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "기본·사용자 지정·파트너 이벤트 버스"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-pipes",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "EventBridge 파이프"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-api-destination",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "EventBridge API 대상"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-private-api-target",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "프라이빗 API로 이벤트를 넣는 길"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-resource-change-rule",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "리소스 구성 변경에 거는 EventBridge 규칙"
     },
     {
@@ -1659,6 +1703,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.ses-inbound-email-receiving",
+     "parentId": "sqs-sns-eventbridge.ses",
      "name": "SES의 이메일 수신 규칙"
     }
    ]
@@ -1678,30 +1723,37 @@
     },
     {
      "id": "backup-disaster-recovery.backup-long-term-retention",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "AWS Backup으로 넘어가야 하는 순간"
     },
     {
      "id": "backup-disaster-recovery.backup-ec2-resource-assignment",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "백업 계획의 리소스로 지정하는 EC2 인스턴스"
     },
     {
      "id": "backup-disaster-recovery.organizations-backup-policy",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "Organizations의 백업 정책"
     },
     {
      "id": "backup-disaster-recovery.backup-cross-account-copy",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "다른 계정에 두는 백업 사본"
     },
     {
      "id": "backup-disaster-recovery.backup-s3-continuous-backup",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "S3의 연속 백업과 특정 시점 복원"
     },
     {
      "id": "backup-disaster-recovery.backup-restore-testing-plan",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "AWS Backup의 복원 테스트 계획"
     },
     {
      "id": "backup-disaster-recovery.backup-audit-manager",
+     "parentId": "backup-disaster-recovery.backup",
      "name": "AWS Backup Audit Manager"
     },
     {
@@ -1737,6 +1789,7 @@
     },
     {
      "id": "vpc-networking.egress-only-igw",
+     "parentId": "vpc-networking.internet-gateway",
      "name": "Egress-only 인터넷 게이트웨이"
     },
     {
@@ -1745,18 +1798,22 @@
     },
     {
      "id": "vpc-networking.nat-gateway-per-az",
+     "parentId": "vpc-networking.nat-gateway",
      "name": "가용 영역마다 두는 NAT 게이트웨이"
     },
     {
      "id": "vpc-networking.internet-gateway-is-not-per-az",
+     "parentId": "vpc-networking.nat-gateway",
      "name": "리전 수준 리소스인 인터넷 게이트웨이"
     },
     {
      "id": "vpc-networking.nat-gateway-count-by-environment",
+     "parentId": "vpc-networking.nat-gateway",
      "name": "환경에 따라 달라지는 NAT 게이트웨이 수"
     },
     {
      "id": "vpc-networking.nat-gateway-elastic-ip",
+     "parentId": "vpc-networking.nat-gateway",
      "name": "NAT 게이트웨이에 붙이는 엘라스틱 IP"
     },
     {
@@ -1765,14 +1822,17 @@
     },
     {
      "id": "vpc-networking.endpoint-pricing",
+     "parentId": "vpc-networking.vpc-endpoint",
      "name": "엔드포인트 유형별 비용 차이"
     },
     {
      "id": "vpc-networking.vpc-endpoint-policy",
+     "parentId": "vpc-networking.vpc-endpoint",
      "name": "VPC 엔드포인트 정책"
     },
     {
      "id": "vpc-networking.s3-is-regional",
+     "parentId": "vpc-networking.vpc-endpoint",
      "name": "리전 수준 서비스인 S3"
     },
     {
@@ -1789,6 +1849,7 @@
     },
     {
      "id": "vpc-networking.vpc-peering-scaling-limit",
+     "parentId": "vpc-networking.vpc-peering",
      "name": "VPC 피어링의 확장 한계"
     },
     {
@@ -1797,6 +1858,7 @@
     },
     {
      "id": "vpc-networking.privatelink-endpoint-service",
+     "parentId": "vpc-networking.privatelink",
      "name": "PrivateLink 엔드포인트 서비스"
     },
     {

@@ -2,7 +2,7 @@
 /**
  * 구조 가드레일: 개념 본문 외의 것이 의도치 않게 바뀌지 않았는지 검사한다.
  *
- * 본문 손질은 summary·paragraphs만 바꾼다. 개념 id·name, 주제 메타데이터, 개념 개수와
+ * 본문 손질은 summary·paragraphs만 바꾼다. 개념 id·name·parentId, 주제 메타데이터, 개념 개수와
  * 순서, 문항 파일은 그대로여야 한다. 이유: 문항이 conceptId로 개념을 참조하고
  * src/data/data.test.ts가 개념 개수·주제 메타데이터를 하드코딩으로 검증한다.
  *
@@ -53,7 +53,7 @@ baseline.topics.forEach((want, i) => {
     problems.push(`주제 ${want.id} sourcePages: ${JSON.stringify(want.sourcePages)} → ${JSON.stringify(got.sourcePages)}`)
   }
 
-  // 3. 개념 id·name·개수·순서
+  // 3. 개념 id·name·parentId·개수·순서
   if (got.concepts.length !== want.concepts.length) {
     problems.push(`주제 ${want.id} 개념 개수: ${want.concepts.length} → ${got.concepts.length}`)
   }
@@ -65,6 +65,9 @@ baseline.topics.forEach((want, i) => {
     }
     if (gc.id !== wc.id) problems.push(`주제 ${want.id} ${j}번 개념 id: "${wc.id}" → "${gc.id}"`)
     if (gc.name !== wc.name) problems.push(`개념 ${wc.id} name: "${wc.name}" → "${gc.name}"`)
+    if (gc.parentId !== wc.parentId) {
+      problems.push(`개념 ${wc.id} parentId: "${wc.parentId ?? '없음'}" → "${gc.parentId ?? '없음'}"`)
+    }
   })
 })
 
@@ -83,4 +86,4 @@ if (problems.length) {
   console.log(`\n구조 위반 ${problems.length}건`)
   process.exit(1)
 }
-console.log('✓ 구조 이상 없음 — 개념 id·name, 주제 메타데이터, 개념 개수·순서, 문항 파일 모두 기준과 같다')
+console.log('✓ 구조 이상 없음 — 개념 id·name·parentId, 주제 메타데이터, 개념 개수·순서, 문항 파일 모두 기준과 같다')
