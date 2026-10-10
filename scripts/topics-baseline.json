@@ -184,6 +184,7 @@
     },
     {
      "id": "s3-versioning-lifecycle.object-lock-prerequisites",
+     "parentId": "s3-versioning-lifecycle.object-lock",
      "name": "객체 잠금의 전제 조건과 MFA 삭제의 한계"
     },
     {
@@ -192,6 +193,7 @@
     },
     {
      "id": "s3-versioning-lifecycle.s3-lifecycle-rules-and-size-filter",
+     "parentId": "s3-versioning-lifecycle.lifecycle-policy",
      "name": "수명 주기 구성의 개수 제한과 규칙의 크기 필터"
     },
     {
@@ -204,14 +206,17 @@
     },
     {
      "id": "s3-versioning-lifecycle.s3-same-region-replication",
+     "parentId": "s3-versioning-lifecycle.s3-replication",
      "name": "S3 동일 리전 복제 (SRR)"
     },
     {
      "id": "s3-versioning-lifecycle.s3-replication-time-control",
+     "parentId": "s3-versioning-lifecycle.s3-replication",
      "name": "S3 복제 시간 제어 (S3 RTC)"
     },
     {
      "id": "s3-versioning-lifecycle.s3-replication-cross-account-kms",
+     "parentId": "s3-versioning-lifecycle.s3-replication",
      "name": "계정을 넘는 복제와 SSE-KMS 키 권한"
     }
    ]
@@ -231,30 +236,37 @@
     },
     {
      "id": "s3-encryption-batch.sse-types",
+     "parentId": "s3-encryption-batch.sse",
      "name": "SSE 종류"
     },
     {
      "id": "s3-encryption-batch.client-side-encryption",
+     "parentId": "s3-encryption-batch.sse",
      "name": "클라이언트 측 암호화"
     },
     {
      "id": "s3-encryption-batch.envelope-encryption",
+     "parentId": "s3-encryption-batch.sse",
      "name": "봉투 암호화 (Envelope Encryption)"
     },
     {
      "id": "s3-encryption-batch.sse-kms-audit-trail",
+     "parentId": "s3-encryption-batch.sse",
      "name": "SSE-KMS의 감사 추적과 업로드 강제"
     },
     {
      "id": "s3-encryption-batch.sse-kms-cost",
+     "parentId": "s3-encryption-batch.sse",
      "name": "SSE-KMS의 비용 구조와 S3 Bucket Key"
     },
     {
      "id": "s3-encryption-batch.sse-c-no-rotation-or-audit",
+     "parentId": "s3-encryption-batch.sse",
      "name": "SSE-C의 자동 교체와 감사 추적 한계"
     },
     {
      "id": "s3-encryption-batch.s3-secure-transport-condition",
+     "parentId": "s3-encryption-batch.sse",
      "name": "버킷 정책의 전송 구간 암호화 강제"
     },
     {
@@ -263,14 +275,17 @@
     },
     {
      "id": "s3-encryption-batch.s3-inventory-report",
+     "parentId": "s3-encryption-batch.batch-operations",
      "name": "S3 인벤토리"
     },
     {
      "id": "s3-encryption-batch.batch-copy-vs-replication",
+     "parentId": "s3-encryption-batch.batch-operations",
      "name": "일회성 대량 복사와 지속 복제"
     },
     {
      "id": "s3-encryption-batch.s3-batch-operations-lambda-invoke",
+     "parentId": "s3-encryption-batch.batch-operations",
      "name": "S3 Batch Operations의 Lambda 호출"
     },
     {
@@ -294,6 +309,7 @@
     },
     {
      "id": "s3-access-control.s3-bucket-policy-source-vpc-condition",
+     "parentId": "s3-access-control.s3-cross-account-bucket-policy",
      "name": "버킷을 특정 VPC에서만 열기"
     },
     {
@@ -302,6 +318,7 @@
     },
     {
      "id": "s3-access-control.block-public-access-allows-explicit-grants",
+     "parentId": "s3-access-control.s3-account-level-public-access-block",
      "name": "공개 액세스 차단과 명시적 허용"
     },
     {
@@ -318,6 +335,7 @@
     },
     {
      "id": "s3-access-control.s3-multi-region-access-point",
+     "parentId": "s3-access-control.s3-access-point",
      "name": "S3 멀티 리전 액세스 포인트"
     },
     {
@@ -338,6 +356,7 @@
     },
     {
      "id": "s3-access-control.s3-storage-lens-advanced-activity-metrics",
+     "parentId": "s3-access-control.s3-storage-lens",
      "name": "S3 Storage Lens의 고급 활동 메트릭"
     }
    ]
@@ -357,42 +376,52 @@
     },
     {
      "id": "ebs-instance-store.ebs-elastic-volumes",
+     "parentId": "ebs-instance-store.ebs",
      "name": "EBS Elastic Volumes"
     },
     {
      "id": "ebs-instance-store.ebs-volume-type-names",
+     "parentId": "ebs-instance-store.ebs",
      "name": "EBS 볼륨 유형의 실제 이름"
     },
     {
      "id": "ebs-instance-store.gp3-iops-independent-of-size",
+     "parentId": "ebs-instance-store.ebs",
      "name": "gp3의 IOPS와 용량 분리"
     },
     {
      "id": "ebs-instance-store.io2-block-express-iops-ceiling",
+     "parentId": "ebs-instance-store.ebs",
      "name": "io2 Block Express가 올려 주는 IOPS 상한"
     },
     {
      "id": "ebs-instance-store.ebs-encryption-by-default",
+     "parentId": "ebs-instance-store.ebs",
      "name": "계정 속성으로 켜는 EBS 기본 암호화"
     },
     {
      "id": "ebs-instance-store.ebs-encryption-performance",
+     "parentId": "ebs-instance-store.ebs",
      "name": "EBS 암호화와 성능"
     },
     {
      "id": "ebs-instance-store.ebs-recycle-bin",
+     "parentId": "ebs-instance-store.ebs",
      "name": "EBS 스냅샷 휴지통"
     },
     {
      "id": "ebs-instance-store.ebs-snapshot-block-public-access",
+     "parentId": "ebs-instance-store.ebs",
      "name": "EBS 스냅샷의 공개 액세스 차단"
     },
     {
      "id": "ebs-instance-store.data-lifecycle-manager",
+     "parentId": "ebs-instance-store.ebs",
      "name": "Amazon Data Lifecycle Manager"
     },
     {
      "id": "ebs-instance-store.ebs-fast-snapshot-restore",
+     "parentId": "ebs-instance-store.ebs",
      "name": "스냅샷으로 만든 볼륨의 첫 접근이 느린 이유"
     },
     {
@@ -428,46 +457,57 @@
     },
     {
      "id": "efs-fsx.efs-throughput-modes",
+     "parentId": "efs-fsx.efs",
      "name": "EFS의 버스팅 처리량과 프로비저닝된 처리량"
     },
     {
      "id": "efs-fsx.efs-elastic-throughput",
+     "parentId": "efs-fsx.efs",
      "name": "EFS의 Elastic 처리량 모드"
     },
     {
      "id": "efs-fsx.efs-performance-modes",
+     "parentId": "efs-fsx.efs",
      "name": "EFS의 범용 성능 모드와 최대 I/O 성능 모드"
     },
     {
      "id": "efs-fsx.efs-one-zone",
+     "parentId": "efs-fsx.efs",
      "name": "EFS One Zone"
     },
     {
      "id": "efs-fsx.efs-posix-permissions",
+     "parentId": "efs-fsx.efs",
      "name": "EFS의 POSIX 권한 모델"
     },
     {
      "id": "efs-fsx.efs-lifecycle-management",
+     "parentId": "efs-fsx.efs",
      "name": "EFS 수명 주기 관리"
     },
     {
      "id": "efs-fsx.efs-ia-file-size-threshold",
+     "parentId": "efs-fsx.efs",
      "name": "EFS IA의 128KB 파일 크기 기준"
     },
     {
      "id": "efs-fsx.efs-lifecycle-transition-to-primary",
+     "parentId": "efs-fsx.efs",
      "name": "EFS 수명 주기의 기본 스토리지 되돌리기 설정"
     },
     {
      "id": "efs-fsx.efs-mount-target-per-az",
+     "parentId": "efs-fsx.efs",
      "name": "가용 영역마다 두는 EFS 마운트 대상"
     },
     {
      "id": "efs-fsx.efs-cross-account-mount",
+     "parentId": "efs-fsx.efs",
      "name": "계정 간 EFS 마운트"
     },
     {
      "id": "efs-fsx.efs-replication-one-way",
+     "parentId": "efs-fsx.efs",
      "name": "EFS 복제의 단방향 제약"
     },
     {
@@ -480,10 +520,12 @@
     },
     {
      "id": "efs-fsx.sql-server-always-on-shared-storage",
+     "parentId": "efs-fsx.fsx-windows-file-server",
      "name": "SQL Server Always On 가용성 그룹의 공유 스토리지"
     },
     {
      "id": "efs-fsx.fsx-windows-storage-auto-scaling",
+     "parentId": "efs-fsx.fsx-windows-file-server",
      "name": "FSx for Windows File Server의 자동 스토리지 확장"
     },
     {
@@ -492,14 +534,17 @@
     },
     {
      "id": "efs-fsx.fsx-lustre-sub-millisecond-latency",
+     "parentId": "efs-fsx.fsx-for-lustre",
      "name": "FSx for Lustre의 1ms 이내 액세스 지연"
     },
     {
      "id": "efs-fsx.fsx-lustre-persistent-deployment",
+     "parentId": "efs-fsx.fsx-for-lustre",
      "name": "FSx for Lustre의 영구 배포 유형"
     },
     {
      "id": "efs-fsx.fsx-lustre-s3-data-repository-association",
+     "parentId": "efs-fsx.fsx-for-lustre",
      "name": "FSx for Lustre의 데이터 리포지토리 연결"
     },
     {
@@ -641,14 +686,17 @@
     },
     {
      "id": "storage-gateway-migration.storage-gateway-gateway-types",
+     "parentId": "storage-gateway-migration.storage-gateway",
      "name": "Storage Gateway의 게이트웨이 유형"
     },
     {
      "id": "storage-gateway-migration.storage-gateway-volume-modes",
+     "parentId": "storage-gateway-migration.storage-gateway",
      "name": "저장 볼륨 게이트웨이와 캐시된 볼륨 게이트웨이"
     },
     {
      "id": "storage-gateway-migration.tape-gateway-archive-tiers",
+     "parentId": "storage-gateway-migration.storage-gateway",
      "name": "가상 테이프가 내려가는 아카이브 계층"
     },
     {
@@ -657,6 +705,7 @@
     },
     {
      "id": "storage-gateway-migration.dms-full-load-and-cdc-task",
+     "parentId": "storage-gateway-migration.dms-sct",
      "name": "전체 로드와 변경 데이터 캡처를 함께 하는 복제 태스크"
     },
     {
@@ -684,6 +733,7 @@
     },
     {
      "id": "rds-storage-features.storage-type-names",
+     "parentId": "rds-storage-features.storage-types",
      "name": "RDS 스토리지 유형의 약칭"
     },
     {
@@ -712,6 +762,7 @@
     },
     {
      "id": "rds-storage-features.rds-proxy-failover",
+     "parentId": "rds-storage-features.connection-issue-heuristic",
      "name": "RDS Proxy의 장애 조치 시간 단축"
     },
     {
@@ -744,6 +795,7 @@
     },
     {
      "id": "rds-storage-features.rds-encrypt-existing-instance",
+     "parentId": "rds-storage-features.rds-encryption-scope-and-in-transit",
      "name": "기존 RDS 인스턴스의 저장 중 암호화 절차"
     },
     {
@@ -756,6 +808,7 @@
     },
     {
      "id": "rds-storage-features.rds-custom-byol",
+     "parentId": "rds-storage-features.rds-custom",
      "name": "RDS Custom의 보유 라이선스 모델"
     }
    ]
@@ -779,6 +832,7 @@
     },
     {
      "id": "aurora.aurora-serverless-max-acu",
+     "parentId": "aurora.aurora-serverless-v2",
      "name": "Aurora Serverless의 최대 ACU 설정"
     },
     {
@@ -787,14 +841,17 @@
     },
     {
      "id": "aurora.aurora-endpoint-types",
+     "parentId": "aurora.aurora-reader-endpoint",
      "name": "Aurora의 엔드포인트 종류"
     },
     {
      "id": "aurora.aurora-replica-auto-scaling",
+     "parentId": "aurora.aurora-reader-endpoint",
      "name": "Aurora Auto Scaling의 레플리카 수 조정"
     },
     {
      "id": "aurora.read-replica-no-schema-change",
+     "parentId": "aurora.aurora-reader-endpoint",
      "name": "읽기 전용 복제본의 스키마 변경 제약"
     },
     {
@@ -803,6 +860,7 @@
     },
     {
      "id": "aurora.sql-server-license-cost",
+     "parentId": "aurora.babelfish",
      "name": "SQL Server를 그대로 옮길 때의 라이선스 비용"
     },
     {
@@ -858,6 +916,7 @@
     },
     {
      "id": "dynamodb.dynamodb-single-digit-latency",
+     "parentId": "dynamodb.dynamodb",
      "name": "DynamoDB의 응답 시간"
     },
     {
@@ -866,10 +925,12 @@
     },
     {
      "id": "dynamodb.dynamodb-streams-retention-24h",
+     "parentId": "dynamodb.dynamodb-streams",
      "name": "DynamoDB Streams의 24시간 보존 한계"
     },
     {
      "id": "dynamodb.dynamodb-streams-batch-size",
+     "parentId": "dynamodb.dynamodb-streams",
      "name": "DynamoDB Streams 소비의 배치 크기"
     },
     {
@@ -882,6 +943,7 @@
     },
     {
      "id": "dynamodb.dynamodb-ttl-deletion-delay",
+     "parentId": "dynamodb.dynamodb-ttl",
      "name": "TTL 삭제의 48시간 지연"
     },
     {
@@ -894,6 +956,7 @@
     },
     {
      "id": "dynamodb.dynamodb-auto-scaling-target-utilization",
+     "parentId": "dynamodb.dynamodb-capacity-modes",
      "name": "DynamoDB 오토 스케일링과 목표 활용률"
     },
     {
@@ -906,18 +969,22 @@
     },
     {
      "id": "dynamodb.dynamodb-incremental-export",
+     "parentId": "dynamodb.dynamodb-s3-export-vs-streams",
      "name": "S3 내보내기의 증분 형태"
     },
     {
      "id": "dynamodb.dynamodb-export-no-read-capacity",
+     "parentId": "dynamodb.dynamodb-s3-export-vs-streams",
      "name": "S3 내보내기와 테이블 읽기 용량"
     },
     {
      "id": "dynamodb.dynamodb-pitr",
+     "parentId": "dynamodb.dynamodb-s3-export-vs-streams",
      "name": "DynamoDB PITR의 보존 한계"
     },
     {
      "id": "dynamodb.dynamodb-export-requires-pitr",
+     "parentId": "dynamodb.dynamodb-s3-export-vs-streams",
      "name": "S3 내보내기의 전제 조건인 PITR"
     },
     {
@@ -941,22 +1008,27 @@
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-redis-vs-memcached",
+     "parentId": "elasticache-purpose-built-db.elasticache",
      "name": "Redis와 Memcached의 갈림길"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-multi-az-failover",
+     "parentId": "elasticache-purpose-built-db.elasticache",
      "name": "ElastiCache의 다중 AZ 자동 장애 조치"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-global-datastore",
+     "parentId": "elasticache-purpose-built-db.elasticache",
      "name": "ElastiCache 글로벌 데이터스토어"
     },
     {
      "id": "elasticache-purpose-built-db.cache-requires-application-change",
+     "parentId": "elasticache-purpose-built-db.elasticache",
      "name": "캐시 도입에 필요한 애플리케이션 코드 변경"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-not-a-durable-store",
+     "parentId": "elasticache-purpose-built-db.elasticache",
      "name": "영구 저장소가 아닌 캐시"
     },
     {
@@ -965,6 +1037,7 @@
     },
     {
      "id": "elasticache-purpose-built-db.dax-encryption-at-rest",
+     "parentId": "elasticache-purpose-built-db.dax-dynamodb-only",
      "name": "DAX 저장 중 암호화의 설정 시점"
     },
     {
@@ -973,6 +1046,7 @@
     },
     {
      "id": "elasticache-purpose-built-db.documentdb-global-cluster",
+     "parentId": "elasticache-purpose-built-db.documentdb",
      "name": "DocumentDB 글로벌 클러스터"
     },
     {
@@ -981,6 +1055,7 @@
     },
     {
      "id": "elasticache-purpose-built-db.neptune-streams",
+     "parentId": "elasticache-purpose-built-db.neptune",
      "name": "Neptune Streams"
     },
     {
@@ -1012,6 +1087,7 @@
     },
     {
      "id": "ec2-autoscaling.ec2-image-builder",
+     "parentId": "ec2-autoscaling.ami-and-launch-template",
      "name": "EC2 Image Builder"
     },
     {
@@ -1135,6 +1211,7 @@
     },
     {
      "id": "elastic-load-balancing.gwlb-endpoint-cross-account-inspection",
+     "parentId": "elastic-load-balancing.gateway-load-balancer",
      "name": "게이트웨이 로드 밸런서 엔드포인트와 계정 간 트래픽 검사"
     },
     {
@@ -1166,46 +1243,57 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-alb-origin",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront의 ALB 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-multiple-origins",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "배포 하나에 등록하는 여러 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-onprem-origin",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront의 온프레미스 오리진"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-signed-url",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront 서명된 URL"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-signed-cookie",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront 서명된 쿠키"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-geo-restriction",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront 지리적 제한"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-field-level-encryption",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront 필드 수준 암호화"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-price-class",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront 가격 등급"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-ttl",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront TTL과 캐시 무효화의 관계"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-s3-upload-with-oac",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "CloudFront를 거쳐 S3에 올리기"
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-alb-origin-access-restriction",
+     "parentId": "cloudfront-global-accelerator.cloudfront",
      "name": "ALB 오리진 접근을 CloudFront로 좁히는 보안 그룹"
     },
     {
@@ -1218,10 +1306,12 @@
     },
     {
      "id": "cloudfront-global-accelerator.lambda-at-edge-origin-selection-by-viewer-location",
+     "parentId": "cloudfront-global-accelerator.lambda-at-edge",
      "name": "뷰어 위치에 따른 Lambda@Edge의 오리진 선택"
     },
     {
      "id": "cloudfront-global-accelerator.lambda-at-edge-response-compression",
+     "parentId": "cloudfront-global-accelerator.lambda-at-edge",
      "name": "Lambda@Edge의 응답 압축"
     },
     {
@@ -1230,6 +1320,7 @@
     },
     {
      "id": "cloudfront-global-accelerator.cloudfront-functions-no-external-calls",
+     "parentId": "cloudfront-global-accelerator.cloudfront-functions",
      "name": "CloudFront Functions의 외부 서비스 호출 제약"
     },
     {
@@ -1238,18 +1329,22 @@
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator-static-ip",
+     "parentId": "cloudfront-global-accelerator.global-accelerator",
      "name": "Global Accelerator의 고정 IP"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator-endpoints",
+     "parentId": "cloudfront-global-accelerator.global-accelerator",
      "name": "Global Accelerator가 앞에 붙는 대상"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator-protocols",
+     "parentId": "cloudfront-global-accelerator.global-accelerator",
      "name": "Global Accelerator가 처리하는 것"
     },
     {
      "id": "cloudfront-global-accelerator.global-accelerator-vs-dns-failover",
+     "parentId": "cloudfront-global-accelerator.global-accelerator",
      "name": "DNS 캐시에 영향받지 않는 장애 조치"
     },
     {
@@ -1361,18 +1456,22 @@
     },
     {
      "id": "ecs-eks-fargate.ecs-task-role",
+     "parentId": "ecs-eks-fargate.ecs",
      "name": "태스크 역할과 인스턴스 역할"
     },
     {
      "id": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
+     "parentId": "ecs-eks-fargate.ecs",
      "name": "태스크 역할과 태스크 실행 역할"
     },
     {
      "id": "ecs-eks-fargate.ecs-awsvpc-mode",
+     "parentId": "ecs-eks-fargate.ecs",
      "name": "ECS의 awsvpc 네트워크 모드"
     },
     {
      "id": "ecs-eks-fargate.ecs-task-placement-strategy",
+     "parentId": "ecs-eks-fargate.ecs",
      "name": "ECS 태스크 배치 전략"
     },
     {
@@ -1397,34 +1496,42 @@
     },
     {
      "id": "ecs-eks-fargate.eks-compute-options",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "EKS의 세 가지 컴퓨팅 방식과 관리 책임"
     },
     {
      "id": "ecs-eks-fargate.eks-fargate-pod-isolation",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "Fargate의 파드 단위 환경 격리"
     },
     {
      "id": "ecs-eks-fargate.eks-cluster-autoscaler",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "Horizontal Pod Autoscaler와 Cluster Autoscaler"
     },
     {
      "id": "ecs-eks-fargate.eks-aws-load-balancer-controller",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "AWS Load Balancer Controller"
     },
     {
      "id": "ecs-eks-fargate.eks-connector",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "Amazon EKS Connector"
     },
     {
      "id": "ecs-eks-fargate.eks-anywhere",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "Amazon EKS Anywhere"
     },
     {
      "id": "ecs-eks-fargate.eks-irsa",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "서비스 계정용 IAM 역할(IRSA)"
     },
     {
      "id": "ecs-eks-fargate.eks-secrets-kms-encryption",
+     "parentId": "ecs-eks-fargate.eks",
      "name": "EKS 시크릿의 KMS 암호화"
     },
     {
@@ -1437,6 +1544,7 @@
     },
     {
      "id": "ecs-eks-fargate.batch-fargate-compute-environment",
+     "parentId": "ecs-eks-fargate.aws-batch",
      "name": "AWS Batch의 컴퓨팅 환경"
     },
     {
@@ -1464,54 +1572,67 @@
     },
     {
      "id": "api-gateway-step-functions.api-gateway-jwt-authorizer",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "HTTP API의 JWT 권한 부여자"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "REST API와 HTTP API의 통합 타임아웃"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-rest-only-features",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "REST API의 API 키·요청 유효성 검사·스로틀링"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-websocket-api",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "WebSocket API"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-api-key-not-auth",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "식별 장치인 API 키"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-resource-policy",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "API Gateway 리소스 정책"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-endpoint-types",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "엣지 최적화 엔드포인트와 리전 엔드포인트"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-behind-cloudfront",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "CloudFront의 HTTP API 오리진"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-lambda-proxy-integration",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "REST API의 Lambda 프록시 통합"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-aws-service-integration",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "API Gateway의 AWS 서비스 통합"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-custom-domain-name",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "API Gateway 사용자 지정 도메인 이름"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-mapping-template-limits",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "매핑 템플릿으로 되는 변환과 안 되는 변환"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy",
+     "parentId": "api-gateway-step-functions.api-gateway",
      "name": "리소스 정책의 IP 주소 제한"
     },
     {
@@ -1520,18 +1641,22 @@
     },
     {
      "id": "api-gateway-step-functions.step-functions-features",
+     "parentId": "api-gateway-step-functions.step-functions",
      "name": "Step Functions의 수동 승인과 재시도"
     },
     {
      "id": "api-gateway-step-functions.step-functions-long-running-workflow",
+     "parentId": "api-gateway-step-functions.step-functions",
      "name": "최대 1년까지 이어지는 Step Functions 실행"
     },
     {
      "id": "api-gateway-step-functions.step-functions-express-workflow",
+     "parentId": "api-gateway-step-functions.step-functions",
      "name": "Express 워크플로"
     },
     {
      "id": "api-gateway-step-functions.step-functions-map-state",
+     "parentId": "api-gateway-step-functions.step-functions",
      "name": "Map 상태의 항목별 반복 호출"
     },
     {
