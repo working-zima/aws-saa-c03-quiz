@@ -1,0 +1,9 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "53-concept-indent",
+  "steps": [
+    { "step": 0, "name": "concept-groups", "status": "pending" },
+    { "step": 1, "name": "indented-children", "status": "pending" },
+    { "step": 2, "name": "sample-hierarchy", "status": "pending" }
+  ]
+}

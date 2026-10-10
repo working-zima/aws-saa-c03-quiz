@@ -34,6 +34,7 @@ interface Topic {
 
 interface Concept {
   id: string;                          // 전역 유일. 예: "s3-storage-classes.standard-ia"
+  parentId?: string;                   // 딸린 개념만. 같은 주제 안 머리 개념의 id (ADR-041)
   name: string;                        // "S3 Standard-IA"
   summary: string;                     // 한 줄 요약
   paragraphs: string[];                // 설명 본문. 문단 단위 평문.
@@ -77,8 +78,20 @@ interface Question {
 전부로 못박고, 그 주석이 블록과 예외를 적는다.
 
 **`Concept`에 층·블록 필드를 두지 마라.** 순서 자체가 블록과 층이고, 필드를 더하면 배열 순서와
-필드가 어긋날 수 있는 두 번째 진실이 생긴다. 블록이나 층을 화면에 표시하는 것은 별개의 판단이고
-지금은 하지 않는다 (ADR-023·ADR-033).
+필드가 어긋날 수 있는 두 번째 진실이 생긴다 (ADR-023·ADR-033).
+
+**예외는 `parentId` 하나다 (ADR-041).** 블록 안에서 무엇이 머리이고 무엇이 그 아래 딸린 개념인지는
+순서로 알 수 없어서 딸린 개념에만 머리의 id를 적는다. 머리와 홀로 선 개념에는 키를 두지 않는다.
+세 규칙을 `src/lib/concept-groups.ts`의 `hierarchyProblems`가 검사하고 `data.test.ts`가 전 주제에 돌린다.
+
+1. `parentId`는 같은 주제에 있는, 자기 자신이 아닌 개념의 id다.
+2. 머리에는 `parentId`가 없다(두 단까지만).
+3. 딸린 개념은 머리 바로 뒤에 끊김 없이 이어진다.
+
+화면은 같은 파일의 `groupConcepts`로 개념을 머리와 딸린 개념의 무리로 나눠 그린다. 규칙 3을 어긴 개념은
+무리에 넣지 않고 평평하게 그린다 — 화면은 깨지지 않고, 테스트가 그 데이터를 잡는다. 개념 순서를 바꿀 때
+머리와 딸린 개념이 떨어지면 `data.test.ts`가 실패하므로 `parentId`도 함께 고친다. `parentId`는 구조라서
+`scripts/topics-baseline.json`에도 같은 값을 둔다.
 
 개념 순서를 바꾸면 `scripts/topics-baseline.json`의 개념 항목 순서도 같은 커밋에서 옮긴다 —
 `scripts/check-structure.mjs`가 순서를 대조하고, `scripts/sync-baseline.mjs`는 순서 변경을 거부한다.
