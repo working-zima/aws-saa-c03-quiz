@@ -13,10 +13,10 @@
     {
       "step": 1,
       "name": "indented-children",
-      "status": "error",
-      "started_at": "2026-10-10T12:13:52+0900",
-      "error_message": "[3회 시도 후 실패] Step did not update status",
-      "failed_at": "2026-10-10T12:14:03+0900"
+      "status": "completed",
+      "summary": "ConceptList가 groupConcepts와 개념 id를 key로 둔 Fragment로 머리 article 뒤에 딸린 무리를 그리며, 무리 div에 space-y-8 border-l border-border pl-4 max-sm:[&_figure]:-ml-[37px] 클래스를 적용했다. 딸린 제목은 h2→h3·h4→h5이고 글자 모양은 유지하며, article 마크업은 헤딩 태그를 받는 내부 renderConcept 함수 한 곳에 뒀다. 기존 테스트를 보존하고 새 테스트 12개를 먼저 작성해 실패를 확인한 뒤 구현했으며, 전체 1,261개 테스트(70개 파일)와 AC 6개가 Node 18.17.1에서 통과했다. 파일 해시 대조로 src/data·scripts·도식·페이지·QuizRunner 보존을 확인했고 빌드 CSS의 margin-left:-37px도 확인했다.",
+      "started_at": "2026-10-10T15:10:48+0900",
+      "completed_at": "2026-10-10T15:14:09+0900"
     },
     {
       "step": 2,
