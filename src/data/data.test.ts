@@ -6720,3 +6720,59 @@ describe('ADR-039 확장 — 권한 세트가 만드는 IAM 역할과 SCP의 관
     expect(question.explanation).toContain('제한할 생각이 없던 멤버 계정까지')
   })
 })
+
+describe('ADR-039 확장 — CloudFormation의 템플릿·스택·드리프트', () => {
+  const byId = Object.fromEntries(
+    topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+  )
+  const questionById = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+  it('CloudFormation의 기존 문단과 요약을 유지하고 둘째 문단에 템플릿과 스택을 정의한다', () => {
+    const concept = byId['governance-iac.cloudformation']
+
+    expect(concept.paragraphs).toHaveLength(3)
+    expect(concept.paragraphs[0]).toBe(
+      'CloudFormation은 AWS 분류로는 관리 및 거버넌스(Management and Governance) 쪽 서비스다. 인프라 구성을 파일로 적어 두고 그대로 배포하며, 사람이 콘솔에서 하나씩 만드는 것에 비해 실수가 줄고 같은 구성을 반복해서 만들 수 있다.',
+    )
+    expect(concept.paragraphs[1]).toBe(
+      'CloudFormation에서 만들 리소스와 설정을 적어 두는 파일이 **템플릿**(template)이고, 그 템플릿을 제출해 실제로 만든 리소스 묶음이 **스택**(stack)이다. 스택을 만들면 CloudFormation이 템플릿에 적힌 리소스를 모두 만들고, 그 뒤로 이 리소스들은 스택 단위로 함께 고치고 함께 지운다. 예를 들어 로드 밸런서와 데이터베이스를 적은 템플릿으로 스택을 만들면, 둘은 한 스택에 속해 하나의 단위로 관리된다.',
+    )
+    expect(concept.paragraphs[2]).toBe(
+      '이름이 CloudFront와 닮았지만 하는 일이 전혀 다르다. 인프라를 자동화해서 설정하는 것이 CloudFormation의 몫이고, 여러 계정을 묶어 관리하는 Organizations는 계정 관리 도구이지 인프라를 만드는 도구가 아니다.',
+    )
+    expect(concept.summary).toBe(
+      '인프라를 템플릿으로 정의해 자동으로, 몇 번이든 같게 만들어 주는 서비스다.',
+    )
+  })
+
+  it('드리프트 감지의 요약을 고치고 기존 문단 앞에 드리프트를 정의한다', () => {
+    const concept = byId['governance-iac.cloudformation-drift-detection']
+
+    expect(concept.summary).toBe(
+      'CloudFormation 스택에 속한 리소스가 템플릿과 달라졌는지 보는 기능이라, 스택 밖에서 만든 리소스는 보지 못한다.',
+    )
+    expect(concept.paragraphs).toHaveLength(3)
+    expect(concept.paragraphs[0]).toBe(
+      '스택에 속한 리소스도 누군가 CloudFormation을 거치지 않고 콘솔 등에서 직접 바꿀 수 있다. 이렇게 템플릿에 적힌 값과 실제 값이 달라진 상태를 **드리프트**(drift)라 하고, 드리프트 감지는 두 값을 비교해 달라진 리소스를 찾는다.',
+    )
+    expect(concept.paragraphs[1]).toBe(
+      '리소스 설정이 바뀐 것을 감지해야 한다는 요구에 드리프트 감지가 함께 오른다. 하는 일은 맞지만 대상이 좁다. CloudFormation이 만들고 관리하는 리소스에만 동작하고 스택이 있어야 한다.',
+    )
+    expect(concept.paragraphs[2]).toBe(
+      '여러 팀이 각자 만든 리소스가 섞여 있는 계정 전체의 변경을 잡아야 한다면 이 기능으로는 스택 밖이 통째로 빠진다. 계정의 모든 지원 리소스를 대상으로 삼는 쪽은 AWS Config다.',
+    )
+  })
+
+  it('세 해설에 스택의 뜻과 서비스 이름을 밝히고 정답 위치를 유지한다', () => {
+    expect(questionById.q301.explanation).toContain('곧 스택에 속한 리소스에만 동작하므로')
+    expect(questionById.q301.explanation).not.toContain('스택이 있어야 하므로')
+    ;['q296', 'q299'].forEach((id) => {
+      expect(questionById[id].explanation).toContain(
+        '드리프트 감지는 CloudFormation 스택으로 만든 리소스가',
+      )
+    })
+    expect(questionById.q296.answerIndex).toBe(0)
+    expect(questionById.q299.answerIndex).toBe(0)
+    expect(questionById.q301.answerIndex).toBe(2)
+  })
+})
