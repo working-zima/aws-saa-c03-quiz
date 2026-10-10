@@ -274,6 +274,11 @@
       "dir": "54-block-heads",
       "status": "completed",
       "completed_at": "2026-10-10T20:18:23+0900"
+    },
+    {
+      "dir": "55-sourced-block-heads",
+      "status": "completed",
+      "completed_at": "2026-10-10T21:47:22+0900"
     }
   ]
 }

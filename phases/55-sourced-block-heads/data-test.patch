@@ -1,0 +1,148 @@
+diff --git a/src/data/data.test.ts b/src/data/data.test.ts
+index 7bd3701..44a38ff 100644
+--- a/src/data/data.test.ts
++++ b/src/data/data.test.ts
+@@ -2603,8 +2603,9 @@ describe('학습 데이터 무결성', () => {
+     // step 20이 (주제 미정)의 workload-discovery를 governance-iac 1단에 넣어 7로
+     // 늘리고, AI·ML 신규 6으로 ai-ml-services를 배열 끝에 세웠다.
+     // phase 54가 iam-permissions에 IAM 사용자·IAM 역할의 기본 개념 둘을 더해 18이 20이 됐다(ADR-041 개정).
++    // phase 55가 IAM 정책·루트 사용자와 Systems Manager의 기본 개념을 더해 iam-permissions가 22, systems-manager가 8이 됐다(ADR-043).
+     expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
+-      13, 20, 16, 11, 11, 20, 15, 11, 20, 11, 16, 17, 7, 7, 6,
++      13, 20, 16, 11, 11, 20, 15, 11, 22, 11, 16, 17, 7, 8, 6,
+     ])
+   })
+ 
+@@ -2659,8 +2660,10 @@ describe('학습 데이터 무결성', () => {
+     // amplify를 api-gateway-step-functions 1단에 넣어 17·19가 18·20이 됐다.
+     // phase 54가 기본 개념을 더해 ec2-autoscaling이 18에서 20(구매 옵션·Auto Scaling), elastic-load-balancing이
+     // 16에서 18(ALB·NLB), ecs-eks-fargate가 23에서 24(Fargate)가 됐다(ADR-041 개정).
++    // phase 55가 기본 개념을 더해 rds-storage-features가 22(자동 백업과 DB 스냅샷), ec2-autoscaling이 21(인스턴스 유형과
++    // 제품군), backup-disaster-recovery가 12(재해 복구 전략)가 됐다(ADR-043).
+     expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
+-      21, 18, 18, 14, 20, 18, 24, 18, 24, 20, 33, 11, 20, 9, 19,
++      22, 18, 18, 14, 21, 18, 24, 18, 24, 20, 33, 12, 20, 9, 19,
+     ])
+   })
+ 
+@@ -3144,8 +3147,9 @@ describe('학습 데이터 무결성', () => {
+     const topic = topics.find((candidate) => candidate.id === 'ebs-instance-store')
+ 
+     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+-    // 블록: EBS 볼륨(7) → EBS 스냅샷(4) → 인스턴스 스토어(1) → 배치 그룹(2) → EFA(1).
++    // 블록: EBS 볼륨(7) → EBS 스냅샷(4) → 인스턴스 스토어(1) → 배치 그룹(3) → EFA(1).
+     // EFA 본문이 클러스터 배치 그룹과 분산 배치 그룹을 둘 다 전제로 쓰므로 배치 그룹 블록 뒤에 둔다(규칙 5).
++    // 배치 그룹의 기본 개념은 phase 55가 더했다 — 클러스터와 분산 둘을 그 아래로 들여쓰려고(ADR-043).
+     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+       'ebs-instance-store.ebs',
+       'ebs-instance-store.ebs-elastic-volumes',
+@@ -3159,6 +3163,7 @@ describe('학습 데이터 무결성', () => {
+       'ebs-instance-store.data-lifecycle-manager',
+       'ebs-instance-store.ebs-fast-snapshot-restore',
+       'ebs-instance-store.instance-store',
++      'ebs-instance-store.placement-groups',
+       'ebs-instance-store.cluster-placement-group',
+       'ebs-instance-store.spread-placement-group',
+       'ebs-instance-store.elastic-fabric-adapter',
+@@ -3282,9 +3287,10 @@ describe('학습 데이터 무결성', () => {
+ 
+     // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+     // 블록: RDS(1) → 스토리지 유형(2) → 기능 개요(1) → 다중 AZ(3) → 읽기 전용 복제본(1) → RDS Proxy(2) → 블루/그린 배포(1) → 백업과
+-    //   스냅샷(4) → 인증과 암호화(3) → 인스턴스 중지(1) → RDS Custom(2).
++    //   스냅샷(5) → 인증과 암호화(3) → 인스턴스 중지(1) → RDS Custom(2).
+     // 기능 개요(features)가 다중 AZ → 읽기 전용 복제본 → RDS Proxy → 블루/그린 순으로 소개하므로 그 순서로
+-    // 블록을 둔다. 백업 블록은 리전 간 스냅샷 복사(갈림길) → 자동 백업 보존·특정 시점 복구·수동 스냅샷(세부).
++    // 블록을 둔다. 백업 블록은 자동 백업과 DB 스냅샷(기본, phase 55가 더했다 — ADR-043) → 리전 간 스냅샷 복사(갈림길) →
++    // 자동 백업 보존·특정 시점 복구·수동 스냅샷(세부).
+     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+       'rds-storage-features.rds',
+       'rds-storage-features.storage-types',
+@@ -3297,6 +3303,7 @@ describe('학습 데이터 무결성', () => {
+       'rds-storage-features.connection-issue-heuristic',
+       'rds-storage-features.rds-proxy-failover',
+       'rds-storage-features.rds-blue-green-deployment',
++      'rds-storage-features.rds-backups',
+       'rds-storage-features.rds-snapshot-cross-region-copy',
+       'rds-storage-features.automated-backup-retention',
+       'rds-storage-features.rds-pitr-transaction-log-interval',
+@@ -3447,10 +3454,11 @@ describe('학습 데이터 무결성', () => {
+     const topic = topics.find((candidate) => candidate.id === 'ec2-autoscaling')
+ 
+     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+-    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(3) → 구매 옵션(3) → Auto Scaling 기본(1) → 조정 정책(3) → 스팟과 혼합 구성(3) →
++    // 블록: EC2와 인스턴스 재료(3) → 인스턴스 제품군(4) → 구매 옵션(3) → Auto Scaling 기본(1) → 조정 정책(3) → 스팟과 혼합 구성(3) →
+     //   Auto Scaling 운영(3) → ParallelCluster(1).
+     // 구매 옵션과 Auto Scaling의 기본 개념은 phase 54가 더했다 — 구매 옵션 둘과 Auto Scaling 세 블록의 아홉을 그 아래로
+     //   들여쓰려고(ADR-041 개정). ec2 개념의 구매 옵션·Auto Scaling 문단은 주제의 첫 소개로 그대로 둔다.
++    // 인스턴스 제품군 블록의 기본 개념(인스턴스 유형과 제품군)은 phase 55가 더했다(ADR-043).
+     // 향상된 네트워킹은 인스턴스 유형이 지원해야 켜지는 기능이라 인스턴스 제품군 블록 끝에 둔다.
+     // 스팟에 올릴 워크로드는 예약 인스턴스 유형과 함께 어떤 구매 옵션을 고를지의 갈림길이라 구매 옵션 블록에 둔다.
+     // 스팟과 혼합 구성의 인스턴스 유형 재정의가 예약된 조정을 전제로 쓰므로 조정 정책 블록을 그 앞에 둔다(규칙 5).
+@@ -3458,6 +3466,7 @@ describe('학습 데이터 무결성', () => {
+       'ec2-autoscaling.ec2',
+       'ec2-autoscaling.ami-and-launch-template',
+       'ec2-autoscaling.ec2-image-builder',
++      'ec2-autoscaling.ec2-instance-types',
+       'ec2-autoscaling.memory-optimized-instance-family',
+       'ec2-autoscaling.gpu-instance-family',
+       'ec2-autoscaling.enhanced-networking',
+@@ -3926,7 +3935,8 @@ describe('학습 데이터 무결성', () => {
+     const topic = topics.find((candidate) => candidate.id === 'backup-disaster-recovery')
+ 
+     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+-    // 블록: AWS Backup(8) → 재해 복구 전략(2) → Elastic Disaster Recovery(1).
++    // 블록: AWS Backup(8) → 재해 복구 전략(3) → Elastic Disaster Recovery(1).
++    // 재해 복구 전략의 기본 개념은 phase 55가 더했다 — 네 방식을 소개하고 백업 및 복원·웜 스탠바이를 그 아래로 들여쓴다(ADR-043).
+     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+       'backup-disaster-recovery.backup',
+       'backup-disaster-recovery.backup-long-term-retention',
+@@ -3936,6 +3946,7 @@ describe('학습 데이터 무결성', () => {
+       'backup-disaster-recovery.backup-s3-continuous-backup',
+       'backup-disaster-recovery.backup-restore-testing-plan',
+       'backup-disaster-recovery.backup-audit-manager',
++      'backup-disaster-recovery.dr-strategies',
+       'backup-disaster-recovery.backup-and-restore-dr',
+       'backup-disaster-recovery.warm-standby-for-low-rto',
+       'backup-disaster-recovery.elastic-disaster-recovery',
+@@ -4496,11 +4507,12 @@ describe('학습 데이터 무결성', () => {
+     const topic = topics.find((candidate) => candidate.id === 'iam-permissions')
+ 
+     // ADR-033 하위 기능 블록 순서 — 서비스가 하나라 하위 기능이 블록이다. 블록마다 기본 → 갈림길 → 세부.
+-    // 블록: IAM(1) → 사용자와 그룹(4) → 역할(4) → 정책 — 권한을 좁히는 장치와 평가 규칙(6) → 분석 도구(3) → 루트 사용자(2).
++    // 블록: IAM(1) → 사용자와 그룹(4) → 역할(4) → 정책 — 권한을 좁히는 장치와 평가 규칙(7) → 분석 도구(3) → 루트 사용자(3).
+     // 사용자와 그룹·역할의 기본 개념은 phase 54가 더했다 — 세부 셋씩을 그 아래로 들여쓰려고(ADR-041 개정). iam 개념의
+     //   사용자·역할 문단은 주제의 첫 소개로 그대로 둔다.
+     // 분석 도구 블록은 IAM Access Analyzer와 위임 관리자를 붙이고 Network Access Analyzer를 뒤에 둔다. 위임 관리자를
+     //   Access Analyzer 아래로 들여쓰려고 옮겼다(ADR-041 「남은 자리」 5, phase 54).
++    // 정책과 루트 사용자의 기본 개념은 phase 55가 더했다(ADR-043).
+     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
+       'iam-permissions.iam',
+       'iam-permissions.iam-user',
+@@ -4511,6 +4523,7 @@ describe('학습 데이터 무결성', () => {
+       'iam-permissions.instance-profile',
+       'iam-permissions.iam-roles-anywhere',
+       'iam-permissions.cross-account-iam-role',
++      'iam-permissions.iam-policy',
+       'iam-permissions.least-privilege',
+       'iam-permissions.abac',
+       'iam-permissions.permissions-boundary',
+@@ -4520,6 +4533,7 @@ describe('학습 데이터 무결성', () => {
+       'iam-permissions.iam-access-analyzer',
+       'iam-permissions.access-analyzer-delegated-administrator',
+       'iam-permissions.network-access-analyzer',
++      'iam-permissions.root-user',
+       'iam-permissions.root-user-multiple-mfa',
+       'iam-permissions.root-user-cannot-be-disabled',
+     ])
+@@ -4980,8 +4994,10 @@ describe('학습 데이터 무결성', () => {
+     const topic = topics.find((candidate) => candidate.id === 'systems-manager')
+ 
+     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
+-    // 블록: Systems Manager(5) → EC2 Instance Connect 엔드포인트(1) → AppConfig(1).
++    // 블록: Systems Manager(6) → EC2 Instance Connect 엔드포인트(1) → AppConfig(1).
++    // Systems Manager 블록의 기본 개념은 phase 55가 더했다 — 기능 다섯을 그 아래로 들여쓰려고(ADR-043).
+     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
++      'systems-manager.systems-manager',
+       'systems-manager.ssm-run-command',
+       'systems-manager.ssm-session-manager',
+       'systems-manager.ssm-patch-manager',

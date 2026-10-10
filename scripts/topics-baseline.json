@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
- "conceptLineCount": 626,
- "questionsSha256": "d8a9919e7397cf6ab715471a0016abb7dded57d8e72a120d23bd87e90fefcfa8",
+ "conceptLineCount": 633,
+ "questionsSha256": "4a082a08c287c7543787e042797f1a9b08568e561d377eff21d81ab29d846bb0",
  "topics": [
   {
    "id": "aws-core-services",
@@ -429,11 +429,17 @@
      "name": "인스턴스 스토어 (Instance Store)"
     },
     {
+     "id": "ebs-instance-store.placement-groups",
+     "name": "EC2 배치 그룹"
+    },
+    {
      "id": "ebs-instance-store.cluster-placement-group",
+     "parentId": "ebs-instance-store.placement-groups",
      "name": "클러스터 배치 그룹"
     },
     {
      "id": "ebs-instance-store.spread-placement-group",
+     "parentId": "ebs-instance-store.placement-groups",
      "name": "분산 배치 그룹"
     },
     {
@@ -782,19 +788,27 @@
      "name": "RDS 블루/그린 배포"
     },
     {
+     "id": "rds-storage-features.rds-backups",
+     "name": "RDS 자동 백업과 DB 스냅샷"
+    },
+    {
      "id": "rds-storage-features.rds-snapshot-cross-region-copy",
+     "parentId": "rds-storage-features.rds-backups",
      "name": "리전 간 RDS 스냅샷 복사"
     },
     {
      "id": "rds-storage-features.automated-backup-retention",
+     "parentId": "rds-storage-features.rds-backups",
      "name": "RDS 자동 백업의 보존 한계"
     },
     {
      "id": "rds-storage-features.rds-pitr-transaction-log-interval",
+     "parentId": "rds-storage-features.rds-backups",
      "name": "특정 시점 복구와 5분 간격 트랜잭션 로그"
     },
     {
      "id": "rds-storage-features.rds-manual-snapshot-retention",
+     "parentId": "rds-storage-features.rds-backups",
      "name": "만료가 없는 수동 스냅샷"
     },
     {
@@ -1104,15 +1118,22 @@
      "name": "EC2 Image Builder"
     },
     {
+     "id": "ec2-autoscaling.ec2-instance-types",
+     "name": "EC2 인스턴스 유형과 제품군"
+    },
+    {
      "id": "ec2-autoscaling.memory-optimized-instance-family",
+     "parentId": "ec2-autoscaling.ec2-instance-types",
      "name": "메모리 최적화 인스턴스 제품군"
     },
     {
      "id": "ec2-autoscaling.gpu-instance-family",
+     "parentId": "ec2-autoscaling.ec2-instance-types",
      "name": "GPU 인스턴스 제품군과 컴퓨팅 서비스 선택"
     },
     {
      "id": "ec2-autoscaling.enhanced-networking",
+     "parentId": "ec2-autoscaling.ec2-instance-types",
      "name": "향상된 네트워킹"
     },
     {
@@ -1939,11 +1960,17 @@
      "name": "AWS Backup Audit Manager"
     },
     {
+     "id": "backup-disaster-recovery.dr-strategies",
+     "name": "재해 복구 전략"
+    },
+    {
      "id": "backup-disaster-recovery.backup-and-restore-dr",
+     "parentId": "backup-disaster-recovery.dr-strategies",
      "name": "백업 및 복원"
     },
     {
      "id": "backup-disaster-recovery.warm-standby-for-low-rto",
+     "parentId": "backup-disaster-recovery.dr-strategies",
      "name": "짧은 RTO가 요구하는 대기 리전 구성"
     },
     {
@@ -2883,27 +2910,37 @@
      "name": "계정 간 IAM 역할과 신뢰 정책"
     },
     {
+     "id": "iam-permissions.iam-policy",
+     "name": "IAM 정책"
+    },
+    {
      "id": "iam-permissions.least-privilege",
+     "parentId": "iam-permissions.iam-policy",
      "name": "최소 권한 원칙 (Least Privilege)"
     },
     {
      "id": "iam-permissions.abac",
+     "parentId": "iam-permissions.iam-policy",
      "name": "속성 기반 액세스 제어(ABAC)"
     },
     {
      "id": "iam-permissions.permissions-boundary",
+     "parentId": "iam-permissions.iam-policy",
      "name": "권한 경계"
     },
     {
      "id": "iam-permissions.iam-explicit-deny-precedence",
+     "parentId": "iam-permissions.iam-policy",
      "name": "정책 평가 순서와 명시적 거부"
     },
     {
      "id": "iam-permissions.iam-notaction-deny",
+     "parentId": "iam-permissions.iam-policy",
      "name": "NotAction을 쓴 Deny 문"
     },
     {
      "id": "iam-permissions.iam-requested-region-condition",
+     "parentId": "iam-permissions.iam-policy",
      "name": "aws:RequestedRegion 조건 키"
     },
     {
@@ -2920,11 +2957,17 @@
      "name": "Network Access Analyzer"
     },
     {
+     "id": "iam-permissions.root-user",
+     "name": "루트 사용자"
+    },
+    {
      "id": "iam-permissions.root-user-multiple-mfa",
+     "parentId": "iam-permissions.root-user",
      "name": "루트 사용자에 여러 개 등록하는 MFA 장치"
     },
     {
      "id": "iam-permissions.root-user-cannot-be-disabled",
+     "parentId": "iam-permissions.root-user",
      "name": "비활성화할 수 없는 루트 사용자"
     }
    ]
@@ -3213,23 +3256,32 @@
    ],
    "concepts": [
     {
+     "id": "systems-manager.systems-manager",
+     "name": "AWS Systems Manager"
+    },
+    {
      "id": "systems-manager.ssm-run-command",
+     "parentId": "systems-manager.systems-manager",
      "name": "Systems Manager Run Command"
     },
     {
      "id": "systems-manager.ssm-session-manager",
+     "parentId": "systems-manager.systems-manager",
      "name": "Systems Manager Session Manager"
     },
     {
      "id": "systems-manager.ssm-patch-manager",
+     "parentId": "systems-manager.systems-manager",
      "name": "Systems Manager Patch Manager"
     },
     {
      "id": "systems-manager.ssm-managed-instance-core-policy",
+     "parentId": "systems-manager.systems-manager",
      "name": "관리형 인스턴스를 만드는 정책"
     },
     {
      "id": "systems-manager.ssm-inventory",
+     "parentId": "systems-manager.systems-manager",
      "name": "Systems Manager Inventory"
     },
     {
