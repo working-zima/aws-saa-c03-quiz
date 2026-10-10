@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "hierarchy-batch-a",
-      "status": "pending"
+      "status": "completed",
+      "summary": "hierarchy.json의 승인된 짝대로 17개 주제(aws-core-services 0개·s3-storage-classes 0개·s3-versioning-lifecycle 5개·s3-encryption-batch 10개·s3-access-control 4개·ebs-instance-store 10개·efs-fsx 16개·storage-gateway-migration 4개·rds-storage-features 4개·aurora 5개·dynamodb 9개·elasticache-purpose-built-db 8개·ec2-autoscaling 1개·elastic-load-balancing 1개·cloudfront-global-accelerator 18개·ecs-eks-fargate 13개·api-gateway-step-functions 17개)에 총 125개 parentId를 topics.json과 topics-baseline.json에 텍스트 삽입만으로 적용했다. 사전 검사는 해당 125개 누락만 보고했고, 적용 후 verify-hierarchy.mjs 3은 parentId 187개·적용 주제 22개를 확인했다. Node 18.17.1에서 전체 테스트 1,261개(70개 파일)와 AC 6개가 통과했고 sync-baseline --dry-run은 갱신할 것이 없음을 보고했다. 751개 파일 해시 및 줄 단위 대조로 데이터 두 파일의 지정된 삽입 외에 본문·순서·문항·코드·테스트·문서·승인 매핑을 보존했으며 일회성 스크립트를 저장소에 남기지 않았다.",
+      "started_at": "2026-10-10T15:30:59+0900",
+      "completed_at": "2026-10-10T15:33:57+0900"
     },
     {
       "step": 4,
