@@ -1,0 +1,16 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "52-vpc-comparison-table",
+  "steps": [
+    {
+      "step": 0,
+      "name": "comparison-table",
+      "status": "completed",
+      "summary": "nat-endpoint-privatelink-peering 표를 ConnectionTargetsTable 래퍼로 추가하고 vpc-networking.comparison에 [ConnectionTargetsTable, VpcPathsDiagram, VpcDestinationDiagram] 순서로 등록; private-connectivity 열 폭을 24/38/38%에서 32/34/34%로 변경; 기존 ComparisonTableFigure.test.tsx·VpcPathsDiagram.test.tsx·VpcDestinationDiagram.test.tsx의 지정 단언만 수정; 새 vpcTables.test.tsx 6개와 기존 매개변수 테스트 확장 5개를 포함한 전체 69개 파일·1,230개 테스트 및 build·lint·구조 검사·경로 교차 검사 통과",
+      "started_at": "2026-10-10T11:11:11+0900",
+      "completed_at": "2026-10-10T11:14:12+0900"
+    }
+  ],
+  "created_at": "2026-10-10T11:11:11+0900",
+  "completed_at": "2026-10-10T11:14:12+0900"
+}
