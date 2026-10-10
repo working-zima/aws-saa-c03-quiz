@@ -6,8 +6,8 @@
 - `│` 딸린 개념 — `parentId`가 바로 위 `■`를 가리킨다.
 - 표시 없음 — 홀로 선 개념(머리도 딸린 개념도 아니다).
 
-순서는 `src/data/topics.json`의 현재 순서 그대로다. `waf-shield`는 두 번째 자리의 `cloudfront` 때문에 아직 WAF 묶음이 없다
-(ADR-041 「남은 자리」 1).
+순서는 `src/data/topics.json`의 순서 그대로다. 단, `waf-shield`는 step 4가 `cloudfront`를 주제 맨 앞(`waf` 앞)으로 옮긴 뒤의
+순서로 그렸다(ADR-041 「남은 자리」 1). 머리 102개, 딸린 개념 301개.
 
 ### AWS 핵심 서비스·리전·가용 영역·온프레미스 (`aws-core-services`)
 
@@ -672,16 +672,16 @@
 ### WAF·Shield·Firewall Manager (`waf-shield`)
 
 ```text
-  WAF (Web Application Firewall)
   CloudFront
-  WAF를 붙일 수 있는 곳
-  WAF 규칙의 종류
-  WAF 관리형 규칙 그룹
-  WAF 속도 기반 규칙
-  AWS WAF Bot Control
-  WAF가 검사하는 요청 본문의 크기 한도
-  REST API에 붙일 Web ACL의 리전 조건
-  Firehose를 거쳐 S3로 가는 WAF 로그
+■ WAF (Web Application Firewall)
+│ WAF를 붙일 수 있는 곳
+│ WAF 규칙의 종류
+│ WAF 관리형 규칙 그룹
+│ WAF 속도 기반 규칙
+│ AWS WAF Bot Control
+│ WAF가 검사하는 요청 본문의 크기 한도
+│ REST API에 붙일 Web ACL의 리전 조건
+│ Firehose를 거쳐 S3로 가는 WAF 로그
 ■ Shield
 │ Shield Standard가 다루지 않는 계층
 │ Shield Advanced와 DRT

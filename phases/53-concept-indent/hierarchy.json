@@ -315,6 +315,14 @@
   ["secrets-encryption.acm-expiration-event", "secrets-encryption.acm"]
  ],
  "waf-shield": [
+  ["waf-shield.waf-attach-targets", "waf-shield.waf"],
+  ["waf-shield.waf-rule-types", "waf-shield.waf"],
+  ["waf-shield.waf-managed-rule-groups", "waf-shield.waf"],
+  ["waf-shield.waf-rate-based-rule", "waf-shield.waf"],
+  ["waf-shield.waf-bot-control", "waf-shield.waf"],
+  ["waf-shield.waf-body-inspection-size-limit", "waf-shield.waf"],
+  ["waf-shield.waf-web-acl-region-must-match-rest-api", "waf-shield.waf"],
+  ["waf-shield.waf-logging-to-firehose", "waf-shield.waf"],
   ["waf-shield.shield-standard-network-layer", "waf-shield.shield"],
   ["waf-shield.shield-advanced-drt", "waf-shield.shield"],
   ["waf-shield.shield-advanced-protection-group", "waf-shield.shield"]
