@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { questions, topics } from './index'
+import { hierarchyProblems } from '../lib/concept-groups'
 
 describe('학습 데이터 무결성', () => {
   it('보안·비용 보충 개념 23개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
@@ -6774,5 +6775,11 @@ describe('ADR-039 확장 — CloudFormation의 템플릿·스택·드리프트',
     expect(questionById.q296.answerIndex).toBe(0)
     expect(questionById.q299.answerIndex).toBe(0)
     expect(questionById.q301.answerIndex).toBe(2)
+  })
+})
+
+describe('개념 계층 (ADR-041)', () => {
+  it('모든 주제의 parentId가 같은 주제·두 단·연속 규칙을 지킨다', () => {
+    expect(topics.flatMap((topic) => hierarchyProblems(topic))).toEqual([])
   })
 })
