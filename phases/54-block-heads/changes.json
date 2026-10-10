@@ -1,0 +1,146 @@
+{
+  "newConcepts": [
+    {
+      "step": 0,
+      "topic": "efs-fsx",
+      "before": "efs-fsx.fsx-ontap-multi-az",
+      "concept": {
+        "id": "efs-fsx.fsx-for-netapp-ontap",
+        "name": "Amazon FSx for NetApp ONTAP",
+        "summary": "Windows·macOS·Linux에서 함께 쓰는 FSx 유형이며, NFS와 SMB를 모두 지원한다.",
+        "paragraphs": [
+          "FSx for NetApp ONTAP은 FSx 계열 가운데 여러 운영 체제의 클라이언트가 함께 쓰는 유형이다. Windows, macOS, Linux에서 모두 사용할 수 있고 NFS와 SMB를 함께 지원하므로, Linux 서버와 Windows 서버가 한 파일 시스템을 같이 쓸 수 있다.",
+          "파일 공유 말고도 쓰임이 있다. 블록 스토리지로 노출하면 여러 가용 영역의 인스턴스가 같은 블록 스토리지에 함께 붙고, 다중 AZ로 배포하면 여러 가용 영역의 서버가 밀리초 미만의 지연으로 공유 데이터에 접근한다. 온프레미스 스토리지가 NetApp이면 데이터를 옮기는 수단은 NetApp 자체 복제 기능인 SnapMirror다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "ec2-autoscaling",
+      "before": "ec2-autoscaling.reserved-instance-types",
+      "concept": {
+        "id": "ec2-autoscaling.ec2-purchase-options",
+        "name": "EC2 구매 옵션",
+        "summary": "EC2는 온디맨드·스팟·예약 인스턴스 가운데 어느 방식으로 쓰느냐에 따라 요금과 중단 가능성이 달라진다.",
+        "paragraphs": [
+          "EC2 인스턴스의 요금을 내는 방식은 셋이다. **온디맨드 인스턴스**는 쓴 시간만큼 나중에 내는 방식이라 계속 실행하는 범용 서버에 널리 쓰인다. **스팟 인스턴스**는 AWS의 여유 용량을 아주 싼 값에 쓰는 대신, AWS가 용량을 회수하면 실행이 멈출 수 있다. **예약 인스턴스**는 1년이나 3년 사용을 약정하고 할인을 받는다.",
+          "중단돼도 괜찮은 작업에서 비용을 가장 낮추려면 스팟 인스턴스를 고른다. 오래 계속 쓸 것이 확실한 서버에는 예약 인스턴스를 고른다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "ec2-autoscaling",
+      "before": "ec2-autoscaling.scheduled-scaling",
+      "concept": {
+        "id": "ec2-autoscaling.ec2-auto-scaling",
+        "name": "EC2 Auto Scaling",
+        "summary": "부하에 맞춰 EC2 인스턴스 수를 자동으로 늘리고 줄이며, 비정상인 인스턴스는 새 인스턴스로 교체한다.",
+        "paragraphs": [
+          "EC2 Auto Scaling은 인스턴스를 **Auto Scaling 그룹**으로 묶고 그 수를 자동으로 늘리거나 줄인다. 언제 얼마나 바꿀지는 조정 정책이 정한다. **대상 추적 정책**은 평균 CPU 사용률 70%처럼 정해 둔 목표값을 지표가 유지하도록 용량을 계속 맞추므로, 변화를 예측하기 어려운 트래픽에 알맞다.",
+          "그룹은 인스턴스 수를 조정할 뿐 아니라 비정상 인스턴스를 교체한다. 상태 검사에서 비정상으로 판정된 인스턴스를 새 인스턴스로 바꾸므로, 최소·최대·희망 용량을 모두 1로 둔 그룹도 장애가 난 서버를 자동으로 대체한다. 스팟과 온디맨드를 한 그룹에 섞는 구성과 허용할 인스턴스 유형을 여러 개 두는 구성도 그룹에서 정한다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "elastic-load-balancing",
+      "before": "elastic-load-balancing.alb-routing-conditions",
+      "concept": {
+        "id": "elastic-load-balancing.alb",
+        "name": "ALB (Application Load Balancer)",
+        "summary": "HTTP·HTTPS 요청의 내용을 보고 보낼 대상을 고르는 7계층 로드 밸런서다.",
+        "paragraphs": [
+          "ALB는 ELB 계열 가운데 웹 애플리케이션 앞에 두는 로드 밸런서다. HTTP와 HTTPS 요청을 다루며 TCP·UDP 트래픽은 받지 않는다. 7계층, 곧 애플리케이션 계층에서 동작하므로 요청의 URL 경로·헤더·호스트 이름을 읽고 그에 따라 대상을 나눈다.",
+          "요청의 내용을 읽을 수 있어서 할 수 있는 일이 더 있다. 쿠키로 같은 사용자의 요청을 같은 서버에 계속 보내는 스티키 세션을 걸 수 있고, 조건에 맞는 요청을 대상에 넘기지 않고 미리 정해 둔 응답으로 답할 수도 있다. WAF를 연결할 수 있는 로드 밸런서도 ALB다. 특정 요청을 막는 일은 WAF가 맡고, ALB는 받은 요청을 어느 대상으로 보낼지 정한다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "elastic-load-balancing",
+      "before": "elastic-load-balancing.nlb-tls-listener",
+      "concept": {
+        "id": "elastic-load-balancing.nlb",
+        "name": "NLB (Network Load Balancer)",
+        "summary": "TCP와 UDP 트래픽을 4계층에서 매우 빠르게 나누는 로드 밸런서다.",
+        "paragraphs": [
+          "NLB는 ELB 계열 가운데 4계층, 곧 전송 계층에서 동작하는 로드 밸런서다. TCP와 UDP 트래픽을 모두 다루고 응답 속도가 매우 빠르다. 요청의 내용은 보지 않으므로 URL 경로나 HTTP 헤더로 대상을 나누지 못한다.",
+          "대신 ALB에 없는 기능이 있다. UDP 트래픽을 받을 수 있고, 4계층 로드 밸런서이면서도 TLS를 처리해 하나의 공용 진입점이 된다. 대상을 IP 주소로 등록할 수 있어 온프레미스 서버까지 같은 로드 밸런서 뒤에 두고, 고정 IP도 함께 제공한다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "ecs-eks-fargate",
+      "before": "ecs-eks-fargate.fargate-no-time-limit",
+      "concept": {
+        "id": "ecs-eks-fargate.fargate",
+        "name": "AWS Fargate",
+        "summary": "컨테이너를 실행할 서버의 관리와 확장을 AWS가 맡는 완전 관리형 실행 방식이다.",
+        "paragraphs": [
+          "Fargate는 컨테이너를 실행할 서버를 사용자가 관리하지 않는 실행 방식이다. ECS를 Fargate 기반으로 쓰면 서버의 확장과 축소까지 AWS가 맡으므로 관리할 일이 비교적 적고, 예측하기 어려운 트래픽 변화에도 유연하게 대응한다.",
+          "서버를 관리하지 않는다는 점에서 Lambda와 함께 비교된다. Fargate에는 실행 시간 제한이 없어 Lambda의 15분 제한을 넘기는 작업을 맡는다. 반대로 사용 시간을 초 단위로 계산하되 최소 1분이 과금되므로, 수십 초짜리 짧은 작업에는 Lambda가 더 싸다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "iam-permissions",
+      "before": "iam-permissions.iam-group-policy-attachment",
+      "concept": {
+        "id": "iam-permissions.iam-user",
+        "name": "IAM 사용자",
+        "summary": "계정 안에서 AWS를 쓰는 사람이나 애플리케이션을 나타내며, 만료 시점이 없는 액세스 키로 접근한다.",
+        "paragraphs": [
+          "IAM 사용자는 계정 안에서 AWS 서비스를 쓰는 사람이나 애플리케이션 하나를 나타낸다. 사용자는 발급받은 **액세스 키**로 AWS에 접근하고 그 키를 직접 보관한다. 액세스 키에는 만료 시점이 없어 장기 자격 증명으로 분류되고, 유출되면 회수할 방법이 없다. 그래서 권한을 줄 때는 사용자에게 키를 발급하기보다 IAM 역할을 쓰는 방식이 권장된다.",
+          "사용자는 **IAM 그룹**으로 묶어 관리한다. 그룹은 사용자만 담는 집합이라 EC2 같은 리소스는 넣을 수 없고, 정책을 그룹에 붙이면 같은 일을 하는 사람이 늘어나도 고칠 곳이 그룹 하나로 모인다. 사용자는 자기 계정 안에서만 존재하므로 다른 계정의 사용자를 내 계정의 그룹에 넣지 못한다."
+        ]
+      }
+    },
+    {
+      "step": 0,
+      "topic": "iam-permissions",
+      "before": "iam-permissions.instance-profile",
+      "concept": {
+        "id": "iam-permissions.iam-role",
+        "name": "IAM 역할",
+        "summary": "원래 권한이 없는 사용자나 서비스에 권한을 맡기는 방식이며, 장기 키 없이 임시 자격 증명으로 쓴다.",
+        "paragraphs": [
+          "IAM 역할은 원래 접근 권한이 없는 사용자나 서비스가 AWS 리소스에 접근하도록 권한을 맡긴다. 액세스 키 같은 자격 증명을 서로 건넬 필요가 없고, 필요할 때 언제든 역할을 해제할 수 있다. 역할에는 액세스 키가 없으며, 역할을 맡은 쪽은 임시 자격 증명을 받아 쓴다.",
+          "역할을 맡기는 방법은 맡는 쪽에 따라 다르다. EC2에는 인스턴스 프로파일로 역할을 붙이고, 데이터 센터의 시스템은 IAM Roles Anywhere에 X.509 인증서를 제시해 역할의 임시 자격 증명을 받는다. 다른 계정의 주체에게는 신뢰 정책으로 그 역할을 맡을 수 있게 허용한다."
+        ]
+      }
+    }
+  ],
+  "moves": [
+    { "step": 1, "topic": "aurora", "id": "aurora.aurora-cross-region-read-replica", "after": "aurora.aurora-global-database-write-region" },
+    { "step": 1, "topic": "route53", "id": "route53.route53-alias-record", "after": "route53.private-hosted-zone-vpc-only" },
+    { "step": 1, "topic": "iam-permissions", "id": "iam-permissions.network-access-analyzer", "after": "iam-permissions.access-analyzer-delegated-administrator" }
+  ],
+  "parents": [
+    { "step": 0, "parent": "efs-fsx.fsx-for-netapp-ontap", "children": ["efs-fsx.fsx-ontap-multi-az", "efs-fsx.fsx-ontap-multi-protocol-tiering", "efs-fsx.fsx-ontap-iscsi-block", "efs-fsx.fsx-ontap-snapmirror"] },
+    { "step": 0, "parent": "ec2-autoscaling.ec2-purchase-options", "children": ["ec2-autoscaling.reserved-instance-types", "ec2-autoscaling.spot-workload-fit"] },
+    { "step": 0, "parent": "ec2-autoscaling.ec2-auto-scaling", "children": ["ec2-autoscaling.scheduled-scaling", "ec2-autoscaling.target-tracking-vs-simple-scaling", "ec2-autoscaling.predictive-scaling", "ec2-autoscaling.spot-allocation-strategy", "ec2-autoscaling.asg-instance-type-override", "ec2-autoscaling.asg-on-demand-base-capacity", "ec2-autoscaling.warm-pool", "ec2-autoscaling.asg-single-instance-self-healing", "ec2-autoscaling.elb-health-check-drives-asg-replacement"] },
+    { "step": 0, "parent": "elastic-load-balancing.alb", "children": ["elastic-load-balancing.alb-routing-conditions", "elastic-load-balancing.alb-cookie-stickiness", "elastic-load-balancing.sticky-session-tradeoff", "elastic-load-balancing.alb-least-outstanding-requests", "elastic-load-balancing.alb-target-group-independent-scaling", "elastic-load-balancing.alb-listener-rule-fixed-response"] },
+    { "step": 0, "parent": "elastic-load-balancing.nlb", "children": ["elastic-load-balancing.nlb-tls-listener", "elastic-load-balancing.nlb-udp-listener", "elastic-load-balancing.nlb-ip-targets"] },
+    { "step": 0, "parent": "ecs-eks-fargate.fargate", "children": ["ecs-eks-fargate.fargate-no-time-limit", "ecs-eks-fargate.fargate-spot", "ecs-eks-fargate.fargate-per-second-billing", "ecs-eks-fargate.fargate-efs-mount"] },
+    { "step": 0, "parent": "iam-permissions.iam-user", "children": ["iam-permissions.iam-group-policy-attachment", "iam-permissions.iam-group-users-only", "iam-permissions.iam-user-is-account-scoped"] },
+    { "step": 0, "parent": "iam-permissions.iam-role", "children": ["iam-permissions.instance-profile", "iam-permissions.iam-roles-anywhere", "iam-permissions.cross-account-iam-role"] },
+    { "step": 1, "parent": "rds-storage-features.features", "children": ["rds-storage-features.multi-az-standby-limits", "rds-storage-features.rds-multi-az-db-cluster", "rds-storage-features.rds-multi-az-failover-rto", "rds-storage-features.read-replica-vs-cache"] },
+    { "step": 1, "parent": "aurora.aurora-global-database-dr-targets", "children": ["aurora.aurora-global-database-write-region"] },
+    { "step": 1, "parent": "route53.private-hosted-zone", "children": ["route53.private-hosted-zone-vpc-only"] },
+    { "step": 1, "parent": "iam-permissions.iam-access-analyzer", "children": ["iam-permissions.access-analyzer-delegated-administrator"] }
+  ],
+  "relinks": [
+    { "step": 0, "question": "q046", "from": "efs-fsx.fsx-ontap-multi-protocol-tiering", "to": "efs-fsx.fsx-for-netapp-ontap" },
+    { "step": 0, "question": "q075", "from": "ec2-autoscaling.ec2", "to": "ec2-autoscaling.ec2-auto-scaling" },
+    { "step": 0, "question": "q076", "from": "ec2-autoscaling.ec2", "to": "ec2-autoscaling.ec2-purchase-options" },
+    { "step": 0, "question": "q077", "from": "ec2-autoscaling.ec2", "to": "ec2-autoscaling.ec2-purchase-options" },
+    { "step": 0, "question": "q079", "from": "elastic-load-balancing.elb", "to": "elastic-load-balancing.alb" },
+    { "step": 0, "question": "q080", "from": "elastic-load-balancing.nlb-udp-listener", "to": "elastic-load-balancing.nlb" },
+    { "step": 0, "question": "q084", "from": "ecs-eks-fargate.ecs", "to": "ecs-eks-fargate.fargate" },
+    { "step": 0, "question": "q156", "from": "iam-permissions.iam", "to": "iam-permissions.iam-role" },
+    { "step": 0, "question": "q157", "from": "iam-permissions.iam", "to": "iam-permissions.iam-user" }
+  ]
+}

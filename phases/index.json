@@ -269,6 +269,10 @@
       "dir": "53-concept-indent",
       "status": "completed",
       "completed_at": "2026-10-10T16:37:21+0900"
+    },
+    {
+      "dir": "54-block-heads",
+      "status": "pending"
     }
   ]
 }
