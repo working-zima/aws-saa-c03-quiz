@@ -2,8 +2,24 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "53-concept-indent",
   "steps": [
-    { "step": 0, "name": "concept-groups", "status": "pending" },
-    { "step": 1, "name": "indented-children", "status": "pending" },
-    { "step": 2, "name": "sample-hierarchy", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "concept-groups",
+      "status": "completed",
+      "summary": "src/types/content.ts에 Concept.parentId와 ConceptGroup을 정의하고 groupConcepts(concepts: Concept[]): ConceptGroup[] 및 hierarchyProblems(topic: Topic): string[]를 구현했다. groupConcepts는 입력 순서를 유지하며 parentId 없음·머리 부재·다른 묶음 개입·딸린 개념 참조를 평평한 묶음으로 둔다. 테스트를 먼저 작성해 실패를 확인했고 새 테스트 19개(단위 18개·전 주제 검사 1개), 전체 1,249개(70개 파일)와 AC 5개가 통과했다.",
+      "started_at": "2026-10-10T12:09:31+0900",
+      "completed_at": "2026-10-10T12:13:52+0900"
+    },
+    {
+      "step": 1,
+      "name": "indented-children",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "sample-hierarchy",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-10-10T12:09:31+0900"
 }
