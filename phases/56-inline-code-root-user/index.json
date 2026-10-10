@@ -7,7 +7,8 @@
       "name": "inline-code",
       "status": "completed",
       "started_at": "2026-10-10T23:51:20+0900",
-      "summary": "백틱 한 쌍을 <code class=\"font-mono text-[0.9em]\">로 그린다(ADR-044). 바꾼 파일: EmphasizedText.tsx(renderEmphasis가 백틱도 나눔), glossary.ts(markFirstOccurrences가 백틱 안 약어를 건너뜀), search.ts(stripEmphasis가 백틱도 지움). 테스트 7개 추가: glossary.test.ts 2(백틱 안의 약어는 표시하지 않고 백틱 밖의 첫 자리를 표시한다 / 백틱 조각이 있어도 조각들을 이으면 원문과 같다), search.test.ts 1(백틱을 지우고 나머지 글자는 그대로 둔다), 새 파일 EmphasizedText.test.tsx 「본문 속 코드 표기 (ADR-044)」 4(code 요소·클래스 둘뿐 / textContent에 백틱 없음 / strong과 code 하나씩 / 백틱 안 약어는 버튼 아님). 전체 테스트 1261→1268 통과, build·lint·check-structure·sync-baseline --dry-run 통과. 실제 데이터 개념 문단 20개에서 code 24개, 남은 백틱 0. src/data·baseline 변경 없음."
+      "summary": "백틱 한 쌍을 <code class=\"font-mono text-[0.9em]\">로 그린다(ADR-044). 바꾼 파일: EmphasizedText.tsx(renderEmphasis가 백틱도 나눔), glossary.ts(markFirstOccurrences가 백틱 안 약어를 건너뜀), search.ts(stripEmphasis가 백틱도 지움). 테스트 7개 추가: glossary.test.ts 2(백틱 안의 약어는 표시하지 않고 백틱 밖의 첫 자리를 표시한다 / 백틱 조각이 있어도 조각들을 이으면 원문과 같다), search.test.ts 1(백틱을 지우고 나머지 글자는 그대로 둔다), 새 파일 EmphasizedText.test.tsx 「본문 속 코드 표기 (ADR-044)」 4(code 요소·클래스 둘뿐 / textContent에 백틱 없음 / strong과 code 하나씩 / 백틱 안 약어는 버튼 아님). 전체 테스트 1261→1268 통과, build·lint·check-structure·sync-baseline --dry-run 통과. 실제 데이터 개념 문단 20개에서 code 24개, 남은 백틱 0. src/data·baseline 변경 없음.",
+      "completed_at": "2026-10-10T23:54:33+0900"
     },
     {
       "step": 1,
