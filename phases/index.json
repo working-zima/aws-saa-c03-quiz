@@ -277,7 +277,8 @@
     },
     {
       "dir": "55-sourced-block-heads",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-10T21:47:22+0900"
     }
   ]
 }
