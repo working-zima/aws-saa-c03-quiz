@@ -97,7 +97,7 @@ npm run test     # Vitest (CI 모드, watch 금지)
   정답 근거로 쓰인 것만 추린 보충 개념. 항목마다 덤프 원문 인용이 붙어 있다.
   덤프 해설이 실제 AWS 동작과 어긋나 고치거나 뺀 항목은 이 파일의 "원본 수정 이력"에 있다.
   근거는 ADR-008.
-- `docs/source/aws-docs.md` — 위 두 파일이 쓰기만 하고 정의하지 않는 기초 용어(레코드·호스팅 영역·대상 그룹, Lambda의 동시 실행 수·예약된 동시성, Identity Center 권한 세트가 만드는 IAM 역할, SCP의 관리 계정 예외, CloudFormation의 템플릿·스택·드리프트)의 정의만
+- `docs/source/aws-docs.md` — 위 두 파일이 쓰기만 하고 정의하지 않는 기초 용어(레코드·호스팅 영역·대상 그룹, Lambda의 동시 실행 수·예약된 동시성, Identity Center 권한 세트가 만드는 IAM 역할, SCP의 관리 계정 예외, CloudFormation의 템플릿·스택·드리프트, 그리고 블록의 기본 개념인 IAM 정책·루트 사용자·Systems Manager 관리형 노드·EC2 인스턴스 유형과 제품군·RDS 자동 백업과 DB 스냅샷·재해 복구 전략·EC2 배치 그룹)의 정의만
   AWS 공식 문서에서 가져와 URL과 함께 남긴 것. 이 목록 밖의 사실은 여전히 위 두 파일에서만 가져온다. 근거는 ADR-039.
 
 - CRITICAL: **사실만 가져오고 문장은 직접 쓴다.** 원본 문장을 그대로 옮기지 마라.
