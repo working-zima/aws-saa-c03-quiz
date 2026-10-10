@@ -15,7 +15,8 @@
       "name": "root-user-fact",
       "status": "completed",
       "started_at": "2026-10-10T23:54:33+0900",
-      "summary": "ADR-045대로 changes.json을 줄 단위로 적용. 개념 iam-permissions.root-user-cannot-be-disabled의 summary·paragraphs(문단 2→4, 멤버 계정 예외 둘 추가), 문항 q701의 prompt(단독 계정 명시)·explanation(「유일한 보호 방법」 삭제, 멤버 계정 예외 한 문장 추가). name·choices·answerIndex 그대로. scripts/topics-baseline.json의 questionsSha256을 4a082a08c287 → f26c06ca9e7e로 갱신. 전체 테스트 1268개 통과(step 0과 같은 수), build·lint·check-structure·sync-baseline --dry-run·verify-root-user.mjs 통과. 바뀐 파일은 데이터 셋과 phase 메타데이터뿐."
+      "summary": "ADR-045대로 changes.json을 줄 단위로 적용. 개념 iam-permissions.root-user-cannot-be-disabled의 summary·paragraphs(문단 2→4, 멤버 계정 예외 둘 추가), 문항 q701의 prompt(단독 계정 명시)·explanation(「유일한 보호 방법」 삭제, 멤버 계정 예외 한 문장 추가). name·choices·answerIndex 그대로. scripts/topics-baseline.json의 questionsSha256을 4a082a08c287 → f26c06ca9e7e로 갱신. 전체 테스트 1268개 통과(step 0과 같은 수), build·lint·check-structure·sync-baseline --dry-run·verify-root-user.mjs 통과. 바뀐 파일은 데이터 셋과 phase 메타데이터뿐.",
+      "completed_at": "2026-10-10T23:56:57+0900"
     }
   ],
   "created_at": "2026-10-10T23:51:20+0900"
