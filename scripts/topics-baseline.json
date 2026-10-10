@@ -2011,14 +2011,17 @@
     },
     {
      "id": "security-groups-nacl.security-group-referencing",
+     "parentId": "security-groups-nacl.security-group",
      "name": "보안 그룹 참조"
     },
     {
      "id": "security-groups-nacl.alb-security-group-outbound-and-health-check-port",
+     "parentId": "security-groups-nacl.security-group",
      "name": "로드 밸런서 보안 그룹의 아웃바운드와 상태 검사 포트"
     },
     {
      "id": "security-groups-nacl.nlb-security-group",
+     "parentId": "security-groups-nacl.security-group",
      "name": "NLB에 붙이는 보안 그룹"
     },
     {
@@ -2027,10 +2030,12 @@
     },
     {
      "id": "security-groups-nacl.nacl-rule-limit",
+     "parentId": "security-groups-nacl.nacl",
      "name": "NACL의 규칙 수 제한"
     },
     {
      "id": "security-groups-nacl.nacl-deny-at-source-subnet",
+     "parentId": "security-groups-nacl.nacl",
      "name": "보내는 쪽 서브넷에 거는 거부 규칙"
     },
     {
@@ -2058,6 +2063,7 @@
     },
     {
      "id": "hybrid-connectivity.access-terms",
+     "parentId": "hybrid-connectivity.site-to-site-vpn",
      "name": "Customer Gateway와 Bastion Host"
     },
     {
@@ -2070,6 +2076,7 @@
     },
     {
      "id": "hybrid-connectivity.transit-gateway-cross-region-peering",
+     "parentId": "hybrid-connectivity.transit-gateway",
      "name": "리전 간 Transit Gateway 피어링"
     },
     {
@@ -2078,22 +2085,27 @@
     },
     {
      "id": "hybrid-connectivity.virtual-private-gateway",
+     "parentId": "hybrid-connectivity.direct-connect",
      "name": "가상 프라이빗 게이트웨이(VGW)"
     },
     {
      "id": "hybrid-connectivity.direct-connect-gateway",
+     "parentId": "hybrid-connectivity.direct-connect",
      "name": "Direct Connect Gateway"
     },
     {
      "id": "hybrid-connectivity.direct-connect-caveats",
+     "parentId": "hybrid-connectivity.direct-connect",
      "name": "Direct Connect의 두 가지 함정"
     },
     {
      "id": "hybrid-connectivity.direct-connect-resiliency",
+     "parentId": "hybrid-connectivity.direct-connect",
      "name": "Direct Connect 최대 복원력 구성"
     },
     {
      "id": "hybrid-connectivity.direct-connect-vif-types",
+     "parentId": "hybrid-connectivity.direct-connect",
      "name": "Direct Connect의 가상 인터페이스(VIF)"
     },
     {
@@ -2126,6 +2138,7 @@
     },
     {
      "id": "hybrid-connectivity.outposts-data-residency",
+     "parentId": "hybrid-connectivity.region-attached-edge-options",
      "name": "Outposts로 지키는 데이터 상주 요건"
     }
    ]
@@ -2149,18 +2162,22 @@
     },
     {
      "id": "route53.route53-failover-routing",
+     "parentId": "route53.routing-policies",
      "name": "페일오버 라우팅 정책"
     },
     {
      "id": "route53.multi-region-failover-for-region-outage",
+     "parentId": "route53.routing-policies",
      "name": "리전 장애에 대비하는 다중 리전 장애 조치"
     },
     {
      "id": "route53.latency-record-for-non-aws-endpoint",
+     "parentId": "route53.routing-policies",
      "name": "AWS 밖 엔드포인트의 지연 시간 레코드"
     },
     {
      "id": "route53.multivalue-answer-details",
+     "parentId": "route53.routing-policies",
      "name": "다중값 응답 라우팅의 세부 동작"
     },
     {
@@ -2169,6 +2186,7 @@
     },
     {
      "id": "route53.route53-resolver-forward-rule",
+     "parentId": "route53.resolver",
      "name": "전달 규칙과 VPC 연결"
     },
     {
@@ -2177,6 +2195,7 @@
     },
     {
      "id": "route53.route53-zone-file-import",
+     "parentId": "route53.private-hosted-zone",
      "name": "DNS 호스팅을 Route 53으로 옮기는 절차"
     },
     {
@@ -2208,26 +2227,32 @@
     },
     {
      "id": "emr-glue-athena.emr-node-types",
+     "parentId": "emr-glue-athena.emr",
      "name": "EMR 클러스터의 세 가지 노드"
     },
     {
      "id": "emr-glue-athena.emr-transient-cluster",
+     "parentId": "emr-glue-athena.emr",
      "name": "일시적 클러스터와 장기 실행 클러스터"
     },
     {
      "id": "emr-glue-athena.emr-managed-scaling",
+     "parentId": "emr-glue-athena.emr",
      "name": "EMR 관리형 스케일링"
     },
     {
      "id": "emr-glue-athena.emr-node-instance-family-choice",
+     "parentId": "emr-glue-athena.emr",
      "name": "노드 역할에 따른 인스턴스 제품군 선택"
     },
     {
      "id": "emr-glue-athena.emr-runtime-role",
+     "parentId": "emr-glue-athena.emr",
      "name": "EMR 런타임 역할"
     },
     {
      "id": "emr-glue-athena.emr-security-configuration",
+     "parentId": "emr-glue-athena.emr",
      "name": "EMR 보안 구성"
     },
     {
@@ -2240,14 +2265,17 @@
     },
     {
      "id": "emr-glue-athena.glue-crawler",
+     "parentId": "emr-glue-athena.glue",
      "name": "AWS Glue Crawler"
     },
     {
      "id": "emr-glue-athena.glue-databrew",
+     "parentId": "emr-glue-athena.glue",
      "name": "AWS Glue DataBrew"
     },
     {
      "id": "emr-glue-athena.glue-etl-with-per-customer-kms-key",
+     "parentId": "emr-glue-athena.glue",
      "name": "고객마다 다른 키로 암호화하는 Glue ETL 작업"
     },
     {
@@ -2256,14 +2284,17 @@
     },
     {
      "id": "emr-glue-athena.athena-encrypted-and-pay-per-query",
+     "parentId": "emr-glue-athena.athena",
      "name": "Athena의 과금 단위와 암호화된 데이터"
     },
     {
      "id": "emr-glue-athena.athena-federated-query",
+     "parentId": "emr-glue-athena.athena",
      "name": "Athena 페더레이션 쿼리"
     },
     {
      "id": "emr-glue-athena.log-storage-s3-athena",
+     "parentId": "emr-glue-athena.athena",
      "name": "조회 빈도로 나뉘는 로그 저장 위치"
     },
     {
@@ -2272,10 +2303,12 @@
     },
     {
      "id": "emr-glue-athena.lake-formation-blueprint-and-athena",
+     "parentId": "emr-glue-athena.lake-formation",
      "name": "Lake Formation 블루프린트와 Athena의 열 수준 권한"
     },
     {
      "id": "emr-glue-athena.lake-formation-lf-tags",
+     "parentId": "emr-glue-athena.lake-formation",
      "name": "LF 태그 기반 액세스 제어"
     },
     {
@@ -2299,22 +2332,27 @@
     },
     {
      "id": "kinesis-streaming.kinesis-retention-and-fanout",
+     "parentId": "kinesis-streaming.kinesis-data-streams",
      "name": "보존 기간과 향상된 팬아웃"
     },
     {
      "id": "kinesis-streaming.kinesis-client-library",
+     "parentId": "kinesis-streaming.kinesis-data-streams",
      "name": "샤드와 체크포인트를 직접 다루는 소비자"
     },
     {
      "id": "kinesis-streaming.kinesis-record-size-limit",
+     "parentId": "kinesis-streaming.kinesis-data-streams",
      "name": "스트림에 넣을 수 있는 레코드 크기"
     },
     {
      "id": "kinesis-streaming.kinesis-partition-key-hot-shard",
+     "parentId": "kinesis-streaming.kinesis-data-streams",
      "name": "파티션 키 쏠림으로 생기는 핫 샤드"
     },
     {
      "id": "kinesis-streaming.kinesis-capacity-mode",
+     "parentId": "kinesis-streaming.kinesis-data-streams",
      "name": "Kinesis 스트림의 프로비저닝 모드와 온디맨드 모드"
     },
     {
@@ -2323,14 +2361,17 @@
     },
     {
      "id": "kinesis-streaming.firehose-lambda-transformation",
+     "parentId": "kinesis-streaming.data-firehose",
      "name": "Firehose의 적재 전 Lambda 변환"
     },
     {
      "id": "kinesis-streaming.firehose-format-conversion",
+     "parentId": "kinesis-streaming.data-firehose",
      "name": "Firehose의 형식 변환"
     },
     {
      "id": "kinesis-streaming.firehose-buffering",
+     "parentId": "kinesis-streaming.data-firehose",
      "name": "Firehose의 버퍼링 지연"
     },
     {
@@ -2339,6 +2380,7 @@
     },
     {
      "id": "kinesis-streaming.flink-kinesis-source-sink",
+     "parentId": "kinesis-streaming.managed-service-apache-flink",
      "name": "Flink의 Kinesis 스트림 소스와 싱크"
     },
     {
@@ -2355,6 +2397,7 @@
     },
     {
      "id": "kinesis-streaming.msk-kafka-connect",
+     "parentId": "kinesis-streaming.msk",
      "name": "MSK가 수집과 변환까지 맡는 방식"
     }
    ]
@@ -2374,26 +2417,32 @@
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-spectrum",
+     "parentId": "redshift-opensearch-quicksight.redshift",
      "name": "Redshift Spectrum"
     },
     {
      "id": "redshift-opensearch-quicksight.oltp-vs-olap",
+     "parentId": "redshift-opensearch-quicksight.redshift",
      "name": "OLTP와 OLAP"
     },
     {
      "id": "redshift-opensearch-quicksight.athena-vs-redshift-workload",
+     "parentId": "redshift-opensearch-quicksight.redshift",
      "name": "임시 쿼리와 반복되는 고성능 쿼리"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-hot-cold-split",
+     "parentId": "redshift-opensearch-quicksight.redshift",
      "name": "조회 빈도에 따른 Redshift 적재와 S3 보관"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-concurrency-scaling",
+     "parentId": "redshift-opensearch-quicksight.redshift",
      "name": "Redshift 동시성 확장"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-copy-from-s3",
+     "parentId": "redshift-opensearch-quicksight.redshift",
      "name": "S3에서 COPY 명령으로 하는 Redshift 병렬 적재"
     },
     {
@@ -2406,6 +2455,7 @@
     },
     {
      "id": "redshift-opensearch-quicksight.quicksight-ml-forecast",
+     "parentId": "redshift-opensearch-quicksight.quicksight",
      "name": "QuickSight에 내장된 머신러닝 예측"
     },
     {
@@ -2429,26 +2479,32 @@
     },
     {
      "id": "cloudwatch-xray.cloudwatch-network-monitor",
+     "parentId": "cloudwatch-xray.cloudwatch",
      "name": "CloudWatch Network Monitor"
     },
     {
      "id": "cloudwatch-xray.cloudwatch-container-insights",
+     "parentId": "cloudwatch-xray.cloudwatch",
      "name": "CloudWatch Container Insights"
     },
     {
      "id": "cloudwatch-xray.log-analysis-options",
+     "parentId": "cloudwatch-xray.cloudwatch",
      "name": "로그 분석 선택지: OpenSearch와 CloudWatch Logs Insights"
     },
     {
      "id": "cloudwatch-xray.cloudwatch-agent-memory-metric",
+     "parentId": "cloudwatch-xray.cloudwatch",
      "name": "CloudWatch 에이전트의 메모리 사용률 지표"
     },
     {
      "id": "cloudwatch-xray.ec2-detailed-monitoring",
+     "parentId": "cloudwatch-xray.cloudwatch",
      "name": "EC2 상세 모니터링의 1분 간격 지표"
     },
     {
      "id": "cloudwatch-xray.cloudwatch-alarm-state-change-event",
+     "parentId": "cloudwatch-xray.cloudwatch",
      "name": "CloudWatch 알람의 상태 변경 이벤트"
     },
     {
@@ -2461,6 +2517,7 @@
     },
     {
      "id": "cloudwatch-xray.performance-insights-rightsizing",
+     "parentId": "cloudwatch-xray.performance-insight",
      "name": "Performance Insights와 적정 규모 조정"
     },
     {
@@ -2484,6 +2541,7 @@
     },
     {
      "id": "secrets-encryption.secrets-manager-batch-get-secret-value",
+     "parentId": "secrets-encryption.secrets-manager",
      "name": "Secrets Manager의 BatchGetSecretValue API"
     },
     {
@@ -2504,34 +2562,42 @@
     },
     {
      "id": "secrets-encryption.kms-key-types-by-management",
+     "parentId": "secrets-encryption.kms",
      "name": "KMS 키의 관리 주체: 고객 관리 키·AWS 관리 키·AWS 소유 키"
     },
     {
      "id": "secrets-encryption.kms-multi-region-key",
+     "parentId": "secrets-encryption.kms",
      "name": "KMS 다중 리전 키"
     },
     {
      "id": "secrets-encryption.kms-key-per-tenant",
+     "parentId": "secrets-encryption.kms",
      "name": "고객마다 따로 만드는 KMS 키"
     },
     {
      "id": "secrets-encryption.kms-imported-key-material",
+     "parentId": "secrets-encryption.kms",
      "name": "KMS의 가져온 키 자료"
     },
     {
      "id": "secrets-encryption.kms-automatic-key-rotation",
+     "parentId": "secrets-encryption.kms",
      "name": "해마다 이뤄지는 KMS 자동 키 교체"
     },
     {
      "id": "secrets-encryption.kms-symmetric-vs-asymmetric-rotation",
+     "parentId": "secrets-encryption.kms",
      "name": "KMS 대칭 키와 비대칭 키의 자동 교체"
     },
     {
      "id": "secrets-encryption.imported-key-material-rotation",
+     "parentId": "secrets-encryption.kms",
      "name": "KMS의 가져온 키 자료를 교체하는 방법"
     },
     {
      "id": "secrets-encryption.lambda-env-var-kms",
+     "parentId": "secrets-encryption.kms",
      "name": "Lambda 환경 변수의 KMS 암호화"
     },
     {
@@ -2540,6 +2606,7 @@
     },
     {
      "id": "secrets-encryption.kms-cloudhsm-key-store",
+     "parentId": "secrets-encryption.cloudhsm",
      "name": "CloudHSM이 뒷받침하는 KMS 키"
     },
     {
@@ -2548,14 +2615,17 @@
     },
     {
      "id": "secrets-encryption.acm-dns-validation",
+     "parentId": "secrets-encryption.acm",
      "name": "ACM의 도메인 검증 방식"
     },
     {
      "id": "secrets-encryption.acm-cloudfront-region",
+     "parentId": "secrets-encryption.acm",
      "name": "CloudFront용 인증서의 us-east-1 발급 제약"
     },
     {
      "id": "secrets-encryption.acm-expiration-event",
+     "parentId": "secrets-encryption.acm",
      "name": "ACM 인증서 만료 임박 이벤트"
     }
    ]
@@ -2570,43 +2640,51 @@
    ],
    "concepts": [
     {
-     "id": "waf-shield.waf",
-     "name": "WAF (Web Application Firewall)"
-    },
-    {
      "id": "waf-shield.cloudfront",
      "name": "CloudFront"
     },
     {
+     "id": "waf-shield.waf",
+     "name": "WAF (Web Application Firewall)"
+    },
+    {
      "id": "waf-shield.waf-attach-targets",
+     "parentId": "waf-shield.waf",
      "name": "WAF를 붙일 수 있는 곳"
     },
     {
      "id": "waf-shield.waf-rule-types",
+     "parentId": "waf-shield.waf",
      "name": "WAF 규칙의 종류"
     },
     {
      "id": "waf-shield.waf-managed-rule-groups",
+     "parentId": "waf-shield.waf",
      "name": "WAF 관리형 규칙 그룹"
     },
     {
      "id": "waf-shield.waf-rate-based-rule",
+     "parentId": "waf-shield.waf",
      "name": "WAF 속도 기반 규칙"
     },
     {
      "id": "waf-shield.waf-bot-control",
+     "parentId": "waf-shield.waf",
      "name": "AWS WAF Bot Control"
     },
     {
      "id": "waf-shield.waf-body-inspection-size-limit",
+     "parentId": "waf-shield.waf",
      "name": "WAF가 검사하는 요청 본문의 크기 한도"
     },
     {
      "id": "waf-shield.waf-web-acl-region-must-match-rest-api",
+     "parentId": "waf-shield.waf",
      "name": "REST API에 붙일 Web ACL의 리전 조건"
     },
     {
      "id": "waf-shield.waf-logging-to-firehose",
+     "parentId": "waf-shield.waf",
      "name": "Firehose를 거쳐 S3로 가는 WAF 로그"
     },
     {
@@ -2615,14 +2693,17 @@
     },
     {
      "id": "waf-shield.shield-standard-network-layer",
+     "parentId": "waf-shield.shield",
      "name": "Shield Standard가 다루지 않는 계층"
     },
     {
      "id": "waf-shield.shield-advanced-drt",
+     "parentId": "waf-shield.shield",
      "name": "Shield Advanced와 DRT"
     },
     {
      "id": "waf-shield.shield-advanced-protection-group",
+     "parentId": "waf-shield.shield",
      "name": "Shield Advanced 보호 그룹"
     },
     {
@@ -2646,10 +2727,12 @@
     },
     {
      "id": "guardduty-macie-inspector.guardduty-db-login",
+     "parentId": "guardduty-macie-inspector.guardduty",
      "name": "GuardDuty의 데이터베이스 로그인 이상 탐지"
     },
     {
      "id": "guardduty-macie-inspector.guardduty-finding-to-eventbridge",
+     "parentId": "guardduty-macie-inspector.guardduty",
      "name": "GuardDuty 탐지 결과를 자동 대응으로 잇는 EventBridge"
     },
     {
@@ -2658,14 +2741,17 @@
     },
     {
      "id": "guardduty-macie-inspector.macie-automated-discovery",
+     "parentId": "guardduty-macie-inspector.macie",
      "name": "Macie의 민감 데이터 자동 탐지"
     },
     {
      "id": "guardduty-macie-inspector.macie-delegated-administrator",
+     "parentId": "guardduty-macie-inspector.macie",
      "name": "조직 전체를 보는 Macie 위임 관리자 계정"
     },
     {
      "id": "guardduty-macie-inspector.macie-finding-to-eventbridge",
+     "parentId": "guardduty-macie-inspector.macie",
      "name": "Macie 탐지 결과를 알림으로 잇는 EventBridge"
     },
     {
@@ -2674,6 +2760,7 @@
     },
     {
      "id": "guardduty-macie-inspector.inspector-scans-ecr-images",
+     "parentId": "guardduty-macie-inspector.amazon-inspector",
      "name": "Inspector의 ECR 컨테이너 이미지 스캔"
     },
     {
@@ -2784,10 +2871,12 @@
     },
     {
      "id": "identity-federation.identity-center-external-idp",
+     "parentId": "identity-federation.identity-center",
      "name": "IAM Identity Center와 외부 IdP의 연결"
     },
     {
      "id": "identity-federation.identity-center-permission-set",
+     "parentId": "identity-federation.identity-center",
      "name": "권한 세트"
     },
     {
@@ -2796,6 +2885,7 @@
     },
     {
      "id": "identity-federation.sts-assume-role",
+     "parentId": "identity-federation.sts",
      "name": "STS로 임시 자격 증명 받기"
     },
     {
@@ -2816,10 +2906,12 @@
     },
     {
      "id": "identity-federation.cognito-pools",
+     "parentId": "identity-federation.cognito",
      "name": "Cognito 사용자 풀과 자격 증명 풀"
     },
     {
      "id": "identity-federation.cognito-social-idp-federation",
+     "parentId": "identity-federation.cognito",
      "name": "Cognito 사용자 풀과 소셜 로그인 연동"
     }
    ]
@@ -2839,22 +2931,27 @@
     },
     {
      "id": "organizations-cloudtrail-config.organizations-tag-policy",
+     "parentId": "organizations-cloudtrail-config.organizations-scp",
      "name": "태그 정책과 SCP"
     },
     {
      "id": "organizations-cloudtrail-config.organizations-consolidated-billing",
+     "parentId": "organizations-cloudtrail-config.organizations-scp",
      "name": "Organizations의 통합 청구"
     },
     {
      "id": "organizations-cloudtrail-config.organizational-unit",
+     "parentId": "organizations-cloudtrail-config.organizations-scp",
      "name": "조직 단위(OU)"
     },
     {
      "id": "organizations-cloudtrail-config.scp-attachment-targets",
+     "parentId": "organizations-cloudtrail-config.organizations-scp",
      "name": "SCP를 붙일 수 있는 자리"
     },
     {
      "id": "organizations-cloudtrail-config.scp-condition-exception",
+     "parentId": "organizations-cloudtrail-config.organizations-scp",
      "name": "SCP에서 예외를 두는 방법"
     },
     {
@@ -2863,18 +2960,22 @@
     },
     {
      "id": "organizations-cloudtrail-config.config-configuration-recorder",
+     "parentId": "organizations-cloudtrail-config.aws-config",
      "name": "구성 레코더"
     },
     {
      "id": "organizations-cloudtrail-config.config-conformance-pack",
+     "parentId": "organizations-cloudtrail-config.aws-config",
      "name": "AWS Config 준수 팩"
     },
     {
      "id": "organizations-cloudtrail-config.config-custom-rule",
+     "parentId": "organizations-cloudtrail-config.aws-config",
      "name": "AWS Config 사용자 지정 규칙"
     },
     {
      "id": "organizations-cloudtrail-config.config-rule-remediation",
+     "parentId": "organizations-cloudtrail-config.aws-config",
      "name": "AWS Config 규칙과 자동 수정"
     },
     {
@@ -2883,14 +2984,17 @@
     },
     {
      "id": "organizations-cloudtrail-config.cloudtrail-lake",
+     "parentId": "organizations-cloudtrail-config.cloudtrail",
      "name": "AWS CloudTrail Lake"
     },
     {
      "id": "organizations-cloudtrail-config.cloudtrail-data-events",
+     "parentId": "organizations-cloudtrail-config.cloudtrail",
      "name": "관리 이벤트와 데이터 이벤트"
     },
     {
      "id": "organizations-cloudtrail-config.cloudtrail-log-file-validation",
+     "parentId": "organizations-cloudtrail-config.cloudtrail",
      "name": "CloudTrail 로그 파일 유효성 검사"
     },
     {
@@ -2914,10 +3018,12 @@
     },
     {
      "id": "cost-management.savings-plan-details",
+     "parentId": "cost-management.savings-plan",
      "name": "절약 플랜의 적용 범위와 결제 옵션"
     },
     {
      "id": "cost-management.savings-plan-baseline-vs-spike",
+     "parentId": "cost-management.savings-plan",
      "name": "기본 부하와 일시적 증가분의 약정 크기"
     },
     {
@@ -2938,10 +3044,12 @@
     },
     {
      "id": "cost-management.cost-allocation-tag-activation",
+     "parentId": "cost-management.billing-and-cost-management",
      "name": "결제 콘솔에서 하는 비용 할당 태그 활성화"
     },
     {
      "id": "cost-management.cost-allocation-tag-activation-in-management-account",
+     "parentId": "cost-management.billing-and-cost-management",
      "name": "통합 청구에서 비용 할당 태그를 활성화하는 계정"
     },
     {
@@ -2950,10 +3058,12 @@
     },
     {
      "id": "cost-management.budget-actions",
+     "parentId": "cost-management.aws-budgets",
      "name": "AWS Budgets의 예산 조치"
     },
     {
      "id": "cost-management.budget-forecasted-alert",
+     "parentId": "cost-management.aws-budgets",
      "name": "예상 지출에 거는 예산 알림"
     },
     {
@@ -2974,6 +3084,7 @@
     },
     {
      "id": "cost-management.compute-optimizer-ebs-recommendations",
+     "parentId": "cost-management.compute-optimizer",
      "name": "Compute Optimizer의 EBS 볼륨 권장 사항"
     }
    ]
@@ -2993,6 +3104,7 @@
     },
     {
      "id": "governance-iac.cloudformation-drift-detection",
+     "parentId": "governance-iac.cloudformation",
      "name": "CloudFormation 드리프트 감지"
     },
     {
@@ -3005,6 +3117,7 @@
     },
     {
      "id": "governance-iac.control-tower-controls",
+     "parentId": "governance-iac.control-tower-landing-zone",
      "name": "Control Tower의 사전 예방적 제어와 탐지 제어"
     },
     {
@@ -3071,6 +3184,7 @@
     },
     {
      "id": "ai-ml-services.sagemaker-autopilot",
+     "parentId": "ai-ml-services.sagemaker",
      "name": "SageMaker Autopilot"
     },
     {

@@ -4728,16 +4728,17 @@ describe('학습 데이터 무결성', () => {
     ])
   })
 
-  it('WAF·Shield 주제가 WAF·Shield·Firewall Manager 블록 순서로 개념을 둔다', () => {
+  it('WAF·Shield 주제가 CloudFront 재소개 다음 WAF·Shield·Firewall Manager 블록 순서로 개념을 둔다', () => {
     const topic = topics.find((candidate) => candidate.id === 'waf-shield')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: WAF(10) → Shield(4) → Firewall Manager(1).
-    // CloudFront 재소개는 WAF를 붙이는 자리(waf-attach-targets)가 멀티 오리진 CloudFront를 전제로 쓰므로
-    // WAF 블록 안, 그 앞에 둔다(규칙 5). Firewall Manager는 WAF 규칙을 중앙에서 배포하므로 두 블록 뒤.
+    // 블록: CloudFront 재소개(1) → WAF(9) → Shield(4) → Firewall Manager(1).
+    // CloudFront 재소개는 WAF를 붙이는 자리(waf-attach-targets)가 멀티 오리진 CloudFront를 전제로 쓰므로 그보다 앞에 둔다(규칙 5).
+    // WAF 블록 안에 두면 waf와 그 세부 여덟 사이가 끊겨 들여쓰기로 묶을 수 없으므로 주제 맨 앞에 둔다(ADR-041 「남은 자리」 1).
+    // Firewall Manager는 WAF 규칙을 중앙에서 배포하므로 두 블록 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
-      'waf-shield.waf',
       'waf-shield.cloudfront',
+      'waf-shield.waf',
       'waf-shield.waf-attach-targets',
       'waf-shield.waf-rule-types',
       'waf-shield.waf-managed-rule-groups',
