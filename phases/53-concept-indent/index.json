@@ -37,10 +37,10 @@
     {
       "step": 4,
       "name": "hierarchy-batch-b",
-      "status": "error",
-      "started_at": "2026-10-10T15:33:58+0900",
-      "error_message": "[3회 시도 후 실패] Step did not update status",
-      "failed_at": "2026-10-10T15:34:42+0900"
+      "status": "completed",
+      "summary": "hierarchy.json의 승인된 짝대로 마지막 17개 주제(security-groups-nacl 5개·hybrid-connectivity 8개·route53 6개·emr-glue-athena 14개·kinesis-streaming 10개·redshift-opensearch-quicksight 7개·cloudwatch-xray 7개·secrets-encryption 13개·waf-shield 11개·guardduty-macie-inspector 6개·iam-permissions 0개·identity-federation 5개·organizations-cloudtrail-config 12개·cost-management 7개·governance-iac 2개·systems-manager 0개·ai-ml-services 1개)에 총 114개 parentId를 topics.json과 topics-baseline.json에 줄 단위 삽입으로 적용했다. waf-shield.cloudfront를 주제 맨 앞(waf-shield.waf 앞)으로 옮겨 두 파일에서 줄·항목 자리만 맞바꿨고, data.test.ts의 WAF 순서 테스트 한 블록만 지정된 내용으로 바꿔 데이터 이동 전 그 테스트 하나의 실패를 먼저 확인했다. verify-hierarchy.mjs 4는 parentId 301개·적용 주제 39개를 확인했고, Node 18.17.1에서 build·lint·전체 테스트 1,261개(70개 파일)·check-structure가 통과했으며 sync-baseline --dry-run은 갱신할 것이 없음을 보고했다. 바뀐 파일은 데이터 두 파일과 data.test.ts뿐이고 일회성 치환 스크립트는 저장소 밖(/tmp)에서 쓰고 지웠다.",
+      "started_at": "2026-10-10T16:34:51+0900",
+      "completed_at": "2026-10-10T16:37:20+0900"
     }
   ],
   "created_at": "2026-10-10T12:09:31+0900"
