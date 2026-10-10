@@ -13,13 +13,14 @@ const anchors: Record<string, string> = {
   'nat-instance-vs-gateway': 'vpc-networking.nat-instance',
   'private-connectivity': 'vpc-networking.privatelink-endpoint-service',
   'flow-logs-vs-cloudtrail': 'vpc-networking.vpc-flow-logs',
+  'nat-endpoint-privatelink-peering': 'vpc-networking.comparison',
 }
 
 // tailwind.config의 정답/오답 토큰과 기본 팔레트의 초록·빨강
 const colorClass = /\b(?:text|bg|border)-(?:correct|incorrect|green|red|emerald|rose)\b/
 
 describe('ComparisonTableFigure', () => {
-  it('표 다섯이 모두 데이터에 있다', () => {
+  it('표 여섯이 모두 데이터에 있다', () => {
     expect(Object.keys(tables).sort()).toEqual(Object.keys(anchors).sort())
   })
 

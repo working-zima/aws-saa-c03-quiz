@@ -179,16 +179,18 @@ describe('VpcDestinationDiagram', () => {
     }
   })
 
-  it.each([2, 4] as const)('h%i 공유 본문에서 comparison 뒤에 지도 다음 목적지 도식이 온다', (headingLevel) => {
+  it.each([2, 4] as const)('h%i 공유 본문에서 comparison 뒤에 표, 지도, 목적지 도식이 차례로 온다', (headingLevel) => {
     const comparison = topics.find(({ id }) => id === 'vpc-networking')!.concepts.find(({ id }) => id === 'vpc-networking.comparison')!
     render(<ConceptList concepts={[comparison]} headingLevel={headingLevel} />)
     const figures = screen.getAllByRole('figure')
 
-    expect(figures).toHaveLength(2)
-    expect(figures[0]).toHaveAttribute('aria-label', 'VPC 통신 경로 도식')
-    expect(figures[1]).toHaveAttribute('aria-label', diagramText.label)
+    expect(figures).toHaveLength(3)
+    expect(figures[0]).toHaveAttribute('aria-label', 'NAT 게이트웨이, VPC Endpoint, PrivateLink, VPC 피어링')
+    expect(figures[1]).toHaveAttribute('aria-label', 'VPC 통신 경로 도식')
+    expect(figures[2]).toHaveAttribute('aria-label', diagramText.label)
     expect(figures[0].previousElementSibling).toHaveTextContent(comparison.paragraphs[comparison.paragraphs.length - 1])
     expect(figures[1].previousElementSibling).toBe(figures[0])
+    expect(figures[2].previousElementSibling).toBe(figures[1])
     for (const figure of figures) {
       expect(figure.closest('article')).toHaveAttribute('id', comparison.id)
       expect(within(figure).queryByRole('heading')).toBeNull()
