@@ -177,4 +177,8 @@ describe('stripEmphasis', () => {
   it('강조 마커를 지우고 나머지 글자는 그대로 둔다', () => {
     expect(stripEmphasis('**장기** 보관에 쓰는 클래스다')).toBe('장기 보관에 쓰는 클래스다')
   })
+
+  it('백틱을 지우고 나머지 글자는 그대로 둔다', () => {
+    expect(stripEmphasis('`NotAction`은 **나머지**를 가리킨다')).toBe('NotAction은 나머지를 가리킨다')
+  })
 })

@@ -282,7 +282,8 @@
     },
     {
       "dir": "56-inline-code-root-user",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-10T23:56:57+0900"
     }
   ]
 }
