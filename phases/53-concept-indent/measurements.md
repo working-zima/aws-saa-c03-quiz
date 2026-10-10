@@ -54,3 +54,41 @@
 
 - 320px에서 세로선(`#262626`)은 보이지만 옅다. 무리를 가르는 일은 17px 들여쓰기가 주로 한다.
 - 도식·표가 있는 자리는 `bg-panel` 띠가 화면 끝까지 펼쳐져 세로선이 그 자리에서 끊긴다(UI_GUIDE 그대로).
+
+# 전체 적용 뒤 실측 — 39개 주제
+
+2026-10-10, `feat-53-concept-indent` `60a3719`(step 4)의 `npm run build` 결과를 같은 방식으로 쟀다. 39개 주제 × 세 폭 = 117회.
+기대값은 `hierarchy.json`에서 주제마다 머리 수(무리)와 짝 수(딸린 개념)를 센 것이다.
+
+## 무리와 글 폭
+
+| 뷰포트 | 무리 | 딸린 개념 | 개념 읽기 h3 | 판정과 다른 주제 | 글 폭 머리 / 딸린 개념 | 가로 넘침 |
+|---|---|---|---|---|---|---|
+| 320px | 102 | 301 | 301 | 0 | 280 / 263px | 0 (39개 주제 모두) |
+| 390px | 102 | 301 | 301 | 0 | 350 / 333px | 0 |
+| 1280px | 102 | 301 | 301 | 0 | 672 / 655px | 0 |
+
+들여쓰기가 없는 네 주제(`aws-core-services`·`s3-storage-classes`·`iam-permissions`·`systems-manager`)는 무리 0이다.
+`waf-shield`는 세 폭 모두 첫 개념이 `waf-shield.cloudfront`이고 무리 2(`waf` 아래 8, `shield` 아래 3)다.
+
+## 도식·비교표
+
+| 자리 | 종류 | 수 | 320px 왼쪽·폭 / 안 | 390px 왼쪽·폭 / 안 | 1280px 왼쪽·폭 / 안 |
+|---|---|---|---|---|---|
+| 딸린 개념 | 도식 | 11 | 0 · 320 / SVG 320 | 0 · 390 / SVG 380 | 273 · 655 / SVG 380 |
+| 딸린 개념 | 표 | 6 | 0 · 320 / 표 288 | 0 · 390 / 표 358 | 273 · 655 / 표 621 |
+| 머리·홀로 선 개념 | 도식 | 12 | 0 · 320 / SVG 320 | 0 · 390 / SVG 380 | 256 · 672 / SVG 380 |
+| 머리·홀로 선 개념 | 표 | 6 | 0 · 320 / 표 288 | 0 · 390 / 표 358 | 256 · 672 / 표 638 |
+
+딸린 도식 11개는 표본의 다섯에 `cloudfront-global-accelerator.global-accelerator-vs-dns-failover`,
+`route53.multivalue-answer-details`, `identity-federation.identity-center-permission-set`,
+`organizations-cloudtrail-config.scp-attachment-targets`, `governance-iac.cloudformation-drift-detection`·`control-tower-controls`가
+더해진 것이다. 딸린 표는 표본의 여섯 그대로다.
+
+단어 끊김: 딸린 표 6개는 0. 머리 개념 `governance-iac.cloudformation`의 비교표에서 가운뎃점 뒤 줄바꿈이 320px 3곳·1280px 1곳
+잡혔는데, phase 48 실측(`phases/48-governance-visuals/measurements.md`)에 같은 네 곳이 이미 적혀 있고 이 표는 무리 밖이라
+이번 변경과 무관하다.
+
+## 콘솔
+
+`waf-shield`·`route53`·`organizations-cloudtrail-config`·`governance-iac`를 다시 불러온 뒤 오류·예외 0건.
