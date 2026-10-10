@@ -104,8 +104,20 @@
   계정을 만들 때 쓴 이메일 주소와 비밀번호로 로그인한다. AWS는 일상 작업에 루트 사용자를 쓰지 말고, 루트 자격 증명을 안전하게 보관해 루트만
   할 수 있는 작업에만 쓰라고 권한다. 루트만 할 수 있는 작업의 예로, 하나뿐인 IAM 관리자가 실수로 자기 권한을 회수했을 때 정책을 고쳐 권한을
   되살리는 일이 있다. 루트 사용자는 MFA로 보호한다.
-- 이 파일을 근거로 쓰지 않는 것: Organizations 멤버 계정의 루트 자격 증명 중앙 관리·삭제, 루트만 할 수 있는 작업 전체 목록, 루트 액세스 키
-  관리 절차. (멤버 계정의 루트 자격 증명을 지울 수 있다는 사실은 기존 개념 `root-user-cannot-be-disabled`와 어긋날 수 있어 따로 검토한다.)
+- 이 파일을 근거로 쓰지 않는 것: 루트만 할 수 있는 작업 전체 목록, 루트 액세스 키 관리 절차.
+
+#### 멤버 계정의 루트 자격 증명 (phase 56 추가, 2026-10-10)
+
+- 출처: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-enable-root-access.html (「Centralize root access for member accounts」),
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html (「Centrally manage root access for member accounts」)
+- 가져온 사실: Organizations에 묶인 멤버 계정도 저마다 루트 사용자를 가진다. 루트 접근을 중앙에서 관리하도록 켜면(IAM 콘솔의 루트 액세스
+  관리), 관리 계정과 IAM 위임 관리자가 멤버 계정의 루트 비밀번호·액세스 키·서명 인증서를 지우고 MFA를 비활성화할 수 있다. 그러면 그 멤버
+  계정은 루트 사용자로 로그인하지도, 루트 비밀번호를 복구하지도 못한다. Organizations에서 새로 만든 계정에는 처음부터 루트 자격 증명이 없다.
+  루트만 할 수 있는 작업이 필요하면 관리 계정이나 위임 관리자가 비밀번호 복구를 허용하고, 멤버 계정의 루트 이메일 받은편지함에 접근하는
+  사람이 비밀번호를 재설정해 루트로 들어간다. AWS는 그 작업을 마친 뒤 루트 자격 증명을 다시 지우라고 권한다.
+- 이 파일을 근거로 쓰지 않는 것: 관리 계정이 멤버 계정에서 대신하는 특권 작업의 목록(S3 버킷 정책·SQS 큐 정책 삭제 등)과 그 절차, 기능을
+  켜는 데 필요한 권한·API(`sts:AssumeRoot` 등), 단독 계정의 계정 설정 변경에 루트가 필요한지 여부.
+- 쓰인 곳: `iam-permissions.root-user-cannot-be-disabled`의 셋째·넷째 문단과 요약, q701 해설(ADR-045).
 
 ### AWS Systems Manager와 관리형 노드
 
