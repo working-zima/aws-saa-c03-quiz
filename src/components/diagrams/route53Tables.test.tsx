@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { stripListMarker } from '../../lib/paragraph-blocks'
 import { ConceptList } from '../ConceptList'
 import { ComparisonTableFigure } from './ComparisonTableFigure'
 
@@ -82,7 +83,8 @@ describe('Route 53 라우팅 정책 비교표', () => {
     expect(article).toHaveAttribute('id', concept.id)
     expect(within(article).getByRole('heading', { level: headingLevel, name: concept.name })).toBeInTheDocument()
     expect(screen.getAllByRole('figure')).toEqual([table])
-    expect(table.previousElementSibling?.textContent).toBe(concept.paragraphs.join('').replace(/\*\*/gu, ''))
+    // 목록 항목의 `- ` 표지는 화면에 나오지 않는다(ADR-046).
+    expect(table.previousElementSibling?.textContent).toBe(concept.paragraphs.map(stripListMarker).join('').replace(/\*\*/gu, ''))
     expect(article.lastElementChild).toBe(table)
     expect(within(table).getAllByRole('columnheader')).toHaveLength(2)
     expect(within(table).getAllByRole('rowheader')).toHaveLength(8)

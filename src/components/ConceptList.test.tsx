@@ -165,3 +165,95 @@ describe('딸린 개념 (ADR-041)', () => {
     expect(Array.from(articles[0].parentElement!.children)).toEqual(articles)
   })
 })
+
+describe('본문 목록 (ADR-046)', () => {
+  const concept: Concept = {
+    id: 'list.example',
+    name: '목록 개념',
+    summary: '목록 요약',
+    paragraphs: ['머리 문단', '- **가**는 첫째다', '- **나**는 둘째다', '꼬리 문단'],
+  }
+
+  it('머리 문단과 꼬리 문단 사이에 목록 하나와 항목 둘을 DOM 순서대로 그린다', () => {
+    render(<ConceptList concepts={[concept]} diagrams={{}} headingLevel={2} />)
+
+    const article = screen.getByRole('article')
+    const lists = within(article).getAllByRole('list')
+    expect(lists).toHaveLength(1)
+    expect(within(lists[0]).getAllByRole('listitem')).toHaveLength(2)
+    const head = within(article).getByText('머리 문단')
+    const tail = within(article).getByText('꼬리 문단')
+    expect(head.tagName).toBe('P')
+    expect(tail.tagName).toBe('P')
+    expect(Array.from(head.parentElement!.children)).toEqual([head, lists[0], tail])
+  })
+
+  it('항목의 목록 표지는 숨기고 굵은 이름은 strong으로 그린다', () => {
+    render(<ConceptList concepts={[concept]} diagrams={{}} headingLevel={2} />)
+
+    const items = screen.getAllByRole('listitem')
+    expect(items.map((item) => item.textContent)).toEqual(['가는 첫째다', '나는 둘째다'])
+    for (const item of items) expect(item.textContent?.startsWith('- ')).toBe(false)
+    expect(within(items[0]).getByText('가').tagName).toBe('STRONG')
+    expect(within(items[1]).getByText('나').tagName).toBe('STRONG')
+  })
+
+  it('목록과 항목에 UI_GUIDE의 본문 목록 클래스를 적용한다', () => {
+    render(<ConceptList concepts={[concept]} diagrams={{}} headingLevel={2} />)
+
+    expect(screen.getByRole('list')).toHaveClass(
+      'list-disc space-y-2 pl-5 text-[15px] leading-7 text-neutral-300 marker:text-neutral-500',
+      { exact: true },
+    )
+    for (const item of screen.getAllByRole('listitem')) {
+      expect(item).toHaveClass('break-keep', { exact: true })
+    }
+  })
+
+  it('목록 항목에서 처음 나오는 약어만 버튼으로 그리고 표지 없이 글을 잇는다', () => {
+    const withTerms: Concept = {
+      ...concept,
+      paragraphs: ['머리 문단', '- **가**는 NFS를 쓴다', '- **나**도 NFS를 쓴다', '꼬리 문단의 NFS'],
+    }
+    const glossary = [
+      { term: 'NFS', expansion: 'Network File System', meaning: '네트워크 파일 시스템', sourceConceptId: 'efs-fsx.efs' },
+    ]
+    render(<ConceptList concepts={[withTerms]} diagrams={{}} glossary={glossary} headingLevel={2} />)
+
+    const [first, second] = screen.getAllByRole('listitem')
+    const button = within(first).getByRole('button', { name: 'NFS' })
+    expect(screen.getAllByRole('button', { name: 'NFS' })).toEqual([button])
+    expect(within(second).queryByRole('button')).not.toBeInTheDocument()
+    expect(first.textContent).toBe('가는 NFS를 쓴다')
+    expect(button.nextSibling?.textContent).toBe('를 쓴다')
+    expect(second.textContent).toBe('나도 NFS를 쓴다')
+    expect(screen.getByText('꼬리 문단의 NFS').tagName).toBe('P')
+  })
+
+  it('문단이 끼어 있는 두 목록은 별도의 ul로 그린다', () => {
+    const separated: Concept = { ...concept, paragraphs: ['- 가', '- 나', '중간 문단', '- 다', '- 라'] }
+    render(<ConceptList concepts={[separated]} diagrams={{}} headingLevel={2} />)
+
+    const lists = screen.getAllByRole('list')
+    expect(lists).toHaveLength(2)
+    expect(lists.map((list) => list.tagName)).toEqual(['UL', 'UL'])
+    expect(lists.map((list) => within(list).getAllByRole('listitem').map((item) => item.textContent)))
+      .toEqual([['가', '나'], ['다', '라']])
+    const middle = screen.getByText('중간 문단')
+    expect(middle.tagName).toBe('P')
+    expect(Array.from(middle.parentElement!.children)).toEqual([lists[0], middle, lists[1]])
+  })
+
+  it('목록이 없는 개념은 기존 클래스의 문단만 원래 순서대로 그린다', () => {
+    const plain: Concept = { ...concept, paragraphs: ['첫 문단', '둘째 문단'] }
+    render(<ConceptList concepts={[plain]} diagrams={{}} headingLevel={2} />)
+
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+    const paragraphs = plain.paragraphs.map((text) => screen.getByText(text))
+    expect(Array.from(paragraphs[0].parentElement!.children)).toEqual(paragraphs)
+    for (const paragraph of paragraphs) {
+      expect(paragraph.tagName).toBe('P')
+      expect(paragraph).toHaveClass('whitespace-pre-line break-keep text-[15px] leading-7 text-neutral-300', { exact: true })
+    }
+  })
+})
