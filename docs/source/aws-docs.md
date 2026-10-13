@@ -172,3 +172,29 @@
   줄인다) 등이다. 배치 그룹은 선택 사항이고, 쓰지 않으면 EC2가 동시 장애를 줄이도록 인스턴스를 하드웨어에 흩어 놓으려 한다. 배치 그룹을 만드는
   데는 요금이 없고, 인스턴스는 한 번에 한 배치 그룹에만 들어간다.
 - 이 파일을 근거로 쓰지 않는 것: Precision time 전략, 배치 그룹 병합 불가, 용량 예약·전용 호스트·스팟 관련 규칙, 공유 배치 그룹, Outposts.
+
+## 목록 항목의 영문 이름 (ADR-046, phase 57)
+
+개념 본문의 목록 항목 가운데 이름이 한국어인 것에 붙인 영문 이름의 근거다(ADR-039 「2026-10-13 확장」). **이름 표기만** 가져온다. 이 절을
+근거로 항목의 동작·사양·제약을 쓰지 않는다. 확인한 날: 2026-10-13.
+
+표기 규칙: 문서는 복수형(On-Demand Instances)이나 문장 속 소문자(compliance mode)로 쓰지만, 이 앱의 기존 괄호 영문(Standard Queue,
+Simple Routing)에 맞춰 단수·Title Case로 쓴다. 파일 게이트웨이는 별도 개념인 FSx File Gateway와 갈리도록 S3를 붙인다(문서 이름은 Amazon
+S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은 Invoke API `InvocationType`의 값 그대로 코드 표기로 쓴다.
+
+| 개념 | 한국어 이름 → 영문 이름 | 출처 |
+|---|---|---|
+| storage-gateway-migration.storage-gateway | 파일 게이트웨이 → S3 File Gateway, 볼륨 게이트웨이 → Volume Gateway, 테이프 게이트웨이 → Tape Gateway | https://docs.aws.amazon.com/storagegateway/ |
+| ec2-autoscaling.ec2, ec2-autoscaling.ec2-purchase-options | 온디맨드 인스턴스 → On-Demand Instance, 스팟 인스턴스 → Spot Instance, 예약 인스턴스 → Reserved Instance | https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-purchasing-options.html |
+| ebs-instance-store.placement-groups | 클러스터 → Cluster, 파티션 → Partition, 분산 → Spread | https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-strategies.html |
+| ebs-instance-store.ebs-volume-type-names | 범용 SSD → General Purpose SSD, 프로비저닝된 IOPS SSD → Provisioned IOPS SSD, 처리량 최적화 HDD → Throughput Optimized HDD, 콜드 HDD → Cold HDD | https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volume-types.html |
+| backup-disaster-recovery.dr-strategies | 백업 및 복원 → Backup and Restore, 파일럿 라이트 → Pilot Light, 웜 스탠바이 → Warm Standby, 다중 사이트 액티브-액티브 → Multi-site Active/Active | https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html |
+| s3-versioning-lifecycle.object-lock | 거버넌스 모드 → Governance Mode, 규정 준수 모드 → Compliance Mode | https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html |
+| lambda.lambda-invocation-types | 이벤트 호출 → `Event`, 요청-응답 → `RequestResponse` | https://docs.aws.amazon.com/lambda/latest/api/API_Invoke.html |
+| governance-iac.control-tower-controls | 사전 예방적 제어 → Proactive Control, 탐지 제어 → Detective Control | https://docs.aws.amazon.com/controltower/latest/controlreference/controls.html |
+| iam-permissions.iam-policy | 자격 증명 기반 정책 → Identity-based Policy, 리소스 기반 정책 → Resource-based Policy | https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html |
+| rds-storage-features.rds-backups | 자동 백업 → Automated Backup, DB 스냅샷 → DB Snapshot | https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_CommonTasks.BackupRestore.html |
+| ecs-eks-fargate.ecs-task-role-vs-task-execution-role | 태스크 실행 역할 → Task Execution Role, 태스크 역할 → Task Role | https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html, https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html |
+| waf-shield.cloudfront | 캐시 무효화 → Invalidation | https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html |
+
+영문을 붙이지 않은 것: 멀티 오리진(공식 문서에 딱 맞는 단일 기능명이 없다), 이름이 이미 영문이거나 영문이 이미 붙어 있던 항목.
