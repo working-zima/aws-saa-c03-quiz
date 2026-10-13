@@ -1710,6 +1710,10 @@ phase 50의 새 도식 둘(조직과 SCP 범위, IAM Identity Center 접근)에�
 MFA를 비활성화할 수 있다는 것, 그러면 루트 로그인과 비밀번호 복구가 막힌다는 것, Organizations에서 새로 만든 계정에는 루트 자격 증명이 없다는
 것, 관리 계정이 비밀번호 복구를 허용하면 다시 쓸 수 있다는 것이다. 특권 루트 작업의 목록과 필요한 권한·API는 가져오지 않는다.
 
+**2026-10-13 확장 — 목록 항목의 영문 이름(phase 57)**: 개념 본문의 목록 항목 가운데 이름이 한국어인 것에 영문 이름을 괄호로 붙인다(ADR-046).
+근거는 `docs/source/aws-docs.md` 「목록 항목의 영문 이름」에 있다. 가져오는 것은 **이름 표기뿐**이다. 그 항목이 무엇을 하는지, 어떤 제약이
+있는지는 이 확장으로 가져오지 않고 여전히 두 원본(또는 앞의 확장)에서만 쓴다.
+
 ### ADR-040: 원본 PDF의 키워드 퀴즈를 암호로 잠가 숨은 화면으로 둔다 (ADR-009 예외)
 
 **결정**: 원본 PDF(`concepts-raw.md`의 원본)의 `✅` 키워드와 그 정의를 **원문 그대로** 모아 키워드 퀴즈를 만든다. 이 데이터는
@@ -2020,3 +2024,84 @@ q701은 문제문에 「Organizations에 속하지 않은 단독 계정」을 �
 
 **새 문항을 쓰지 않는 이유**: 멤버 계정의 예외는 이 개념의 한계이지 새 블록이 아니다. q701의 해설이 그 사실을 문항만 푸는 학습자에게도
 전한다(ADR-026). 정답 위치가 바뀌지 않으므로 q247 이후 분포도 그대로다.
+
+### ADR-046: 한 대상의 종류를 나란히 정의한 본문을 목록으로 그리고, 한국어 항목 이름에 영문 이름을 붙인다 (UI_GUIDE 「타이포그래피」 확장 / ADR-039 확장)
+
+**결정**: 개념 본문에서 한 대상의 종류·유형·모드·기능을 굵은 이름으로 하나씩 세우고 각각 설명한 곳을 글머리 기호 목록으로 그린다. 데이터
+표기는 **`- `(하이픈과 공백)로 시작하는 문단**이다. `paragraphs`의 타입은 `string[]` 그대로이고, 잇닿은 `- ` 문단들이 `<ul>` 하나가 된다.
+규칙을 아는 곳은 셋이다.
+
+- `src/lib/paragraph-blocks.ts` — 문단 배열을 일반 문단과 목록 묶음으로 나누고 표지를 뗀다. 묶음마다 원래 문단 번호를 지닌다.
+- `src/components/ConceptList.tsx` — 묶음을 `<p>`와 `<ul>`로 그린다. 약어 툴팁의 첫 등장 판정(`markFirstOccurrences`)에도 표지를 뗀 글을 넘긴다.
+- `src/data/data.test.ts` — 목록 항목은 혼자 서지 않는다(앞이나 뒤 문단도 항목이다). 목록이 있는 개념은 아래 21개뿐이다.
+
+목록 항목의 이름이 한국어면 이름 바로 뒤에 AWS 공식 문서의 영문 이름을 괄호로 붙인다. `**파일 게이트웨이**(S3 File Gateway)는`처럼 쓰며,
+기존 `**NLB**(Network Load Balancer)는`·`**표준 대기열**(Standard Queue)은`과 같은 꼴이다. 이름이 이미 영문이거나(FSx for Lustre, SSE-KMS)
+영문이 이미 붙은 항목(ALB·NLB·GLB, Route 53 라우팅 정책, SQS 대기열)은 그대로 둔다. Lambda 호출 유형은 Invoke API의 값이라 코드 표기로
+쓴다(`` `Event` ``, `` `RequestResponse` ``, ADR-044). 멀티 오리진은 공식 문서에 딱 맞는 단일 기능명이 없어 붙이지 않는다.
+
+적용 대상은 개념 21개, 목록 21개, 항목 65개다. 변경은 `phases/57-concept-lists/changes.json`에 글자 그대로 있다.
+
+사용자 결정(2026-10-13): 사용자가 Storage Gateway의 세 게이트웨이를 예로 들며 "리스트 형식으로 되어 있어야 하고 소괄호로 영문명도 넣어야
+될 거 같다, 이런 부분이 더 있을 것"이라고 했다. 범위는 "탭(들여쓰기)으로 내려갈 정도는 아닌데 주제가 될 만한 것, 두껍게 바꾼 키워드 같은
+것"이고, 영문명은 목록 항목에만 붙인다. 아래 기준과 21곳, EBS 볼륨 유형 이름을 넣는 것, 멀티 오리진에 영문을 붙이지 않는 것을 승인했다.
+
+**기준 — 무엇이 목록이 되는가**: 한 상위 대상의 종류·유형·모드·기능을 굵은 이름으로 세우고 각각 설명을 붙인 곳이다. 굵은 키워드가 둘
+이상인 개념 49개 가운데 21개가 해당한다. 개수는 기준이 아니다 — 둘짜리(SQS 대기열, 객체 잠금 모드)도 목록이다. 해당하지 않는 것은 넷이다.
+
+- 서로를 담거나 쓰는 관계의 용어 — 버킷·객체·접두사, 호스팅 영역·레코드, 템플릿·스택, 버전·별칭, 인스턴스 유형·제품군, IAM 사용자·역할,
+  Lambda 동시성 용어. 관계를 말하는 문장이라 목록으로 떼면 그 연결이 끊긴다.
+- 이름만 늘어놓고 각각의 설명이 없는 곳 — Aurora 스토리지 구성 둘, S3 크기 필터 둘, SQS 정책 두 방향.
+- 강조로만 쓴 굵은 글씨 — 「**보장한다**」, 「**무엇을**」 같은 것.
+- 「첫째·둘째·셋째」로 늘어놓은 조건(SNS 암호화 주제 권한, EFS 계정 간 마운트) — 굵은 키워드가 아니다.
+
+| 주제 | 개념 | 항목 |
+|---|---|---|
+| storage-gateway-migration | storage-gateway | 파일·볼륨·테이프 게이트웨이 |
+| efs-fsx | fsx | FSx 네 종류 |
+| s3-encryption-batch | sse-types | SSE-S3·SSE-KMS·SSE-C |
+| rds-storage-features | features | Multi AZ 배포·Multi AZ DB Cluster·Read Replica·RDS Proxy·Blue/Green |
+| rds-storage-features | rds-backups | 자동 백업·DB 스냅샷 |
+| ec2-autoscaling | ec2, ec2-purchase-options | 온디맨드·스팟·예약 인스턴스 (두 개념) |
+| elastic-load-balancing | elb | ALB·NLB·GLB |
+| sqs-sns-eventbridge | sqs | 표준·선입선출 대기열 |
+| guardduty-macie-inspector | security-service-lineup | Detective·Inspector·Firewall Manager·Network Firewall |
+| dynamodb | dynamodb | DynamoDB Streams·DAX |
+| waf-shield | cloudfront | OAC·캐시 무효화·멀티 오리진 |
+| ecs-eks-fargate | ecs-task-role-vs-task-execution-role | 태스크 실행 역할·태스크 역할 |
+| ebs-instance-store | placement-groups | 클러스터·파티션·분산 |
+| ebs-instance-store | ebs-volume-type-names | gp3·io2·st1·sc1 |
+| backup-disaster-recovery | dr-strategies | 백업 및 복원·파일럿 라이트·웜 스탠바이·다중 사이트 액티브-액티브 |
+| route53 | routing-policies | 라우팅 정책 일곱 |
+| s3-versioning-lifecycle | object-lock | 거버넌스·규정 준수 모드 |
+| lambda | lambda-invocation-types | 이벤트·요청-응답 호출 |
+| governance-iac | control-tower-controls | 사전 예방적·탐지 제어 |
+| iam-permissions | iam-policy | 자격 증명 기반·리소스 기반 정책 |
+
+**문장을 다루는 규칙**: 사실·`summary`·문항은 바꾸지 않는다. 바꾸는 것은 셋뿐이다.
+
+1. 한 문단에 여러 항목을 이어 쓴 곳은 항목마다 문단을 나눈다. 두 항목을 한 문장에 묶은 곳(「A는 국가를, B는 거리를 기준으로 삼는다」)은
+   서술어를 되풀이해 두 문장으로 쪼갠다. Route 53 라우팅 정책 문단 안의 줄바꿈(`\n`)도 이렇게 없어진다.
+2. 항목 여럿을 함께 다루는 문장(「세 기능은 목적이 다르다…」, 「자동 스냅샷과 수동 스냅샷은 모두…」)과 앞 항목을 이어받는 문장(「그래서 …」)은
+   목록 뒤 문단으로 뺀다. 「~는 셋이다」 같은 머리 문장은 목록 앞 문단으로 뺀다. 항목 하나에만 딸린 문장(Cross Region Read Replica,
+   S3 Bucket Key)은 그 항목 안에 두거나 목록 바로 뒤에 둔다.
+3. 항목은 굵은 이름으로 시작하게 어순을 고친다(「사용자·그룹·역할에 붙이는 **자격 증명 기반 정책**은」 → 「**자격 증명 기반 정책**(…)은
+   사용자·그룹·역할에 붙이며」). 예외는 이름 대응 자체가 내용인 EBS 볼륨 유형(「범용 SSD(General Purpose SSD)는 **gp3**다」)과, 원래부터
+   정식 이름으로 시작하는 DAX(「DynamoDB Accelerator(**DAX**)는」)다.
+
+**영문 이름의 근거**: 영문 이름은 서비스의 사양·제약이 아니라 이름 표기라 어떤 문항의 정답 근거도 되지 않는다(ADR-015와 같은 판단).
+그래도 철자를 지어내지 않도록 AWS 공식 문서에서 확인하고 URL을 `docs/source/aws-docs.md` 「목록 항목의 영문 이름」에 남긴다(ADR-039 확장).
+문서는 복수형(On-Demand Instances)이나 문장 속 소문자(compliance mode)로 쓰지만, 이 앱의 기존 괄호 영문(Standard Queue, Simple Routing)에
+맞춰 단수·Title Case로 쓴다. 파일 게이트웨이는 별도 개념인 FSx File Gateway와 갈리도록 `S3 File Gateway`로 쓴다. 덤프 원문(Q252)도 이
+이름을 쓴다.
+
+**데이터 표기로 정한 이유**: 타입을 `(string | string[])[]`로 바꾸면 검색·약어 툴팁·구조 가드·전사 검사·content-audit와 문단을 읽는 데이터
+테스트 수십 곳이 함께 바뀐다. `**강조**`와 백틱(ADR-044)처럼 문자열 안의 표지로 두면 화면 코드 한 곳과 순수 함수 하나만 안다. 검색
+(`stripEmphasis`)은 표지를 지우지 않는다 — 검색은 본문을 화면에 내보내지 않고 비교에만 쓰므로 `- `가 걸릴 일이 없다.
+
+**트레이드오프**: 문단 개수와 위치가 바뀐다. 문단 번호나 개수를 박아 둔 데이터 테스트 5개가 번호를 옮긴다(단언의 뜻은 그대로다).
+`ec2-autoscaling.ec2`와 `ec2-autoscaling.ec2-purchase-options`에 같은 구매 옵션 셋이 두 번 나온다. 이 phase 전부터 있던 중복이고 목록이 되면
+더 눈에 띄지만, 개념을 합치거나 지우는 일은 범위 밖이라 남긴다.
+
+**실측(시험 적용, Chrome)**: 목록이 있는 주제 18개 × 320·390·1440px에서 `<ul>` 21개, `<li>` 65개, 화면에 남은 `- ` 표지 0, 목록 가로
+넘침 0, 문서 가로 넘침 0. 딸린 개념의 들여쓰기(ADR-041) 안에서도 글머리 기호가 세로선 안쪽에 선다. 전사 검사·content-audit 결과는 develop과 같다.

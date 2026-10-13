@@ -38,6 +38,7 @@ interface Concept {
   name: string;                        // "S3 Standard-IA"
   summary: string;                     // 한 줄 요약
   paragraphs: string[];                // 설명 본문. 문단 단위 평문. `**강조**`와 백틱 코드 표기를 그린다 (ADR-044)
+                                       // `- `로 시작하는 문단은 목록 항목이고, 잇닿은 항목이 목록 하나가 된다 (ADR-046)
 }
 // concepts 배열의 순서가 학습 순서다: 서비스 블록마다 기본 → 갈림길 → 한계. 아래 절을 봐라.
 

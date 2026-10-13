@@ -1,0 +1,8 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "57-concept-lists",
+  "steps": [
+    { "step": 0, "name": "list-render", "status": "pending" },
+    { "step": 1, "name": "list-data", "status": "pending" }
+  ]
+}

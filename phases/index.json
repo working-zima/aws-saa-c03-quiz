@@ -284,6 +284,10 @@
       "dir": "56-inline-code-root-user",
       "status": "completed",
       "completed_at": "2026-10-10T23:56:57+0900"
+    },
+    {
+      "dir": "57-concept-lists",
+      "status": "pending"
     }
   ]
 }
