@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { questions, topics } from './index'
 import { hierarchyProblems } from '../lib/concept-groups'
+import { isListItem } from '../lib/paragraph-blocks'
 
 describe('학습 데이터 무결성', () => {
   it('보안·비용 보충 개념 23개가 지정된 주제의 개념 배열 끝에 추가된다', () => {
@@ -5132,7 +5133,7 @@ describe('학습 데이터 무결성', () => {
     )
     // 제어는 언제 작동하는지로 갈리고, 드리프트 감지는 스택 밖을 보지 못한다.
     expect(bodyOf('governance-iac.control-tower-controls')).toContain(
-      '**사전 예방적 제어**는 배포 시점에 템플릿을 평가해',
+      '**사전 예방적 제어**(Proactive Control)는 배포 시점에 템플릿을 평가해',
     )
     expect(bodyOf('governance-iac.cloudformation-drift-detection')).toContain(
       '계정의 모든 지원 리소스를 대상으로 삼는 쪽은 AWS Config다',
@@ -5699,15 +5700,16 @@ describe('학습 데이터 무결성', () => {
     expect(concept?.paragraphs[0]).toContain('자체 저장 공간을 제공하지 않으며')
   })
 
-  it('RDS 세 기능의 목적 차이가 Read Replica 문단에 드러난다', () => {
+  it('RDS 세 기능의 목적 차이가 기능 목록 바로 뒤 문단에 드러난다', () => {
     const concept = topics
       .flatMap((topic) => topic.concepts)
       .find(({ id }) => id === 'rds-storage-features.features')
 
-    expect(concept?.paragraphs).toHaveLength(5)
-    expect(concept?.paragraphs[2]).toContain('Multi AZ 배포는 고가용성')
-    expect(concept?.paragraphs[2]).toContain('Read Replica는 읽기 확장')
-    expect(concept?.paragraphs[2]).toContain('Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다')
+    // ADR-046이 다섯 기능을 목록 항목으로 세우고, 셋을 함께 견주는 문장을 목록 뒤 문단으로 뺐다.
+    expect(concept?.paragraphs).toHaveLength(6)
+    expect(concept?.paragraphs[5]).toContain('Multi AZ 배포는 고가용성')
+    expect(concept?.paragraphs[5]).toContain('Read Replica는 읽기 확장')
+    expect(concept?.paragraphs[5]).toContain('Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다')
     expect(concept?.paragraphs[2]).toContain('Cross Region Read Replica')
   })
 
@@ -6159,8 +6161,9 @@ describe('학습 데이터 무결성', () => {
       .flatMap((topic) => topic.concepts)
       .find(({ id }) => id === 'elastic-load-balancing.elb')
 
-    expect(concept?.paragraphs[1]).toContain('빠진 것은 다시 보낸다')
-    expect(concept?.paragraphs[1]).toContain('일부가 유실될 수 있다')
+    // ADR-046이 ALB를 첫 문단에서 떼어 목록 항목으로 세워 NLB 항목이 셋째 문단이 됐다.
+    expect(concept?.paragraphs[2]).toContain('빠진 것은 다시 보낸다')
+    expect(concept?.paragraphs[2]).toContain('일부가 유실될 수 있다')
   })
 
   it('CloudFront와 Global Accelerator의 갈림길이 추상적인 대비 대신 구체적인 기준으로 쓰인다', () => {
@@ -6179,8 +6182,9 @@ describe('학습 데이터 무결성', () => {
     )
 
     // ADR-010이 정한 편집 범위 — paragraphs 안에서만 문장을 손본다.
-    // ADR-039가 대상 그룹 정의 문단을 더해 4가 됐다. phase 13의 편집 범위 단언이었다.
-    expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(4)
+    // ADR-039가 대상 그룹 정의 문단을 더해 4가 됐고, ADR-046이 ALB를 첫 문단에서 떼어 목록 항목으로 세워 5가 됐다.
+    // phase 13의 편집 범위 단언이었다.
+    expect(byId['elastic-load-balancing.elb'].paragraphs).toHaveLength(5)
     expect(byId['elastic-load-balancing.sticky-session-tradeoff'].paragraphs).toHaveLength(2)
     expect(byId['cloudfront-global-accelerator.global-accelerator-protocols'].paragraphs).toHaveLength(2)
     expect(byId['cloudfront-global-accelerator.cloudfront-ttl'].paragraphs).toHaveLength(2)
@@ -6637,14 +6641,15 @@ describe('ADR-039 — 레코드·호스팅 영역·대상 그룹의 정의', () 
     expect(gloss).toBeLessThan(first.indexOf('대상 그룹이 인스턴스 등록을 맡으므로'))
   })
 
-  it('ELB 개념의 넷째 문단이 대상 그룹을 정의한다', () => {
+  it('ELB 개념의 다섯째 문단이 대상 그룹을 정의한다', () => {
     const concept = byId['elastic-load-balancing.elb']
 
-    expect(concept.paragraphs).toHaveLength(4)
+    // ADR-046이 ALB·NLB·GLB를 목록 항목으로 세웠다. 대상 그룹 문단은 목록 뒤 마지막 문단이다.
+    expect(concept.paragraphs).toHaveLength(5)
     expect(
-      concept.paragraphs[3].startsWith('로드 밸런서가 요청을 넘길 곳은 **대상 그룹**(target group)'),
+      concept.paragraphs[4].startsWith('로드 밸런서가 요청을 넘길 곳은 **대상 그룹**(target group)'),
     ).toBe(true)
-    expect(concept.paragraphs[3]).toContain('상태 검사도 대상 그룹마다')
+    expect(concept.paragraphs[4]).toContain('상태 검사도 대상 그룹마다')
   })
 
   it('세 개념의 요약은 그대로다', () => {
@@ -6822,5 +6827,154 @@ describe('ADR-039 확장 — CloudFormation의 템플릿·스택·드리프트',
 describe('개념 계층 (ADR-041)', () => {
   it('모든 주제의 parentId가 같은 주제·두 단·연속 규칙을 지킨다', () => {
     expect(topics.flatMap((topic) => hierarchyProblems(topic))).toEqual([])
+  })
+})
+
+describe('ADR-046 — 개념 본문 목록', () => {
+  const concepts = topics.flatMap((topic) => topic.concepts)
+  const byId = Object.fromEntries(concepts.map((concept) => [concept.id, concept]))
+
+  it('목록 항목은 혼자 서지 않는다', () => {
+    concepts.forEach(({ id, paragraphs }) => {
+      paragraphs.forEach((paragraph, index) => {
+        if (!isListItem(paragraph)) return
+
+        expect(
+          isListItem(paragraphs[index - 1] ?? '') || isListItem(paragraphs[index + 1] ?? ''),
+          `${id} 문단 ${index}: 목록 항목의 앞이나 뒤에도 항목이 있어야 한다`,
+        ).toBe(true)
+      })
+    })
+  })
+
+  it('목록이 있는 개념은 이 21개뿐이다', () => {
+    // 목록을 늘리려면 ADR-046의 기준과 표를 먼저 고친다.
+    const conceptsWithLists = [
+      'backup-disaster-recovery.dr-strategies',
+      'dynamodb.dynamodb',
+      'ebs-instance-store.ebs-volume-type-names',
+      'ebs-instance-store.placement-groups',
+      'ec2-autoscaling.ec2',
+      'ec2-autoscaling.ec2-purchase-options',
+      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'efs-fsx.fsx',
+      'elastic-load-balancing.elb',
+      'governance-iac.control-tower-controls',
+      'guardduty-macie-inspector.security-service-lineup',
+      'iam-permissions.iam-policy',
+      'lambda.lambda-invocation-types',
+      'rds-storage-features.features',
+      'rds-storage-features.rds-backups',
+      'route53.routing-policies',
+      's3-encryption-batch.sse-types',
+      's3-versioning-lifecycle.object-lock',
+      'sqs-sns-eventbridge.sqs',
+      'storage-gateway-migration.storage-gateway',
+      'waf-shield.cloudfront',
+    ]
+
+    expect(new Set(
+      concepts.filter(({ paragraphs }) => paragraphs.some(isListItem)).map(({ id }) => id),
+    )).toEqual(new Set(conceptsWithLists))
+  })
+
+  it('표지는 문단 맨 앞의 - 하나뿐이다', () => {
+    concepts.forEach(({ id, paragraphs }) => {
+      paragraphs.forEach((paragraph, index) => {
+        const message = `${id} 문단 ${index}`
+
+        if (paragraph.startsWith('-')) {
+          expect(paragraph, message).toMatch(/^- \S/)
+        }
+        expect(paragraph, message).not.toContain('\n')
+      })
+    })
+  })
+
+  it('이름이 한국어인 항목에는 영문 이름이 붙는다', () => {
+    // 영문 이름은 docs/source/aws-docs.md 「목록 항목의 영문 이름」(ADR-039 확장).
+    const englishNamePrefixes: Record<string, string[]> = {
+      'backup-disaster-recovery.dr-strategies': [
+        '- **백업 및 복원**(Backup and Restore)',
+        '- **파일럿 라이트**(Pilot Light)',
+        '- **웜 스탠바이**(Warm Standby)',
+        '- **다중 사이트 액티브-액티브**(Multi-site Active/Active)',
+      ],
+      'ebs-instance-store.ebs-volume-type-names': [
+        '- 범용 SSD(General Purpose SSD)',
+        '- 프로비저닝된 IOPS SSD(Provisioned IOPS SSD)',
+        '- 처리량 최적화 HDD(Throughput Optimized HDD)',
+        '- 콜드 HDD(Cold HDD)',
+      ],
+      'ebs-instance-store.placement-groups': [
+        '- **클러스터**(Cluster)',
+        '- **파티션**(Partition)',
+        '- **분산**(Spread)',
+      ],
+      'ec2-autoscaling.ec2': [
+        '- **온디맨드 인스턴스**(On-Demand Instance)',
+        '- **스팟 인스턴스**(Spot Instance)',
+        '- **예약 인스턴스**(Reserved Instance)',
+      ],
+      'ec2-autoscaling.ec2-purchase-options': [
+        '- **온디맨드 인스턴스**(On-Demand Instance)',
+        '- **스팟 인스턴스**(Spot Instance)',
+        '- **예약 인스턴스**(Reserved Instance)',
+      ],
+      'ecs-eks-fargate.ecs-task-role-vs-task-execution-role': [
+        '- **태스크 실행 역할**(Task Execution Role)',
+        '- **태스크 역할**(Task Role)',
+      ],
+      'governance-iac.control-tower-controls': [
+        '- **사전 예방적 제어**(Proactive Control)',
+        '- **탐지 제어**(Detective Control)',
+      ],
+      'iam-permissions.iam-policy': [
+        '- **자격 증명 기반 정책**(Identity-based Policy)',
+        '- **리소스 기반 정책**(Resource-based Policy)',
+      ],
+      'lambda.lambda-invocation-types': [
+        '- **이벤트 호출**(`Event`)',
+        '- **요청-응답**(`RequestResponse`)',
+      ],
+      'rds-storage-features.rds-backups': [
+        '- **자동 백업**(Automated Backup)',
+        '- **DB 스냅샷**(DB Snapshot)',
+      ],
+      'route53.routing-policies': [
+        '- **단순 라우팅**(Simple Routing)',
+        '- **지리적 위치 라우팅**(Geolocation Routing)',
+        '- **지리적 근접 라우팅**(Geoproximity Routing)',
+        '- **다중값 응답 라우팅**(Multi-value Answer Routing)',
+        '- **가중치 기반 라우팅**(Weighted Routing)',
+        '- **지연시간 기반 라우팅**(Latency-based Routing)',
+        '- **IP 기반 라우팅**(IP-based Routing)',
+      ],
+      's3-versioning-lifecycle.object-lock': [
+        '- **거버넌스 모드**(Governance Mode)',
+        '- **규정 준수 모드**(Compliance Mode)',
+      ],
+      'sqs-sns-eventbridge.sqs': [
+        '- **표준 대기열**(Standard Queue)',
+        '- **선입선출 대기열**(FIFO Queue)',
+      ],
+      'storage-gateway-migration.storage-gateway': [
+        '- **파일 게이트웨이**(S3 File Gateway)',
+        '- **볼륨 게이트웨이**(Volume Gateway)',
+        '- **테이프 게이트웨이**(Tape Gateway)',
+      ],
+      'waf-shield.cloudfront': [
+        '- **캐시 무효화**(Invalidation)',
+      ],
+    }
+
+    Object.entries(englishNamePrefixes).forEach(([id, prefixes]) => {
+      prefixes.forEach((prefix) => {
+        expect(
+          byId[id].paragraphs.filter((paragraph) => paragraph.startsWith(prefix)),
+          `${id}: ${prefix}`,
+        ).toHaveLength(1)
+      })
+    })
   })
 })

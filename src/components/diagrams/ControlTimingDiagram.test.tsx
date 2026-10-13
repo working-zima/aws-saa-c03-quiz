@@ -2,6 +2,7 @@ import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { stripListMarker } from '../../lib/paragraph-blocks'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { ControlTimingDiagram, controlTimingScenarios } from './ControlTimingDiagram'
@@ -223,7 +224,8 @@ describe('ControlTimingDiagram', () => {
     const figure = screen.getByRole('figure', { name: 'Control Tower 제어 시점 도식' })
 
     expect(figure.closest('article')).toHaveAttribute('id', concept.id)
-    expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.join('').replace(/\*\*/g, ''))
+    // 목록 항목의 `- ` 표지는 화면에 나오지 않는다(ADR-046).
+    expect(figure.previousElementSibling?.textContent).toBe(concept.paragraphs.map(stripListMarker).join('').replace(/\*\*/g, ''))
     expect(figure.closest('article')!.lastElementChild).toBe(figure)
     expect(within(figure).queryByRole('heading')).toBeNull()
   })
