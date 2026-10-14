@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
 import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
@@ -75,4 +76,5 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'api-gateway-step-functions.api-gateway': ApiTypeTable,
   'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy': ApiAccessControlTable,
   'api-gateway-step-functions.api-gateway-mapping-template-limits': ApiIntegrationDiagram,
+  'api-gateway-step-functions.api-gateway-behind-cloudfront': ApiEndpointPathDiagram,
 }

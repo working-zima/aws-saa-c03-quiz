@@ -56,6 +56,62 @@
         "api-gateway-step-functions.api-gateway-aws-service-integration",
         "api-gateway-step-functions.api-gateway-mapping-template-limits"
       ]
+    },
+    "endpoint-path": {
+      "label": "API 엔드포인트 경로 도식",
+      "svgLabel": "엣지 최적화·리전 엔드포인트와 CloudFront 오리진",
+      "question": "전 세계 사용자의 요청은 어디를 거쳐 갈까?",
+      "idleCaption": "설정을 고르면 요청이 어디를 거쳐 응답을 받는지 볼 수 있다.",
+      "legend": "파랑: AWS 서비스 · 회색: 사용자. 위 박스는 CloudFront의 엣지, 아래 박스는 API가 배포된 리전이다.",
+      "nodes": {
+        "user": "전 세계 사용자",
+        "cloudfront": "CloudFront",
+        "s3": "S3 버킷",
+        "api": "API Gateway",
+        "lambda": "Lambda 함수"
+      },
+      "groups": {
+        "edge": "엣지",
+        "region": "리전"
+      },
+      "notes": {
+        "via-edge": "엣지를 거쳐 들어옴",
+        "latency-remains": "멀리서는 지연이 그대로",
+        "from-cache": "캐시에서 응답",
+        "static": "정적 파일",
+        "dynamic": "동적 응답"
+      },
+      "scenarios": [
+        {
+          "id": "edge",
+          "label": "엣지 최적화",
+          "caption": "엣지 최적화 엔드포인트는 요청을 CloudFront 엣지로 받아, 전 세계 사용자의 지연을 줄인다.",
+          "sources": ["api-gateway-step-functions.api-gateway-endpoint-types"]
+        },
+        {
+          "id": "regional",
+          "label": "리전",
+          "caption": "리전 엔드포인트는 그 리전으로 직접 받는다. 멀리 있는 사용자의 지연이 그대로 남는다.",
+          "sources": ["api-gateway-step-functions.api-gateway-endpoint-types"]
+        },
+        {
+          "id": "cache",
+          "label": "API 캐싱",
+          "caption": "캐싱을 켜면 같은 응답을 백엔드까지 가지 않고 API Gateway가 바로 돌려준다.",
+          "sources": ["api-gateway-step-functions.api-gateway-endpoint-types"]
+        },
+        {
+          "id": "cdn-origins",
+          "label": "CloudFront 오리진",
+          "caption": "배포 하나에 S3 버킷과 HTTP API를 오리진으로 두면 정적·동적 응답이 다 엣지를 거친다.",
+          "sources": ["api-gateway-step-functions.api-gateway-behind-cloudfront"]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.api-gateway",
+        "api-gateway-step-functions.api-gateway-endpoint-types",
+        "api-gateway-step-functions.api-gateway-behind-cloudfront"
+      ]
     }
   },
   "tables": {
