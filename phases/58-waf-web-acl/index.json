@@ -1,0 +1,16 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "58-waf-web-acl",
+  "steps": [
+    {
+      "step": 0,
+      "name": "web-acl-terms",
+      "status": "completed",
+      "summary": "waf-shield.waf에 Web ACL·평가 순서·기본 동작을 추가해 3→5문단, elastic-load-balancing.alb-routing-conditions와 identity-federation.cognito-social-idp-federation은 각각 2문단을 유지하며 풀이를 보강했고, q079·q454·q705의 구절 5곳을 Web ACL로 통일했다. questionsSha256만 갱신하고 기존 테스트 뒤에 'ADR-039 확장 — WAF의 Web ACL' 테스트 4개를 추가해 실패를 먼저 확인한 뒤 전체 1290개가 통과했다. build·lint·구조 검사·기준선 dry-run·명세 검증 통과, 전사 검사는 원본 파일 부재로 건너뜀(exit 0).",
+      "started_at": "2026-10-14T22:36:13+0900",
+      "completed_at": "2026-10-14T22:39:49+0900"
+    }
+  ],
+  "created_at": "2026-10-14T22:36:13+0900",
+  "completed_at": "2026-10-14T22:39:49+0900"
+}

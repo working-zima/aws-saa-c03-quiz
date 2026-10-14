@@ -1,0 +1,60 @@
+{
+  "concepts": [
+    {
+      "id": "waf-shield.waf",
+      "paragraphs": [
+        "WAF는 AWS 분류로는 보안·자격 증명·규정 준수(Security, Identity, and Compliance) 쪽 서비스다. 웹 애플리케이션 앞단에서 HTTP와 HTTPS 요청을 살펴보고 공격 트래픽을 막는다. 인프라에서는 외부 요청이 처음 들어오는 지점에 주로 둔다.",
+        "방어 범위는 **L7 애플리케이션 계층**이다. TCP와 UDP가 속한 L4 전송 계층 공격은 WAF로 막을 수 없다.",
+        "IP 세트를 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 SQL Injection과 XSS 공격을 방어한다. SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다.",
+        "**Web ACL**(Web Access Control List)은 WAF가 요청을 검사할 규칙을 담아 두는 묶음이다. 규칙 하나는 요청의 어느 부분을 어떤 조건으로 볼지와, 그 조건에 맞는 요청을 허용할지 차단할지를 함께 정한다. 규칙은 Web ACL 안에 직접 쓸 수도 있고, 여러 규칙을 묶은 규칙 그룹을 통째로 넣을 수도 있다. 만든 Web ACL을 ALB나 CloudFront 같은 리소스에 연결해야 그 리소스로 들어오는 요청이 검사된다.",
+        "Web ACL은 요청이 들어오면 우선순위가 앞선 규칙부터 차례로 평가하고, 허용이나 차단이 정해지면 나머지 규칙은 보지 않는다. 어느 규칙에서도 결론이 나지 않은 요청에는 Web ACL에 정해 둔 **기본 동작**(default action)이 적용된다. 기본 동작은 허용과 차단 가운데 하나다. 대부분의 요청을 받아들이고 일부만 막으려면 기본 동작을 허용으로 두고 막을 요청을 규칙으로 적는다. 반대로 회사 내부 IP처럼 정해진 출처만 들이려면 기본 동작을 차단으로 두고 들일 요청을 규칙으로 적는다."
+      ]
+    },
+    {
+      "id": "elastic-load-balancing.alb-routing-conditions",
+      "paragraphs": [
+        "ALB의 라우팅 조건은 URL 경로 하나가 아니다. 7계층 로드 밸런서라 요청의 내용을 볼 수 있어서 헤더 기반·경로 기반·호스트 기반 라우팅을 모두 지원한다. HTTP·HTTPS 요청의 헤더를 보고 대상을 나누는 일이 NLB로 풀리지 않는 이유도 같다. 4계층에서는 헤더가 보이지 않기 때문이다.",
+        "라우팅과 차단은 다른 일이다. 규칙으로 특정 요청을 막는 것은 WAF의 몫이고, 그 규칙을 담은 Web ACL을 ALB에 붙이면 헤더 기반 라우팅을 그대로 쓰면서 특정 패턴만 차단할 수 있다. 상호 TLS는 클라이언트 인증서로 신원을 확인하는 기능이라 규칙 기반 차단을 대신하지 못한다."
+      ]
+    },
+    {
+      "id": "identity-federation.cognito-social-idp-federation",
+      "paragraphs": [
+        "이 경로의 주인공은 AWS 계정에 로그인하는 직원이 아니라 **애플리케이션의 최종 사용자**다. 사용자 풀은 SAML이나 OpenID Connect 같은 표준 프로토콜로 외부 자격 증명 공급자와 연동된다. 그래서 사용자가 흔히 쓰는 소셜 계정으로 로그인하게 하면서 애플리케이션은 인증을 직접 구현하지 않는다.",
+        "이 사용자 풀을 API Gateway REST API에 통합하면 API가 호출자의 신원을 확인하게 된다. 여기에 WAF의 관리형 규칙을 담은 Web ACL을 함께 두면, 인증과 애플리케이션 계층 공격 방어가 각각 제자리를 잡는다."
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q079",
+      "field": "explanation",
+      "old": "WAF(Web Application Firewall)의 웹 ACL(Access Control List)을",
+      "new": "WAF(Web Application Firewall)의 Web ACL(Access Control List)을"
+    },
+    {
+      "id": "q454",
+      "field": "explanation",
+      "old": "몫이고, 웹 ACL(Access Control List)을 붙이면",
+      "new": "몫이고, Web ACL(Access Control List)을 붙이면"
+    },
+    {
+      "id": "q454",
+      "field": "choices.2",
+      "old": "ALB에 붙인 WAF 웹 ACL",
+      "new": "ALB에 붙인 WAF Web ACL"
+    },
+    {
+      "id": "q705",
+      "field": "explanation",
+      "old": "WAF(Web Application Firewall) 웹 ACL(Access Control List)을",
+      "new": "WAF(Web Application Firewall) Web ACL(Access Control List)을"
+    },
+    {
+      "id": "q705",
+      "field": "choices.2",
+      "old": "관리형 규칙을 붙인 WAF 웹 ACL을 함께 둔다",
+      "new": "관리형 규칙을 붙인 WAF Web ACL을 함께 둔다"
+    }
+  ]
+}

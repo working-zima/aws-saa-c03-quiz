@@ -6978,3 +6978,67 @@ describe('ADR-046 — 개념 본문 목록', () => {
     })
   })
 })
+
+describe('ADR-039 확장 — WAF의 Web ACL', () => {
+  const concepts = topics.flatMap((topic) => topic.concepts)
+  const byId = Object.fromEntries(concepts.map((concept) => [concept.id, concept]))
+  const questionById = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+  it('WAF 기본 개념의 기존 문단과 요약을 유지하고 뒤에 Web ACL과 기본 동작을 정의한다', () => {
+    const concept = byId['waf-shield.waf']
+
+    expect(concept.paragraphs).toHaveLength(5)
+    expect(concept.paragraphs[0]).toBe(
+      'WAF는 AWS 분류로는 보안·자격 증명·규정 준수(Security, Identity, and Compliance) 쪽 서비스다. 웹 애플리케이션 앞단에서 HTTP와 HTTPS 요청을 살펴보고 공격 트래픽을 막는다. 인프라에서는 외부 요청이 처음 들어오는 지점에 주로 둔다.',
+    )
+    expect(concept.paragraphs[1]).toBe(
+      '방어 범위는 **L7 애플리케이션 계층**이다. TCP와 UDP가 속한 L4 전송 계층 공격은 WAF로 막을 수 없다.',
+    )
+    expect(concept.paragraphs[2]).toBe(
+      'IP 세트를 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 SQL Injection과 XSS 공격을 방어한다. SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다.',
+    )
+    expect(concept.paragraphs[3]).toBe(
+      '**Web ACL**(Web Access Control List)은 WAF가 요청을 검사할 규칙을 담아 두는 묶음이다. 규칙 하나는 요청의 어느 부분을 어떤 조건으로 볼지와, 그 조건에 맞는 요청을 허용할지 차단할지를 함께 정한다. 규칙은 Web ACL 안에 직접 쓸 수도 있고, 여러 규칙을 묶은 규칙 그룹을 통째로 넣을 수도 있다. 만든 Web ACL을 ALB나 CloudFront 같은 리소스에 연결해야 그 리소스로 들어오는 요청이 검사된다.',
+    )
+    expect(concept.paragraphs[4]).toBe(
+      'Web ACL은 요청이 들어오면 우선순위가 앞선 규칙부터 차례로 평가하고, 허용이나 차단이 정해지면 나머지 규칙은 보지 않는다. 어느 규칙에서도 결론이 나지 않은 요청에는 Web ACL에 정해 둔 **기본 동작**(default action)이 적용된다. 기본 동작은 허용과 차단 가운데 하나다. 대부분의 요청을 받아들이고 일부만 막으려면 기본 동작을 허용으로 두고 막을 요청을 규칙으로 적는다. 반대로 회사 내부 IP처럼 정해진 출처만 들이려면 기본 동작을 차단으로 두고 들일 요청을 규칙으로 적는다.',
+    )
+    expect(concept.summary).toBe('웹 요청을 검사해 애플리케이션 계층의 공격을 차단한다.')
+  })
+
+  it('다른 주제에서 처음 나오는 Web ACL에 규칙 묶음이라는 풀이가 붙는다(ADR-029)', () => {
+    const alb = byId['elastic-load-balancing.alb-routing-conditions']
+    const cognito = byId['identity-federation.cognito-social-idp-federation']
+
+    expect(alb.paragraphs).toHaveLength(2)
+    expect(cognito.paragraphs).toHaveLength(2)
+    expect(alb.paragraphs[1]).toContain('그 규칙을 담은 Web ACL을 ALB에 붙이면')
+    expect(cognito.paragraphs[1]).toContain('WAF의 관리형 규칙을 담은 Web ACL을 함께 두면')
+  })
+
+  it('데이터 어디에도 웹 ACL 표기가 없다', () => {
+    concepts.forEach(({ id, name, summary, paragraphs }) => {
+      [name, summary, ...paragraphs].forEach((text) => {
+        expect(text, id).not.toContain('웹 ACL')
+      })
+    })
+    questions.forEach(({ id, prompt, choices, explanation }) => {
+      [prompt, ...choices, explanation].forEach((text) => {
+        expect(text, id).not.toContain('웹 ACL')
+      })
+    })
+  })
+
+  it('표기를 바꾼 문항은 정답 위치를 유지한다', () => {
+    expect(questionById.q454.choices[2]).toBe('ALB에 붙인 WAF Web ACL')
+    expect(questionById.q705.choices[2]).toBe(
+      'Cognito 사용자 풀을 소셜 자격 증명 공급자와 연동해 REST API에 통합하고, 관리형 규칙을 붙인 WAF Web ACL을 함께 둔다',
+    )
+    expect(questionById.q079.answerIndex).toBe(1)
+    expect(questionById.q454.answerIndex).toBe(1)
+    expect(questionById.q705.answerIndex).toBe(2)
+    ;['q079', 'q454', 'q705'].forEach((id) => {
+      expect(questionById[id].explanation, id).toContain('Web ACL(Access Control List)')
+    })
+  })
+})
