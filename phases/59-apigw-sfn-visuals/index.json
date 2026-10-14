@@ -31,7 +31,8 @@
       "name": "state-machine-diagram",
       "status": "completed",
       "summary": "StateMachineDiagram(viewBox 0 0 280 256, 그룹 1·노드 6·경로 5·곁말 4, 시나리오 start/retry/approval/one-lambda, 물음형 제목)을 JSON diagrams.state-machine 문구로 그리고 registry에 앵커 api-gateway-step-functions.step-functions-long-running-workflow로 붙였다. 출발점 좌표에서 바꾼 것 없음(교차 검사기가 따옴표 붙은 키만 읽으므로 paths의 'retry' 키에 따옴표를 붙였다). 교차 검사 통과(전체 노드 199개·경로 169개, 이 도식 단독 노드 6·경로 5). 새 테스트 21개(StateMachineDiagram.test.tsx), 전체 1365개 통과",
-      "started_at": "2026-10-15T08:55:07+0900"
+      "started_at": "2026-10-15T08:55:07+0900",
+      "completed_at": "2026-10-15T08:59:03+0900"
     },
     {
       "step": 4,
