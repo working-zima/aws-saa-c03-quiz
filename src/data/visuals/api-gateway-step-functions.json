@@ -1,5 +1,63 @@
 {
-  "diagrams": {},
+  "diagrams": {
+    "integration": {
+      "label": "API Gateway 통합 방식 도식",
+      "svgLabel": "API Gateway가 요청을 백엔드에 넘기는 방식",
+      "question": "API Gateway는 받은 요청을 어떻게 넘길까?",
+      "idleCaption": "통합 방식을 고르면 요청이 무엇을 거쳐 넘어가는지 볼 수 있다.",
+      "legend": "파랑: API Gateway의 기능과 통합 대상 AWS 서비스 · 회색: 클라이언트와 백엔드. 위로 돌아오는 화살표는 응답이다.",
+      "nodes": {
+        "client": "클라이언트",
+        "mapping": "매핑 템플릿",
+        "lambda": "Lambda 함수",
+        "dynamodb": "DynamoDB PutItem",
+        "backend": "백엔드"
+      },
+      "groups": {
+        "api-gateway": "API Gateway"
+      },
+      "notes": {
+        "as-is": "헤더까지 그대로",
+        "as-response": "결과가 곧 응답",
+        "no-function": "함수 없이 직접",
+        "fields-only": "필드 이름·값만",
+        "json": "JSON",
+        "xml": "XML"
+      },
+      "scenarios": [
+        {
+          "id": "proxy",
+          "label": "Lambda 프록시",
+          "caption": "요청을 헤더까지 그대로 함수에 넘기는 동기 호출이라, 함수의 결과가 곧 응답이 된다.",
+          "sources": ["api-gateway-step-functions.api-gateway-lambda-proxy-integration"]
+        },
+        {
+          "id": "service",
+          "label": "AWS 서비스",
+          "caption": "메서드가 DynamoDB PutItem을 바로 부른다. 사이에 함수가 없어 관리할 코드도 없다.",
+          "sources": ["api-gateway-step-functions.api-gateway-aws-service-integration"]
+        },
+        {
+          "id": "mapping",
+          "label": "매핑 템플릿",
+          "caption": "필드 이름을 바꾸거나 값을 옮기는 정도는 매핑 템플릿에서 끝내고 백엔드로 넘긴다.",
+          "sources": ["api-gateway-step-functions.api-gateway-mapping-template-limits"]
+        },
+        {
+          "id": "transform",
+          "label": "JSON을 XML로",
+          "caption": "JSON 주문을 XML 문서로 바꾸는 변환은 매핑 템플릿의 범위를 넘어, 함수 코드가 맡는다.",
+          "sources": ["api-gateway-step-functions.api-gateway-mapping-template-limits"]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.api-gateway",
+        "api-gateway-step-functions.api-gateway-lambda-proxy-integration",
+        "api-gateway-step-functions.api-gateway-aws-service-integration",
+        "api-gateway-step-functions.api-gateway-mapping-template-limits"
+      ]
+    }
+  },
   "tables": {
     "api-types": {
       "label": "API Gateway 유형과 Lambda 함수 URL",

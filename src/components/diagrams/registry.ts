@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
+import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
@@ -73,4 +74,5 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time': SqsMessageLifeDiagram,
   'api-gateway-step-functions.api-gateway': ApiTypeTable,
   'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy': ApiAccessControlTable,
+  'api-gateway-step-functions.api-gateway-mapping-template-limits': ApiIntegrationDiagram,
 }
