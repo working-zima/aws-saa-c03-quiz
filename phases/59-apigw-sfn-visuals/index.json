@@ -15,7 +15,8 @@
       "name": "integration-diagram",
       "status": "completed",
       "summary": "ApiIntegrationDiagram(viewBox 0 0 280 272, 그룹 1·노드 5·경로 6·곁말 6, 시나리오 proxy/service/mapping/transform, 물음형 제목)을 JSON diagrams.integration 문구로 그리고 registry에 앵커 api-gateway-step-functions.api-gateway-mapping-template-limits로 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 통과(전체 노드 188개·경로 159개, 이 도식 단독 노드 5·경로 6). 새 테스트 20개(ApiIntegrationDiagram.test.tsx), 전체 1323개 통과",
-      "started_at": "2026-10-15T08:39:11+0900"
+      "started_at": "2026-10-15T08:39:11+0900",
+      "completed_at": "2026-10-15T08:42:57+0900"
     },
     {
       "step": 2,
