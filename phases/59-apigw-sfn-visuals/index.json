@@ -1,0 +1,11 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "59-apigw-sfn-visuals",
+  "steps": [
+    { "step": 0, "name": "api-gateway-tables", "status": "pending" },
+    { "step": 1, "name": "integration-diagram", "status": "pending" },
+    { "step": 2, "name": "endpoint-path-diagram", "status": "pending" },
+    { "step": 3, "name": "state-machine-diagram", "status": "pending" },
+    { "step": 4, "name": "map-state-diagram", "status": "pending" }
+  ]
+}
