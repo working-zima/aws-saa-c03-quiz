@@ -173,6 +173,30 @@
   데는 요금이 없고, 인스턴스는 한 번에 한 배치 그룹에만 들어간다.
 - 이 파일을 근거로 쓰지 않는 것: Precision time 전략, 배치 그룹 병합 불가, 용량 예약·전용 호스트·스팟 관련 규칙, 공유 배치 그룹, Outposts.
 
+## Web ACL·규칙·기본 동작 (AWS WAF)
+
+확인한 날: 2026-10-14. 사용자가 "web acl에 대한 설명이 있나?"라고 물었다. 데이터는 `Web ACL`을 개념 넷과 해설 열 곳에서 쓰지만, 그것이
+무엇인지 말하는 문장은 `security-groups-nacl.web-acl-vs-nacl`의 한 문장(WAF의 규칙 묶음)뿐이고 WAF의 기본 개념에는 없다. 두 원본과 덤프
+해설도 "WAF에서만 쓰는, 웹 요청의 허용·차단을 판단하는 접근 제어"까지만 말한다. 「본문 크기 한도」의 "우선순위가 앞선 규칙으로 허용한다"와
+「규칙 종류」의 "매장 IP만 허용"은 규칙 평가 순서와 기본 동작을 알아야 읽히는데, 그 설명도 없다(ADR-039 「2026-10-14 확장」).
+
+- 출처: https://docs.aws.amazon.com/waf/latest/developerguide/how-aws-waf-works.html
+- 가져온 사실: WAF로 리소스를 보호하려면 Web ACL을 만들어 보호할 리소스에 연결한다. 연결된 리소스는 들어오는 요청을 WAF에 넘겨 그 Web ACL로
+  검사받는다. Web ACL이 무엇을 막을지는 규칙으로 정한다. 규칙 하나는 요청을 검사할 기준과, 기준에 맞는 요청에 할 동작(허용·차단 등)을 함께
+  담는다. 규칙은 Web ACL 안에 직접 정의하거나, 다시 쓸 수 있는 규칙 그룹(AWS 관리형 규칙 그룹 포함)으로 넣는다.
+- 출처: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-processing-order.html
+- 가져온 사실: Web ACL 안의 규칙에는 서로 다른 숫자 우선순위를 준다. WAF는 우선순위 숫자가 낮은 규칙부터 평가하고, 평가를 끝내는 동작이 걸리거나
+  규칙을 다 볼 때까지 이어 간다.
+- 출처: https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-default-action.html
+- 가져온 사실: Web ACL에는 기본 동작을 반드시 정한다. 기본 동작은 어느 규칙에서도 평가를 끝내는 동작이 걸리지 않은 요청에 적용되고, 값은
+  허용(Allow)과 차단(Block) 가운데 하나다. 대부분의 요청을 들이고 특정 요청만 막으려면 기본 동작을 허용으로 두고 막을 요청을 규칙으로 적는다.
+  대부분을 막고 특정 IP 등에서 온 요청만 들이려면 기본 동작을 차단으로 두고 들일 요청을 규칙으로 적는다.
+- 이 파일을 근거로 쓰지 않는 것: 콘솔의 새 이름 「protection pack(web ACL)」(기능은 같고 API와 시험은 web ACL이라 부른다), Count·CAPTCHA·
+  Challenge 동작, 규칙 그룹 동작의 재정의, WCU와 요금, 리소스 하나에 Web ACL 하나만 연결된다는 제약, 리전 Web ACL과 CloudFront용 글로벌
+  Web ACL(us-east-1)의 구분, 연결할 수 있는 리소스 전체 목록, 변경 전파 지연.
+- 쓰인 곳: `waf-shield.waf`의 넷째·다섯째 문단. 다른 주제에서 처음 나오는 두 자리(`elastic-load-balancing.alb-routing-conditions`,
+  `identity-federation.cognito-social-idp-federation`)의 "규칙을 담은 Web ACL"은 이 절의 사실을 한 구절로 줄인 것이다(ADR-029).
+
 ## 목록 항목의 영문 이름 (ADR-046, phase 57)
 
 개념 본문의 목록 항목 가운데 이름이 한국어인 것에 붙인 영문 이름의 근거다(ADR-039 「2026-10-13 확장」). **이름 표기만** 가져온다. 이 절을

@@ -1,0 +1,7 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "58-waf-web-acl",
+  "steps": [
+    { "step": 0, "name": "web-acl-terms", "status": "pending" }
+  ]
+}
