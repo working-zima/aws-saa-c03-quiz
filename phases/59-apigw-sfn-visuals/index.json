@@ -23,7 +23,8 @@
       "name": "endpoint-path-diagram",
       "status": "completed",
       "summary": "ApiEndpointPathDiagram(viewBox 0 0 280 276, 그룹 2·노드 5·경로 5·곁말 5, 시나리오 edge/regional/cache/cdn-origins, 물음형 제목)을 JSON diagrams.endpoint-path 문구로 그리고 registry에 앵커 api-gateway-step-functions.api-gateway-behind-cloudfront로 붙였다. 출발점 좌표에서 바꾼 것: 엣지 그룹 폭 272→256(x 4..260), 곁말 via-edge x 262→246 — 출발점의 오른쪽 통로 x 270이 엣지 박스(4..276) 안을 지나 '엣지 박스를 피해'와 어긋났고, 이를 단언한 테스트가 실패해 고쳤다. 교차 검사 통과(전체 노드 193개·경로 164개, 이 도식 단독 노드 5·경로 5). 새 테스트 21개(ApiEndpointPathDiagram.test.tsx), 전체 1344개 통과",
-      "started_at": "2026-10-15T08:42:57+0900"
+      "started_at": "2026-10-15T08:42:57+0900",
+      "completed_at": "2026-10-15T08:48:15+0900"
     },
     {
       "step": 3,
