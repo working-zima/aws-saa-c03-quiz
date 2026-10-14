@@ -26,6 +26,7 @@ import { SgNaclLayersDiagram } from './SgNaclLayersDiagram'
 import { SgNaclCompareTable } from './sgNaclTables'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
+import { StateMachineDiagram } from './StateMachineDiagram'
 import { VpcDestinationDiagram } from './VpcDestinationDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
 import { VpcScopeDiagram } from './VpcScopeDiagram'
@@ -77,4 +78,5 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy': ApiAccessControlTable,
   'api-gateway-step-functions.api-gateway-mapping-template-limits': ApiIntegrationDiagram,
   'api-gateway-step-functions.api-gateway-behind-cloudfront': ApiEndpointPathDiagram,
+  'api-gateway-step-functions.step-functions-long-running-workflow': StateMachineDiagram,
 }

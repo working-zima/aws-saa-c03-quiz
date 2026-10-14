@@ -112,6 +112,64 @@
         "api-gateway-step-functions.api-gateway-endpoint-types",
         "api-gateway-step-functions.api-gateway-behind-cloudfront"
       ]
+    },
+    "state-machine": {
+      "label": "Step Functions 상태 머신 도식",
+      "svgLabel": "상태 머신이 잇는 태스크와 관리자 승인",
+      "question": "15분을 넘는 여러 단계 작업은 누가 이어 갈까?",
+      "idleCaption": "장면을 고르면 상태 머신이 단계를 잇고 관리하는 모습을 볼 수 있다.",
+      "legend": "파랑: AWS 서비스와 상태 머신의 단계. 큰 박스가 상태 머신 하나이고, 맨 아래는 견줘 볼 구성이다.",
+      "nodes": {
+        "s3": "S3 버킷",
+        "rule": "EventBridge 규칙",
+        "task-a": "태스크",
+        "approval": "관리자 승인",
+        "task-b": "태스크",
+        "one-lambda": "Lambda 함수 하나로 전부 처리"
+      },
+      "groups": {
+        "machine": "상태 머신"
+      },
+      "notes": {
+        "per-upload": "업로드마다 실행 시작",
+        "on-failure": "실패하면 다시",
+        "up-to-year": "실행은 최대 1년",
+        "limit-15": "15분 제한에 걸림"
+      },
+      "scenarios": [
+        {
+          "id": "start",
+          "label": "업로드로 시작",
+          "caption": "업로드 이벤트가 EventBridge로 가고, 상태 머신을 대상으로 둔 규칙이 실행을 시작한다.",
+          "sources": ["api-gateway-step-functions.step-functions-long-running-workflow"]
+        },
+        {
+          "id": "retry",
+          "label": "실패하면 재시도",
+          "caption": "단계마다 실행 상태를 상태 머신이 관리해, 실패한 태스크를 자동으로 다시 시도한다.",
+          "sources": ["api-gateway-step-functions.step-functions"]
+        },
+        {
+          "id": "approval",
+          "label": "관리자 승인",
+          "caption": "단계 사이에 관리자 승인을 넣을 수 있다. 같은 흐름을 코드로 짜면 부담이 훨씬 크다.",
+          "sources": ["api-gateway-step-functions.step-functions-features"]
+        },
+        {
+          "id": "one-lambda",
+          "label": "Lambda 하나로",
+          "caption": "전체가 24시간 걸리면 함수 하나로는 15분 제한에 걸린다. 상태 머신의 실행은 최대 1년이다.",
+          "sources": [
+            "api-gateway-step-functions.step-functions-long-running-workflow",
+            "api-gateway-step-functions.step-functions"
+          ]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.step-functions",
+        "api-gateway-step-functions.step-functions-features",
+        "api-gateway-step-functions.step-functions-long-running-workflow"
+      ]
     }
   },
   "tables": {
