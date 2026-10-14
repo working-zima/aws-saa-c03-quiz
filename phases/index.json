@@ -292,7 +292,8 @@
     },
     {
       "dir": "58-waf-web-acl",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-14T22:39:49+0900"
     }
   ]
 }
