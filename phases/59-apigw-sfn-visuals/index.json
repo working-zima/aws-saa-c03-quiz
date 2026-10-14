@@ -2,10 +2,33 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "59-apigw-sfn-visuals",
   "steps": [
-    { "step": 0, "name": "api-gateway-tables", "status": "pending" },
-    { "step": 1, "name": "integration-diagram", "status": "pending" },
-    { "step": 2, "name": "endpoint-path-diagram", "status": "pending" },
-    { "step": 3, "name": "state-machine-diagram", "status": "pending" },
-    { "step": 4, "name": "map-state-diagram", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "api-gateway-tables",
+      "status": "completed",
+      "summary": "src/data/visuals/api-gateway-step-functions.json(diagrams {}·glossary [])과 로더 키 visualsByTopicId['api-gateway-step-functions']를 더하고, 비교표 api-types(30/35/35%, 앵커 api-gateway-step-functions.api-gateway)와 access-control(30/70%, 앵커 api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy)를 래퍼 ApiTypeTable·ApiAccessControlTable(apiGatewayTables.tsx)로 registry에 붙였다. 새 테스트 13개(apiGatewayTables.test.tsx), 전체 1303개 통과",
+      "started_at": "2026-10-15T08:36:39+0900"
+    },
+    {
+      "step": 1,
+      "name": "integration-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "endpoint-path-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "state-machine-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "map-state-diagram",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-10-15T08:36:39+0900"
 }

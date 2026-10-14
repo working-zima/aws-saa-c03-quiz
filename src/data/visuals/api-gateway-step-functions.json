@@ -1,0 +1,70 @@
+{
+  "diagrams": {},
+  "tables": {
+    "api-types": {
+      "label": "API Gateway 유형과 Lambda 함수 URL",
+      "columns": ["유형", "고를 때", "고르지 않을 때"],
+      "rows": [
+        {
+          "header": "REST API",
+          "cells": ["API 키, 요청 검증, 스로틀링이 필요할 때", "비용과 지연을 낮추는 것이 먼저일 때"]
+        },
+        {
+          "header": "HTTP API",
+          "cells": ["싸고 빠르게 JWT 인증과 ALB 통합을 쓸 때", "몇 분 걸리는 동기 호출이나 API 키가 필요할 때"]
+        },
+        {
+          "header": "WebSocket API",
+          "cells": ["연결을 열어 둔 채 메시지를 주고받을 때", "요청에 응답하고 끝나는 RESTful 호출일 때"]
+        },
+        {
+          "header": "Lambda 함수 URL",
+          "cells": ["함수를 곧장 열기만 하면 될 때", "API 관리 기능이 필요할 때"]
+        }
+      ],
+      "columnWidths": ["30%", "35%", "35%"],
+      "sources": [
+        "api-gateway-step-functions.api-gateway",
+        "api-gateway-step-functions.api-gateway-jwt-authorizer",
+        "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
+        "api-gateway-step-functions.api-gateway-rest-only-features",
+        "api-gateway-step-functions.api-gateway-websocket-api"
+      ]
+    },
+    "access-control": {
+      "label": "API 호출을 거르는 장치",
+      "columns": ["장치", "하는 일"],
+      "rows": [
+        {
+          "header": "리소스 정책",
+          "cells": ["호출할 수 있는 계정과 IP 주소 범위를 정한다. 다른 계정에만 열거나 사내 IP만 허용할 때 쓴다."]
+        },
+        {
+          "header": "권한 부여자",
+          "cells": ["로그인한 사용자의 신원을 확인한다. 인증 방식이 표준이 아니면 사용자 지정 권한 부여자를 붙인다."]
+        },
+        {
+          "header": "API 키",
+          "cells": ["어느 클라이언트가 호출했는지 구분해 사용량을 잰다. 신원은 확인하지 않는다."]
+        },
+        {
+          "header": "엔드포인트 정책",
+          "cells": ["프라이빗 API를 부르는 인터페이스 VPC 엔드포인트의 트래픽에 통제를 더한다. 계정 간 접근은 리소스 정책이 정한다."]
+        },
+        {
+          "header": "보안 그룹",
+          "cells": ["붙일 수 없다. API Gateway는 VPC 안에 만들어지는 리소스가 아니다."]
+        }
+      ],
+      "columnWidths": ["30%", "70%"],
+      "sources": [
+        "api-gateway-step-functions.api-gateway-resource-policy",
+        "api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy",
+        "api-gateway-step-functions.api-gateway-api-key-not-auth",
+        "api-gateway-step-functions.api-gateway-jwt-authorizer",
+        "api-gateway-step-functions.api-gateway-lambda-proxy-integration"
+      ]
+    }
+  },
+  "glossary": []
+}
