@@ -1,7 +1,8 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { VpcPathsDiagram, vpcPathScenarios } from './VpcPathsDiagram'
@@ -325,5 +326,315 @@ describe('VpcPathsDiagram', () => {
     for (const svg of container.querySelectorAll('svg')) {
       expect(svg.querySelector('[data-path]')).toHaveAttribute('marker-end', `url(#${svg.querySelector('marker')!.id})`)
     }
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const routes: [string, string[]][] = [
+      ['사용자 → EC2', ['internet', 'igw', 'alb', 'ec2']],
+      ['Lambda → EC2', ['lambda', 'eni', 'ec2']],
+      ['프라이빗 → 인터넷', ['ec2', 'nat', 'igw', 'internet']],
+      ['VPC → S3', ['ec2', 'endpoint', 's3']],
+      ['Lambda → 로그', ['lambda', 'logs']],
+      ['Lambda → EFS', ['lambda', 'eni', 'efs']],
+      ['온프레미스 → VPC', ['onprem', 'vgw', 'rds']],
+      ['프라이빗 → 그 외 AWS 서비스', ['ec2', 'interface-endpoint', 'logs']],
+      ['PrivateLink → 다른 VPC의 앱', ['ec2', 'pl-endpoint', 'other-app']],
+      ['VPC ⇄ VPC 피어링', ['ec2', 'peering', 'other-app']],
+      ['Transit Gateway', ['ec2', 'tgw', 'other-app']],
+    ]
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    async function collectPathIds() {
+      const ids = new Set<string>()
+      for (const [label] of routes) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) ids.add(path.getAttribute('data-path')!)
+      }
+      return [...ids].sort()
+    }
+
+    function nodeColors() {
+      return Object.fromEntries(Array.from(diagram().querySelectorAll('[data-node]'), (node) => (
+        [node.getAttribute('data-node'), node.querySelector('rect')!.getAttribute('class')]
+      )))
+    }
+
+    // 직교 경로를 선분으로 편다. SnsFanoutDiagram.test.tsx의 segments와 같은 방식이다.
+    function segments(path: Element) {
+      let x = 0
+      let y = 0
+      const result = []
+      for (const [, command, first, second] of path.getAttribute('d')!.matchAll(/([MHV])\s*(\d+)(?:\s+(\d+))?/g)) {
+        if (command === 'M') {
+          x = Number(first)
+          y = Number(second)
+          continue
+        }
+        const nextX = command === 'H' ? Number(first) : x
+        const nextY = command === 'V' ? Number(first) : y
+        result.push({ x1: Math.min(x, nextX), x2: Math.max(x, nextX), y1: Math.min(y, nextY), y2: Math.max(y, nextY) })
+        x = nextX
+        y = nextY
+      }
+      return result
+    }
+
+    function vertices(path: Element) {
+      let x = 0
+      let y = 0
+      return Array.from(path.getAttribute('d')!.matchAll(/([MHV])(\d+)(?:\s+(\d+))?/g), ([, command, a, b]) => {
+        if (command === 'M') { x = Number(a); y = Number(b) }
+        else if (command === 'H') x = Number(a)
+        else y = Number(a)
+        return { x, y }
+      })
+    }
+
+    const groupBox = (id: string) => readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const inside = (box: ReturnType<typeof readBox>, group: ReturnType<typeof readBox>) => (
+      boxesOutsideViewBox([box], [group.x, group.y, group.width, group.height]).length === 0
+    )
+    const overlap = (a: ReturnType<typeof readBox>, b: ReturnType<typeof readBox>) => (
+      Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x) > 0
+      && Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y) > 0
+    )
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×640 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성·화살표·그룹 선 모양을 세로형과 같게 둔다', () => {
+      render(<VpcPathsDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 640')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram()).toHaveAttribute('aria-label', diagramText.svgLabel)
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+
+      const shapes = Array.from(diagram().querySelectorAll('[data-group]'), (group) => [
+        group.getAttribute('data-group'), group.getAttribute('rx'), group.getAttribute('stroke-dasharray'),
+      ])
+      expect(shapes).toEqual([
+        ['region', '6', '6 4'],
+        ['managed', '4', null],
+        ['vpc', '6', '6 4'],
+        ['public', '4', '2 3'],
+        ['private', '4', '2 3'],
+        ['private', '4', '2 3'],
+        ['other-vpc', '6', '6 4'],
+      ])
+    })
+
+    it('노드 id·색과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<VpcPathsDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 1120')
+      const tallColors = nodeColors()
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 640')
+      expect(Object.keys(tallColors).sort()).toEqual(Object.keys(labels).sort())
+      expect(nodeColors()).toEqual(tallColors)
+      expect(tallPaths).toHaveLength(22)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드 19개와 그룹 7개의 모든 rect가 440×640 viewBox 안에 있다', () => {
+      render(<VpcPathsDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(26)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 640])).toEqual([])
+    })
+
+    it('라벨 19개가 글자 크기 10과 여백 12로 들어가고 그룹 라벨 일곱이 자기 박스 안에 있다', () => {
+      render(<VpcPathsDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const text = node.querySelector('text')!
+        const box = readBox(node.querySelector('rect')!)
+        expect(box.height).toBe(32)
+        expect(text.textContent).toBe(label)
+        expect(text).toHaveAttribute('font-size', '10')
+        expect(Number(text.getAttribute('x'))).toBe(box.x + box.width / 2)
+        expect(Number(text.getAttribute('y'))).toBe(box.y + 16)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+      }
+
+      const groupRects = Array.from(diagram().querySelectorAll('[data-group]'))
+      const groupTexts = Array.from(diagram().querySelectorAll('g.fill-muted > text'))
+      expect(groupTexts).toHaveLength(groupRects.length)
+      groupRects.forEach((rect, i) => {
+        const box = readBox(rect)
+        const text = groupTexts[i]
+        const label = diagramText.groups![box.id]
+        const x = Number(text.getAttribute('x'))
+        const y = Number(text.getAttribute('y'))
+        expect(text.textContent).toBe(label)
+        expect(text.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        expect(x).toBeGreaterThan(box.x)
+        expect(x + estimateTextWidth(label, 9), label).toBeLessThanOrEqual(box.x + box.width)
+        expect(y).toBeGreaterThan(box.y)
+        expect(y).toBeLessThan(box.y + box.height)
+      })
+    })
+
+    it.each(routes)('%s는 지정한 노드와 방향의 경로만 표시한다', async (label, route) => {
+      render(<VpcPathsDiagram />)
+      await selectScenario(label)
+
+      const nodes = Array.from(diagram().querySelectorAll('[data-node][opacity="1"]'), (node) => node.getAttribute('data-node'))
+      expect(nodes.sort()).toEqual([...route].sort())
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', route.includes(node.getAttribute('data-node') ?? '') ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) {
+        expect(group.closest('[opacity]')).toBeNull()
+      }
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(route.slice(1).map((to, i) => `${route[i]}-${to}`))
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end')
+        expect(path).toHaveClass('stroke-title')
+      }
+      expect(screen.getByRole('button', { name: label })).toHaveAttribute('aria-pressed', 'true')
+    })
+
+    it('S3·피어링·Transit Gateway를 VPC 밖에 두고 각 자원의 소속은 세로형과 같다', () => {
+      render(<VpcPathsDiagram />)
+      const expectInside = (ids: string[], group: string) => {
+        for (const id of ids) expect(inside(nodeBox(id), groupBox(group)), `${id} ⊂ ${group}`).toBe(true)
+      }
+
+      expectInside(['lambda', 'logs', 's3'], 'managed')
+      expectInside(['igw', 'vgw', 'endpoint'], 'vpc')
+      expectInside(['alb', 'nat'], 'public')
+      expectInside(['eni', 'ec2', 'efs', 'rds'], 'private')
+
+      const privateBoxes = Array.from(diagram().querySelectorAll('[data-group="private"]'), readBox)
+      for (const id of ['interface-endpoint', 'pl-endpoint']) {
+        expect(privateBoxes.some((group) => inside(nodeBox(id), group)), id).toBe(true)
+        expect(inside(nodeBox(id), groupBox('vpc')), id).toBe(true)
+        expect(diagram().querySelector(`[data-node="${id}"] rect`)).toHaveClass('stroke-diagram-resource')
+      }
+      for (const group of privateBoxes) expect(inside(nodeBox('endpoint'), group)).toBe(false)
+
+      const region = groupBox('region')
+      for (const group of ['managed', 'vpc', 'public', 'other-vpc']) {
+        expect(inside(groupBox(group), region), group).toBe(true)
+      }
+      for (const group of privateBoxes) expect(inside(group, region)).toBe(true)
+      for (const id of ['peering', 'tgw']) {
+        expect(inside(nodeBox(id), region), id).toBe(true)
+        expect(diagram().querySelector(`[data-node="${id}"] rect`)).toHaveClass('stroke-disabled')
+      }
+      expect(inside(nodeBox('other-app'), groupBox('other-vpc'))).toBe(true)
+      expect(diagram().querySelector('[data-node="other-app"] rect')).toHaveClass('stroke-diagram-resource')
+
+      const vpc = groupBox('vpc')
+      for (const box of [nodeBox('peering'), nodeBox('tgw'), groupBox('other-vpc'), nodeBox('s3')]) {
+        expect(overlap(box, vpc), box.id).toBe(false)
+      }
+      for (const id of ['internet', 'onprem']) {
+        expect(nodeBox(id).y + nodeBox(id).height, id).toBeLessThan(region.y)
+      }
+      expect(diagram().querySelector('[data-group="other-vpc"]')).toHaveAttribute(
+        'stroke-dasharray', diagram().querySelector('[data-group="vpc"]')!.getAttribute('stroke-dasharray'),
+      )
+    })
+
+    it('피어링과 Transit Gateway는 VPC 아래에서 서로 다른 쪽 통로를 쓴다', async () => {
+      render(<VpcPathsDiagram />)
+      const vpcBottom = groupBox('vpc').y + groupBox('vpc').height
+      const belowVpc = () => Array.from(diagram().querySelectorAll('[data-path]'))
+        .flatMap(vertices)
+        .filter(({ y }) => y > vpcBottom)
+
+      await selectScenario('VPC ⇄ VPC 피어링')
+      const peering = belowVpc()
+      await selectScenario('Transit Gateway')
+      const transitGateway = belowVpc()
+
+      expect(peering.length).toBeGreaterThan(0)
+      expect(transitGateway.length).toBeGreaterThan(0)
+      expect(Math.max(...peering.map(({ x }) => x))).toBeLessThan(Math.min(...transitGateway.map(({ x }) => x)))
+    })
+
+    it('같은 시나리오 안의 경로끼리 같은 직선 위에서 겹치지 않는다', async () => {
+      render(<VpcPathsDiagram />)
+
+      for (const [label] of routes) {
+        await selectScenario(label)
+        const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+        for (let i = 0; i < paths.length; i++) {
+          for (let j = i + 1; j < paths.length; j++) {
+            for (const a of segments(paths[i])) {
+              for (const b of segments(paths[j])) {
+                const sameRow = a.y1 === a.y2 && b.y1 === b.y2 && a.y1 === b.y1
+                  && Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1) > 0
+                const sameColumn = a.x1 === a.x2 && b.x1 === b.x2 && a.x1 === b.x1
+                  && Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1) > 0
+                const pair = `${label}: ${paths[i].getAttribute('data-path')} / ${paths[j].getAttribute('data-path')}`
+                expect(sameRow || sameColumn, pair).toBe(false)
+              }
+            }
+          }
+        }
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<VpcPathsDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 1120')
+      await selectScenario('Transit Gateway')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: 'Transit Gateway' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-path]'), (path) => path.getAttribute('data-path')))
+        .toEqual(['ec2-tgw', 'tgw-other-app'])
+    })
   })
 })

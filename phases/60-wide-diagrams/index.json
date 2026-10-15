@@ -37,7 +37,10 @@
     {
       "step": 4,
       "name": "vpc-paths-wide",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-15T22:21:07+0900",
+      "summary": "VpcPathsDiagram에 가로형 viewBox 0 0 440 640을 추가했고 출발점 좌표 변경은 없다. 세로형 그룹 JSX를 같은 좌표의 groups 배열로 옮기고 선 모양(rx·점선)은 두 배치가 함께 쓰는 groupLines로 id에서 정하며, wideGroups(7)·wideNodes(19줄)·widePaths(22줄)를 더해 useWideDiagram() 결과로 그룹·노드·경로·래퍼(w-full)·viewBox를 고른다. 색은 세로형 nodes에서, 라벨은 JSON에서 가져온다(vpc-networking.json 무변경). 세로형 DOM은 matchMedia 미지원·false 각각 초기·시나리오 11개·전체 복귀 innerHTML이 구현 전과 바이트 단위로 같고 기존 it은 그대로다. 가로형 테스트를 먼저 써서 4개 실패를 확인한 뒤 구현했고(나머지는 세로형 좌표로도 성립하는 소속·겹침 단언), 새 테스트 19개·파일 전체 64개·전체 1439개가 통과했다(기존 1420개). Node 18.17.1에서 build·lint·check-structure 통과. ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 48개·경로 37개를 검사했고 상자 내부를 지나는 선분이 없다.",
+      "completed_at": "2026-10-15T22:24:52+0900"
     }
   ],
   "created_at": "2026-10-15T21:19:44+0900"
