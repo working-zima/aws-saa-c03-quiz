@@ -7042,3 +7042,72 @@ describe('ADR-039 확장 — WAF의 Web ACL', () => {
     })
   })
 })
+
+describe('ADR-039 확장 — ECS의 태스크와 EKS의 파드', () => {
+  const concepts = topics.flatMap((topic) => topic.concepts)
+  const byId = Object.fromEntries(concepts.map((concept) => [concept.id, concept]))
+
+  it('ECS 기본 개념의 기존 문단과 요약을 유지하고 뒤에 태스크 정의·태스크·서비스를 정의한다', () => {
+    const concept = byId['ecs-eks-fargate.ecs']
+
+    expect(concept.paragraphs).toHaveLength(4)
+    expect(concept.paragraphs[0]).toBe(
+      'ECS는 AWS 분류로는 컨테이너(Containers) 쪽 서비스다. EC2 기반 ECS에서는 사용자가 EC2를 직접 관리한다. 세부 구성을 조정할 수 있는 대신 운영 부담이 크다.',
+    )
+    expect(concept.paragraphs[1]).toBe(
+      '**Fargate 기반 ECS**는 서버 관리를 AWS에 맡기는 완전 관리형 방식이다. 서버의 확장과 축소도 AWS가 담당하므로 관리할 일이 비교적 적고, 예측하기 어려운 트래픽 변화에 유연하게 대응할 수 있다.',
+    )
+    expect(concept.paragraphs[2]).toBe(
+      'EC2 기반이든 Fargate 기반이든 그 위에서 실제로 실행되는 단위는 **태스크**(task)다. 무엇을 실행할지는 **태스크 정의**(task definition)에 먼저 적는다. 태스크 정의는 JSON 형식의 설계도로, 어떤 컨테이너 이미지를 쓸지, CPU와 메모리를 얼마나 줄지, 네트워크 모드는 무엇인지, 태스크가 쓸 IAM 역할은 무엇인지를 담고, 컨테이너를 하나 이상 적을 수 있다. 태스크는 이 설계도대로 시작한 실행 단위 하나이고, 한 태스크 정의로 태스크를 여러 개 실행할 수 있다.',
+    )
+    expect(concept.paragraphs[3]).toBe(
+      '한 태스크 정의에 적은 컨테이너들은 태스크마다 함께 시작되고 함께 늘어난다. 그래서 웹 서버와 API처럼 따로 늘려야 하는 컨테이너는 태스크 정의를 나눈다. 태스크가 정해 둔 수만큼 계속 실행되게 유지하는 것은 **서비스**(service)다. 태스크가 실패하거나 멈추면 서비스 스케줄러가 같은 태스크 정의로 새 태스크를 시작해 그 수를 맞추고, 서비스를 로드 밸런서 뒤에 두면 트래픽이 그 서비스의 태스크들로 나뉜다.',
+    )
+    expect(concept.summary).toBe('ECS는 Docker 컨테이너를 손쉽게 운영하도록 지원하는 서비스다.')
+  })
+
+  it('EKS 기본 개념의 기존 문단과 요약을 유지하고 뒤에 파드와 노드를 정의한다', () => {
+    const concept = byId['ecs-eks-fargate.eks']
+
+    expect(concept.paragraphs).toHaveLength(4)
+    expect(concept.paragraphs[0]).toBe(
+      'EKS는 AWS 분류로는 컨테이너(Containers) 쪽 서비스다. 기존 환경이 쿠버네티스면 EKS로 옮겨야 코드와 배포 프로세스를 그대로 쓸 수 있다. 같은 컨테이너 서비스라도 ECS로 옮기면 공수가 많이 든다.',
+    )
+    expect(concept.paragraphs[1]).toBe(
+      '반대로 온프레미스에서 순수 Docker 컨테이너로 돌리던 것을 옮길 때는 ECS가 맞다. EKS와 ECS를 가르는 기준은 "원래 쿠버네티스였는가"다.',
+    )
+    expect(concept.paragraphs[2]).toBe(
+      'EKS에서 배포하는 가장 작은 단위는 **파드**(Pod)이고, ECS의 태스크에 해당한다. 파드는 보통 컨테이너 하나를 담지만, 웹 서버와 그 옆에서 로그를 모으는 컨테이너처럼 단단히 붙어 일하는 컨테이너는 한 파드에 함께 넣는다. 한 파드의 컨테이너들은 늘 같은 머신에서 함께 실행되고, IP 주소 하나를 함께 쓰므로 같은 머신 안의 프로그램끼리처럼 서로 통신한다.',
+    )
+    expect(concept.paragraphs[3]).toBe(
+      'EKS로 만드는 쿠버네티스 클러스터는 두 부분으로 이루어진다. 클러스터 전체를 관리하는 컨트롤 플레인은 AWS가 운영하고, 파드가 실제로 올라가 실행되는 머신인 **노드**(node)는 보통 EC2 인스턴스다. 파드를 어느 노드에 올릴지는 컨트롤 플레인이 정한다.',
+    )
+    expect(concept.summary).toBe('쿠버네티스를 AWS에서 관리형으로 운영하는 서비스다.')
+  })
+
+  it('Lambda 주제에서 처음 나오는 태스크 정의와 서비스에 한 구절 풀이가 붙는다(ADR-029)', () => {
+    const concept = byId['lambda.lambda-container-image']
+
+    expect(concept.paragraphs).toHaveLength(2)
+    expect(concept.paragraphs[1]).toContain(
+      'ECS도 컨테이너를 어떤 설정으로 실행할지 적는 태스크 정의, 태스크를 정한 수만큼 유지하는 서비스, 네트워킹을 여전히 사람이 관리해야 하기 때문이다.',
+    )
+  })
+
+  it('컨테이너 주제에서 파드와 태스크가 정의보다 먼저 나오지 않는다(ADR-029)', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')
+    const ids = topic?.concepts.map((concept) => concept.id) ?? []
+    const firstUse = (word: string) =>
+      ids.findIndex((id) => {
+        const { name, summary, paragraphs } = byId[id]
+        return [name, summary, ...paragraphs].some((text) => text.includes(word))
+      })
+
+    expect(firstUse('**태스크**')).toBe(ids.indexOf('ecs-eks-fargate.ecs'))
+    expect(firstUse('태스크')).toBe(ids.indexOf('ecs-eks-fargate.ecs'))
+    expect(firstUse('**파드**')).toBe(ids.indexOf('ecs-eks-fargate.eks'))
+    expect(firstUse('파드')).toBe(ids.indexOf('ecs-eks-fargate.eks'))
+    expect(firstUse('**노드**')).toBe(ids.indexOf('ecs-eks-fargate.eks'))
+    expect(firstUse('노드')).toBe(ids.indexOf('ecs-eks-fargate.eks'))
+  })
+})
