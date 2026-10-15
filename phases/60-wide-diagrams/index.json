@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "crossing-checker-wide",
-      "status": "pending"
+      "status": "completed",
+      "summary": "check-path-crossings.mjs가 선언 블록별로 nodes·paths와 wideNodes·widePaths를 읽고 배치별 노드 겹침·경로 교차를 따로 검사하며 위반에 [세로]/[가로]를 표시한다(export const paths 포함). 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 0개·경로 0개를 검사했고 상자 내부를 지나는 선분이 없다. 수정 전 b는 가로 경로를 세로 노드 c와 대조해 exit 1로 실패했고 a의 가로 교차는 놓쳤다. 수정 후 음성 시험 a는 [가로] c 교차로 exit 1, b는 exit 0, c는 [세로] 교차로 exit 1이며 마지막 줄 negative ok. 경로 없는 가로 노드 겹침·블록 밖 경로 제외·경계 접촉 시험도 통과. Node 18.17.1에서 build·lint·전체 1393개 테스트·check-structure 통과.",
+      "started_at": "2026-10-15T21:23:04+0900",
+      "completed_at": "2026-10-15T21:27:55+0900"
     },
     {
       "step": 2,
