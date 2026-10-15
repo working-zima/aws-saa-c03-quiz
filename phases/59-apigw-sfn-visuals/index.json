@@ -37,7 +37,9 @@
     {
       "step": 4,
       "name": "map-state-diagram",
-      "status": "pending"
+      "status": "completed",
+      "summary": "MapStateDiagram(viewBox 0 0 280 212, 그룹 2·노드 9·경로 8·곁말 2, 시나리오 loop/map, 물음형 제목)을 JSON diagrams.map-state 문구로 그리고 registry에 앵커 api-gateway-step-functions.step-functions-map-state로 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 통과(전체 노드 208개·경로 177개, 이 도식 단독 노드 9·경로 8). 새 테스트 17개(MapStateDiagram.test.tsx), 전체 1382개 통과",
+      "started_at": "2026-10-15T08:59:04+0900"
     }
   ],
   "created_at": "2026-10-15T08:36:39+0900"

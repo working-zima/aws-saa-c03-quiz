@@ -170,6 +170,50 @@
         "api-gateway-step-functions.step-functions-features",
         "api-gateway-step-functions.step-functions-long-running-workflow"
       ]
+    },
+    "map-state": {
+      "label": "Map 상태 도식",
+      "svgLabel": "함수 안 반복문과 Map 상태의 항목별 호출",
+      "question": "함수를 고치지 않고 15분 제한을 벗어나려면?",
+      "idleCaption": "방식을 고르면 목록의 반복을 누가 맡는지 볼 수 있다.",
+      "legend": "파랑: Lambda 함수와 Map 상태 · 회색: 처리할 목록과 함수 안의 반복문. 함수 셋은 여러 번 부른다는 표시다.",
+      "nodes": {
+        "list": "목록",
+        "loop": "목록을 도는 반복문",
+        "map": "Map 상태",
+        "loop-fn-1": "함수",
+        "loop-fn-2": "함수",
+        "loop-fn-3": "함수",
+        "map-fn-1": "함수",
+        "map-fn-2": "함수",
+        "map-fn-3": "함수"
+      },
+      "groups": {
+        "one-function": "Lambda 함수 하나",
+        "machine": "상태 머신"
+      },
+      "notes": {
+        "time-limit": "항목이 늘면 15분 제한",
+        "per-item": "항목마다 한 번씩"
+      },
+      "scenarios": [
+        {
+          "id": "loop",
+          "label": "함수 안 반복문",
+          "caption": "함수 하나가 목록을 돌며 다른 함수를 부르는 구조는 항목 수가 늘면 15분 제한에 걸린다.",
+          "sources": ["api-gateway-step-functions.step-functions-map-state"]
+        },
+        {
+          "id": "map",
+          "label": "Map 상태",
+          "caption": "반복을 상태 머신이 맡아 항목마다 함수를 한 번씩 부른다. 기존 함수 코드는 고치지 않는다.",
+          "sources": ["api-gateway-step-functions.step-functions-map-state"]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.step-functions",
+        "api-gateway-step-functions.step-functions-map-state"
+      ]
     }
   },
   "tables": {
