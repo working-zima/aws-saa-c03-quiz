@@ -1,7 +1,8 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { VpcDestinationDiagram, vpcDestinationScenarios } from './VpcDestinationDiagram'
@@ -195,5 +196,188 @@ describe('VpcDestinationDiagram', () => {
       expect(figure.closest('article')).toHaveAttribute('id', comparison.id)
       expect(within(figure).queryByRole('heading')).toBeNull()
     }
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×400 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성을 유지한다', () => {
+      render(<VpcDestinationDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 400')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram()).toHaveAttribute('aria-label', diagramText.svgLabel)
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+    })
+
+    it('노드 id 집합과 그룹 순서를 세로형과 같이 유지한다', () => {
+      render(<VpcDestinationDiagram />)
+
+      expect(Array.from(diagram().querySelectorAll('[data-node]'), (node) => node.getAttribute('data-node')))
+        .toEqual(destinations.flatMap(({ nodes }) => nodes))
+      expect(Array.from(diagram().querySelectorAll('[data-group]'), (group) => group.getAttribute('data-group')))
+        .toEqual(destinations.map(({ group }) => group))
+    })
+
+    it('노드와 그룹을 포함한 모든 rect가 440×400 viewBox 안에 있다', () => {
+      render(<VpcDestinationDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(16)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 400])).toEqual([])
+    })
+
+    it('노드 두 줄과 그룹 라벨이 글자 크기를 유지하며 각 상자 안에 들어간다', () => {
+      render(<VpcDestinationDiagram />)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        const id = node.getAttribute('data-node')!
+        const box = readBox(node.querySelector('rect')!)
+        const lines = Array.from(node.querySelectorAll('text'))
+        expect(box.width).toBe(184)
+        expect(box.height).toBe(44)
+        expect(lines).toHaveLength(2)
+        expect(lines[0].textContent).toBe(diagramText.nodeNotes![id])
+        expect(lines[1].textContent).toBe(diagramText.nodes[id])
+        expect(lines[0]).toHaveClass('fill-muted')
+        expect(lines[1]).toHaveClass('fill-title')
+        for (const [index, fontSize] of [9, 10].entries()) {
+          const line = lines[index]
+          expect(line.textContent!.trim().length).toBeGreaterThan(0)
+          expect(line).toHaveAttribute('font-size', String(fontSize))
+          expect(estimateTextWidth(line.textContent!, fontSize) + 12, `${id}: ${line.textContent}`).toBeLessThanOrEqual(box.width)
+          expect(Number(line.getAttribute('x'))).toBe(box.x + box.width / 2)
+          expect(Number(line.getAttribute('y'))).toBe(box.y + (index === 0 ? 13 : 31))
+        }
+      }
+
+      for (const rect of diagram().querySelectorAll('[data-group]')) {
+        const box = readBox(rect)
+        const label = rect.parentElement!.querySelector('text')!
+        const x = Number(label.getAttribute('x'))
+        expect(label.textContent).toBe(diagramText.groups![box.id])
+        expect(label).toHaveAttribute('font-size', '9')
+        expect(label).toHaveClass('fill-muted')
+        expect(x).toBeGreaterThan(box.x)
+        expect(x + estimateTextWidth(label.textContent!, 9)).toBeLessThanOrEqual(box.x + box.width)
+        expect(Number(label.getAttribute('y'))).toBe(box.y + 14)
+      }
+    })
+
+    it('그룹 넷이 읽는 순서대로 2×2에 놓이고 서로 겹치지 않는다', () => {
+      render(<VpcDestinationDiagram />)
+      const groups = Array.from(diagram().querySelectorAll('[data-group]'), readBox)
+      const [internet, services, application, vpcs] = groups
+
+      expect(internet.y).toBe(services.y)
+      expect(application.y).toBe(vpcs.y)
+      expect(internet.x).toBe(application.x)
+      expect(services.x).toBe(vpcs.x)
+      expect(internet.y + internet.height).toBeLessThan(application.y)
+      expect(services.y + services.height).toBeLessThan(vpcs.y)
+      expect(internet.x + internet.width).toBeLessThan(services.x)
+      expect(application.x + application.width).toBeLessThan(vpcs.x)
+      for (const [index, box] of groups.entries()) {
+        expect(box.width).toBe(208)
+        expect(box.height).toBe(184)
+        for (const other of groups.slice(index + 1)) {
+          const overlapX = Math.min(box.x + box.width, other.x + other.width) - Math.max(box.x, other.x)
+          const overlapY = Math.min(box.y + box.height, other.y + other.height) - Math.max(box.y, other.y)
+          expect(overlapX > 0 && overlapY > 0, `${box.id} / ${other.id}`).toBe(false)
+        }
+      }
+    })
+
+    it('목적지마다 노드 셋이 자기 그룹 안에서 위아래로 겹치지 않고 쌓인다', () => {
+      render(<VpcDestinationDiagram />)
+
+      for (const { group, nodes } of destinations) {
+        const box = readBox(diagram().querySelector(`[data-group="${group}"]`)!)
+        const children = nodes.map((id) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!))
+        expect(children).toHaveLength(3)
+        expect(boxesOutsideViewBox(children, [box.x, box.y, box.width, box.height]), group).toEqual([])
+        for (let i = 1; i < children.length; i++) {
+          expect(children[i - 1].x).toBe(children[i].x)
+          expect(children[i - 1].y + children[i - 1].height).toBeLessThan(children[i].y)
+        }
+      }
+    })
+
+    it.each(destinations)('$label을 고르면 그 그룹 셋만 선명하고 그룹 박스와 라벨은 흐려지지 않는다', async (destination) => {
+      const { container } = render(<VpcDestinationDiagram />)
+      await selectDestination(destination.label)
+
+      expect(diagram().querySelectorAll('[data-node][opacity="1"]')).toHaveLength(3)
+      expect(diagram().querySelectorAll('[data-node][opacity="0.25"]')).toHaveLength(9)
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', destination.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) {
+        expect(group.closest('[opacity]')).toBeNull()
+      }
+      for (const { label } of destinations) {
+        expect(within(diagram()).getByText(label).closest('[opacity]')).toBeNull()
+      }
+      expect(container.querySelector('figcaption')!.textContent).toBe(diagramText.scenarios.find(({ id }) => id === destination.id)!.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: destination.label })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'false')
+    })
+
+    it('세로형에서 고른 목적지와 캡션이 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<VpcDestinationDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 800')
+      await selectDestination('다른 VPC의 앱')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 400')
+      expect(screen.getByRole('button', { name: '다른 VPC의 앱' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-node][opacity="1"]'), (node) => node.getAttribute('data-node')))
+        .toEqual(destinations[2].nodes)
+
+      act(() => change(false))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 800')
+      expect(screen.getByRole('button', { name: '다른 VPC의 앱' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+    })
   })
 })

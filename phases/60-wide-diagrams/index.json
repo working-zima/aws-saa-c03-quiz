@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "60-wide-diagrams",
+  "steps": [
+    {
+      "step": 0,
+      "name": "wide-diagram-hook",
+      "status": "completed",
+      "summary": "src/hooks/useWideDiagram.ts와 src/hooks/useWideDiagram.test.tsx 생성: useSyncExternalStore로 768px 판정·첫 렌더 실제 값·change 구독 해제·matchMedia 미지원 시 false 구현, 새 테스트 7개와 전체 1393개 통과(기존 1386개), build·lint 통과.",
+      "started_at": "2026-10-15T21:19:44+0900",
+      "completed_at": "2026-10-15T21:23:04+0900"
+    },
+    {
+      "step": 1,
+      "name": "crossing-checker-wide",
+      "status": "completed",
+      "summary": "check-path-crossings.mjs가 선언 블록별로 nodes·paths와 wideNodes·widePaths를 읽고 배치별 노드 겹침·경로 교차를 따로 검사하며 위반에 [세로]/[가로]를 표시한다(export const paths 포함). 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 0개·경로 0개를 검사했고 상자 내부를 지나는 선분이 없다. 수정 전 b는 가로 경로를 세로 노드 c와 대조해 exit 1로 실패했고 a의 가로 교차는 놓쳤다. 수정 후 음성 시험 a는 [가로] c 교차로 exit 1, b는 exit 0, c는 [세로] 교차로 exit 1이며 마지막 줄 negative ok. 경로 없는 가로 노드 겹침·블록 밖 경로 제외·경계 접촉 시험도 통과. Node 18.17.1에서 build·lint·전체 1393개 테스트·check-structure 통과.",
+      "started_at": "2026-10-15T21:23:04+0900",
+      "completed_at": "2026-10-15T21:27:55+0900"
+    },
+    {
+      "step": 2,
+      "name": "vpc-destination-wide",
+      "status": "completed",
+      "summary": "VpcDestinationDiagram에 가로형 viewBox 0 0 440 400과 2×2 배치를 추가했으며 출발점 좌표 변경은 없다. 기존 groups·nodes를 유지하고 wideGroups·wideNodes(명시한 12줄)를 추가해 컴포넌트의 useWideDiagram() 결과로 layoutGroups·layoutNodes와 래퍼·viewBox를 고르며, 세로형 그룹에는 기존 JSX의 고정 좌표를 보충해 SVG 하나와 문구·시나리오·선택 상태를 공유한다. 기존 테스트 14개 원문과 세로형 전체 DOM(초기·목적지 4개·전체 복귀, matchMedia 미지원/false)을 유지했고 폭 전환 시 선택·캡션도 유지된다. 테스트 먼저 작성 후 5개 실패를 확인했고 새 테스트 11개·파일 전체 25개·전체 1404개가 통과했다. Node 18.17.1에서 build·lint·check-structure 통과. ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 12개·경로 0개를 검사했고 상자 내부를 지나는 선분이 없다.",
+      "started_at": "2026-10-15T21:27:56+0900",
+      "completed_at": "2026-10-15T21:33:50+0900"
+    },
+    {
+      "step": 3,
+      "name": "eventbridge-wide",
+      "status": "completed",
+      "started_at": "2026-10-15T21:33:51+0900",
+      "summary": "EventBridgeRoutingDiagram에 가로형 viewBox 0 0 440 488을 추가했고 출발점 좌표 변경은 없다. 세로형 그룹 JSX를 같은 좌표의 groups 배열로 옮기고 wideGroups(5)·wideNodes(17줄)·widePaths(15줄)를 더해 useWideDiagram() 결과로 그룹·노드·경로·래퍼(w-full)·viewBox를 고르며, 라벨·색은 세로형 nodes에서 id로 가져온다. 세로형 DOM은 초기·시나리오 7개·전체 복귀 innerHTML이 구현 전과 바이트 단위로 같고 기존 it은 그대로다. 가로형 테스트를 먼저 써서 7개 실패를 확인한 뒤 구현했고, 새 테스트 16개·파일 전체 40개·전체 1420개가 통과했다(기존 1404개). Node 18.17.1에서 build·lint·check-structure 통과. ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 29개·경로 15개를 검사했고 상자 내부를 지나는 선분이 없다.",
+      "completed_at": "2026-10-15T22:21:07+0900"
+    },
+    {
+      "step": 4,
+      "name": "vpc-paths-wide",
+      "status": "completed",
+      "started_at": "2026-10-15T22:21:07+0900",
+      "summary": "VpcPathsDiagram에 가로형 viewBox 0 0 440 640을 추가했고 출발점 좌표 변경은 없다. 세로형 그룹 JSX를 같은 좌표의 groups 배열로 옮기고 선 모양(rx·점선)은 두 배치가 함께 쓰는 groupLines로 id에서 정하며, wideGroups(7)·wideNodes(19줄)·widePaths(22줄)를 더해 useWideDiagram() 결과로 그룹·노드·경로·래퍼(w-full)·viewBox를 고른다. 색은 세로형 nodes에서, 라벨은 JSON에서 가져온다(vpc-networking.json 무변경). 세로형 DOM은 matchMedia 미지원·false 각각 초기·시나리오 11개·전체 복귀 innerHTML이 구현 전과 바이트 단위로 같고 기존 it은 그대로다. 가로형 테스트를 먼저 써서 4개 실패를 확인한 뒤 구현했고(나머지는 세로형 좌표로도 성립하는 소속·겹침 단언), 새 테스트 19개·파일 전체 64개·전체 1439개가 통과했다(기존 1420개). Node 18.17.1에서 build·lint·check-structure 통과. ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 48개·경로 37개를 검사했고 상자 내부를 지나는 선분이 없다.",
+      "completed_at": "2026-10-15T22:25:24+0900"
+    }
+  ],
+  "created_at": "2026-10-15T21:19:44+0900",
+  "completed_at": "2026-10-15T22:25:24+0900"
+}

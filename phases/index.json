@@ -299,6 +299,11 @@
       "dir": "59-apigw-sfn-visuals",
       "status": "completed",
       "completed_at": "2026-10-15T09:02:43+0900"
+    },
+    {
+      "dir": "60-wide-diagrams",
+      "status": "completed",
+      "completed_at": "2026-10-15T22:25:24+0900"
     }
   ]
 }
