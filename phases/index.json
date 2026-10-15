@@ -302,7 +302,8 @@
     },
     {
       "dir": "60-wide-diagrams",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-15T22:25:24+0900"
     }
   ]
 }
