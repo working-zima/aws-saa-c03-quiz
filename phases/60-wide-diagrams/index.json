@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "vpc-destination-wide",
-      "status": "pending"
+      "status": "completed",
+      "summary": "VpcDestinationDiagram에 가로형 viewBox 0 0 440 400과 2×2 배치를 추가했으며 출발점 좌표 변경은 없다. 기존 groups·nodes를 유지하고 wideGroups·wideNodes(명시한 12줄)를 추가해 컴포넌트의 useWideDiagram() 결과로 layoutGroups·layoutNodes와 래퍼·viewBox를 고르며, 세로형 그룹에는 기존 JSX의 고정 좌표를 보충해 SVG 하나와 문구·시나리오·선택 상태를 공유한다. 기존 테스트 14개 원문과 세로형 전체 DOM(초기·목적지 4개·전체 복귀, matchMedia 미지원/false)을 유지했고 폭 전환 시 선택·캡션도 유지된다. 테스트 먼저 작성 후 5개 실패를 확인했고 새 테스트 11개·파일 전체 25개·전체 1404개가 통과했다. Node 18.17.1에서 build·lint·check-structure 통과. ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 12개·경로 0개를 검사했고 상자 내부를 지나는 선분이 없다.",
+      "started_at": "2026-10-15T21:27:56+0900",
+      "completed_at": "2026-10-15T21:33:50+0900"
     },
     {
       "step": 3,
