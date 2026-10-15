@@ -1,4 +1,7 @@
 import type { ComponentType } from 'react'
+import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
+import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
+import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
@@ -9,6 +12,7 @@ import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { IdentityCenterAccessDiagram } from './IdentityCenterAccessDiagram'
+import { MapStateDiagram } from './MapStateDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
@@ -23,6 +27,7 @@ import { SgNaclLayersDiagram } from './SgNaclLayersDiagram'
 import { SgNaclCompareTable } from './sgNaclTables'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
+import { StateMachineDiagram } from './StateMachineDiagram'
 import { VpcDestinationDiagram } from './VpcDestinationDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
 import { VpcScopeDiagram } from './VpcScopeDiagram'
@@ -70,4 +75,10 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'sqs-sns-eventbridge.eventbridge': EventBridgeRoutingDiagram,
   'sqs-sns-eventbridge.sns-sqs-fanout-per-consumer': SnsFanoutDiagram,
   'sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time': SqsMessageLifeDiagram,
+  'api-gateway-step-functions.api-gateway': ApiTypeTable,
+  'api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy': ApiAccessControlTable,
+  'api-gateway-step-functions.api-gateway-mapping-template-limits': ApiIntegrationDiagram,
+  'api-gateway-step-functions.api-gateway-behind-cloudfront': ApiEndpointPathDiagram,
+  'api-gateway-step-functions.step-functions-long-running-workflow': StateMachineDiagram,
+  'api-gateway-step-functions.step-functions-map-state': MapStateDiagram,
 }
