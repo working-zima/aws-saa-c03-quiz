@@ -297,7 +297,8 @@
     },
     {
       "dir": "59-apigw-sfn-visuals",
-      "status": "pending"
+      "status": "completed",
+      "completed_at": "2026-10-15T09:02:43+0900"
     }
   ]
 }
