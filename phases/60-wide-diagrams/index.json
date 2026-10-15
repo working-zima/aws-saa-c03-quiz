@@ -32,7 +32,7 @@
       "status": "completed",
       "started_at": "2026-10-15T21:33:51+0900",
       "summary": "EventBridgeRoutingDiagram에 가로형 viewBox 0 0 440 488을 추가했고 출발점 좌표 변경은 없다. 세로형 그룹 JSX를 같은 좌표의 groups 배열로 옮기고 wideGroups(5)·wideNodes(17줄)·widePaths(15줄)를 더해 useWideDiagram() 결과로 그룹·노드·경로·래퍼(w-full)·viewBox를 고르며, 라벨·색은 세로형 nodes에서 id로 가져온다. 세로형 DOM은 초기·시나리오 7개·전체 복귀 innerHTML이 구현 전과 바이트 단위로 같고 기존 it은 그대로다. 가로형 테스트를 먼저 써서 7개 실패를 확인한 뒤 구현했고, 새 테스트 16개·파일 전체 40개·전체 1420개가 통과했다(기존 1404개). Node 18.17.1에서 build·lint·check-structure 통과. ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 29개·경로 15개를 검사했고 상자 내부를 지나는 선분이 없다.",
-      "completed_at": "2026-10-15T22:21:00+0900"
+      "completed_at": "2026-10-15T22:21:07+0900"
     },
     {
       "step": 4,
