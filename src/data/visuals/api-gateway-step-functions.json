@@ -1,0 +1,286 @@
+{
+  "diagrams": {
+    "integration": {
+      "label": "API Gateway 통합 방식 도식",
+      "svgLabel": "API Gateway가 요청을 백엔드에 넘기는 방식",
+      "question": "API Gateway는 받은 요청을 어떻게 넘길까?",
+      "idleCaption": "통합 방식을 고르면 요청이 무엇을 거쳐 넘어가는지 볼 수 있다.",
+      "legend": "파랑: API Gateway의 기능과 통합 대상 AWS 서비스 · 회색: 클라이언트와 백엔드. 위로 돌아오는 화살표는 응답이다.",
+      "nodes": {
+        "client": "클라이언트",
+        "mapping": "매핑 템플릿",
+        "lambda": "Lambda 함수",
+        "dynamodb": "DynamoDB PutItem",
+        "backend": "백엔드"
+      },
+      "groups": {
+        "api-gateway": "API Gateway"
+      },
+      "notes": {
+        "as-is": "헤더까지 그대로",
+        "as-response": "결과가 곧 응답",
+        "no-function": "함수 없이 직접",
+        "fields-only": "필드 이름·값만",
+        "json": "JSON",
+        "xml": "XML"
+      },
+      "scenarios": [
+        {
+          "id": "proxy",
+          "label": "Lambda 프록시",
+          "caption": "요청을 헤더까지 그대로 함수에 넘기는 동기 호출이라, 함수의 결과가 곧 응답이 된다.",
+          "sources": ["api-gateway-step-functions.api-gateway-lambda-proxy-integration"]
+        },
+        {
+          "id": "service",
+          "label": "AWS 서비스",
+          "caption": "메서드가 DynamoDB PutItem을 바로 부른다. 사이에 함수가 없어 관리할 코드도 없다.",
+          "sources": ["api-gateway-step-functions.api-gateway-aws-service-integration"]
+        },
+        {
+          "id": "mapping",
+          "label": "매핑 템플릿",
+          "caption": "필드 이름을 바꾸거나 값을 옮기는 정도는 매핑 템플릿에서 끝내고 백엔드로 넘긴다.",
+          "sources": ["api-gateway-step-functions.api-gateway-mapping-template-limits"]
+        },
+        {
+          "id": "transform",
+          "label": "JSON을 XML로",
+          "caption": "JSON 주문을 XML 문서로 바꾸는 변환은 매핑 템플릿의 범위를 넘어, 함수 코드가 맡는다.",
+          "sources": ["api-gateway-step-functions.api-gateway-mapping-template-limits"]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.api-gateway",
+        "api-gateway-step-functions.api-gateway-lambda-proxy-integration",
+        "api-gateway-step-functions.api-gateway-aws-service-integration",
+        "api-gateway-step-functions.api-gateway-mapping-template-limits"
+      ]
+    },
+    "endpoint-path": {
+      "label": "API 엔드포인트 경로 도식",
+      "svgLabel": "엣지 최적화·리전 엔드포인트와 CloudFront 오리진",
+      "question": "전 세계 사용자의 요청은 어디를 거쳐 갈까?",
+      "idleCaption": "설정을 고르면 요청이 어디를 거쳐 응답을 받는지 볼 수 있다.",
+      "legend": "파랑: AWS 서비스 · 회색: 사용자. 위 박스는 CloudFront의 엣지, 아래 박스는 API가 배포된 리전이다.",
+      "nodes": {
+        "user": "전 세계 사용자",
+        "cloudfront": "CloudFront",
+        "s3": "S3 버킷",
+        "api": "API Gateway",
+        "lambda": "Lambda 함수"
+      },
+      "groups": {
+        "edge": "엣지",
+        "region": "리전"
+      },
+      "notes": {
+        "via-edge": "엣지를 거쳐 들어옴",
+        "latency-remains": "멀리서는 지연이 그대로",
+        "from-cache": "캐시에서 응답",
+        "static": "정적 파일",
+        "dynamic": "동적 응답"
+      },
+      "scenarios": [
+        {
+          "id": "edge",
+          "label": "엣지 최적화",
+          "caption": "엣지 최적화 엔드포인트는 요청을 CloudFront 엣지로 받아, 전 세계 사용자의 지연을 줄인다.",
+          "sources": ["api-gateway-step-functions.api-gateway-endpoint-types"]
+        },
+        {
+          "id": "regional",
+          "label": "리전",
+          "caption": "리전 엔드포인트는 그 리전으로 직접 받는다. 멀리 있는 사용자의 지연이 그대로 남는다.",
+          "sources": ["api-gateway-step-functions.api-gateway-endpoint-types"]
+        },
+        {
+          "id": "cache",
+          "label": "API 캐싱",
+          "caption": "캐싱을 켜면 같은 응답을 백엔드까지 가지 않고 API Gateway가 바로 돌려준다.",
+          "sources": ["api-gateway-step-functions.api-gateway-endpoint-types"]
+        },
+        {
+          "id": "cdn-origins",
+          "label": "CloudFront 오리진",
+          "caption": "배포 하나에 S3 버킷과 HTTP API를 오리진으로 두면 정적·동적 응답이 다 엣지를 거친다.",
+          "sources": ["api-gateway-step-functions.api-gateway-behind-cloudfront"]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.api-gateway",
+        "api-gateway-step-functions.api-gateway-endpoint-types",
+        "api-gateway-step-functions.api-gateway-behind-cloudfront"
+      ]
+    },
+    "state-machine": {
+      "label": "Step Functions 상태 머신 도식",
+      "svgLabel": "상태 머신이 잇는 태스크와 관리자 승인",
+      "question": "15분을 넘는 여러 단계 작업은 누가 이어 갈까?",
+      "idleCaption": "장면을 고르면 상태 머신이 단계를 잇고 관리하는 모습을 볼 수 있다.",
+      "legend": "파랑: AWS 서비스와 상태 머신의 단계. 큰 박스가 상태 머신 하나이고, 맨 아래는 견줘 볼 구성이다.",
+      "nodes": {
+        "s3": "S3 버킷",
+        "rule": "EventBridge 규칙",
+        "task-a": "태스크",
+        "approval": "관리자 승인",
+        "task-b": "태스크",
+        "one-lambda": "Lambda 함수 하나로 전부 처리"
+      },
+      "groups": {
+        "machine": "상태 머신"
+      },
+      "notes": {
+        "per-upload": "업로드마다 실행 시작",
+        "on-failure": "실패하면 다시",
+        "up-to-year": "실행은 최대 1년",
+        "limit-15": "15분 제한에 걸림"
+      },
+      "scenarios": [
+        {
+          "id": "start",
+          "label": "업로드로 시작",
+          "caption": "업로드 이벤트가 EventBridge로 가고, 상태 머신을 대상으로 둔 규칙이 실행을 시작한다.",
+          "sources": ["api-gateway-step-functions.step-functions-long-running-workflow"]
+        },
+        {
+          "id": "retry",
+          "label": "실패하면 재시도",
+          "caption": "단계마다 실행 상태를 상태 머신이 관리해, 실패한 태스크를 자동으로 다시 시도한다.",
+          "sources": ["api-gateway-step-functions.step-functions"]
+        },
+        {
+          "id": "approval",
+          "label": "관리자 승인",
+          "caption": "단계 사이에 관리자 승인을 넣을 수 있다. 같은 흐름을 코드로 짜면 부담이 훨씬 크다.",
+          "sources": ["api-gateway-step-functions.step-functions-features"]
+        },
+        {
+          "id": "one-lambda",
+          "label": "Lambda 하나로",
+          "caption": "전체가 24시간 걸리면 함수 하나로는 15분 제한에 걸린다. 상태 머신의 실행은 최대 1년이다.",
+          "sources": [
+            "api-gateway-step-functions.step-functions-long-running-workflow",
+            "api-gateway-step-functions.step-functions"
+          ]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.step-functions",
+        "api-gateway-step-functions.step-functions-features",
+        "api-gateway-step-functions.step-functions-long-running-workflow"
+      ]
+    },
+    "map-state": {
+      "label": "Map 상태 도식",
+      "svgLabel": "함수 안 반복문과 Map 상태의 항목별 호출",
+      "question": "함수를 고치지 않고 15분 제한을 벗어나려면?",
+      "idleCaption": "방식을 고르면 목록의 반복을 누가 맡는지 볼 수 있다.",
+      "legend": "파랑: Lambda 함수와 Map 상태 · 회색: 처리할 목록과 함수 안의 반복문. 함수 셋은 여러 번 부른다는 표시다.",
+      "nodes": {
+        "list": "목록",
+        "loop": "목록을 도는 반복문",
+        "map": "Map 상태",
+        "loop-fn-1": "함수",
+        "loop-fn-2": "함수",
+        "loop-fn-3": "함수",
+        "map-fn-1": "함수",
+        "map-fn-2": "함수",
+        "map-fn-3": "함수"
+      },
+      "groups": {
+        "one-function": "Lambda 함수 하나",
+        "machine": "상태 머신"
+      },
+      "notes": {
+        "time-limit": "항목이 늘면 15분 제한",
+        "per-item": "항목마다 한 번씩"
+      },
+      "scenarios": [
+        {
+          "id": "loop",
+          "label": "함수 안 반복문",
+          "caption": "함수 하나가 목록을 돌며 다른 함수를 부르는 구조는 항목 수가 늘면 15분 제한에 걸린다.",
+          "sources": ["api-gateway-step-functions.step-functions-map-state"]
+        },
+        {
+          "id": "map",
+          "label": "Map 상태",
+          "caption": "반복을 상태 머신이 맡아 항목마다 함수를 한 번씩 부른다. 기존 함수 코드는 고치지 않는다.",
+          "sources": ["api-gateway-step-functions.step-functions-map-state"]
+        }
+      ],
+      "sources": [
+        "api-gateway-step-functions.step-functions",
+        "api-gateway-step-functions.step-functions-map-state"
+      ]
+    }
+  },
+  "tables": {
+    "api-types": {
+      "label": "API Gateway 유형과 Lambda 함수 URL",
+      "columns": ["유형", "고를 때", "고르지 않을 때"],
+      "rows": [
+        {
+          "header": "REST API",
+          "cells": ["API 키, 요청 검증, 스로틀링이 필요할 때", "비용과 지연을 낮추는 것이 먼저일 때"]
+        },
+        {
+          "header": "HTTP API",
+          "cells": ["싸고 빠르게 JWT 인증과 ALB 통합을 쓸 때", "몇 분 걸리는 동기 호출이나 API 키가 필요할 때"]
+        },
+        {
+          "header": "WebSocket API",
+          "cells": ["연결을 열어 둔 채 메시지를 주고받을 때", "요청에 응답하고 끝나는 RESTful 호출일 때"]
+        },
+        {
+          "header": "Lambda 함수 URL",
+          "cells": ["함수를 곧장 열기만 하면 될 때", "API 관리 기능이 필요할 때"]
+        }
+      ],
+      "columnWidths": ["30%", "35%", "35%"],
+      "sources": [
+        "api-gateway-step-functions.api-gateway",
+        "api-gateway-step-functions.api-gateway-jwt-authorizer",
+        "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
+        "api-gateway-step-functions.api-gateway-rest-only-features",
+        "api-gateway-step-functions.api-gateway-websocket-api"
+      ]
+    },
+    "access-control": {
+      "label": "API 호출을 거르는 장치",
+      "columns": ["장치", "하는 일"],
+      "rows": [
+        {
+          "header": "리소스 정책",
+          "cells": ["호출할 수 있는 계정과 IP 주소 범위를 정한다. 다른 계정에만 열거나 사내 IP만 허용할 때 쓴다."]
+        },
+        {
+          "header": "권한 부여자",
+          "cells": ["로그인한 사용자의 신원을 확인한다. 인증 방식이 표준이 아니면 사용자 지정 권한 부여자를 붙인다."]
+        },
+        {
+          "header": "API 키",
+          "cells": ["어느 클라이언트가 호출했는지 구분해 사용량을 잰다. 신원은 확인하지 않는다."]
+        },
+        {
+          "header": "엔드포인트 정책",
+          "cells": ["프라이빗 API를 부르는 인터페이스 VPC 엔드포인트의 트래픽에 통제를 더한다. 계정 간 접근은 리소스 정책이 정한다."]
+        },
+        {
+          "header": "보안 그룹",
+          "cells": ["붙일 수 없다. API Gateway는 VPC 안에 만들어지는 리소스가 아니다."]
+        }
+      ],
+      "columnWidths": ["30%", "70%"],
+      "sources": [
+        "api-gateway-step-functions.api-gateway-resource-policy",
+        "api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy",
+        "api-gateway-step-functions.api-gateway-api-key-not-auth",
+        "api-gateway-step-functions.api-gateway-jwt-authorizer",
+        "api-gateway-step-functions.api-gateway-lambda-proxy-integration"
+      ]
+    }
+  },
+  "glossary": []
+}

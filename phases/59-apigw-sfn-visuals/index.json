@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "59-apigw-sfn-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "api-gateway-tables",
+      "status": "completed",
+      "summary": "src/data/visuals/api-gateway-step-functions.json(diagrams {}·glossary [])과 로더 키 visualsByTopicId['api-gateway-step-functions']를 더하고, 비교표 api-types(30/35/35%, 앵커 api-gateway-step-functions.api-gateway)와 access-control(30/70%, 앵커 api-gateway-step-functions.api-gateway-ip-restriction-by-resource-policy)를 래퍼 ApiTypeTable·ApiAccessControlTable(apiGatewayTables.tsx)로 registry에 붙였다. 새 테스트 13개(apiGatewayTables.test.tsx), 전체 1303개 통과",
+      "started_at": "2026-10-15T08:36:39+0900",
+      "completed_at": "2026-10-15T08:39:11+0900"
+    },
+    {
+      "step": 1,
+      "name": "integration-diagram",
+      "status": "completed",
+      "summary": "ApiIntegrationDiagram(viewBox 0 0 280 272, 그룹 1·노드 5·경로 6·곁말 6, 시나리오 proxy/service/mapping/transform, 물음형 제목)을 JSON diagrams.integration 문구로 그리고 registry에 앵커 api-gateway-step-functions.api-gateway-mapping-template-limits로 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 통과(전체 노드 188개·경로 159개, 이 도식 단독 노드 5·경로 6). 새 테스트 20개(ApiIntegrationDiagram.test.tsx), 전체 1323개 통과",
+      "started_at": "2026-10-15T08:39:11+0900",
+      "completed_at": "2026-10-15T08:42:57+0900"
+    },
+    {
+      "step": 2,
+      "name": "endpoint-path-diagram",
+      "status": "completed",
+      "summary": "ApiEndpointPathDiagram(viewBox 0 0 280 276, 그룹 2·노드 5·경로 5·곁말 5, 시나리오 edge/regional/cache/cdn-origins, 물음형 제목)을 JSON diagrams.endpoint-path 문구로 그리고 registry에 앵커 api-gateway-step-functions.api-gateway-behind-cloudfront로 붙였다. 출발점 좌표에서 바꾼 것: 엣지 그룹 폭 272→256(x 4..260), 곁말 via-edge x 262→246 — 출발점의 오른쪽 통로 x 270이 엣지 박스(4..276) 안을 지나 '엣지 박스를 피해'와 어긋났고, 이를 단언한 테스트가 실패해 고쳤다. 교차 검사 통과(전체 노드 193개·경로 164개, 이 도식 단독 노드 5·경로 5). 새 테스트 21개(ApiEndpointPathDiagram.test.tsx), 전체 1344개 통과",
+      "started_at": "2026-10-15T08:42:57+0900",
+      "completed_at": "2026-10-15T08:48:15+0900"
+    },
+    {
+      "step": 3,
+      "name": "state-machine-diagram",
+      "status": "completed",
+      "summary": "StateMachineDiagram(viewBox 0 0 280 256, 그룹 1·노드 6·경로 5·곁말 4, 시나리오 start/retry/approval/one-lambda, 물음형 제목)을 JSON diagrams.state-machine 문구로 그리고 registry에 앵커 api-gateway-step-functions.step-functions-long-running-workflow로 붙였다. 출발점 좌표에서 바꾼 것 없음(교차 검사기가 따옴표 붙은 키만 읽으므로 paths의 'retry' 키에 따옴표를 붙였다). 교차 검사 통과(전체 노드 199개·경로 169개, 이 도식 단독 노드 6·경로 5). 새 테스트 21개(StateMachineDiagram.test.tsx), 전체 1365개 통과",
+      "started_at": "2026-10-15T08:55:07+0900",
+      "completed_at": "2026-10-15T08:59:03+0900"
+    },
+    {
+      "step": 4,
+      "name": "map-state-diagram",
+      "status": "completed",
+      "summary": "MapStateDiagram(viewBox 0 0 280 212, 그룹 2·노드 9·경로 8·곁말 2, 시나리오 loop/map, 물음형 제목)을 JSON diagrams.map-state 문구로 그리고 registry에 앵커 api-gateway-step-functions.step-functions-map-state로 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 통과(전체 노드 208개·경로 177개, 이 도식 단독 노드 9·경로 8). 새 테스트 17개(MapStateDiagram.test.tsx), 전체 1382개 통과",
+      "started_at": "2026-10-15T08:59:04+0900",
+      "completed_at": "2026-10-15T09:02:42+0900"
+    }
+  ],
+  "created_at": "2026-10-15T08:36:39+0900",
+  "completed_at": "2026-10-15T09:02:43+0900"
+}
