@@ -1,0 +1,11 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "60-wide-diagrams",
+  "steps": [
+    { "step": 0, "name": "wide-diagram-hook", "status": "pending" },
+    { "step": 1, "name": "crossing-checker-wide", "status": "pending" },
+    { "step": 2, "name": "vpc-destination-wide", "status": "pending" },
+    { "step": 3, "name": "eventbridge-wide", "status": "pending" },
+    { "step": 4, "name": "vpc-paths-wide", "status": "pending" }
+  ]
+}
