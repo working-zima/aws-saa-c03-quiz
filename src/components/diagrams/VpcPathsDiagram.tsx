@@ -1,8 +1,30 @@
 import { useId, useState } from 'react'
 import { visualsByTopicId } from '../../data'
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { DiagramFrame, type DiagramScenario } from './DiagramFrame'
 
 const text = visualsByTopicId['vpc-networking'].diagrams['vpc-paths']
+
+// 그룹 선 모양은 두 배치가 함께 쓴다. 리전·VPC·다른 VPC는 둥근 점선, 서브넷은 잔 점선, AWS 관리 영역만 실선이다.
+const groupLines: Record<string, { rx: number, dash?: string }> = {
+  region: { rx: 6, dash: '6 4' },
+  managed: { rx: 4 },
+  vpc: { rx: 6, dash: '6 4' },
+  public: { rx: 4, dash: '2 3' },
+  private: { rx: 4, dash: '2 3' },
+  'other-vpc': { rx: 6, dash: '6 4' },
+}
+
+const groups = [
+  { id: 'region', x: 4, y: 68, width: 272, height: 1044, labelX: 14, labelY: 82 },
+  { id: 'managed', x: 12, y: 90, width: 256, height: 142, labelX: 24, labelY: 104 },
+  { id: 'vpc', x: 12, y: 250, width: 256, height: 640, labelX: 24, labelY: 266 },
+  { id: 'public', x: 18, y: 398, width: 244, height: 86, labelX: 24, labelY: 412 },
+  { id: 'private', x: 18, y: 506, width: 244, height: 132, labelX: 24, labelY: 520 },
+  // 기존 경로를 보존하며 엔드포인트용 프라이빗 서브넷을 아래에 둔다.
+  { id: 'private', x: 18, y: 718, width: 244, height: 156, labelX: 24, labelY: 732 },
+  { id: 'other-vpc', x: 12, y: 1000, width: 256, height: 88, labelX: 24, labelY: 1014 },
+]
 
 // 이 도식 전용 고정 좌표다. 긴 라벨만 VPC 안의 한 줄 전체를 쓴다.
 const nodes = [
@@ -52,6 +74,67 @@ const paths: Record<string, string> = {
   'peering-other-app': 'M78 960 V976 H122 V1034',
   'ec2-tgw': 'M256 548 H266 V916 H202 V928',
   'tgw-other-app': 'M202 960 V984 H158 V1034',
+}
+
+// 가로형은 두 서브넷을 나란히 두고, 리전 밖 출발점은 받는 게이트웨이 바로 위에, S3는 게이트웨이 엔드포인트 바로 아래에 세운다.
+const wideGroups = [
+  { id: 'region', x: 4, y: 60, width: 432, height: 568, labelX: 14, labelY: 74 },
+  { id: 'managed', x: 12, y: 452, width: 380, height: 70, labelX: 24, labelY: 466 },
+  { id: 'vpc', x: 12, y: 82, width: 416, height: 354, labelX: 24, labelY: 98 },
+  { id: 'public', x: 20, y: 160, width: 184, height: 118, labelX: 28, labelY: 174 },
+  { id: 'private', x: 216, y: 160, width: 204, height: 118, labelX: 224, labelY: 174 },
+  { id: 'private', x: 224, y: 294, width: 196, height: 118, labelX: 232, labelY: 308 },
+  { id: 'other-vpc', x: 116, y: 546, width: 112, height: 70, labelX: 124, labelY: 560 },
+]
+
+// 색은 세로형 nodes에서 id로 가져온다.
+const wideNodes = [
+  { id: 'internet', x: 80, y: 12, width: 108 },
+  { id: 'onprem', x: 316, y: 12, width: 80 },
+  { id: 'igw', x: 80, y: 108, width: 108 },
+  { id: 'vgw', x: 280, y: 108, width: 140 },
+  { id: 'alb', x: 140, y: 186, width: 56 },
+  { id: 'nat', x: 28, y: 234, width: 96 },
+  { id: 'ec2', x: 232, y: 186, width: 56 },
+  { id: 'rds', x: 328, y: 186, width: 56 },
+  { id: 'eni', x: 232, y: 234, width: 80 },
+  { id: 'efs', x: 324, y: 234, width: 88 },
+  { id: 'endpoint', x: 20, y: 320, width: 144 },
+  { id: 'pl-endpoint', x: 232, y: 320, width: 136 },
+  { id: 'interface-endpoint', x: 232, y: 368, width: 128 },
+  { id: 's3', x: 100, y: 478, width: 48 },
+  { id: 'lambda', x: 160, y: 478, width: 104 },
+  { id: 'logs', x: 276, y: 478, width: 108 },
+  { id: 'peering', x: 20, y: 572, width: 80 },
+  { id: 'other-app', x: 124, y: 572, width: 96 },
+  { id: 'tgw', x: 244, y: 572, width: 108 },
+]
+
+// EC2에서 나가는 여섯 갈래와 Lambda 실행 환경 → ENI는 두 서브넷 사이 통로(x 210)를 함께 쓴다.
+// 피어링은 왼쪽 바깥 통로(x 8), Transit Gateway와 PrivateLink → 다른 VPC의 앱은 오른쪽 바깥 통로(x 432)를 쓴다.
+const widePaths: Record<string, string> = {
+  'internet-igw': 'M134 44 V108',
+  'igw-alb': 'M168 140 V186',
+  'alb-ec2': 'M196 202 H232',
+  'lambda-eni': 'M210 478 V250 H232',
+  'eni-ec2': 'M260 234 V218',
+  'ec2-nat': 'M232 210 H210 V250 H124',
+  'nat-igw': 'M100 234 V140',
+  'igw-internet': 'M134 108 V44',
+  'ec2-endpoint': 'M232 210 H210 V336 H164',
+  'endpoint-s3': 'M124 352 V478',
+  'lambda-logs': 'M264 494 H276',
+  'eni-efs': 'M312 250 H324',
+  'onprem-vgw': 'M356 44 V108',
+  'vgw-rds': 'M356 140 V186',
+  'ec2-interface-endpoint': 'M232 210 H210 V384 H232',
+  'interface-endpoint-logs': 'M320 400 V478',
+  'ec2-pl-endpoint': 'M232 210 H210 V336 H232',
+  'pl-endpoint-other-app': 'M368 336 H432 V538 H200 V572',
+  'ec2-peering': 'M232 210 H210 V424 H8 V588 H20',
+  'peering-other-app': 'M100 588 H124',
+  'ec2-tgw': 'M232 210 H210 V424 H432 V588 H352',
+  'tgw-other-app': 'M244 588 H220',
 }
 
 // 경로와 문구는 id로 짝을 맞춘다. 두 id 집합의 일치는 테스트가 검증한다.
@@ -108,6 +191,10 @@ export const vpcPathScenarios: DiagramScenario[] = [
 export function VpcPathsDiagram() {
   const [active, setActive] = useState<DiagramScenario | null>(null)
   const arrowId = `${useId()}-vpc-arrow`
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? wideGroups : groups
+  const layoutNodes = wide ? wideNodes.map((node) => ({ ...nodes.find(({ id }) => id === node.id)!, ...node })) : nodes
+  const layoutPaths = wide ? widePaths : paths
 
   return (
     <DiagramFrame
@@ -118,8 +205,8 @@ export function VpcPathsDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox="0 0 280 1120">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 640' : '0 0 280 1120'}>
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">
               <path className="fill-title" d="M0 0 L6 3 L0 6 Z" />
@@ -127,30 +214,30 @@ export function VpcPathsDiagram() {
           </defs>
 
           <g className="fill-none stroke-disabled" strokeWidth="1">
-            <rect data-group="region" x="4" y="68" width="272" height="1044" rx="6" strokeDasharray="6 4" />
-            <rect data-group="managed" x="12" y="90" width="256" height="142" rx="4" />
-            <rect data-group="vpc" x="12" y="250" width="256" height="640" rx="6" strokeDasharray="6 4" />
-            <rect data-group="public" x="18" y="398" width="244" height="86" rx="4" strokeDasharray="2 3" />
-            <rect data-group="private" x="18" y="506" width="244" height="132" rx="4" strokeDasharray="2 3" />
-            {/* 기존 경로를 보존하며 엔드포인트용 프라이빗 서브넷을 아래에 둔다. */}
-            <rect data-group="private" x="18" y="718" width="244" height="156" rx="4" strokeDasharray="2 3" />
-            <rect data-group="other-vpc" x="12" y="1000" width="256" height="88" rx="6" strokeDasharray="6 4" />
+            {layoutGroups.map((group, index) => (
+              <rect
+                key={index}
+                data-group={group.id}
+                x={group.x}
+                y={group.y}
+                width={group.width}
+                height={group.height}
+                rx={groupLines[group.id].rx}
+                strokeDasharray={groupLines[group.id].dash}
+              />
+            ))}
           </g>
           <g className="fill-muted" fontSize="9">
-            <text x="14" y="82">{text.groups?.region}</text>
-            <text x="24" y="104">{text.groups?.managed}</text>
-            <text x="24" y="266">{text.groups?.vpc}</text>
-            <text x="24" y="412">{text.groups?.public}</text>
-            <text x="24" y="520">{text.groups?.private}</text>
-            <text x="24" y="732">{text.groups?.private}</text>
-            <text x="24" y="1014">{text.groups?.['other-vpc']}</text>
+            {layoutGroups.map((group, index) => (
+              <text key={index} x={group.labelX} y={group.labelY}>{text.groups?.[group.id]}</text>
+            ))}
           </g>
 
           {active?.paths.map((id) => (
             <path
               key={id}
               data-path={id}
-              d={paths[id]}
+              d={layoutPaths[id]}
               className="fill-none stroke-title"
               strokeWidth="2"
               strokeLinejoin="round"
@@ -158,7 +245,7 @@ export function VpcPathsDiagram() {
             />
           ))}
 
-          {nodes.map((node) => (
+          {layoutNodes.map((node) => (
             <g key={node.id} data-node={node.id} opacity={active && !active.nodes.includes(node.id) ? 0.25 : 1}>
               <rect className={`fill-panel ${node.color}`} x={node.x} y={node.y} width={node.width} height="32" rx="4" strokeWidth="1.5" />
               <text className="fill-title" x={node.x + node.width / 2} y={node.y + 16} dominantBaseline="central" textAnchor="middle" fontSize="10">
