@@ -39,7 +39,8 @@
       "name": "sg-nacl-boundary-wide",
       "status": "completed",
       "started_at": "2026-10-16T09:40:54+0900",
-      "summary": "SgNaclBoundaryDiagram에 가로형(viewBox 0 0 440 232, 래퍼 w-full)을 더했다. 경계 그림을 한 줄로 낮게 접고 왕복을 두 줄로 편다(윗줄 요청 왼쪽→오른쪽, 아랫줄 응답 오른쪽→왼쪽). 바깥·리소스는 두 줄을 잇는 높이 76 상자이고, 노드 높이는 데이터에서 읽되(BoundaryNode 타입, 적지 않으면 32) 세로형은 height=\"32\"·글자 y+16 그대로다. JSX에 박혀 있던 경계 rect 둘과 곁말 여섯은 같은 좌표·같은 속성 순서의 groups·notes 배열로 옮기고, 선 색·rx는 groupLines, 글은 noteLabels로 두 배치가 함께 쓴다. wideGroups 2개·wideNodes 8개·widePaths 6개·곁말 자리 6개는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 셋(요청·응답·전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 17개는 고치지 않고 통과한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 81개·경로 66개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 10개(먼저 써서 6개 실패를 확인)를 더해 전체 1503개 통과(기존 1493개), build·lint·check-structure 통과."
+      "summary": "SgNaclBoundaryDiagram에 가로형(viewBox 0 0 440 232, 래퍼 w-full)을 더했다. 경계 그림을 한 줄로 낮게 접고 왕복을 두 줄로 편다(윗줄 요청 왼쪽→오른쪽, 아랫줄 응답 오른쪽→왼쪽). 바깥·리소스는 두 줄을 잇는 높이 76 상자이고, 노드 높이는 데이터에서 읽되(BoundaryNode 타입, 적지 않으면 32) 세로형은 height=\"32\"·글자 y+16 그대로다. JSX에 박혀 있던 경계 rect 둘과 곁말 여섯은 같은 좌표·같은 속성 순서의 groups·notes 배열로 옮기고, 선 색·rx는 groupLines, 글은 noteLabels로 두 배치가 함께 쓴다. wideGroups 2개·wideNodes 8개·widePaths 6개·곁말 자리 6개는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 셋(요청·응답·전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 17개는 고치지 않고 통과한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 81개·경로 66개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 10개(먼저 써서 6개 실패를 확인)를 더해 전체 1503개 통과(기존 1493개), build·lint·check-structure 통과.",
+      "completed_at": "2026-10-16T09:46:21+0900"
     },
     {
       "step": 5,
