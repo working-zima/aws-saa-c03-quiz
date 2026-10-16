@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import { visualsByTopicId } from '../../data'
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { DiagramFrame, type DiagramScenario } from './DiagramFrame'
 
 const text = visualsByTopicId.route53.diagrams['hybrid-dns']
@@ -46,6 +47,64 @@ const exampleNotes = [
   { id: 'aws-domain', x: 140, y: 332, node: 'phz' },
 ]
 
+// 프라이빗 호스팅 영역을 두 VPC에 잇는 연결선의 자리다.
+const attachments = [
+  { id: 'phz-vpc-a', x1: 100, y1: 260, x2: 100, y2: 284 },
+  { id: 'phz-vpc-b', x1: 180, y1: 260, x2: 180, y2: 284 },
+]
+
+// 가로형은 왼쪽에서 오른쪽으로 온프레미스 · Route 53 Resolver · VPC를 둔다.
+// 윗줄이 나가는 방향(아웃바운드), 아랫줄이 들어오는 방향(인바운드)이다. 선 색은 세로형 groups에서 id로 가져온다.
+const wideGroups = [
+  { id: 'onprem', x: 4, y: 24, width: 108, height: 144 },
+  { id: 'resolver', x: 124, y: 24, width: 140, height: 144 },
+  { id: 'vpc-a', x: 276, y: 24, width: 76, height: 76 },
+  { id: 'vpc-b', x: 360, y: 24, width: 76, height: 76 },
+]
+
+// 라벨과 색은 세로형 nodes에서 id로 가져온다. 프라이빗 호스팅 영역은 두 VPC 아래 어느 그룹에도 들지 않는 자리다.
+const wideNodes = [
+  { id: 'onprem-dns', x: 12, y: 46, width: 92 },
+  { id: 'onprem-server', x: 12, y: 124, width: 92 },
+  { id: 'outbound', x: 132, y: 46, width: 124 },
+  { id: 'inbound', x: 132, y: 124, width: 124 },
+  { id: 'ec2-a', x: 282, y: 46, width: 64 },
+  { id: 'ec2-b', x: 366, y: 46, width: 64 },
+  { id: 'phz', x: 284, y: 124, width: 140 },
+]
+
+// VPC B의 EC2는 VPC 박스 위 통로(y 16)로 VPC A를 넘고, Resolver와 VPC A 사이(x 270)로 내려와 VPC A의 경로와 합류한다.
+const widePaths: Record<string, string> = {
+  'ec2-a-outbound': 'M282 62 H256',
+  'ec2-b-outbound': 'M414 46 V16 H270 V62 H256',
+  'outbound-onprem-dns': 'M132 62 H104',
+  'onprem-server-inbound': 'M104 140 H132',
+  'inbound-phz': 'M256 140 H284',
+}
+
+// 곁말은 자리만 배치마다 다르다. 보이는 시나리오와 붙은 노드는 세로형 notes·exampleNotes에서 id로 가져온다.
+const wideNotes = [
+  { id: 'rule', x: 194, y: 96 },
+  { id: 'rule-vpc-a', x: 314, y: 94 },
+  { id: 'rule-vpc-b', x: 398, y: 94 },
+  { id: 'vpc-only', x: 354, y: 186 },
+]
+
+const wideExampleNotes = [
+  { id: 'corp-domain', x: 58, y: 96 },
+  { id: 'aws-domain', x: 354, y: 172 },
+]
+
+const wideAttachments = [
+  { id: 'phz-vpc-a', x1: 314, y1: 100, x2: 314, y2: 124 },
+  { id: 'phz-vpc-b', x1: 398, y1: 100, x2: 398, y2: 124 },
+]
+
+// 가로형 항목에 세로형 항목의 나머지 필드(색·시나리오·붙은 노드)를 id로 덧붙인다.
+function withTallFields<T extends { id: string }, W extends { id: string }>(wide: W[], tall: T[]): (T & W)[] {
+  return wide.map((item) => ({ ...tall.find(({ id }) => id === item.id)!, ...item }))
+}
+
 export const route53HybridDnsScenarios: DiagramScenario[] = [
   { id: 'outbound', nodes: ['ec2-a', 'outbound', 'onprem-dns'], paths: ['ec2-a-outbound', 'outbound-onprem-dns'] },
   { id: 'inbound', nodes: ['onprem-server', 'inbound', 'phz'], paths: ['onprem-server-inbound', 'inbound-phz'] },
@@ -64,6 +123,13 @@ export function Route53HybridDnsDiagram() {
   const [active, setActive] = useState<DiagramScenario | null>(null)
   const arrowId = `${useId()}-route53-hybrid-dns-arrow`
   const opacityOf = (id: string) => (active && !active.nodes.includes(id) ? 0.25 : 1)
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? withTallFields(wideGroups, groups) : groups
+  const layoutNodes = wide ? withTallFields(wideNodes, nodes) : nodes
+  const layoutPaths = wide ? widePaths : paths
+  const layoutNotes = wide ? withTallFields(wideNotes, notes) : notes
+  const layoutExampleNotes = wide ? withTallFields(wideExampleNotes, exampleNotes) : exampleNotes
+  const layoutAttachments = wide ? wideAttachments : attachments
 
   return (
     <DiagramFrame
@@ -75,15 +141,15 @@ export function Route53HybridDnsDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox="0 0 280 352">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 192' : '0 0 280 352'}>
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">
               <path className="fill-title" d="M0 0 L6 3 L0 6 Z" />
             </marker>
           </defs>
 
-          {groups.map((group) => (
+          {layoutGroups.map((group) => (
             <g key={group.id}>
               <rect data-group={group.id} className={`fill-none ${group.color}`} x={group.x} y={group.y} width={group.width} height={group.height} rx="6" strokeWidth="1" />
               <text data-group-label={group.id} x={group.x + 8} y={group.y + 14} className="fill-muted" fontSize="9">{text.groups![group.id]}</text>
@@ -91,14 +157,15 @@ export function Route53HybridDnsDiagram() {
           ))}
 
           {/* 요청 경로가 아니라 "이 VPC에 연결됨" 표시라 화살표 없이 정적으로 그린다. */}
-          <line data-attachment="phz-vpc-a" x1="100" y1="260" x2="100" y2="284" className="stroke-disabled" strokeWidth="1" opacity={opacityOf('phz')} />
-          <line data-attachment="phz-vpc-b" x1="180" y1="260" x2="180" y2="284" className="stroke-disabled" strokeWidth="1" opacity={opacityOf('phz')} />
+          {layoutAttachments.map((link) => (
+            <line key={link.id} data-attachment={link.id} x1={link.x1} y1={link.y1} x2={link.x2} y2={link.y2} className="stroke-disabled" strokeWidth="1" opacity={opacityOf('phz')} />
+          ))}
 
           {active?.paths.map((id) => (
             <path
               key={id}
               data-path={id}
-              d={paths[id]}
+              d={layoutPaths[id]}
               className="fill-none stroke-title"
               strokeWidth="2"
               strokeLinejoin="round"
@@ -106,7 +173,7 @@ export function Route53HybridDnsDiagram() {
             />
           ))}
 
-          {nodes.map((node) => (
+          {layoutNodes.map((node) => (
             <g key={node.id} data-node={node.id} opacity={opacityOf(node.id)}>
               <rect className={`fill-panel ${node.color}`} x={node.x} y={node.y} width={node.width} height="32" rx="4" strokeWidth="1.5" />
               <text className="fill-title" x={node.x + node.width / 2} y={node.y + 16} dominantBaseline="central" textAnchor="middle" fontSize="10">
@@ -115,12 +182,12 @@ export function Route53HybridDnsDiagram() {
             </g>
           ))}
 
-          {active && notes.filter((note) => note.scenarios.includes(active.id)).map((note) => (
+          {active && layoutNotes.filter((note) => note.scenarios.includes(active.id)).map((note) => (
             <text key={note.id} data-note={note.id} x={note.x} y={note.y} textAnchor="middle" className="fill-muted" fontSize="9">
               {text.notes![note.id]}
             </text>
           ))}
-          {exampleNotes.map((note) => (
+          {layoutExampleNotes.map((note) => (
             <text key={note.id} data-note={note.id} x={note.x} y={note.y} textAnchor="middle" className="fill-muted" fontSize="9" opacity={opacityOf(note.node)}>
               {text.notes![note.id]}
             </text>

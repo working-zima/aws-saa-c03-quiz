@@ -1,7 +1,8 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { Route53AliasDiagram, route53AliasScenarios, paths as aliasPaths } from './Route53AliasDiagram'
@@ -252,5 +253,287 @@ describe('Route53AliasDiagram', () => {
       }
     }
     expect(new Set(figures.map((figure) => figure.querySelector('marker')!.id)).size).toBe(2)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const pathEnds: Record<string, [string, string]> = {
+      'record-alb': ['record', 'alb'],
+      'alb-ec2': ['alb', 'ec2'],
+      'alb-ec2-new': ['alb', 'ec2-new'],
+      'record-ec2': ['record', 'ec2'],
+    }
+    const noteAnchors: Record<string, string> = {
+      replaced: 'start', 'public-ip': 'start', 'record-same': 'middle', 'record-edit': 'middle',
+    }
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    async function collectPaths() {
+      const found = new Map<string, string>()
+      for (const { label } of expectedScenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) found.set(path.getAttribute('data-path')!, path.getAttribute('d')!)
+      }
+      return found
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const groupBox = () => readBox(diagram().querySelector('[data-group="tg"]')!)
+
+    // 곁말 한 줄이 차지하는 상자. 글자 높이는 크기 9로 잡고, 정렬(text-anchor)에 따라 왼쪽 끝을 정한다.
+    function noteBox(note: Element) {
+      const width = estimateTextWidth(note.textContent!, 9)
+      const x = Number(note.getAttribute('x')), y = Number(note.getAttribute('y'))
+      const left = note.getAttribute('text-anchor') === 'start' ? x : x - width / 2
+      return { id: note.getAttribute('data-note')!, x: left, y: y - 9, width, height: 9 }
+    }
+
+    type Box = ReturnType<typeof readBox>
+    const overlaps = (a: Box, b: Box) =>
+      Math.min(a.x + a.width, b.x + b.width) > Math.max(a.x, b.x)
+      && Math.min(a.y + a.height, b.y + b.height) > Math.max(a.y, b.y)
+
+    const onEdge = (point: { x: number, y: number }, box: Box) => (
+      ((point.x === box.x || point.x === box.x + box.width) && point.y > box.y && point.y < box.y + box.height)
+      || ((point.y === box.y || point.y === box.y + box.height) && point.x > box.x && point.x < box.x + box.width)
+    )
+
+    // 직교 경로의 시작점과 끝점.
+    function endpoints(d: string) {
+      const [, x0, y0] = d.match(/^M(\d+) (\d+)/)!.map(Number)
+      let x = x0, y = y0
+      for (const [, cmd, n] of d.matchAll(/([HV])(\d+)/g)) {
+        if (cmd === 'H') x = Number(n); else y = Number(n)
+      }
+      return { start: { x: x0, y: y0 }, end: { x, y } }
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×136 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<Route53AliasDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 136')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<Route53AliasDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 256')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = [...(await collectPaths()).keys()].sort()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 136')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(['tg'])
+      expect(tallPaths).toEqual(Object.keys(aliasPaths).sort())
+      expect(tallPaths).toHaveLength(4)
+      expect([...(await collectPaths()).keys()].sort()).toEqual(tallPaths)
+    })
+
+    it('노드 넷과 대상 그룹의 rect가 모두 440×136 viewBox 안에 있다', () => {
+      render(<Route53AliasDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(5)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 136])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어가고 색은 세로형과 같다', () => {
+      render(<Route53AliasDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+        expect(node.querySelector('rect')).toHaveClass(id === 'record' ? 'stroke-diagram-managed' : 'stroke-diagram-resource')
+      }
+      const group = groupBox()
+      const groupLabel = within(diagram()).getByText('대상 그룹')
+      expect(diagram().querySelector('[data-group="tg"]')).toHaveClass('stroke-diagram-resource')
+      expect(diagram().querySelector('[data-group="tg"]')).toHaveAttribute('rx', '6')
+      expect(diagram().querySelector('[data-group="tg"]')).not.toHaveAttribute('stroke-dasharray')
+      expect(groupLabel).toHaveAttribute('font-size', '9')
+      expect(groupLabel).toHaveClass('fill-muted')
+      expect(Number(groupLabel.getAttribute('x'))).toBe(group.x + 8)
+      expect(Number(groupLabel.getAttribute('y'))).toBe(group.y + 16)
+      expect(Number(groupLabel.getAttribute('x')) + estimateTextWidth('대상 그룹', 9)).toBeLessThanOrEqual(group.x + group.width)
+    })
+
+    it.each(expectedScenarios)('$label은 세로형과 같은 노드·경로·곁말·캡션을 보이고 곁말은 노드와 겹치지 않는다', async (scenario) => {
+      const { container } = render(<Route53AliasDiagram />)
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      expect(diagram().querySelector('[data-group="tg"]')!.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path')).sort()).toEqual([...scenario.paths].sort())
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+      }
+      const visibleNotes = Array.from(diagram().querySelectorAll('[data-note]'))
+      expect(visibleNotes.map((note) => note.getAttribute('data-note')).sort()).toEqual([...scenario.notes].sort())
+      const nodeBoxes = Object.keys(labels).map(nodeBox)
+      for (const note of visibleNotes) {
+        const id = note.getAttribute('data-note')! as keyof typeof notes
+        expect(note.textContent).toBe(notes[id])
+        expect(note).toHaveAttribute('font-size', '9')
+        expect(note).toHaveClass('fill-muted')
+        expect(note.closest('[opacity]')).toBeNull()
+        expect(note).toHaveAttribute('text-anchor', noteAnchors[id])
+        expect(boxesOutsideViewBox([noteBox(note)], [0, 0, 440, 136]), id).toEqual([])
+        for (const box of nodeBoxes) expect(overlaps(noteBox(note), box), `${id}·${box.id}`).toBe(false)
+      }
+      const wording = visualsByTopicId.route53.diagrams['alias-record'].scenarios.find(({ id }) => id === scenario.id)!
+      expect(container.querySelector('figcaption')!.textContent).toBe(wording.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path], [data-note]')).toHaveLength(0)
+    })
+
+    it('경로 양 끝이 두 노드의 변에 닿는다', async () => {
+      render(<Route53AliasDiagram />)
+      const paths = await collectPaths()
+
+      for (const [id, [from, to]] of Object.entries(pathEnds)) {
+        const { start, end } = endpoints(paths.get(id)!)
+        expect(onEdge(start, nodeBox(from)), `${id} 시작`).toBe(true)
+        expect(onEdge(end, nodeBox(to)), `${id} 끝`).toBe(true)
+      }
+    })
+
+    // 세로형은 도메인 이름과 ALB를 대상 그룹 위에 두지만, 가로형은 왼쪽에서 오른쪽으로 흐른다.
+    it('EC2 둘은 대상 그룹 안에, 도메인 이름과 ALB는 대상 그룹 왼쪽에 겹치지 않게 둔다', () => {
+      render(<Route53AliasDiagram />)
+      const group = groupBox()
+      const ec2 = nodeBox('ec2'), newEc2 = nodeBox('ec2-new')
+
+      expect(boxesOutsideViewBox([ec2, newEc2], [group.x, group.y, group.width, group.height])).toEqual([])
+      for (const id of ['record', 'alb']) {
+        expect(nodeBox(id).x + nodeBox(id).width, id).toBeLessThan(group.x)
+        expect(overlaps(nodeBox(id), group), id).toBe(false)
+      }
+      expect(nodeBox('record').x + nodeBox('record').width).toBeLessThan(nodeBox('alb').x)
+      expect(newEc2.y + newEc2.height).toBeLessThan(ec2.y)
+      const groupLabel = within(diagram()).getByText('대상 그룹')
+      expect(groupLabel.closest('[opacity]')).toBeNull()
+      expect(Number(groupLabel.getAttribute('y')) - 9).toBeGreaterThan(group.y)
+      expect(Number(groupLabel.getAttribute('y'))).toBeLessThan(newEc2.y)
+    })
+
+    it('공용 IP 52.123.25.11 곁말은 공용 IP에 직접에서만 대상 그룹 안에 보인다', async () => {
+      render(<Route53AliasDiagram />)
+      expect(diagram().querySelector('[data-note="public-ip"]')).toBeNull()
+      for (const label of ['별칭 레코드', '인스턴스 교체']) {
+        await selectScenario(label)
+        expect(diagram().querySelector('[data-note="public-ip"]')).toBeNull()
+      }
+      await selectScenario('공용 IP에 직접')
+      const note = diagram().querySelector('[data-note="public-ip"]')!
+      expect(note.textContent).toBe('공용 IP 52.123.25.11')
+      const group = groupBox()
+      const box = noteBox(note)
+      expect(box.x).toBeGreaterThan(group.x)
+      expect(box.x + box.width).toBeLessThan(group.x + group.width)
+      expect(box.y).toBeGreaterThan(group.y)
+      expect(box.y + box.height).toBeLessThan(group.y + group.height)
+      await selectScenario('전체')
+      expect(diagram().querySelector('[data-note="public-ip"]')).toBeNull()
+    })
+
+    // 세로형은 교체됨·공용 IP 곁말을 EC2 아래 가운데에, 레코드 곁말을 도메인 이름 오른쪽에 둔다.
+    it('교체됨·공용 IP 곁말은 기존 EC2 오른쪽에, 레코드 곁말은 도메인 이름 아래에 둔다', async () => {
+      render(<Route53AliasDiagram />)
+      const ec2 = nodeBox('ec2'), record = nodeBox('record')
+
+      for (const label of ['인스턴스 교체', '공용 IP에 직접']) {
+        await selectScenario(label)
+        for (const note of diagram().querySelectorAll('[data-note]')) {
+          const id = note.getAttribute('data-note')!
+          const box = noteBox(note)
+          if (id === 'replaced' || id === 'public-ip') {
+            expect(box.x, id).toBeGreaterThan(ec2.x + ec2.width)
+            expect(box.y, id).toBeGreaterThan(ec2.y)
+            expect(box.y + box.height, id).toBeLessThan(ec2.y + ec2.height)
+          } else {
+            expect(box.x, id).toBeGreaterThan(record.x)
+            expect(box.x + box.width, id).toBeLessThan(record.x + record.width)
+            expect(box.y, id).toBeGreaterThan(record.y + record.height)
+          }
+        }
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<Route53AliasDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 256')
+      await selectScenario('공용 IP에 직접')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '공용 IP에 직접' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(ids('[data-path]', 'data-path')).toEqual(['record-ec2'])
+      expect(ids('[data-note]', 'data-note')).toEqual(['public-ip', 'record-edit'])
+    })
   })
 })

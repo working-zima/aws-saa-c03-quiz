@@ -1,5 +1,22 @@
 import { useId, useState } from 'react'
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { DiagramFrame, type DiagramScenario } from './DiagramFrame'
+
+// 그룹의 라벨과 선 모양은 두 배치가 함께 쓴다. 온프레미스·리전은 긴 점선, VPC는 잔 점선이다.
+// 라벨은 두 배치 모두 박스 왼쪽 위(x + 10, y + 14)에 선다.
+const groupLines: Record<string, { label: string, rx: number, dash: string }> = {
+  'onprem-zone': { label: '온프레미스', rx: 6, dash: '6 4' },
+  region: { label: '리전', rx: 6, dash: '6 4' },
+  'vpc-a': { label: 'VPC A', rx: 4, dash: '2 3' },
+  'vpc-b': { label: 'VPC B', rx: 4, dash: '2 3' },
+}
+
+const groups = [
+  { id: 'onprem-zone', x: 4, y: 4, width: 164, height: 108 },
+  { id: 'region', x: 4, y: 188, width: 272, height: 344 },
+  { id: 'vpc-a', x: 12, y: 304, width: 256, height: 104 },
+  { id: 'vpc-b', x: 12, y: 416, width: 256, height: 104 },
+]
 
 // 이 도식 전용 고정 좌표다. 온프레미스 · 인터넷과 전용선 층 · 리전 순으로 내려온다.
 const nodes = [
@@ -32,6 +49,49 @@ const paths: Record<string, string> = {
   'internet-vpca': 'M72 164 V176 H8 V380 H24',
   'onprem-vgwa': 'M12 40 H8 V340 H24',
   'onprem-vgwb': 'M160 40 H174 V124 H272 V452 H256',
+}
+
+// 가로형도 온프레미스 · 인터넷과 전용선 층 · 리전 순으로 내려오고, 리전 안에서 두 VPC를 나란히 둔다.
+// Transit Gateway와 Direct Connect Gateway는 리전 윗줄에 두 VPC 사이를 비우고 선다.
+const wideGroups = [
+  { id: 'onprem-zone', x: 4, y: 4, width: 264, height: 60 },
+  { id: 'region', x: 4, y: 136, width: 432, height: 180 },
+  { id: 'vpc-a', x: 12, y: 204, width: 200, height: 104 },
+  { id: 'vpc-b', x: 228, y: 204, width: 200, height: 104 },
+]
+
+// 라벨과 색은 세로형 nodes에서 id로 가져온다.
+const wideNodes = [
+  { id: 'onprem', x: 12, y: 24, width: 128 },
+  { id: 'cgw', x: 152, y: 24, width: 108 },
+  { id: 'remote', x: 340, y: 24, width: 88 },
+  { id: 'dxloc', x: 16, y: 84, width: 120 },
+  { id: 'internet', x: 170, y: 84, width: 72 },
+  { id: 'tgw', x: 168, y: 156, width: 104 },
+  { id: 'dxgw', x: 288, y: 156, width: 140 },
+  { id: 'vgwa', x: 20, y: 224, width: 184 },
+  { id: 'vpca', x: 20, y: 264, width: 184 },
+  { id: 'vgwb', x: 236, y: 224, width: 184 },
+  { id: 'vpcb', x: 236, y: 264, width: 184 },
+]
+
+// 꺾이는 경로는 왼쪽 바깥 통로(x 8), 두 VPC 사이 통로(x 216·224), 오른쪽 바깥 통로(x 432),
+// 인터넷 층 아래 띠(y 128)를 쓴다. 두 VPC를 잇는 경로는 여전히 없다.
+const widePaths: Record<string, string> = {
+  'onprem-cgw': 'M140 40 H152',
+  'cgw-internet': 'M206 56 V84',
+  'internet-vgwa': 'M206 116 V128 H140 V224',
+  'onprem-dxloc': 'M76 56 V84',
+  'dxloc-vgwa': 'M76 116 V224',
+  'onprem-tgw': 'M12 40 H8 V172 H168',
+  'dxloc-dxgw': 'M76 116 V128 H358 V156',
+  'dxgw-tgw': 'M288 172 H272',
+  'tgw-vpca': 'M216 188 V280 H204',
+  'tgw-vpcb': 'M224 188 V280 H236',
+  'remote-internet': 'M384 56 V100 H242',
+  'internet-vpca': 'M206 116 V128 H8 V280 H20',
+  'onprem-vgwa': 'M12 40 H8 V240 H20',
+  'onprem-vgwb': 'M140 32 H146 V128 H432 V240 H420',
 }
 
 // 사실 근거는 step 2에 지정된 개념 본문이다. 캡션은 그림이 말하지 못하는 조건과 제약을 쓴다.
@@ -72,6 +132,10 @@ const scenarios: DiagramScenario[] = [
 export function HybridPathsDiagram() {
   const [active, setActive] = useState<DiagramScenario | null>(null)
   const arrowId = `${useId()}-hybrid-arrow`
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? wideGroups : groups
+  const layoutNodes = wide ? wideNodes.map((node) => ({ ...nodes.find(({ id }) => id === node.id)!, ...node })) : nodes
+  const layoutPaths = wide ? widePaths : paths
 
   return (
     <DiagramFrame
@@ -82,8 +146,8 @@ export function HybridPathsDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label="온프레미스 연결 경로" className="block h-auto w-full" role="img" viewBox="0 0 280 540">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label="온프레미스 연결 경로" className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 320' : '0 0 280 540'}>
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">
               <path className="fill-title" d="M0 0 L6 3 L0 6 Z" />
@@ -91,23 +155,30 @@ export function HybridPathsDiagram() {
           </defs>
 
           <g className="fill-none stroke-disabled" strokeWidth="1">
-            <rect data-group="onprem-zone" x="4" y="4" width="164" height="108" rx="6" strokeDasharray="6 4" />
-            <rect data-group="region" x="4" y="188" width="272" height="344" rx="6" strokeDasharray="6 4" />
-            <rect data-group="vpc-a" x="12" y="304" width="256" height="104" rx="4" strokeDasharray="2 3" />
-            <rect data-group="vpc-b" x="12" y="416" width="256" height="104" rx="4" strokeDasharray="2 3" />
+            {layoutGroups.map((group) => (
+              <rect
+                key={group.id}
+                data-group={group.id}
+                x={group.x}
+                y={group.y}
+                width={group.width}
+                height={group.height}
+                rx={groupLines[group.id].rx}
+                strokeDasharray={groupLines[group.id].dash}
+              />
+            ))}
           </g>
           <g className="fill-muted" fontSize="9">
-            <text x="14" y="18">온프레미스</text>
-            <text x="14" y="202">리전</text>
-            <text x="22" y="318">VPC A</text>
-            <text x="22" y="430">VPC B</text>
+            {layoutGroups.map((group) => (
+              <text key={group.id} x={group.x + 10} y={group.y + 14}>{groupLines[group.id].label}</text>
+            ))}
           </g>
 
           {active?.paths.map((id) => (
             <path
               key={id}
               data-path={id}
-              d={paths[id]}
+              d={layoutPaths[id]}
               className="fill-none stroke-title"
               strokeWidth="2"
               strokeLinejoin="round"
@@ -115,7 +186,7 @@ export function HybridPathsDiagram() {
             />
           ))}
 
-          {nodes.map((node) => (
+          {layoutNodes.map((node) => (
             <g key={node.id} data-node={node.id} opacity={active && !active.nodes.includes(node.id) ? 0.25 : 1}>
               <rect className={`fill-panel ${node.color}`} x={node.x} y={node.y} width={node.width} height="32" rx="4" strokeWidth="1.5" />
               <text className="fill-title" x={node.x + node.width / 2} y={node.y + 16} dominantBaseline="central" textAnchor="middle" fontSize="10">

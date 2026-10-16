@@ -1,8 +1,9 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
-import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
+import { boxesOutsideViewBox, estimateTextWidth, type SvgBox } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { DriftScopeDiagram, driftScopeScenarios } from './DriftScopeDiagram'
 
@@ -234,5 +235,298 @@ describe('DriftScopeDiagram', () => {
       }
     }
     expect(new Set(figures.map((figure) => figure.querySelector('marker')!.id)).size).toBe(2)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const wideNotes = {
+      'not-seen': { x: 282, y: 118 },
+      'all-resources': { x: 292, y: 22 },
+    }
+    const widePaths: Record<string, string> = {
+      'template-stack': 'M72 70 H106',
+      'drift-stack': 'M316 40 H292',
+      'config-stack': 'M316 104 H304 V80 H292',
+      'config-outside': 'M316 120 H292',
+    }
+    const resources = ['stack-a', 'stack-b', 'team-a', 'team-b']
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    async function collectPathIds() {
+      const found = new Set<string>()
+      for (const { label } of expectedScenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) found.add(path.getAttribute('data-path')!)
+      }
+      return [...found].sort()
+    }
+
+    // 직교 경로를 선분 목록으로 편다. M/H/V만 나온다.
+    function segments(d: string) {
+      const result: { x1: number, y1: number, x2: number, y2: number }[] = []
+      let x = 0
+      let y = 0
+      for (const [, command, first, second] of d.matchAll(/([MHV])(-?\d+)(?: (-?\d+))?/gu)) {
+        if (command === 'M') { x = Number(first); y = Number(second); continue }
+        const next = command === 'H' ? { x: Number(first), y } : { x, y: Number(first) }
+        result.push({ x1: x, y1: y, x2: next.x, y2: next.y })
+        x = next.x
+        y = next.y
+      }
+      return result
+    }
+
+    // 글자가 차지하는 상자. 높이는 글자 크기 9를 기준선 위로 잡는다.
+    function textBox(text: Element) {
+      const x = Number(text.getAttribute('x'))
+      const y = Number(text.getAttribute('y'))
+      const width = estimateTextWidth(text.textContent!, 9)
+      const anchor = text.getAttribute('text-anchor')
+      const left = anchor === 'end' ? x - width : anchor === 'middle' ? x - width / 2 : x
+      return { id: text.getAttribute('data-note') ?? text.getAttribute('data-group-label')!, x: left, y: y - 9, width, height: 9 }
+    }
+
+    // 경계에 닿는 것까지 겹침으로 센다.
+    function touches(a: SvgBox, b: SvgBox) {
+      return a.x <= b.x + b.width && b.x <= a.x + a.width && a.y <= b.y + b.height && b.y <= a.y + a.height
+    }
+
+    function overlaps(a: SvgBox, b: SvgBox) {
+      return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+    }
+
+    function nodeBox(id: string) {
+      return readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    }
+
+    function groupBox(id: string) {
+      return readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+    }
+
+    function frameOf(id: string) {
+      const group = groupBox(id)
+      return [group.x, group.y, group.width, group.height] as [number, number, number, number]
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×184 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<DriftScopeDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 184')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<DriftScopeDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 276')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 184')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(Object.keys(groupLabels).sort())
+      expect(tallPaths).toEqual(Object.keys(expectedPaths).sort())
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('그룹 셋과 노드 일곱의 모든 rect가 440×184 viewBox 안에 있다', () => {
+      render(<DriftScopeDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(10)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 184])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<DriftScopeDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const rect = node.querySelector('rect')!
+        const box = readBox(rect)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+        expect(rect).toHaveClass(id === 'template' ? 'stroke-disabled' : ['drift', 'config'].includes(id) ? 'stroke-diagram-managed' : 'stroke-diagram-resource')
+      }
+
+      for (const [id, wording] of Object.entries(groupLabels)) {
+        const box = groupBox(id)
+        const groupLabel = diagram().querySelector(`[data-group-label="${id}"]`)!
+        expect(groupLabel.textContent).toBe(wording)
+        expect(groupLabel).toHaveAttribute('font-size', '9')
+        const x = Number(groupLabel.getAttribute('x'))
+        expect(x, wording).toBe(box.x + 10)
+        expect(Number(groupLabel.getAttribute('y')), wording).toBe(box.y + 14)
+        expect(x + estimateTextWidth(wording, 9), wording).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(expectedScenarios)('$label: 세로형과 같은 노드·경로·곁말·캡션을 보이고 곁말은 viewBox 안에서 노드·그룹 라벨과 겹치지 않는다', async (scenario) => {
+      const { container } = render(<DriftScopeDiagram />)
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group], [data-group-label]')) expect(group.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(scenario.paths)
+      for (const path of paths) {
+        expect(path).toHaveAttribute('d', widePaths[path.getAttribute('data-path')!])
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+        expect(path.closest('[opacity]')).toBeNull()
+      }
+      const nodeBoxes = Array.from(diagram().querySelectorAll('[data-node] rect'), readBox)
+      const groupLabelBoxes = Array.from(diagram().querySelectorAll('[data-group-label]'), textBox)
+      const shownNotes = Array.from(diagram().querySelectorAll('[data-note]'))
+      expect(shownNotes.map((note) => note.getAttribute('data-note'))).toEqual(scenario.notes)
+      for (const note of shownNotes) {
+        const id = note.getAttribute('data-note')! as keyof typeof wideNotes
+        expect(note.textContent).toBe(notes[id].label)
+        expect(note).toHaveAttribute('x', String(wideNotes[id].x))
+        expect(note).toHaveAttribute('y', String(wideNotes[id].y))
+        expect(note).toHaveAttribute('text-anchor', 'end')
+        expect(note).toHaveAttribute('font-size', '9')
+        expect(note).toHaveClass('fill-muted')
+        expect(note.closest('[opacity]')).toBeNull()
+        const box = textBox(note)
+        expect(boxesOutsideViewBox([box], [0, 0, 440, 184]), id).toEqual([])
+        for (const label of groupLabelBoxes) expect(overlaps(box, label), `${id} ↔ ${label.id}`).toBe(false)
+        for (const node of nodeBoxes) expect(overlaps(box, node), `${id} ↔ ${node.id}`).toBe(false)
+      }
+      expect(container.querySelector('figcaption')!.textContent).toBe(scenario.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'false')
+    })
+
+    it('살피는 경로 셋은 살피는 노드의 왼쪽 변에서 나와 리소스 노드가 아니라 자기 그룹의 오른쪽 변에서 끝난다', async () => {
+      render(<DriftScopeDiagram />)
+      const watches: Record<string, [string, string, string]> = {
+        'drift-stack': ['드리프트 감지', 'drift', 'stack'],
+        'config-stack': ['AWS Config', 'config', 'stack'],
+        'config-outside': ['AWS Config', 'config', 'outside'],
+      }
+
+      for (const [pathId, [label, from, groupId]] of Object.entries(watches)) {
+        await selectScenario(label)
+        const list = segments(diagram().querySelector(`[data-path="${pathId}"]`)!.getAttribute('d')!)
+        const first = list[0]
+        const last = list[list.length - 1]
+        const source = nodeBox(from)
+        const group = groupBox(groupId)
+
+        expect(first.x1, `${pathId} 시작`).toBe(source.x)
+        expect(first.y1, `${pathId} 시작`).toBeGreaterThan(source.y)
+        expect(first.y1, `${pathId} 시작`).toBeLessThan(source.y + source.height)
+        expect(last.y2, `${pathId} 끝`).toBe(last.y1)
+        expect(last.x2, `${pathId} 끝`).toBeLessThan(last.x1)
+        expect(last.x2, `${pathId} 끝`).toBe(group.x + group.width)
+        expect(last.y2, `${pathId} 끝`).toBeGreaterThan(group.y)
+        expect(last.y2, `${pathId} 끝`).toBeLessThan(group.y + group.height)
+        for (const { x1, y1, x2, y2 } of list) {
+          const line = { id: `(${x1},${y1})-(${x2},${y2})`, x: Math.min(x1, x2), y: Math.min(y1, y2), width: Math.abs(x2 - x1), height: Math.abs(y2 - y1) }
+          for (const id of resources) expect(touches(line, nodeBox(id)), `${pathId} ${line.id} ↔ ${id}`).toBe(false)
+        }
+      }
+    })
+
+    it('배포 경로는 템플릿 오른쪽 변에서 나와 스택 안 리소스의 왼쪽 변에 닿는다', async () => {
+      render(<DriftScopeDiagram />)
+      await selectScenario('드리프트 감지')
+      const list = segments(diagram().querySelector('[data-path="template-stack"]')!.getAttribute('d')!)
+      const template = nodeBox('template')
+      const target = nodeBox('stack-a')
+      const last = list[list.length - 1]
+
+      expect(list[0].x1).toBe(template.x + template.width)
+      expect(list[0].y1).toBeGreaterThan(template.y)
+      expect(list[0].y1).toBeLessThan(template.y + template.height)
+      expect(last.x2).toBe(target.x)
+      expect(last.y2).toBeGreaterThan(target.y)
+      expect(last.y2).toBeLessThan(target.y + target.height)
+    })
+
+    it('템플릿·드리프트 감지·AWS Config는 계정 박스 밖이고 리소스 넷은 자기 그룹 안이다', () => {
+      render(<DriftScopeDiagram />)
+      const account = groupBox('account')
+
+      for (const id of ['template', 'drift', 'config']) {
+        expect(overlaps(nodeBox(id), account), id).toBe(false)
+      }
+      expect(boxesOutsideViewBox([groupBox('stack'), groupBox('outside')], frameOf('account'))).toEqual([])
+      expect(overlaps(groupBox('stack'), groupBox('outside'))).toBe(false)
+      for (const [groupId, memberIds] of Object.entries({ stack: ['stack-a', 'stack-b'], outside: ['team-a', 'team-b'] })) {
+        expect(boxesOutsideViewBox(memberIds.map(nodeBox), frameOf(groupId)), groupId).toEqual([])
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<DriftScopeDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 276')
+      await selectScenario('AWS Config')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: 'AWS Config' })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'false')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(['config-stack', 'config-outside'])
+      for (const path of paths) expect(path).toHaveAttribute('d', widePaths[path.getAttribute('data-path')!])
+      expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note'))).toEqual(['all-resources'])
+    })
   })
 })

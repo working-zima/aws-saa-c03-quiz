@@ -1,7 +1,8 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { Route53HybridDnsDiagram, route53HybridDnsScenarios, paths as hybridPaths } from './Route53HybridDnsDiagram'
@@ -351,5 +352,280 @@ describe('Route53HybridDnsDiagram', () => {
       }
     }
     expect(new Set(figures.map((figure) => figure.querySelector('marker')!.id)).size).toBe(2)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const outboundPaths = ['ec2-a-outbound', 'ec2-b-outbound', 'outbound-onprem-dns']
+    const inboundPaths = ['onprem-server-inbound', 'inbound-phz']
+    const pathEnds: Record<string, [string, string]> = {
+      'ec2-a-outbound': ['ec2-a', 'outbound'],
+      'ec2-b-outbound': ['ec2-b', 'outbound'],
+      'outbound-onprem-dns': ['outbound', 'onprem-dns'],
+      'onprem-server-inbound': ['onprem-server', 'inbound'],
+      'inbound-phz': ['inbound', 'phz'],
+    }
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    async function collectPaths() {
+      const found = new Map<string, string>()
+      for (const { label } of expectedScenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) found.set(path.getAttribute('data-path')!, path.getAttribute('d')!)
+      }
+      return found
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const groupBox = (id: string) => readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+
+    // 가운데 정렬한 곁말 한 줄이 차지하는 상자. 글자 높이는 크기 9로 잡는다.
+    function noteBox(note: Element) {
+      const halfWidth = estimateTextWidth(note.textContent!, 9) / 2
+      const x = Number(note.getAttribute('x')), y = Number(note.getAttribute('y'))
+      return { id: note.getAttribute('data-note')!, x: x - halfWidth, y: y - 9, width: halfWidth * 2, height: 9 }
+    }
+
+    const onEdge = (point: { x: number, y: number }, box: Box) => (
+      ((point.x === box.x || point.x === box.x + box.width) && point.y > box.y && point.y < box.y + box.height)
+      || ((point.y === box.y || point.y === box.y + box.height) && point.x > box.x && point.x < box.x + box.width)
+    )
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×192 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<Route53HybridDnsDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 192')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<Route53HybridDnsDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 352')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = [...(await collectPaths()).keys()].sort()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 192')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(Object.keys(groups).sort())
+      expect(tallPaths).toEqual(Object.keys(hybridPaths).sort())
+      expect(tallPaths).toHaveLength(5)
+      expect([...(await collectPaths()).keys()].sort()).toEqual(tallPaths)
+    })
+
+    it('노드 일곱과 그룹 넷의 rect가 모두 440×192 viewBox 안에 있다', () => {
+      render(<Route53HybridDnsDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(11)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 192])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어가고 색은 세로형과 같다', () => {
+      render(<Route53HybridDnsDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+        expect(node.querySelector('rect')).toHaveClass(nodeColors[id])
+      }
+      for (const [id, label] of Object.entries(groups)) {
+        const box = groupBox(id)
+        const groupLabel = diagram().querySelector(`[data-group-label="${id}"]`)!
+        expect(diagram().querySelector(`[data-group="${id}"]`)).toHaveClass(groupColors[id])
+        expect(diagram().querySelector(`[data-group="${id}"]`)).toHaveAttribute('rx', '6')
+        expect(groupLabel.textContent).toBe(label)
+        expect(groupLabel).toHaveAttribute('font-size', '9')
+        expect(groupLabel).toHaveClass('fill-muted')
+        const x = Number(groupLabel.getAttribute('x'))
+        const y = Number(groupLabel.getAttribute('y'))
+        expect(x, label).toBe(box.x + 8)
+        expect(y, label).toBe(box.y + 14)
+        expect(x + estimateTextWidth(label, 9), label).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(expectedScenarios)('$label은 세로형과 같은 노드·경로·곁말·캡션을 보이고 곁말은 노드와 겹치지 않는다', async (scenario) => {
+      const { container } = render(<Route53HybridDnsDiagram />)
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) expect(group.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path')).sort()).toEqual([...scenario.paths].sort())
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+      }
+      for (const link of diagram().querySelectorAll('[data-attachment]')) {
+        expect(link).toHaveAttribute('opacity', scenario.nodes.includes('phz') ? '1' : '0.25')
+      }
+      const visibleNotes = Array.from(diagram().querySelectorAll('[data-note]'))
+      expect(visibleNotes.map((note) => note.getAttribute('data-note')).sort()).toEqual([...scenario.notes].sort())
+      const nodeBoxes = Object.keys(labels).map(nodeBox)
+      for (const note of visibleNotes) {
+        const id = note.getAttribute('data-note')! as keyof typeof notes
+        expect(note.textContent).toBe(notes[id])
+        expect(note).toHaveAttribute('font-size', '9')
+        expect(note).toHaveClass('fill-muted')
+        expect(note).toHaveAttribute('text-anchor', 'middle')
+        expect(boxesOutsideViewBox([noteBox(note)], [0, 0, 440, 192]), id).toEqual([])
+        for (const box of nodeBoxes) expect(overlaps(noteBox(note), box), `${id}·${box.id}`).toBe(false)
+      }
+      const wording = visualsByTopicId.route53.diagrams['hybrid-dns'].scenarios.find(({ id }) => id === scenario.id)!
+      expect(container.querySelector('figcaption')!.textContent).toBe(wording.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(ids('[data-note]', 'data-note')).toEqual(['aws-domain', 'corp-domain'])
+    })
+
+    // 세로형은 아웃바운드가 위로, 인바운드가 아래로 가지만 가로형은 온프레미스가 왼쪽이다.
+    it('아웃바운드 경로는 온프레미스 쪽(왼쪽)으로, 인바운드 경로는 오른쪽으로 향하고 양 끝이 두 노드의 변에 닿는다', async () => {
+      render(<Route53HybridDnsDiagram />)
+      const paths = await collectPaths()
+
+      for (const id of outboundPaths) {
+        const { start, end } = endpoints(paths.get(id)!)
+        expect(end.x, id).toBeLessThan(start.x)
+      }
+      for (const id of inboundPaths) {
+        const { start, end } = endpoints(paths.get(id)!)
+        expect(end.x, id).toBeGreaterThan(start.x)
+      }
+      for (const [id, [from, to]] of Object.entries(pathEnds)) {
+        const { start, end } = endpoints(paths.get(id)!)
+        expect(onEdge(start, nodeBox(from)), `${id} 시작`).toBe(true)
+        expect(onEdge(end, nodeBox(to)), `${id} 끝`).toBe(true)
+      }
+    })
+
+    // 세로형은 규칙 연결 곁말을 VPC 그룹 라벨 옆에 두지만, 가로형 VPC 박스는 좁아 자기 EC2 아래에 둔다.
+    it('규칙 연결 곁말은 각 VPC 그룹 안, 자기 EC2 아래에 있다', async () => {
+      render(<Route53HybridDnsDiagram />)
+      await selectScenario('규칙 공유')
+
+      for (const [noteId, groupId, ec2Id] of [['rule-vpc-a', 'vpc-a', 'ec2-a'], ['rule-vpc-b', 'vpc-b', 'ec2-b']]) {
+        const note = noteBox(diagram().querySelector(`[data-note="${noteId}"]`)!)
+        const group = groupBox(groupId)
+        const ec2 = nodeBox(ec2Id)
+        expect(note.x, noteId).toBeGreaterThan(group.x)
+        expect(note.x + note.width, noteId).toBeLessThan(group.x + group.width)
+        expect(note.y, noteId).toBeGreaterThan(ec2.y + ec2.height)
+        expect(note.y + note.height, noteId).toBeLessThanOrEqual(group.y + group.height)
+      }
+    })
+
+    it('노드는 자기 그룹 안에 있고 엔드포인트는 VPC와, 프라이빗 호스팅 영역은 어느 그룹과도 겹치지 않는다', () => {
+      render(<Route53HybridDnsDiagram />)
+      const inside = (nodeId: string, groupId: string) => {
+        const g = groupBox(groupId)
+        expect(boxesOutsideViewBox([nodeBox(nodeId)], [g.x, g.y, g.width, g.height]), `${nodeId} ⊂ ${groupId}`).toEqual([])
+      }
+
+      inside('onprem-dns', 'onprem')
+      inside('onprem-server', 'onprem')
+      inside('outbound', 'resolver')
+      inside('inbound', 'resolver')
+      inside('ec2-a', 'vpc-a')
+      inside('ec2-b', 'vpc-b')
+      for (const endpoint of ['outbound', 'inbound']) {
+        for (const vpc of ['vpc-a', 'vpc-b']) expect(overlaps(nodeBox(endpoint), groupBox(vpc)), `${endpoint}·${vpc}`).toBe(false)
+      }
+      for (const id of Object.keys(groups)) expect(overlaps(nodeBox('phz'), groupBox(id)), `phz·${id}`).toBe(false)
+      expect(nodeBox('outbound').y + nodeBox('outbound').height).toBeLessThan(nodeBox('inbound').y)
+      for (const [link, vpc] of [['phz-vpc-a', 'vpc-a'], ['phz-vpc-b', 'vpc-b']]) {
+        const line = diagram().querySelector(`[data-attachment="${link}"]`)!
+        const g = groupBox(vpc)
+        const phz = nodeBox('phz')
+        const x = Number(line.getAttribute('x1'))
+        expect(line.getAttribute('x2'), link).toBe(line.getAttribute('x1'))
+        expect(x, link).toBeGreaterThan(Math.max(g.x, phz.x))
+        expect(x, link).toBeLessThan(Math.min(g.x + g.width, phz.x + phz.width))
+        expect(Number(line.getAttribute('y1')), link).toBe(g.y + g.height)
+        expect(Number(line.getAttribute('y2')), link).toBe(phz.y)
+        expect(line).not.toHaveAttribute('marker-end')
+      }
+    })
+
+    it('프라이빗 호스팅 영역 시나리오에서 vpc-only와 aws-domain 두 줄이 겹치지 않는다', async () => {
+      render(<Route53HybridDnsDiagram />)
+      await selectScenario('프라이빗 호스팅 영역')
+      const y = (id: string) => Number(diagram().querySelector(`[data-note="${id}"]`)!.getAttribute('y'))
+      expect(Math.abs(y('vpc-only') - y('aws-domain'))).toBeGreaterThanOrEqual(9)
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<Route53HybridDnsDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 352')
+      await selectScenario('규칙 공유')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '규칙 공유' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(ids('[data-path]', 'data-path')).toEqual([...outboundPaths].sort())
+      expect(ids('[data-note]', 'data-note')).toEqual(['aws-domain', 'corp-domain', 'rule', 'rule-vpc-a', 'rule-vpc-b'])
+    })
   })
 })

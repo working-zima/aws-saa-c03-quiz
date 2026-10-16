@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
@@ -253,5 +254,243 @@ describe('EdgeToOriginDiagram', () => {
     for (const svg of container.querySelectorAll('svg')) {
       expect(svg.querySelector('[data-path]')).toHaveAttribute('marker-end', `url(#${svg.querySelector('marker')!.id})`)
     }
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const routes = [
+      { label: '엣지 캐시 적중', nodes: ['viewer', 'cf'], paths: ['viewer-cf'] },
+      { label: 'ALB 오리진', nodes: ['viewer', 'cf', 'alb', 'ec2'], paths: ['viewer-cf', 'cf-alb', 'alb-ec2'] },
+      { label: 'S3 오리진', nodes: ['viewer', 'cf', 's3'], paths: ['viewer-cf', 'cf-s3'] },
+      { label: '온프레미스 오리진', nodes: ['viewer', 'cf', 'onpremapi'], paths: ['viewer-cf', 'cf-onpremapi'] },
+      { label: 'Global Accelerator', nodes: ['viewer', 'ga', 'nlba'], paths: ['viewer-ga', 'ga-nlba'] },
+      { label: '리전 장애 조치', nodes: ['viewer', 'ga', 'nlbb'], paths: ['viewer-ga', 'ga-nlbb'] },
+    ]
+    const groupLabels = { edge: '엣지 로케이션', 'region-a': '리전 A', 'region-b': '리전 B' }
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    async function collectPaths() {
+      const found = new Map<string, string>()
+      for (const { label } of routes) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) found.set(path.getAttribute('data-path')!, path.getAttribute('d')!)
+      }
+      return found
+    }
+
+    const inside = (id: string, group: string) => {
+      const box = groupBox(group)
+      return boxesOutsideViewBox([nodeBox(id)], [box.x, box.y, box.width, box.height]).length === 0
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×260 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<EdgeToOriginDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 260')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<EdgeToOriginDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 480')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = [...(await collectPaths()).keys()].sort()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 260')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(Object.keys(groupLabels).sort())
+      expect(tallPaths).toHaveLength(8)
+      expect([...(await collectPaths()).keys()].sort()).toEqual(tallPaths)
+    })
+
+    it('노드 10개와 그룹 박스 셋의 rect가 모두 440×260 viewBox 안에 있다', () => {
+      render(<EdgeToOriginDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(13)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 260])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<EdgeToOriginDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const text = diagram().querySelector(`[data-node="${id}"] text`)!
+        expect(text.textContent).toBe(label)
+        expect(text).toHaveAttribute('font-size', '10')
+        expect(nodeBox(id).height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(nodeBox(id).width)
+      }
+
+      for (const [id, label] of Object.entries(groupLabels)) {
+        const box = groupBox(id)
+        const text = screen.getByText(label)
+        const x = Number(text.getAttribute('x'))
+        const y = Number(text.getAttribute('y'))
+        expect(text.closest('[font-size="9"]'), label).not.toBeNull()
+        expect(x, label).toBeGreaterThan(box.x)
+        expect(y, label).toBeGreaterThan(box.y)
+        expect(x + estimateTextWidth(label, 9), label).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(routes)('$label은 세로형과 같은 노드·경로·캡션을 보이고 경로는 출발 노드 아래 변에서 도착 노드 위 변으로 간다', async ({ label, nodes, paths }) => {
+      const { container } = render(<EdgeToOriginDiagram />)
+      const caption = container.querySelector('figcaption')!
+      const idle = caption.textContent
+      await selectScenario(label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      const shownPaths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(shownPaths.map((path) => path.getAttribute('data-path'))).toEqual(paths)
+      for (const path of shownPaths) {
+        const id = path.getAttribute('data-path')!
+        const [from, to] = id.split('-')
+        const [, x, y1, y2] = path.getAttribute('d')!.match(/^M(\d+) (\d+) V(\d+)$/)!.map(Number)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+        expect(y1, id).toBe(nodeBox(from).y + nodeBox(from).height)
+        expect(y2, id).toBe(nodeBox(to).y)
+        for (const box of [nodeBox(from), nodeBox(to)]) {
+          expect(x, id).toBeGreaterThan(box.x)
+          expect(x, id).toBeLessThan(box.x + box.width)
+        }
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) expect(group.closest('[opacity]')).toBeNull()
+      expect(caption.textContent).not.toBe(idle)
+      expect(caption.textContent!.length).toBeGreaterThan(20)
+      expect(caption).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(caption.textContent).toBe(idle)
+    })
+
+    it('경로 여덟이 모두 곧은 세로선이다', async () => {
+      render(<EdgeToOriginDiagram />)
+      const paths = await collectPaths()
+
+      expect(paths.size).toBe(8)
+      for (const [id, d] of paths) expect(d, id).toMatch(/^M\d+ \d+ V\d+$/)
+    })
+
+    // 세로형은 두 리전을 세로로 쌓지만 가로형은 오리진 층에 나란히 둔다.
+    it('두 리전이 나란하다', () => {
+      render(<EdgeToOriginDiagram />)
+      const regionA = groupBox('region-a')
+      const regionB = groupBox('region-b')
+
+      expect(regionA.y).toBe(regionB.y)
+      expect(regionA.x + regionA.width).toBeLessThan(regionB.x)
+      expect(nodeBox('nlba').y).toBe(nodeBox('nlbb').y)
+    })
+
+    // 세로형은 온프레미스 API를 리전 B 아래에 두지만 가로형은 리전 A 왼쪽에 둔다.
+    it('뷰어와 엣지 층이 리전 위에 있고 온프레미스 API는 두 리전 밖 왼쪽이다', () => {
+      render(<EdgeToOriginDiagram />)
+      const regionA = groupBox('region-a')
+
+      for (const id of ['viewer', 'cf', 'ga', 'route53']) {
+        expect(nodeBox(id).y + nodeBox(id).height, id).toBeLessThan(regionA.y)
+      }
+      expect(nodeBox('viewer').y + nodeBox('viewer').height).toBeLessThan(groupBox('edge').y)
+      for (const id of ['cf', 'ga']) expect(inside(id, 'edge'), id).toBe(true)
+      expect(inside('route53', 'edge')).toBe(false)
+      for (const id of ['alb', 'ec2', 's3', 'nlba']) expect(inside(id, 'region-a'), id).toBe(true)
+      expect(inside('nlbb', 'region-b')).toBe(true)
+      expect(inside('onpremapi', 'region-a')).toBe(false)
+      expect(inside('onpremapi', 'region-b')).toBe(false)
+      expect(nodeBox('onpremapi').x + nodeBox('onpremapi').width).toBeLessThan(regionA.x)
+    })
+
+    it('Route 53은 어느 시나리오에서도 경로에 들어가지 않고 색과 그룹 선은 세로형과 같다', async () => {
+      render(<EdgeToOriginDiagram />)
+      const strokeOf = (id: string) => diagram().querySelector(`[data-node="${id}"] rect`)!.getAttribute('class')
+
+      expect(strokeOf('s3')).toContain('stroke-diagram-managed')
+      for (const id of ['alb', 'ec2', 'nlba', 'nlbb']) expect(strokeOf(id), id).toContain('stroke-diagram-resource')
+      for (const id of ['cf', 'ga']) expect(strokeOf(id), id).toContain('stroke-diagram-managed')
+      for (const id of ['viewer', 'route53', 'onpremapi']) expect(strokeOf(id), id).toContain('stroke-disabled')
+      for (const group of diagram().querySelectorAll('[data-group]')) {
+        expect(group).toHaveAttribute('stroke-dasharray', '6 4')
+        expect(group).toHaveAttribute('rx', '6')
+      }
+
+      for (const { label } of routes) {
+        await selectScenario(label)
+        expect(diagram().querySelector('[data-node="route53"]'), label).toHaveAttribute('opacity', '0.25')
+        for (const path of diagram().querySelectorAll('[data-path]')) {
+          expect(path.getAttribute('data-path'), label).not.toMatch(/route53/)
+        }
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<EdgeToOriginDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 480')
+      await selectScenario('ALB 오리진')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: 'ALB 오리진' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-path]'), (path) => path.getAttribute('data-path')))
+        .toEqual(['viewer-cf', 'cf-alb', 'alb-ec2'])
+    })
   })
 })
