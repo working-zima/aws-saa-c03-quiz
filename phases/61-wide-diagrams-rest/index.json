@@ -47,7 +47,8 @@
       "name": "sg-nacl-layers-wide",
       "status": "completed",
       "started_at": "2026-10-16T09:46:22+0900",
-      "summary": "SgNaclLayersDiagram에 가로형(viewBox 0 0 440 272, 래퍼 w-full)을 더했다. 두 서브넷은 위아래 그대로이고 서브넷 안에서 NACL → 보안 그룹을 왼쪽에서 오른쪽으로 지나며, WAF와 곁말 둘은 서브넷 밖 오른쪽 열(x 340)에 선다. JSX에 박혀 있던 그룹 rect 넷과 라벨 넷은 같은 좌표·같은 속성 순서의 groups 배열(라벨 자리 labelX·labelY)로 옮기고 선 색·rx는 groupLines로 두 배치가 함께 쓰며, 부착선과 곁말 둘의 자리는 attachment·notes와 wideAttachment·wideNotes로 짝지었다(sg-source tspan x도 배치를 따른다). wideGroups 4개·wideNodes 6개·widePaths 4개·부착선·곁말 자리는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 여섯(다섯과 전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 17개는 고치지 않고 통과한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 87개·경로 70개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 14개(먼저 써서 6개 실패를 확인)를 더해 전체 1517개 통과(기존 1503개), build·lint·check-structure 통과."
+      "summary": "SgNaclLayersDiagram에 가로형(viewBox 0 0 440 272, 래퍼 w-full)을 더했다. 두 서브넷은 위아래 그대로이고 서브넷 안에서 NACL → 보안 그룹을 왼쪽에서 오른쪽으로 지나며, WAF와 곁말 둘은 서브넷 밖 오른쪽 열(x 340)에 선다. JSX에 박혀 있던 그룹 rect 넷과 라벨 넷은 같은 좌표·같은 속성 순서의 groups 배열(라벨 자리 labelX·labelY)로 옮기고 선 색·rx는 groupLines로 두 배치가 함께 쓰며, 부착선과 곁말 둘의 자리는 attachment·notes와 wideAttachment·wideNotes로 짝지었다(sg-source tspan x도 배치를 따른다). wideGroups 4개·wideNodes 6개·widePaths 4개·부착선·곁말 자리는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 여섯(다섯과 전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 17개는 고치지 않고 통과한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 87개·경로 70개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 14개(먼저 써서 6개 실패를 확인)를 더해 전체 1517개 통과(기존 1503개), build·lint·check-structure 통과.",
+      "completed_at": "2026-10-16T09:51:19+0900"
     },
     {
       "step": 6,
