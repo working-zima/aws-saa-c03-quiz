@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
@@ -224,5 +225,270 @@ describe('SnsFanoutDiagram', () => {
     expect(figure.previousElementSibling).toHaveTextContent('팬아웃 본문')
     expect(screen.getAllByRole('figure')).toHaveLength(1)
     expect(figure.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull()
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const captions: Record<string, RegExp> = {
+      '소비자마다 큐': /큐마다.*복제.*모두.*전부.*소비자 추가.*발행자.*기존 소비자.*그대로/,
+      '큐 하나를 셋이 폴링': /나눠.*각자.*일부.*모두.*전부.*맞지 않/,
+      '버스가 직접 호출': /소비자별 내구성 버퍼 없이.*여러 대상.*트래픽 급증.*흡수.*못/,
+    }
+    const tiers = [
+      { id: 'publishing', label: '발행', nodes: ['publisher'] },
+      { id: 'delivery', label: '전달 장치', nodes: ['shared-queue', 'topic', 'bus'] },
+      { id: 'queues', label: '소비자별 큐', nodes: queues },
+      { id: 'consumers', label: '소비자', nodes: consumers },
+    ]
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    async function collectPathIds() {
+      const ids = new Set<string>()
+      for (const { label } of routes) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) ids.add(path.getAttribute('data-path')!)
+      }
+      return [...ids].sort()
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    // 꺾이는 점을 순서대로 편다. 마지막 두 점이 화살표가 들어가는 방향이다.
+    function points(path: Element) {
+      let x = 0
+      let y = 0
+      const result = []
+      for (const [, command, first, second] of path.getAttribute('d')!.matchAll(/([MHV])\s*(\d+)(?:\s+(\d+))?/g)) {
+        if (command === 'M') {
+          x = Number(first)
+          y = Number(second)
+        } else if (command === 'H') {
+          x = Number(first)
+        } else {
+          y = Number(first)
+        }
+        result.push({ x, y })
+      }
+      return result
+    }
+
+    function expectNoMeeting(paths: Element[]) {
+      for (let i = 0; i < paths.length; i++) {
+        for (let j = i + 1; j < paths.length; j++) {
+          for (const a of segments(paths[i])) {
+            for (const b of segments(paths[j])) {
+              const meet = Math.max(a.x1, b.x1) <= Math.min(a.x2, b.x2) && Math.max(a.y1, b.y1) <= Math.min(a.y2, b.y2)
+              expect(meet, `${paths[i].getAttribute('data-path')} / ${paths[j].getAttribute('data-path')}`).toBe(false)
+            }
+          }
+        }
+      }
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const groupBox = (id: string) => readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×320 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<SnsFanoutDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 320')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<SnsFanoutDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 504')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 320')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(['consumers', 'delivery', 'publishing', 'queues'])
+      expect(tallPaths).toHaveLength(15)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드 10개와 그룹 4개의 모든 rect가 440×320 viewBox 안에 있다', () => {
+      render(<SnsFanoutDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(14)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 320])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<SnsFanoutDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+      }
+
+      const groupLabels = Array.from(diagram().querySelectorAll('g.fill-muted > text'))
+      expect(groupLabels).toHaveLength(4)
+      for (const tier of tiers) {
+        const box = groupBox(tier.id)
+        const groupLabel = groupLabels.find((element) => element.textContent === tier.label)!
+        expect(groupLabel.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        const x = Number(groupLabel.getAttribute('x'))
+        const y = Number(groupLabel.getAttribute('y'))
+        expect(x, tier.label).toBeGreaterThan(box.x)
+        expect(y, tier.label).toBeGreaterThan(box.y)
+        expect(x + estimateTextWidth(tier.label, 9), tier.label).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(routes)('$label은 세로형과 같은 노드·경로·캡션을 보이고 경로끼리 만나지 않는다', async ({ label, nodes, edges }) => {
+      const { container } = render(<SnsFanoutDiagram />)
+      const caption = container.querySelector('figcaption')!
+      const idle = caption.textContent
+      await selectScenario(label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) expect(group.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(edges.map(([from, to]) => `${from}-${to}`))
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+      }
+      expectNoMeeting(paths)
+      expect(caption.textContent).not.toBe(idle)
+      expect(caption).toHaveTextContent(captions[label])
+      expect(caption).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(caption.textContent).toBe(idle)
+    })
+
+    it('네 단을 위치로 구분하고 큐·소비자는 각각 3열이며 큐와 그 소비자의 가운데 x가 같다', () => {
+      render(<SnsFanoutDiagram />)
+
+      let previousBottom = 0
+      for (const tier of tiers) {
+        const box = groupBox(tier.id)
+        expect(box.y, tier.id).toBeGreaterThanOrEqual(previousBottom)
+        previousBottom = box.y + box.height
+        expect(screen.getByText(tier.label)).toBeInTheDocument()
+        const nodes = tier.nodes.map(nodeBox)
+        expect(boxesOutsideViewBox(nodes, [box.x, box.y, box.width, box.height]), tier.id).toEqual([])
+        if (tier.id === 'queues' || tier.id === 'consumers') {
+          expect(new Set(nodes.map((node) => node.y)).size).toBe(1)
+          expect(new Set(nodes.map((node) => node.x)).size).toBe(3)
+        }
+      }
+      queues.forEach((queue, i) => {
+        const queueBox = nodeBox(queue)
+        const consumerBox = nodeBox(consumers[i])
+        expect(queueBox.x + queueBox.width / 2, queue).toBe(consumerBox.x + consumerBox.width / 2)
+      })
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        const neutral = ['publisher', ...consumers].includes(node.getAttribute('data-node')!)
+        expect(node.querySelector('rect')).toHaveClass(neutral ? 'stroke-disabled' : 'stroke-diagram-managed')
+      }
+      expect(diagram().querySelector('[class*="diagram-resource"]')).toBeNull()
+    })
+
+    it.each([
+      ['큐 하나를 셋이 폴링', 'shared-queue'],
+      ['버스가 직접 호출', 'bus'],
+    ])('%s에서 소비자 셋으로 가는 경로는 각자 소비자 변으로 들어가 끝점과 선분을 함께 쓰지 않는다', async (label, from) => {
+      render(<SnsFanoutDiagram />)
+      await selectScenario(label)
+
+      const paths = consumers.map((consumer) => diagram().querySelector(`[data-path="${from}-${consumer}"]`)!)
+      const ends = consumers.map((consumer, i) => {
+        const route = points(paths[i])
+        const end = route[route.length - 1]
+        const before = route[route.length - 2]
+        const box = nodeBox(consumer)
+        const onLeftOrRight = end.x === box.x || end.x === box.x + box.width
+        const onTopOrBottom = end.y === box.y || end.y === box.y + box.height
+        expect(onLeftOrRight || onTopOrBottom, consumer).toBe(true)
+        expect(end.x, consumer).toBeGreaterThanOrEqual(box.x)
+        expect(end.x, consumer).toBeLessThanOrEqual(box.x + box.width)
+        expect(end.y, consumer).toBeGreaterThanOrEqual(box.y)
+        expect(end.y, consumer).toBeLessThanOrEqual(box.y + box.height)
+        // 마지막 선분은 들어가는 변에 수직이고 상자 바깥에서 출발한다.
+        expect(onLeftOrRight ? before.y === end.y : before.x === end.x, consumer).toBe(true)
+        const outside = before.x < box.x || before.x > box.x + box.width || before.y < box.y || before.y > box.y + box.height
+        expect(outside, consumer).toBe(true)
+        return `${end.x},${end.y}`
+      })
+      expect(new Set(ends).size).toBe(3)
+      expectNoMeeting(paths)
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<SnsFanoutDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 504')
+      await selectScenario('큐 하나를 셋이 폴링')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '큐 하나를 셋이 폴링' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-path]'), (path) => path.getAttribute('data-path')))
+        .toEqual(['publisher-shared-queue', 'shared-queue-consumer-a', 'shared-queue-consumer-b', 'shared-queue-consumer-c'])
+    })
   })
 })
