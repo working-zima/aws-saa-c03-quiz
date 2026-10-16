@@ -141,7 +141,9 @@
     {
       "step": 17,
       "name": "api-integration-wide",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-16T10:43:04+0900",
+      "summary": "ApiIntegrationDiagram에 가로형(viewBox 0 0 440 192, 래퍼 w-full)을 더했다. 왼쪽에서 오른쪽으로 클라이언트 · API Gateway · 통합 대상(Lambda 함수 · 백엔드 · DynamoDB PutItem)을 두고, 요청 경로 셋은 API Gateway 박스의 왼쪽 변을 가로로 지나며 프록시의 응답은 박스 위 통로(y 20)로 클라이언트에 돌아온다. wideGroups 1개·wideNodes 5개·widePaths 6개·곁말 자리 6개는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다(wideNodes 줄은 세로형과 같은 DOM 순서 client·mapping·lambda·dynamodb·backend로 적었다). wideNodes는 라벨·색을, wideNotes는 보이는 시나리오를 세로형 항목에서 id로 가져오고 그룹 라벨 자리(x+10, y+14)는 그대로다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 다섯 번 클릭(넷과 전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 20개는 고치지 않고 통과한다(테스트 파일에서 바뀐 기존 줄은 vitest import 하나). 가로형에서는 매핑 템플릿이 API Gateway 안, 통합 대상 셋이 박스 밖 오른쪽, 클라이언트가 박스 밖 왼쪽인지, 곁말이 viewBox 안에서 어떤 노드와도 겹치지 않는지, 응답 경로가 박스 안을 지나지 않고 가로 선분이 박스 위에 있는지, 경로 양 끝이 두 노드의 변에 닿는지도 검사한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 171개·경로 148개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 13개(먼저 써서 11개 실패를 확인 — 나머지 2개는 배치와 무관한 불변식이라 세로형에서도 통과)를 더해 전체 1674개 통과(기존 1661개), build·lint·check-structure 통과."
     },
     {
       "step": 18,
