@@ -1,7 +1,8 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { BackupFlowDiagram, backupFlowScenarios } from './BackupFlowDiagram'
@@ -196,5 +197,217 @@ describe('BackupFlowDiagram', () => {
     expect(figure.closest('article')).toHaveAttribute('id', 'backup-disaster-recovery.backup-audit-manager')
     expect(figure.previousElementSibling?.textContent).toBe(concepts[7].paragraphs.join(''))
     expect(screen.getAllByRole('img')).toHaveLength(1)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const stages = [
+      { id: 'source', label: '원본 계정', nodes: ['ec2', 'ebs', 'rds', 'dynamodb', 's3'] },
+      { id: 'backup', label: 'AWS Backup', nodes: ['audit', 'plan', 'restore-test'] },
+      { id: 'copies', label: '사본', nodes: ['other-region', 'other-account'] },
+    ]
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    async function collectPathIds() {
+      const found = new Set<string>()
+      for (const { label } of expectedScenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) found.add(path.getAttribute('data-path')!)
+      }
+      return [...found].sort()
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const groupBox = (id: string) => readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×340 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<BackupFlowDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 340')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<BackupFlowDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 556')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 340')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(['backup', 'copies', 'source'])
+      expect(tallPaths).toHaveLength(9)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드 11개와 그룹 3개의 모든 rect가 440×340 viewBox 안에 있다', () => {
+      render(<BackupFlowDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(14)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 340])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<BackupFlowDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+      }
+
+      const groupLabels = Array.from(diagram().querySelectorAll('g.fill-muted > text'))
+      expect(groupLabels).toHaveLength(3)
+      for (const stage of stages) {
+        const box = groupBox(stage.id)
+        const groupLabel = groupLabels.find((element) => element.textContent === stage.label)!
+        expect(groupLabel.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        const x = Number(groupLabel.getAttribute('x'))
+        const y = Number(groupLabel.getAttribute('y'))
+        expect(x, stage.label).toBeGreaterThan(box.x)
+        expect(y, stage.label).toBeGreaterThan(box.y)
+        expect(x + estimateTextWidth(stage.label, 9), stage.label).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(expectedScenarios)('$label은 세로형과 같은 노드·경로·캡션을 보인다', async (scenario) => {
+      const { container } = render(<BackupFlowDiagram />)
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node') ?? '') ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) {
+        expect(group.closest('[opacity]')).toBeNull()
+      }
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path')).sort()).toEqual([...scenario.paths].sort())
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+      }
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+      const wording = visualsByTopicId['backup-disaster-recovery'].diagrams['backup-flow'].scenarios.find(({ id }) => id === scenario.id)!
+      expect(container.querySelector('figcaption')!.textContent).toBe(wording.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(container.querySelector('figcaption')!.textContent).toBe(visualsByTopicId['backup-disaster-recovery'].diagrams['backup-flow'].idleCaption)
+    })
+
+    it('자원·백업 기능·사본이 각 그룹 안에 있고 조직 정책은 그룹 밖 위에 있다', () => {
+      render(<BackupFlowDiagram />)
+
+      for (const stage of stages) {
+        const group = groupBox(stage.id)
+        expect(boxesOutsideViewBox(stage.nodes.map(nodeBox), [group.x, group.y, group.width, group.height]), stage.id).toEqual([])
+      }
+      const org = nodeBox('org-policy')
+      expect(org.y + org.height).toBeLessThan(groupBox('source').y)
+      expect(groupBox('source').y + groupBox('source').height).toBeLessThan(groupBox('backup').y)
+      expect(groupBox('backup').y + groupBox('backup').height).toBeLessThan(groupBox('copies').y)
+    })
+
+    it('대상 지정에서는 EBS 볼륨을 흐리게 두고 EC2 인스턴스에서 경로를 시작한다', async () => {
+      render(<BackupFlowDiagram />)
+      await selectScenario('대상 지정')
+
+      expect(diagram().querySelector('[data-node="ebs"]')).toHaveAttribute('opacity', '0.25')
+      expect(diagram().querySelector('[data-node="ec2"]')).toHaveAttribute('opacity', '1')
+      const ec2 = nodeBox('ec2')
+      const start = diagram().querySelector('[data-path="ec2-plan"]')!.getAttribute('d')!.match(/^M(\d+) (\d+)/)!
+      const [, x, y] = start.map(Number)
+      expect(x === ec2.x || x === ec2.x + ec2.width || y === ec2.y || y === ec2.y + ec2.height).toBe(true)
+      expect(x).toBeGreaterThanOrEqual(ec2.x)
+      expect(x).toBeLessThanOrEqual(ec2.x + ec2.width)
+      expect(y).toBeGreaterThanOrEqual(ec2.y)
+      expect(y).toBeLessThanOrEqual(ec2.y + ec2.height)
+    })
+
+    it('세 단계가 위에서 아래로 겹치지 않게 쌓이고 단계 안의 노드는 같은 y에 가로로 선다', () => {
+      render(<BackupFlowDiagram />)
+
+      let previousBottom = 0
+      for (const stage of stages) {
+        const box = groupBox(stage.id)
+        expect(box.y, stage.id).toBeGreaterThan(previousBottom)
+        previousBottom = box.y + box.height
+        const nodes = stage.nodes.map(nodeBox).sort((a, b) => a.x - b.x)
+        expect(new Set(nodes.map((node) => node.y)).size, stage.id).toBe(1)
+        for (let i = 1; i < nodes.length; i++) {
+          expect(nodes[i - 1].x + nodes[i - 1].width, `${nodes[i - 1].id}·${nodes[i].id}`).toBeLessThan(nodes[i].x)
+        }
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<BackupFlowDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 556')
+      await selectScenario('사본 위치')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '사본 위치' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(ids('[data-path]', 'data-path')).toEqual(['plan-other-account', 'plan-other-region'])
+    })
   })
 })
