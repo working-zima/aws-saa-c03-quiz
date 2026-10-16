@@ -31,7 +31,8 @@
       "name": "hybrid-paths-wide",
       "status": "completed",
       "started_at": "2026-10-16T09:35:32+0900",
-      "summary": "HybridPathsDiagram에 가로형(viewBox 0 0 440 320, 래퍼 w-full)을 더했다. 온프레미스 → 인터넷·전용선 층 → 리전 순서는 그대로이고 리전 안에서 VPC A·B를 나란히 두며 Transit Gateway·Direct Connect Gateway는 리전 윗줄에 선다. JSX에 박혀 있던 세로형 그룹은 같은 좌표의 groups 배열로 옮기고, 라벨·rx·점선은 두 배치가 함께 읽는 groupLines 표에 두었다(라벨 자리는 x+10, y+14). wideGroups 4개·wideNodes 11개·widePaths 14개는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 일곱(여섯과 전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 26개는 고치지 않고 통과한다. 가로형의 「전용 회선 층은 인터넷 층과 나란하다」는 전용선이 왼쪽으로 옮겨 순서 대신 같은 y·겹치지 않음으로 단언했다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 73개·경로 60개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 15개(먼저 써서 5개 실패를 확인)를 더해 전체 1493개 통과(기존 1478개), build·lint·check-structure 통과."
+      "summary": "HybridPathsDiagram에 가로형(viewBox 0 0 440 320, 래퍼 w-full)을 더했다. 온프레미스 → 인터넷·전용선 층 → 리전 순서는 그대로이고 리전 안에서 VPC A·B를 나란히 두며 Transit Gateway·Direct Connect Gateway는 리전 윗줄에 선다. JSX에 박혀 있던 세로형 그룹은 같은 좌표의 groups 배열로 옮기고, 라벨·rx·점선은 두 배치가 함께 읽는 groupLines 표에 두었다(라벨 자리는 x+10, y+14). wideGroups 4개·wideNodes 11개·widePaths 14개는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 일곱(여섯과 전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 26개는 고치지 않고 통과한다. 가로형의 「전용 회선 층은 인터넷 층과 나란하다」는 전용선이 왼쪽으로 옮겨 순서 대신 같은 y·겹치지 않음으로 단언했다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 73개·경로 60개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 15개(먼저 써서 5개 실패를 확인)를 더해 전체 1493개 통과(기존 1478개), build·lint·check-structure 통과.",
+      "completed_at": "2026-10-16T09:40:54+0900"
     },
     {
       "step": 4,
