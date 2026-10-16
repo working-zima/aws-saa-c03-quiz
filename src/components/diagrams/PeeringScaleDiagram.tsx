@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { visualsByTopicId } from '../../data'
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { hubAttachmentCount, meshConnectionCount, ringPoints } from '../../lib/peering'
 import { DiagramFrame, type DiagramScenario } from './DiagramFrame'
 
@@ -12,6 +13,11 @@ const vpcBox = { width: 32, height: 20 }
 const groups = [
   { id: 'mesh', x: 4, y: 4, width: 272, height: 212, cx: 140, cy: 110 },
   { id: 'hub', x: 4, y: 224, width: 272, height: 212, cx: 140, cy: 330 },
+]
+// 가로형은 메시를 왼쪽, 허브를 오른쪽에 나란히 둔다. 반지름과 상자 크기는 같고 그룹과 원의 중심만 옮긴다.
+const wideGroups = [
+  { id: 'mesh', x: 4, y: 4, width: 212, height: 212, cx: 110, cy: 110 },
+  { id: 'hub', x: 224, y: 4, width: 212, height: 212, cx: 330, cy: 110 },
 ]
 const tgw = { width: 100, height: 32 }
 
@@ -29,7 +35,9 @@ const countNote = (count: number) => (text.notes?.count ?? '').replace('{count}'
 export function PeeringScaleDiagram() {
   const [active, setActive] = useState<DiagramScenario | null>(null)
   const vpcCount = active ? vpcCounts[active.id] : idleVpcCount
-  const [mesh, hub] = groups
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? wideGroups : groups
+  const [mesh, hub] = layoutGroups
   const meshPoints = ringPoints(vpcCount, mesh.cx, mesh.cy, radius)
   const hubPoints = ringPoints(vpcCount, hub.cx, hub.cy, radius)
   const pairs = meshPoints.flatMap((from, i) => meshPoints.slice(i + 1).map((to, j) => ({ from, to, key: `${i}-${i + j + 1}` })))
@@ -43,15 +51,15 @@ export function PeeringScaleDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox="0 0 280 440">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label={text.svgLabel} className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 220' : '0 0 280 440'}>
           <g className="fill-none stroke-disabled" strokeWidth="1">
-            {groups.map((group) => (
+            {layoutGroups.map((group) => (
               <rect key={group.id} data-group={group.id} x={group.x} y={group.y} width={group.width} height={group.height} rx="4" />
             ))}
           </g>
           <g className="fill-muted" fontSize="9">
-            {groups.map((group) => (
+            {layoutGroups.map((group) => (
               <text key={group.id} data-group-label={group.id} x={group.x + 10} y={group.y + 14}>{text.groups?.[group.id]}</text>
             ))}
             <text data-count-note="mesh" x={mesh.x + 10} y={mesh.y + mesh.height - 8}>{countNote(meshConnectionCount(vpcCount))}</text>
