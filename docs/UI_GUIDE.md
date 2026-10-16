@@ -578,7 +578,8 @@ S3 클래스 도식의 비용은 본문이 말하는 관계만 SVG 아래 글로
 새 도식을 만들 때도 두 배치를 함께 짠다.
 
 - **`viewBox` 폭은 440이다.** 글자 크기 단위는 세로형과 같다(노드 라벨 10, 그룹 라벨·곁말 9). 768px 이상에서 도식 틀
-  안쪽 폭은 638px(딸린 개념 안 621px)로 고정이라 배율이 1.45(1.41)다. 실측은 [phase 60 실측 기록](../phases/60-wide-diagrams/measurements.md)에 둔다.
+  안쪽 폭은 638px(딸린 개념 안 621px)로 고정이라 배율이 1.45(1.41)다. 실측은 [phase 60 실측 기록](../phases/60-wide-diagrams/measurements.md)과
+  [phase 61 실측 기록](../phases/61-wide-diagrams-rest/measurements.md)(27장 전부, Windows Chrome, 실시간 전환 포함)에 둔다.
 - **래퍼는 `w-full` 하나다.** `max-w-[380px]`·`-mx-4`·`max-sm:` 보정을 붙이지 마라. 768px 이상은 이미 `sm:` 구간이라 상쇄할 모바일
   여백이 없다.
 - **배치를 고르는 것은 `useWideDiagram()` 하나다.** 기준 폭을 도식마다 다시 쓰지 마라. 이유: 기준이 한 곳에 있어야 도식끼리 같은 폭에서
