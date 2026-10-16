@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
@@ -235,5 +236,234 @@ describe('SqsMessageLifeDiagram', () => {
     expect(figure.previousElementSibling).toHaveTextContent('가시성 타임아웃 본문')
     expect(screen.getAllByRole('figure')).toHaveLength(1)
     expect(figure.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull()
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const outgoing = ['dlq', 'consumer', 'deleted', 'expired']
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    async function collectPathIds() {
+      const ids = new Set<string>()
+      for (const { label } of routes) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) ids.add(path.getAttribute('data-path')!)
+      }
+      return [...ids].sort()
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const queueBox = () => readBox(diagram().querySelector('[data-group="queue"]')!)
+    const pathPoints = (id: string) => points(diagram().querySelector(`[data-path="${id}"]`)!)
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×176 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<SqsMessageLifeDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 176')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<SqsMessageLifeDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 396')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 176')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(['queue'])
+      expect(tallPaths).toHaveLength(7)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드 7개와 큐 경계의 rect가 모두 440×176 viewBox 안에 있다', () => {
+      render(<SqsMessageLifeDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(8)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 176])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 큐 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<SqsMessageLifeDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+      }
+
+      const queue = queueBox()
+      const groupLabel = screen.getByText('SQS 큐')
+      const x = Number(groupLabel.getAttribute('x'))
+      const y = Number(groupLabel.getAttribute('y'))
+      expect(groupLabel).toHaveAttribute('font-size', '9')
+      expect(x).toBeGreaterThan(queue.x)
+      expect(y).toBeGreaterThan(queue.y)
+      expect(x + estimateTextWidth('SQS 큐', 9)).toBeLessThanOrEqual(queue.x + queue.width)
+    })
+
+    it.each(routes)('$label은 세로형과 같은 노드·경로·캡션을 보이고 경로끼리 만나지 않는다', async ({ label, nodes, paths }) => {
+      const { container } = render(<SqsMessageLifeDiagram />)
+      const caption = container.querySelector('figcaption')!
+      const idle = caption.textContent
+      const before = queueBox()
+      await selectScenario(label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      const shownPaths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(shownPaths.map((path) => path.getAttribute('data-path'))).toEqual(paths)
+      for (const path of shownPaths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+        const vertices = points(path)
+        const [from, to] = endpoints[path.getAttribute('data-path')!]
+        for (const [id, point] of [[from, vertices[0]], [to, vertices[vertices.length - 1]]] as const) {
+          const box = nodeBox(id)
+          const onHorizontal = (point.y === box.y || point.y === box.y + box.height) && point.x >= box.x && point.x <= box.x + box.width
+          const onVertical = (point.x === box.x || point.x === box.x + box.width) && point.y >= box.y && point.y <= box.y + box.height
+          expect(onHorizontal || onVertical, `${path.getAttribute('data-path')}의 ${id} 연결`).toBe(true)
+        }
+      }
+      for (let i = 0; i < shownPaths.length; i++) {
+        for (let j = i + 1; j < shownPaths.length; j++) {
+          for (const a of segments(shownPaths[i])) {
+            for (const b of segments(shownPaths[j])) {
+              const meet = Math.max(a.x1, b.x1) <= Math.min(a.x2, b.x2) && Math.max(a.y1, b.y1) <= Math.min(a.y2, b.y2)
+              expect(meet, `${shownPaths[i].getAttribute('data-path')} / ${shownPaths[j].getAttribute('data-path')}`).toBe(false)
+            }
+          }
+        }
+      }
+      expect(queueBox()).toEqual(before)
+      expect(diagram().querySelector('[data-group="queue"]')!.closest('[opacity]')).toBeNull()
+      expect(caption.textContent).not.toBe(idle)
+      expect(caption.textContent!.length).toBeGreaterThan(20)
+      expect(caption).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(caption.textContent).toBe(idle)
+    })
+
+    // 세로형은 생산자를 큐 위에 두지만 가로형은 큐 왼쪽에 둔다. 큐를 떠난 결과 넷은 두 배치 모두 큐 아래다.
+    it('점선 큐 안에는 대기·숨김 메시지만 두고 생산자는 큐 왼쪽, 지정한 세 노드만 파랑으로 표시한다', () => {
+      render(<SqsMessageLifeDiagram />)
+      const group = diagram().querySelector('[data-group="queue"]')!
+      const queue = queueBox()
+      const boxes = Array.from(diagram().querySelectorAll('[data-node] rect'), readBox)
+      const outside = boxesOutsideViewBox(boxes, [queue.x, queue.y, queue.width, queue.height])
+
+      expect(group).toHaveAttribute('stroke-dasharray', '6 4')
+      expect(screen.getByText('SQS 큐')).toBeInTheDocument()
+      expect(outside.map((box) => box.id).sort()).toEqual(['producer', ...outgoing].sort())
+      for (const box of outside) {
+        if (box.id === 'producer') expect(box.x + box.width).toBeLessThan(queue.x)
+        else expect(box.y).toBeGreaterThan(queue.y + queue.height)
+      }
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        const managed = ['waiting', 'hidden', 'dlq'].includes(node.getAttribute('data-node')!)
+        expect(node.querySelector('rect')).toHaveClass(managed ? 'stroke-diagram-managed' : 'stroke-disabled')
+      }
+      expect(diagram().querySelector('[class*="diagram-resource"]')).toBeNull()
+    })
+
+    it('숨김·재노출 경로는 큐 안에 머물고 take와 서로 다른 연결점을 쓴다', async () => {
+      render(<SqsMessageLifeDiagram />)
+      await selectScenario('처리가 늦을 때')
+      const queue = queueBox()
+      for (const id of ['hide', 'reappear']) {
+        for (const point of pathPoints(id)) {
+          expect(point.x).toBeGreaterThan(queue.x)
+          expect(point.x).toBeLessThan(queue.x + queue.width)
+          expect(point.y).toBeGreaterThan(queue.y)
+          expect(point.y).toBeLessThan(queue.y + queue.height)
+        }
+      }
+      const reappear = pathPoints('reappear')
+      const waitingPoints = [pathPoints('take')[0], pathPoints('hide')[0], reappear[reappear.length - 1]]
+      expect(new Set(waitingPoints.map(({ x, y }) => `${x},${y}`)).size).toBe(3)
+    })
+
+    it('큐를 떠난 노드 넷이 큐 박스 아래 같은 y에 있다', () => {
+      render(<SqsMessageLifeDiagram />)
+      const queue = queueBox()
+      const boxes = outgoing.map(nodeBox)
+
+      expect(new Set(boxes.map((box) => box.y)).size).toBe(1)
+      for (const box of boxes) expect(box.y, box.id).toBeGreaterThan(queue.y + queue.height)
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<SqsMessageLifeDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 396')
+      await selectScenario('계속 실패할 때')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '계속 실패할 때' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-path]'), (path) => path.getAttribute('data-path')))
+        .toEqual(['take', 'hide', 'reappear', 'to-dlq'])
+    })
   })
 })
