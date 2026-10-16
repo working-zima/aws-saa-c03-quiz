@@ -53,7 +53,9 @@
     {
       "step": 6,
       "name": "messaging-shapes-wide",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-16T09:51:29+0900",
+      "summary": "MessagingShapesDiagram에 가로형(viewBox 0 0 440 300, 래퍼 w-full)을 더했다. 세 단을 보내는 쪽 → AWS 전달 장치 → 받는 쪽 세 열로 펴고 서비스마다 한 줄이며, 애플리케이션은 SQS·SNS·SES 세 줄의 가운데에 선다. JSX에 박혀 있던 그룹 rect 셋과 라벨 셋은 같은 좌표·같은 속성 순서의 groups 배열(라벨 자리 labelX·labelY)로 옮기고 라벨 글은 groupLabels로 두 배치가 함께 쓴다. wideGroups 3개·wideNodes 14개·widePaths 11개는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 여섯(다섯과 전체, useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 19개는 고치지 않고 통과한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 101개·경로 81개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 16개(먼저 써서 10개 실패를 확인)를 더해 전체 1533개 통과(기존 1517개), build·lint·check-structure 통과."
     },
     {
       "step": 7,
