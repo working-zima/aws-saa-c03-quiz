@@ -1,7 +1,8 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth, type SvgBox } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { NatCountDiagram, natCountScenarios } from './NatCountDiagram'
@@ -224,5 +225,230 @@ describe('NatCountDiagram', () => {
     const figure = screen.getByRole('figure', { name: diagramText.label })
     expect(figure.previousElementSibling).toHaveTextContent(concept.paragraphs[concept.paragraphs.length - 1])
     expect(within(figure).queryByRole('heading')).toBeNull()
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const groupIds = ['vpc', 'az-a', 'az-b', 'az-c']
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(attribute: string) {
+      return Array.from(diagram().querySelectorAll(`[${attribute}]`), (el) => el.getAttribute(attribute))
+    }
+
+    async function collectPathIds() {
+      const seen = new Set<string>()
+      for (const { label } of Object.values(expected)) {
+        await select(label)
+        for (const id of visiblePaths()) seen.add(id!)
+      }
+      return [...seen].sort()
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×284 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<NatCountDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 284')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram()).toHaveAttribute('aria-label', diagramText.svgLabel)
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드 id·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<NatCountDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 424')
+      const tallNodes = ids('data-node')
+      const tallGroups = ids('data-group')
+      const tallPaths = await collectPathIds()
+      expect(tallNodes).toEqual(nodeIds)
+      expect(tallGroups).toEqual(groupIds)
+      expect(tallPaths).toHaveLength(9)
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 284')
+      expect(ids('data-node')).toEqual(tallNodes)
+      expect(ids('data-group')).toEqual(tallGroups)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드와 그룹을 포함한 모든 rect가 440×284 viewBox 안에 있다', () => {
+      render(<NatCountDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(12)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 284])).toEqual([])
+    })
+
+    it('노드 라벨(10)이 여백 12를 남기고 들어가고 그룹 라벨(9)은 자기 박스 안에 있다', () => {
+      render(<NatCountDiagram />)
+
+      for (const id of nodeIds) {
+        const el = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = readBox(el.querySelector('rect')!)
+        const label = el.querySelector('text')!
+        expect(box.height).toBe(32)
+        expect(label).toHaveTextContent(diagramText.nodes[id])
+        expect(label).toHaveAttribute('font-size', '10')
+        expect(Number(label.getAttribute('x'))).toBe(box.x + box.width / 2)
+        expect(Number(label.getAttribute('y'))).toBe(box.y + 16)
+        expect(estimateTextWidth(label.textContent!, 10) + 12, label.textContent!).toBeLessThanOrEqual(box.width)
+      }
+      for (const id of groupIds) {
+        const label = diagram().querySelector(`[data-group-label="${id}"]`)!
+        const box = group(id)
+        expect(label.textContent).toBe(diagramText.groups![id])
+        expect(label.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        expect(Number(label.getAttribute('x'))).toBe(box.x + 10)
+        expect(Number(label.getAttribute('y'))).toBe(box.y + 14)
+        expect(Number(label.getAttribute('x')) + estimateTextWidth(label.textContent!, 9), id).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(Object.entries(expected))('%s: 선명한 노드·보이는 경로·장애 곁말·캡션이 세로형과 같다', async (id, scenario) => {
+      const { container } = render(<NatCountDiagram />)
+      await select(scenario.label)
+
+      expect(sharpNodes()).toEqual([...scenario.nodes].sort())
+      for (const el of diagram().querySelectorAll('[data-node]')) {
+        expect(el).toHaveAttribute('opacity', (scenario.nodes as readonly string[]).includes(el.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      expect(visiblePaths()).toEqual([...scenario.paths].sort())
+      for (const path of diagram().querySelectorAll('[data-path]')) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end')
+        expect(path).toHaveClass('stroke-title')
+      }
+      for (const el of diagram().querySelectorAll('[data-group]')) expect(el.closest('[opacity]')).toBeNull()
+      expect(container.querySelector('figcaption')!.textContent).toBe(diagramText.scenarios.find((s) => s.id === id)!.caption)
+
+      const note = diagram().querySelector('[data-failure]')
+      if (id === 'n3' || id === 'n4') {
+        expect(note).toHaveTextContent(diagramText.notes!.failure)
+        expect(note).toHaveAttribute('data-failure', 'az-a')
+        const azLabel = diagram().querySelector('[data-group-label="az-a"]')!
+        expect(Number(note!.getAttribute('y'))).toBe(Number(azLabel.getAttribute('y')))
+        expect(Number(note!.getAttribute('x'))).toBeGreaterThan(Number(azLabel.getAttribute('x')) + estimateTextWidth(azLabel.textContent!, 9))
+      } else {
+        expect(note).toBeNull()
+      }
+    })
+
+    it('노드마다 자기 가용 영역 안에 있고, NAT는 위 줄·EC2는 아래 줄이며 같은 가용 영역의 둘은 x와 폭이 같다', () => {
+      render(<NatCountDiagram />)
+
+      for (const az of ['a', 'b', 'c']) {
+        const nat = node(`nat-${az}`)
+        const ec2 = node(`ec2-${az}`)
+        expect(inside(group(`az-${az}`), group('vpc'))).toEqual([])
+        expect(inside(nat, group(`az-${az}`))).toEqual([])
+        expect(inside(ec2, group(`az-${az}`))).toEqual([])
+        expect(nat.y + nat.height, az).toBeLessThan(ec2.y)
+        expect(nat.x).toBe(ec2.x)
+        expect(nat.width).toBe(ec2.width)
+      }
+    })
+
+    it('인터넷 게이트웨이는 VPC 안·가용 영역 밖이고, 서브넷 곁말 둘과 장애 곁말은 자기 가용 영역 안에 있다', async () => {
+      render(<NatCountDiagram />)
+
+      expect(inside(node('igw'), group('vpc'))).toEqual([])
+      expect(inside(node('internet'), group('vpc'))).not.toEqual([])
+      for (const az of ['a', 'b', 'c']) expect(inside(node('igw'), group(`az-${az}`))).not.toEqual([])
+
+      const subnetNotes = diagram().querySelectorAll('[data-subnet-note]')
+      expect(subnetNotes).toHaveLength(6)
+      for (const note of subnetNotes) {
+        const az = note.getAttribute('data-az')!
+        const box = group(`az-${az}`)
+        const x = Number(note.getAttribute('x'))
+        const y = Number(note.getAttribute('y'))
+        expect(note.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        expect(note.textContent).toBe(diagramText.notes![note.getAttribute('data-subnet-note')!])
+        expect(x).toBeGreaterThan(box.x)
+        expect(x + estimateTextWidth(note.textContent!, 9)).toBeLessThanOrEqual(box.x + box.width)
+        expect(y).toBeGreaterThan(box.y)
+        expect(y).toBeLessThan(box.y + box.height)
+        // 퍼블릭 곁말은 NAT 바로 위, 프라이빗 곁말은 NAT와 EC2 사이에 선다.
+        if (note.getAttribute('data-subnet-note') === 'public') {
+          expect(y).toBeLessThanOrEqual(node(`nat-${az}`).y)
+        } else {
+          expect(y).toBeGreaterThan(node(`nat-${az}`).y + 32)
+          expect(y).toBeLessThanOrEqual(node(`ec2-${az}`).y)
+        }
+      }
+
+      await select('프로덕션 · AZ A 장애')
+      const failure = diagram().querySelector('[data-failure]')!
+      const az = group('az-a')
+      expect(Number(failure.getAttribute('x')) + estimateTextWidth(failure.textContent!, 9)).toBeLessThanOrEqual(az.x + az.width)
+      expect(Number(failure.getAttribute('y'))).toBeGreaterThan(az.y)
+      expect(Number(failure.getAttribute('y'))).toBeLessThan(az.y + az.height)
+    })
+
+    it('가용 영역 셋이 왼쪽에서 오른쪽으로 겹치지 않고 나란하다', () => {
+      render(<NatCountDiagram />)
+
+      expect(group('az-a').x + group('az-a').width).toBeLessThan(group('az-b').x)
+      expect(group('az-b').x + group('az-b').width).toBeLessThan(group('az-c').x)
+      for (const az of ['az-b', 'az-c']) {
+        expect(group(az).y).toBe(group('az-a').y)
+        expect(group(az).height).toBe(group('az-a').height)
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<NatCountDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 424')
+      await select('개발')
+      const caption = container.querySelector('figcaption')!.textContent
+      const paths = visiblePaths()
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '개발' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(visiblePaths()).toEqual(paths)
+      expect(paths).toEqual([...expected.n2.paths].sort())
+    })
   })
 })

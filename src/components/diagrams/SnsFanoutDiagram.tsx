@@ -1,5 +1,18 @@
 import { useId, useState } from 'react'
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { DiagramFrame, type DiagramScenario } from './DiagramFrame'
+
+// 그룹 라벨은 두 배치가 함께 쓰고, 자리는 두 배치 모두 박스 왼쪽 위에서 x + 12, y + 18이다.
+const groupLabels: Record<string, string> = {
+  publishing: '발행', delivery: '전달 장치', queues: '소비자별 큐', consumers: '소비자',
+}
+
+const groups = [
+  { id: 'publishing', x: 12, y: 4, width: 256, height: 80 },
+  { id: 'delivery', x: 12, y: 108, width: 256, height: 152 },
+  { id: 'queues', x: 12, y: 284, width: 256, height: 104 },
+  { id: 'consumers', x: 12, y: 412, width: 256, height: 80 },
+]
 
 // 전달 장치는 2열과 전체 폭 한 줄로 펴고, 짧은 큐·소비자 라벨은 각각 3열에 둔다.
 const nodes = [
@@ -35,6 +48,49 @@ const paths: Record<string, string> = {
   'bus-consumer-c': 'M260 156 H272 V440 H224 V452',
 }
 
+// 가로형도 네 단을 위에서 아래로 쌓고, 단 안에서 노드를 넓게 편다. 큐와 그 소비자는 같은 열이라 큐 → 소비자가 곧은 세로선이다.
+const wideGroups = [
+  { id: 'publishing', x: 20, y: 4, width: 400, height: 60 },
+  { id: 'delivery', x: 20, y: 80, width: 400, height: 64 },
+  { id: 'queues', x: 20, y: 160, width: 400, height: 64 },
+  { id: 'consumers', x: 20, y: 240, width: 400, height: 64 },
+]
+
+// 라벨과 색은 세로형 nodes에서 id로 가져온다. 공유 큐는 왼쪽, 이벤트 버스는 오른쪽이다.
+const wideNodes = [
+  { id: 'publisher', x: 172, y: 24, width: 96 },
+  { id: 'shared-queue', x: 28, y: 104, width: 96 },
+  { id: 'topic', x: 172, y: 104, width: 96 },
+  { id: 'bus', x: 316, y: 104, width: 96 },
+  { id: 'queue-a', x: 48, y: 184, width: 56 },
+  { id: 'queue-b', x: 192, y: 184, width: 56 },
+  { id: 'queue-c', x: 336, y: 184, width: 56 },
+  { id: 'consumer-a', x: 28, y: 264, width: 96 },
+  { id: 'consumer-b', x: 172, y: 264, width: 96 },
+  { id: 'consumer-c', x: 316, y: 264, width: 96 },
+]
+
+// 직접 전달은 그룹 밖 좌우 통로(x 8·14, 426·432), 소비자 줄 아래(y 312), 큐 사이(x 148·292)로 돈다.
+// 소비자 셋에게 가는 경로는 각자 다른 변으로 들어가 같은 시나리오 안에서 겹치지 않는다.
+// topic-queue-a는 큐 단 라벨을 비켜 큐 A 위 변의 x 96으로 들어간다.
+const widePaths: Record<string, string> = {
+  'publisher-topic': 'M220 56 V104',
+  'topic-queue-a': 'M196 136 V152 H96 V184',
+  'topic-queue-b': 'M220 136 V184',
+  'topic-queue-c': 'M244 136 V152 H364 V184',
+  'queue-a-consumer-a': 'M76 216 V264',
+  'queue-b-consumer-b': 'M220 216 V264',
+  'queue-c-consumer-c': 'M364 216 V264',
+  'publisher-shared-queue': 'M172 40 H96 V104',
+  'shared-queue-consumer-a': 'M28 126 H14 V280 H28',
+  'shared-queue-consumer-b': 'M124 120 H148 V280 H172',
+  'shared-queue-consumer-c': 'M28 112 H8 V312 H364 V296',
+  'publisher-bus': 'M268 40 H364 V104',
+  'bus-consumer-a': 'M412 112 H432 V312 H76 V296',
+  'bus-consumer-b': 'M316 120 H292 V280 H268',
+  'bus-consumer-c': 'M412 126 H426 V280 H412',
+}
+
 // 근거 개념에서 세 구성의 전달 범위와 버퍼 유무를 가져와 캡션을 다시 쓴다.
 const scenarios: DiagramScenario[] = [
   {
@@ -57,6 +113,10 @@ const scenarios: DiagramScenario[] = [
 export function SnsFanoutDiagram() {
   const [active, setActive] = useState<DiagramScenario | null>(null)
   const arrowId = `${useId()}-sns-fanout-arrow`
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? wideGroups : groups
+  const layoutNodes = wide ? wideNodes.map((node) => ({ ...nodes.find(({ id }) => id === node.id)!, ...node })) : nodes
+  const layoutPaths = wide ? widePaths : paths
 
   return (
     <DiagramFrame
@@ -67,8 +127,8 @@ export function SnsFanoutDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label="SNS 팬아웃 구성 비교" className="block h-auto w-full" role="img" viewBox="0 0 280 504">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label="SNS 팬아웃 구성 비교" className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 320' : '0 0 280 504'}>
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">
               <path className="fill-title" d="M0 0 L6 3 L0 6 Z" />
@@ -76,23 +136,21 @@ export function SnsFanoutDiagram() {
           </defs>
 
           <g className="fill-none stroke-disabled" strokeWidth="1">
-            <rect data-group="publishing" x="12" y="4" width="256" height="80" rx="4" />
-            <rect data-group="delivery" x="12" y="108" width="256" height="152" rx="4" />
-            <rect data-group="queues" x="12" y="284" width="256" height="104" rx="4" />
-            <rect data-group="consumers" x="12" y="412" width="256" height="80" rx="4" />
+            {layoutGroups.map((group) => (
+              <rect key={group.id} data-group={group.id} x={group.x} y={group.y} width={group.width} height={group.height} rx="4" />
+            ))}
           </g>
           <g className="fill-muted" fontSize="9">
-            <text x="24" y="22">발행</text>
-            <text x="24" y="126">전달 장치</text>
-            <text x="24" y="302">소비자별 큐</text>
-            <text x="24" y="430">소비자</text>
+            {layoutGroups.map((group) => (
+              <text key={group.id} x={group.x + 12} y={group.y + 18}>{groupLabels[group.id]}</text>
+            ))}
           </g>
 
           {active?.paths.map((id) => (
             <path
               key={id}
               data-path={id}
-              d={paths[id]}
+              d={layoutPaths[id]}
               className="fill-none stroke-title"
               strokeWidth="2"
               strokeLinejoin="round"
@@ -100,7 +158,7 @@ export function SnsFanoutDiagram() {
             />
           ))}
 
-          {nodes.map((node) => (
+          {layoutNodes.map((node) => (
             <g key={node.id} data-node={node.id} opacity={active && !active.nodes.includes(node.id) ? 0.25 : 1}>
               <rect className={`fill-panel ${node.color}`} x={node.x} y={node.y} width={node.width} height="32" rx="4" strokeWidth="1.5" />
               <text className="fill-title" x={node.x + node.width / 2} y={node.y + 16} dominantBaseline="central" textAnchor="middle" fontSize="10">

@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { act, render, screen } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { S3ClassMapDiagram } from './S3ClassMapDiagram'
@@ -222,5 +223,215 @@ describe('S3ClassMapDiagram', () => {
     expect(figure.closest('article')).toHaveAttribute('id', 's3-storage-classes.s3-storage-class-cost-order')
     expect(figure.previousElementSibling).toHaveTextContent('비용 본문')
     expect(screen.getAllByRole('figure')).toHaveLength(1)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const groupIds = ['immediate', 'longterm-immediate', 'waiting', 'longterm-waiting', 'outside']
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(attribute: string) {
+      return Array.from(diagram().querySelectorAll(`[${attribute}]`), (element) => element.getAttribute(attribute))
+    }
+
+    function textsOf(attribute: string) {
+      return Array.from(diagram().querySelectorAll(`[${attribute}]`), (element) => [element.getAttribute(attribute), element.textContent])
+    }
+
+    function nodeLabels() {
+      return Array.from(diagram().querySelectorAll('[data-node]'), (node) => node.querySelector('text')!.textContent)
+    }
+
+    // 노드를 담는 칸 가운데 가장 안쪽 칸이다. 곁말은 그 칸 안에 들어가야 한다.
+    function innermostGroup(id: string) {
+      return groupIds
+        .filter((group) => inside(id, group))
+        .map(groupBox)
+        .sort((a, b) => a.width * a.height - b.width * b.height)[0]
+    }
+
+    function overlaps(a: ReturnType<typeof readBox>, b: ReturnType<typeof readBox>) {
+      return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×444 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성을 유지한다', () => {
+      render(<S3ClassMapDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 444')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+    })
+
+    it('노드·그룹 id와 라벨·곁말 글이 세로형과 같다', () => {
+      const { change } = mockMatchMedia(false)
+      render(<S3ClassMapDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 596')
+      const tallNodes = ids('data-node')
+      const tallGroups = ids('data-group')
+      const tallGroupLabels = textsOf('data-group-label')
+      const tallNotes = textsOf('data-note')
+      const tallNodeLabels = nodeLabels()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 444')
+      expect(ids('data-node')).toEqual(tallNodes)
+      expect([...tallNodes].sort()).toEqual(Object.keys(labels).sort())
+      expect(ids('data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(groupIds)
+      expect(textsOf('data-group-label')).toEqual(tallGroupLabels)
+      expect(textsOf('data-note')).toEqual(tallNotes)
+      expect(nodeLabels()).toEqual(tallNodeLabels)
+    })
+
+    it('모든 rect가 440폭 viewBox 경계 안에 있다', () => {
+      render(<S3ClassMapDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(13)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 444])).toEqual([])
+    })
+
+    it('노드 라벨은 좌우 여백 12로 노드 안에, 그룹 라벨은 자기 칸 안에 들어간다', () => {
+      render(<S3ClassMapDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const text = diagram().querySelector(`[data-node="${id}"] text`)!
+        expect(text).toHaveAttribute('font-size', '10')
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(nodeBox(id).width)
+      }
+      for (const id of groupIds) {
+        const box = groupBox(id)
+        const label = diagram().querySelector(`[data-group-label="${id}"]`)!
+        const x = Number(label.getAttribute('x'))
+        expect(x, id).toBe(box.x + 10)
+        expect(Number(label.getAttribute('y')), id).toBe(box.y + 14)
+        expect(x + estimateTextWidth(label.textContent!, 9), id).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it('S3 Express One Zone은 두 조회 칸 밖, 기다리는 두 클래스는 대기 조회의 장기 보관 칸 안에 있다', () => {
+      render(<S3ClassMapDiagram />)
+
+      expect(inside('express', 'immediate')).toBe(false)
+      expect(inside('express', 'waiting')).toBe(false)
+      expect(inside('express', 'outside')).toBe(true)
+      const express = nodeBox('express')
+      const immediate = groupBox('immediate')
+      const waiting = groupBox('waiting')
+      expect(express.y).toBeGreaterThanOrEqual(immediate.y + immediate.height)
+      expect(express.y).toBeGreaterThanOrEqual(waiting.y + waiting.height)
+
+      for (const id of ['glacier-flexible', 'glacier-deep']) {
+        expect(inside(id, 'waiting'), id).toBe(true)
+        expect(inside(id, 'longterm-waiting'), id).toBe(true)
+      }
+      for (const id of ['standard', 'tiering', 'standard-ia', 'one-zone-ia', 'glacier-instant', 'express']) {
+        expect(inside(id, 'waiting'), id).toBe(false)
+      }
+    })
+
+    it('즉시 조회에서는 Glacier Instant Retrieval만 장기 보관 칸에 든다', () => {
+      render(<S3ClassMapDiagram />)
+
+      for (const id of ['standard', 'tiering', 'standard-ia', 'one-zone-ia', 'glacier-instant']) {
+        expect(inside(id, 'immediate'), id).toBe(true)
+      }
+      expect(inside('glacier-instant', 'longterm-immediate')).toBe(true)
+      for (const id of ['standard', 'tiering', 'standard-ia', 'one-zone-ia']) {
+        expect(inside(id, 'longterm-immediate'), id).toBe(false)
+      }
+    })
+
+    it('대기 조회의 장기 보관 바깥 칸은 글자 없이 비어 있다', () => {
+      render(<S3ClassMapDiagram />)
+      const waiting = groupBox('waiting')
+      const longterm = groupBox('longterm-waiting')
+
+      expect(longterm.y - waiting.y).toBeGreaterThanOrEqual(40)
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        const box = nodeBox(node.getAttribute('data-node')!)
+        const inGap = box.y >= waiting.y && box.y + box.height <= longterm.y
+        expect(inGap, node.getAttribute('data-node')!).toBe(false)
+      }
+      const gapText = Array.from(diagram().querySelectorAll('text')).filter((text) => {
+        const y = Number(text.getAttribute('y'))
+        return y > waiting.y + 20 && y < longterm.y
+      })
+      expect(gapText).toHaveLength(0)
+    })
+
+    it('곁말이 자기 칸 안에 들어가고 다른 노드·곁말과 겹치지 않는다', () => {
+      render(<S3ClassMapDiagram />)
+      // 곁말 상자는 기준선(y)에서 글자 크기 9만큼 위로 잡는다.
+      const notes = Array.from(diagram().querySelectorAll('[data-note]'), (note) => ({
+        id: note.getAttribute('data-note')!,
+        x: Number(note.getAttribute('x')),
+        y: Number(note.getAttribute('y')) - 9,
+        width: estimateTextWidth(note.textContent!, 9),
+        height: 9,
+      }))
+      const nodes = Object.keys(labels).map(nodeBox)
+
+      expect(notes).toHaveLength(7)
+      for (const note of notes) {
+        const node = nodeBox(note.id)
+        expect(note.x, note.id).toBe(node.x + 2)
+        expect(note.y + 9, note.id).toBe(node.y + 41)
+        const group = innermostGroup(note.id)
+        expect(note.x + note.width, `${note.id} → ${group.id}`).toBeLessThanOrEqual(group.x + group.width)
+        expect(note.y + note.height, `${note.id} → ${group.id}`).toBeLessThanOrEqual(group.y + group.height)
+        for (const other of nodes) expect(overlaps(note, other), `${note.id} × ${other.id}`).toBe(false)
+        for (const other of notes) {
+          if (other.id !== note.id) expect(overlaps(note, other), `${note.id} × ${other.id}`).toBe(false)
+        }
+      }
+    })
+
+    it('폭이 바뀌면 다시 그린다', () => {
+      const { change } = mockMatchMedia(false)
+      render(<S3ClassMapDiagram />)
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(280)
+      expect(diagram().parentElement).toHaveClass('max-w-[380px]')
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+    })
   })
 })

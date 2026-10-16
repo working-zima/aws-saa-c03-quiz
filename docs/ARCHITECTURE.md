@@ -9,7 +9,7 @@ src/
 ├── pages/             # 화면 단위 (라우트 하나 = 파일 하나)
 ├── components/        # 재사용 UI 컴포넌트
 │   └── diagrams/      # 개념 본문 안에 들어가는 SVG 도식. 레이아웃이 서로 달라 도식마다 컴포넌트 하나.
-├── hooks/             # React 훅. 진행 상태(useProgress), 도식 배치 선택(useWideDiagram, ADR-047)
+├── hooks/             # React 훅. 진행 상태(useProgress), 도식 배치 선택(useWideDiagram, ADR-047·ADR-048)
 ├── data/              # 빌드 타임 정적 학습 데이터 (JSON)
 │   └── visuals/       # 주제별 시각 요소의 문구(도식 캡션·표·약어). 좌표는 컴포넌트에 둔다(ADR-037).
 ├── types/             # TypeScript 타입 정의 (단일 출처)
@@ -473,4 +473,4 @@ pages/*  ──읽기──▶  lib/progress.ts  ──▶  localStorage
 | `src/data/*.json` | 스키마 검증 테스트 — 타입 일치, id 유일성, `conceptId` 참조 무결성, `answerIndex` 범위, **개념 커버리지 100%**(개념 618개가 모두 문항 하나 이상을 갖는가), 문항 id의 연속성 |
 | `pages/`, `components/` | @testing-library/react. 사용자 관점 동작만. |
 | `lib/keyword-crypto.ts` | `@vitest-environment node`. jsdom에는 `crypto.subtle`이 없다. 화면 테스트에서는 이 모듈을 mock한다. |
-| `components/diagrams/*` | @testing-library/react + 좌표 단언. 시나리오 동작에 더해 **viewBox 넘침과 라벨 넘침을 `src/lib/svg-bounds.ts`로 기계 검사**한다. 브라우저가 없는 환경에서 레이아웃 회귀를 잡는 유일한 장치다. 가로형이 있는 도식은 `matchMedia`를 모의해 가로형에도 같은 관문을 건다(ADR-047). |
+| `components/diagrams/*` | @testing-library/react + 좌표 단언. 시나리오 동작에 더해 **viewBox 넘침과 라벨 넘침을 `src/lib/svg-bounds.ts`로 기계 검사**한다. 브라우저가 없는 환경에서 레이아웃 회귀를 잡는 유일한 장치다. 도식마다 `matchMedia`를 모의해 가로형에도 같은 관문을 건다(ADR-047·ADR-048). |

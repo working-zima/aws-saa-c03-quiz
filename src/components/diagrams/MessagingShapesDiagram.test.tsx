@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
@@ -174,5 +175,227 @@ describe('MessagingShapesDiagram', () => {
     expect(figure.previousElementSibling).toHaveTextContent('SQS 본문')
     expect(screen.getAllByRole('figure')).toHaveLength(1)
     expect(figure.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull()
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const scenarios = [
+      { label: 'SQS', nodes: ['app', 'queue', 'worker'], paths: ['app-queue', 'queue-worker'], caption: /메시지마다 한 소비자.*느려.*쌓아.*내구성 버퍼/ },
+      { label: 'SNS', nodes: ['app', 'topic', 'subscribers'], paths: ['app-topic', 'topic-subscribers'], caption: /모든 구독자.*사본.*즉시.*버퍼.*않/ },
+      {
+        label: 'EventBridge', nodes: ['aws-service', 'saas', 'bus', 'targets'], paths: ['aws-service-bus', 'saas-bus', 'bus-targets'],
+        caption: /규칙.*이벤트.*순서.*24시간.*않/,
+      },
+      {
+        label: 'Amazon MQ', nodes: ['legacy-app', 'broker', 'legacy-consumer'], paths: ['legacy-app-broker', 'broker-legacy-consumer'],
+        caption: /표준 프로토콜.*메시징 방식.*바꾸지/,
+      },
+      { label: 'SES', nodes: ['app', 'ses', 'inbox'], paths: ['app-ses', 'ses-inbox'], caption: /SNS.*알림.*이메일.*목적.*SES/ },
+    ]
+    const groups = [
+      { id: 'senders', label: '보내는 쪽', nodes: ['app', 'aws-service', 'saas', 'legacy-app'] },
+      { id: 'managed', label: 'AWS 전달 장치', nodes: ['queue', 'topic', 'bus', 'broker', 'ses'] },
+      { id: 'receivers', label: '받는 쪽', nodes: ['worker', 'subscribers', 'targets', 'legacy-consumer', 'inbox'] },
+    ]
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    async function collectPathIds() {
+      const ids = new Set<string>()
+      for (const { label } of scenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) ids.add(path.getAttribute('data-path')!)
+      }
+      return [...ids].sort()
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const groupBox = (id: string) => readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×300 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<MessagingShapesDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 300')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<MessagingShapesDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 592')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 300')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(['managed', 'receivers', 'senders'])
+      expect(tallPaths).toHaveLength(11)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드 14개와 그룹 셋의 모든 rect가 440×300 viewBox 안에 있다', () => {
+      render(<MessagingShapesDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(17)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 300])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<MessagingShapesDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+      }
+
+      const groupLabels = Array.from(diagram().querySelectorAll('g.fill-muted > text'))
+      expect(groupLabels).toHaveLength(3)
+      for (const group of groups) {
+        const box = groupBox(group.id)
+        const groupLabel = groupLabels.find((element) => element.textContent === group.label)!
+        expect(groupLabel.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        const x = Number(groupLabel.getAttribute('x'))
+        const y = Number(groupLabel.getAttribute('y'))
+        expect(x, group.label).toBeGreaterThan(box.x)
+        expect(y, group.label).toBeGreaterThan(box.y)
+        expect(x + estimateTextWidth(group.label, 9), group.label).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(scenarios)('$label은 세로형과 같은 노드·경로·캡션을 보인다', async (scenario) => {
+      const { container } = render(<MessagingShapesDiagram />)
+      const caption = container.querySelector('figcaption')!
+      const idle = caption.textContent
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) expect(group.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(scenario.paths)
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+      }
+      expect(caption.textContent).not.toBe(idle)
+      expect(caption).toHaveTextContent(scenario.caption)
+      expect(caption).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(caption.textContent).toBe(idle)
+    })
+
+    it('색 없이도 보내는 쪽 → AWS 전달 장치 → 받는 쪽 세 열이 왼쪽에서 오른쪽으로 나란하다', () => {
+      render(<MessagingShapesDiagram />)
+
+      let previousRight = 0
+      for (const group of groups) {
+        const box = groupBox(group.id)
+        expect(box.x, group.id).toBeGreaterThan(previousRight)
+        previousRight = box.x + box.width
+        expect(box.y, group.id).toBe(groupBox('senders').y)
+        expect(box.height, group.id).toBe(groupBox('senders').height)
+        expect(screen.getByText(group.label)).toBeInTheDocument()
+        expect(boxesOutsideViewBox(group.nodes.map(nodeBox), [box.x, box.y, box.width, box.height]), group.id).toEqual([])
+      }
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        const managed = groups[1].nodes.includes(node.getAttribute('data-node')!)
+        expect(node.querySelector('rect')).toHaveClass(managed ? 'stroke-diagram-managed' : 'stroke-disabled')
+      }
+      expect(diagram().querySelector('[class*="diagram-resource"]')).toBeNull()
+    })
+
+    it.each([
+      ['SQS', 'queue-worker', 'queue', 'worker'],
+      ['SNS', 'topic-subscribers', 'topic', 'subscribers'],
+      ['EventBridge', 'bus-targets', 'bus', 'targets'],
+      ['Amazon MQ', 'broker-legacy-consumer', 'broker', 'legacy-consumer'],
+      ['SES', 'ses-inbox', 'ses', 'inbox'],
+    ])('%s의 전달 장치 → 받는 쪽 경로는 수평선 하나다', async (label, pathId, from, to) => {
+      render(<MessagingShapesDiagram />)
+      await selectScenario(label)
+
+      const d = diagram().querySelector(`[data-path="${pathId}"]`)!.getAttribute('d')!
+      expect(d).toMatch(/^M\d+ \d+ H\d+$/)
+      const [x1, y, x2] = d.slice(1).split(/ H?/).map(Number)
+      const source = nodeBox(from)
+      const target = nodeBox(to)
+      expect(x1).toBe(source.x + source.width)
+      expect(x2).toBe(target.x)
+      expect(y).toBe(source.y + source.height / 2)
+      expect(y).toBe(target.y + target.height / 2)
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<MessagingShapesDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 592')
+      await selectScenario('EventBridge')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: 'EventBridge' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-path]'), (path) => path.getAttribute('data-path')))
+        .toEqual(['aws-service-bus', 'saas-bus', 'bus-targets'])
+    })
   })
 })

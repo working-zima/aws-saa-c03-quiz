@@ -1,7 +1,8 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { SgNaclLayersDiagram, sgNaclLayersScenarios, paths as layerPaths } from './SgNaclLayersDiagram'
@@ -240,5 +241,246 @@ describe('SgNaclLayersDiagram', () => {
     }
     const ids = figures.map((figure) => figure.querySelector('marker')!.id)
     expect(new Set(ids).size).toBe(2)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    async function collectPathIds() {
+      const ids = new Set<string>()
+      for (const { label } of expectedScenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) ids.add(path.getAttribute('data-path')!)
+      }
+      return [...ids].sort()
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    const nodeBox = (id: string) => readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    const groupBox = (id: string) => readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×272 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<SgNaclLayersDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 272')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<SgNaclLayersDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 464')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 272')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(['alb-sg', 'ec2-sg', 'private', 'public'])
+      expect(tallPaths).toEqual([...requestPaths].sort())
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('노드 여섯과 그룹 넷의 모든 rect가 440×272 viewBox 안에 있다', () => {
+      render(<SgNaclLayersDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(10)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 272])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<SgNaclLayersDiagram />)
+      const text = visualsByTopicId['security-groups-nacl'].diagrams['sg-nacl-layers']
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const box = nodeBox(id)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+      }
+
+      // 소스 곁말에도 'ALB 보안 그룹'이 있어 그룹 라벨은 그룹 라벨 묶음 안에서만 찾는다.
+      const groupLabels = Array.from(diagram().querySelectorAll('g.fill-muted > text'))
+      expect(groupLabels).toHaveLength(4)
+      for (const [id, label] of Object.entries(text.groups!)) {
+        const box = groupBox(id)
+        const groupLabel = groupLabels.find((element) => element.textContent === label)!
+        expect(groupLabel.closest('[font-size]')).toHaveAttribute('font-size', '9')
+        expect(groupLabel.closest('.fill-muted')).not.toBeNull()
+        const x = Number(groupLabel.getAttribute('x'))
+        const y = Number(groupLabel.getAttribute('y'))
+        expect(x, label).toBeGreaterThan(box.x)
+        expect(y, label).toBeGreaterThan(box.y)
+        expect(x + estimateTextWidth(label, 9), label).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(expectedScenarios)('$label은 세로형과 같은 노드·경로·곁말·캡션을 보인다', async (scenario) => {
+      const { container } = render(<SgNaclLayersDiagram />)
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group]')) expect(group.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path')).sort()).toEqual([...scenario.paths].sort())
+      for (const path of paths) {
+        expect(path.getAttribute('d')).toMatch(/^M\d+ \d+( [HV]\d+)+$/)
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+      }
+      const attachment = diagram().querySelector('[data-attachment="alb-waf"]')!
+      expect(attachment).toHaveAttribute('opacity', scenario.nodes.includes('waf') ? '1' : '0.25')
+      expect(attachment).toHaveClass('stroke-disabled')
+      expect(attachment).not.toHaveAttribute('marker-end')
+      expect(diagram().querySelectorAll('[data-note]')).toHaveLength(2)
+      const wording = visualsByTopicId['security-groups-nacl'].diagrams['sg-nacl-layers'].scenarios.find(({ id }) => id === scenario.id)!
+      expect(container.querySelector('figcaption')!.textContent).toBe(wording.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+
+      await selectScenario('전체')
+
+      for (const node of diagram().querySelectorAll('[data-node]')) expect(node).toHaveAttribute('opacity', '1')
+      expect(diagram().querySelectorAll('[data-path]')).toHaveLength(0)
+      expect(diagram().querySelector('[data-attachment="alb-waf"]')).toHaveAttribute('opacity', '1')
+    })
+
+    it('NACL·리소스는 자기 서브넷 안에 있고 ALB·EC2에는 각각 보안 그룹이 있다', () => {
+      render(<SgNaclLayersDiagram />)
+
+      for (const [groupId, members] of Object.entries({ public: ['nacl-public', 'alb'], 'alb-sg': ['alb'], private: ['nacl-private', 'ec2'], 'ec2-sg': ['ec2'] })) {
+        const group = groupBox(groupId)
+        expect(boxesOutsideViewBox(members.map(nodeBox), [group.x, group.y, group.width, group.height]), groupId).toEqual([])
+      }
+      for (const [subnet, sg] of [['public', 'alb-sg'], ['private', 'ec2-sg']]) {
+        const group = groupBox(subnet)
+        expect(boxesOutsideViewBox([groupBox(sg)], [group.x, group.y, group.width, group.height]), sg).toEqual([])
+      }
+      expect(nodeBox('internet').y + nodeBox('internet').height).toBeLessThan(groupBox('public').y)
+    })
+
+    it('WAF는 두 서브넷과 겹치지 않는 오른쪽에서 ALB 옆에 화살표 없이 붙는다', async () => {
+      render(<SgNaclLayersDiagram />)
+      const waf = nodeBox('waf')
+      const alb = nodeBox('alb')
+
+      for (const id of ['public', 'private']) {
+        const subnet = groupBox(id)
+        expect(waf.x, id).toBeGreaterThan(subnet.x + subnet.width)
+      }
+      expect(waf.y).toBe(alb.y)
+      const line = diagram().querySelector('[data-attachment="alb-waf"]')!
+      expect(Number(line.getAttribute('x1'))).toBe(alb.x + alb.width)
+      expect(Number(line.getAttribute('x2'))).toBe(waf.x)
+      expect(Number(line.getAttribute('y1'))).toBe(alb.y + alb.height / 2)
+      expect(line.getAttribute('y1')).toBe(line.getAttribute('y2'))
+      expect(line).toHaveAttribute('stroke-width', '1')
+      expect(line).not.toHaveAttribute('data-path')
+
+      await selectScenario('요청 흐름')
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path')).sort()).toEqual([...requestPaths].sort())
+      for (const path of paths) {
+        expect(path.getAttribute('data-path')).not.toContain('waf')
+        expect(path.getAttribute('d')).toMatch(/^M[\d\sHV]+$/)
+      }
+    })
+
+    it('서브넷 안에서 NACL이 보안 그룹보다 왼쪽에 있고 두 서브넷은 위아래로 겹치지 않는다', () => {
+      render(<SgNaclLayersDiagram />)
+
+      for (const [nacl, sg] of [['nacl-public', 'alb-sg'], ['nacl-private', 'ec2-sg']]) {
+        expect(nodeBox(nacl).x + nodeBox(nacl).width, nacl).toBeLessThan(groupBox(sg).x)
+      }
+      expect(groupBox('public').y + groupBox('public').height).toBeLessThan(groupBox('private').y)
+    })
+
+    it('곁말 둘은 크기 9로 서브넷 오른쪽 밖에 있고 두 줄 소스 라벨도 viewBox 안에 들어간다', () => {
+      render(<SgNaclLayersDiagram />)
+      const text = visualsByTopicId['security-groups-nacl'].diagrams['sg-nacl-layers']
+      const subnetRight = Math.max(...['public', 'private'].map((id) => groupBox(id).x + groupBox(id).width))
+
+      for (const id of ['waf-attach', 'sg-source']) {
+        const note = diagram().querySelector(`[data-note="${id}"]`)!
+        expect(note).toHaveAttribute('font-size', '9')
+        expect(note).toHaveClass('fill-muted')
+        const x = Number(note.getAttribute('x'))
+        const y = Number(note.getAttribute('y'))
+        expect(x, id).toBeGreaterThan(subnetRight)
+        const lines = note.querySelectorAll('tspan')
+        const noteLabels = lines.length ? Array.from(lines, (line) => line.textContent!) : [note.textContent!]
+        expect(noteLabels.join('\n')).toBe(text.notes![id])
+        for (const line of lines) expect(Number(line.getAttribute('x')), id).toBe(x)
+        for (const label of noteLabels) expect(x + estimateTextWidth(label, 9), label).toBeLessThanOrEqual(440)
+        const lastLineY = y + (noteLabels.length - 1) * 14
+        expect(lastLineY, id).toBeLessThanOrEqual(272)
+      }
+      expect(diagram().querySelectorAll('[data-note="sg-source"] tspan')).toHaveLength(2)
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<SgNaclLayersDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 464')
+      await selectScenario('보안 그룹 참조')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '보안 그룹 참조' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      expect(Array.from(diagram().querySelectorAll('[data-path]'), (path) => path.getAttribute('data-path')).sort())
+        .toEqual(['alb-nacl-private', 'nacl-private-ec2'])
+    })
   })
 })

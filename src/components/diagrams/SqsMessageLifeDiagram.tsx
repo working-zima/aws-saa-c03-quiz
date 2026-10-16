@@ -1,5 +1,15 @@
 import { useId, useState } from 'react'
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { DiagramFrame, type DiagramScenario } from './DiagramFrame'
+
+// 그룹 라벨은 두 배치가 함께 쓴다.
+const groupLabels: Record<string, string> = {
+  queue: 'SQS 큐',
+}
+
+const groups = [
+  { id: 'queue', x: 12, y: 84, width: 256, height: 136, labelX: 24, labelY: 102 },
+]
 
 // 대기·숨김 메시지만 점선 큐 안에 둔다. 소비자와 큐를 떠난 결과는 아래 두 열에 둔다.
 const nodes = [
@@ -22,6 +32,34 @@ const paths: Record<string, string> = {
   'reappear': 'M204 164 V196 H108 V164',
   'to-dlq': 'M20 148 H8 V360 H20',
   'expire': 'M112 132 V116 H272 V360 H260',
+}
+
+// 가로형은 생산자 → 큐(대기 → 숨김)를 윗줄에, 큐를 떠난 결과 넷을 아랫줄에 둔다.
+const wideGroups = [
+  { id: 'queue', x: 100, y: 8, width: 224, height: 96, labelX: 112, labelY: 26 },
+]
+
+// 라벨과 색은 세로형 nodes에서 id로 가져온다.
+const wideNodes = [
+  { id: 'producer', x: 12, y: 40, width: 72 },
+  { id: 'waiting', x: 112, y: 40, width: 104 },
+  { id: 'hidden', x: 232, y: 40, width: 80 },
+  { id: 'dlq', x: 12, y: 136, width: 84 },
+  { id: 'consumer', x: 112, y: 136, width: 72 },
+  { id: 'deleted', x: 200, y: 136, width: 84 },
+  { id: 'expired', x: 300, y: 136, width: 96 },
+]
+
+// 재노출은 세로형처럼 큐 안 아래쪽 통로(y 88)로 돈다. 큐를 떠나는 to-dlq·expire는 큐와 아랫줄 사이(y 120)로
+// 각자 왼쪽·오른쪽으로 갈라져 take의 세로선과 만나지 않는다.
+const widePaths: Record<string, string> = {
+  'enqueue': 'M84 56 H112',
+  'take': 'M136 72 V136',
+  'hide': 'M216 56 H232',
+  'delete': 'M184 152 H200',
+  'reappear': 'M272 72 V88 H200 V72',
+  'to-dlq': 'M120 72 V120 H54 V136',
+  'expire': 'M208 72 V120 H348 V136',
 }
 
 // 근거 개념의 조건·수치를 다시 쓴다. ≥는 가시성 타임아웃을 올릴 최소 기준이다.
@@ -47,6 +85,10 @@ const scenarios: DiagramScenario[] = [
 export function SqsMessageLifeDiagram() {
   const [active, setActive] = useState<DiagramScenario | null>(null)
   const arrowId = `${useId()}-sqs-message-life-arrow`
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? wideGroups : groups
+  const layoutNodes = wide ? wideNodes.map((node) => ({ ...nodes.find(({ id }) => id === node.id)!, ...node })) : nodes
+  const layoutPaths = wide ? widePaths : paths
 
   return (
     <DiagramFrame
@@ -57,8 +99,8 @@ export function SqsMessageLifeDiagram() {
       active={active}
       onSelect={setActive}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label="SQS 메시지의 자리와 이동" className="block h-auto w-full" role="img" viewBox="0 0 280 396">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label="SQS 메시지의 자리와 이동" className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 176' : '0 0 280 396'}>
           <defs>
             <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">
               <path className="fill-title" d="M0 0 L6 3 L0 6 Z" />
@@ -66,15 +108,19 @@ export function SqsMessageLifeDiagram() {
           </defs>
 
           <g className="fill-none stroke-disabled" strokeWidth="1">
-            <rect data-group="queue" x="12" y="84" width="256" height="136" rx="4" strokeDasharray="6 4" />
+            {layoutGroups.map((group) => (
+              <rect key={group.id} data-group={group.id} x={group.x} y={group.y} width={group.width} height={group.height} rx="4" strokeDasharray="6 4" />
+            ))}
           </g>
-          <text className="fill-muted" x="24" y="102" fontSize="9">SQS 큐</text>
+          {layoutGroups.map((group) => (
+            <text key={group.id} className="fill-muted" x={group.labelX} y={group.labelY} fontSize="9">{groupLabels[group.id]}</text>
+          ))}
 
           {active?.paths.map((id) => (
             <path
               key={id}
               data-path={id}
-              d={paths[id]}
+              d={layoutPaths[id]}
               className="fill-none stroke-title"
               strokeWidth="2"
               strokeLinejoin="round"
@@ -82,7 +128,7 @@ export function SqsMessageLifeDiagram() {
             />
           ))}
 
-          {nodes.map((node) => (
+          {layoutNodes.map((node) => (
             <g key={node.id} data-node={node.id} opacity={active && !active.nodes.includes(node.id) ? 0.25 : 1}>
               <rect className={`fill-panel ${node.color}`} x={node.x} y={node.y} width={node.width} height="32" rx="4" strokeWidth="1.5" />
               <text className="fill-title" x={node.x + node.width / 2} y={node.y + 16} dominantBaseline="central" textAnchor="middle" fontSize="10">

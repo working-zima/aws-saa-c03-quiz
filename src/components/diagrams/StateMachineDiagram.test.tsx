@@ -1,9 +1,10 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { topics, visualsByTopicId } from '../../data'
+import { WIDE_DIAGRAM_QUERY } from '../../hooks/useWideDiagram'
 import { stripListMarker } from '../../lib/paragraph-blocks'
-import { boxesOutsideViewBox, estimateTextWidth } from '../../lib/svg-bounds'
+import { boxesOutsideViewBox, estimateTextWidth, type SvgBox } from '../../lib/svg-bounds'
 import { ConceptList } from '../ConceptList'
 import { StateMachineDiagram, stateMachineScenarios } from './StateMachineDiagram'
 
@@ -306,5 +307,295 @@ describe('StateMachineDiagram', () => {
       }
     }
     expect(new Set(figures.map((figure) => figure.querySelector('marker')!.id)).size).toBe(2)
+  })
+
+  describe('가로형 (768px 이상)', () => {
+    const wideNotes = {
+      'per-upload': { x: 428, y: 22, anchor: 'end' },
+      'on-failure': { x: 248, y: 90, anchor: 'start' },
+      'up-to-year': { x: 428, y: 22, anchor: 'end' },
+      'limit-15': { x: 316, y: 160, anchor: 'middle' },
+    }
+    const widePaths: Record<string, string> = {
+      's3-rule': 'M64 48 H80',
+      'rule-task': 'M180 48 H204',
+      retry: 'M240 64 V80 H216 V64',
+      'task-approval': 'M260 48 H276',
+      'approval-task': 'M352 48 H368',
+    }
+
+    function mockMatchMedia(matches: boolean) {
+      const listeners = new Set<(event: MediaQueryListEvent) => void>()
+      const mediaQuery = {
+        matches,
+        media: WIDE_DIAGRAM_QUERY,
+        addEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.add(listener)
+        }),
+        removeEventListener: vi.fn((type: string, listener: (event: MediaQueryListEvent) => void) => {
+          if (type === 'change') listeners.delete(listener)
+        }),
+      }
+      vi.stubGlobal('matchMedia', vi.fn(() => mediaQuery))
+
+      return {
+        change(nextMatches: boolean) {
+          mediaQuery.matches = nextMatches
+          const event = Object.assign(new Event('change'), {
+            matches: nextMatches,
+            media: mediaQuery.media,
+          })
+          listeners.forEach((listener) => listener(event))
+        },
+      }
+    }
+
+    function ids(selector: string, attribute: string) {
+      return Array.from(diagram().querySelectorAll(selector), (element) => element.getAttribute(attribute)).sort()
+    }
+
+    async function collectPathIds() {
+      const found = new Set<string>()
+      for (const { label } of expectedScenarios) {
+        await selectScenario(label)
+        for (const path of diagram().querySelectorAll('[data-path]')) found.add(path.getAttribute('data-path')!)
+      }
+      return [...found].sort()
+    }
+
+    // 직교 경로를 선분 목록으로 편다. M/H/V만 나온다.
+    function segments(d: string) {
+      const result: { x1: number, y1: number, x2: number, y2: number }[] = []
+      let x = 0
+      let y = 0
+      for (const [, command, first, second] of d.matchAll(/([MHV])(-?\d+)(?: (-?\d+))?/gu)) {
+        if (command === 'M') { x = Number(first); y = Number(second); continue }
+        const next = command === 'H' ? { x: Number(first), y } : { x, y: Number(first) }
+        result.push({ x1: x, y1: y, x2: next.x, y2: next.y })
+        x = next.x
+        y = next.y
+      }
+      return result
+    }
+
+    // 글자가 차지하는 상자. 높이는 글자 크기 9를 기준선 위로 잡는다.
+    function textBox(text: Element) {
+      const x = Number(text.getAttribute('x'))
+      const y = Number(text.getAttribute('y'))
+      const width = estimateTextWidth(text.textContent!, 9)
+      const anchor = text.getAttribute('text-anchor')
+      const left = anchor === 'end' ? x - width : anchor === 'middle' ? x - width / 2 : x
+      return { id: text.getAttribute('data-note') ?? text.getAttribute('data-group-label')!, x: left, y: y - 9, width, height: 9 }
+    }
+
+    function overlaps(a: SvgBox, b: SvgBox) {
+      return a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+    }
+
+    function nodeBox(id: string) {
+      return readBox(diagram().querySelector(`[data-node="${id}"] rect`)!)
+    }
+
+    function machineBox() {
+      return readBox(diagram().querySelector('[data-group="machine"]')!)
+    }
+
+    beforeEach(() => {
+      mockMatchMedia(true)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    it('440×168 viewBox를 w-full 래퍼 하나로 그리고 SVG 속성과 화살표를 유지한다', () => {
+      render(<StateMachineDiagram />)
+
+      expect(screen.getAllByRole('img')).toHaveLength(1)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 168')
+      expect(diagram()).toHaveAttribute('class', 'block h-auto w-full')
+      expect(diagram().parentElement).toHaveAttribute('class', 'w-full')
+      expect(diagram().parentElement).not.toHaveClass('max-w-[380px]', '-mx-4')
+      expect(diagram().querySelector('marker')).not.toBeNull()
+    })
+
+    it('노드·그룹 id 집합과 시나리오로 나타나는 경로 id 합집합이 세로형과 같다', async () => {
+      const { change } = mockMatchMedia(false)
+      render(<StateMachineDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 256')
+      const tallNodes = ids('[data-node]', 'data-node')
+      const tallGroups = ids('[data-group]', 'data-group')
+      const tallPaths = await collectPathIds()
+
+      act(() => change(true))
+
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 440 168')
+      expect(ids('[data-node]', 'data-node')).toEqual(tallNodes)
+      expect(tallNodes).toEqual(Object.keys(labels).sort())
+      expect(ids('[data-group]', 'data-group')).toEqual(tallGroups)
+      expect(tallGroups).toEqual(Object.keys(groupLabels).sort())
+      expect(tallPaths).toHaveLength(5)
+      expect(await collectPathIds()).toEqual(tallPaths)
+    })
+
+    it('그룹 하나와 노드 여섯의 모든 rect가 440×168 viewBox 안에 있다', () => {
+      render(<StateMachineDiagram />)
+      const boxes = Array.from(diagram().querySelectorAll('rect'), readBox)
+
+      expect(boxes).toHaveLength(7)
+      expect(boxesOutsideViewBox(boxes, [0, 0, 440, 168])).toEqual([])
+    })
+
+    it('노드 라벨은 크기 10과 여백 12로, 그룹 라벨은 크기 9로 자기 박스 오른쪽 끝 안에 들어간다', () => {
+      render(<StateMachineDiagram />)
+
+      for (const [id, label] of Object.entries(labels)) {
+        const node = diagram().querySelector(`[data-node="${id}"]`)!
+        const rect = node.querySelector('rect')!
+        const box = readBox(rect)
+        expect(node.querySelector('text')!.textContent).toBe(label)
+        expect(node.querySelector('text')).toHaveAttribute('font-size', '10')
+        expect(box.height).toBe(32)
+        expect(estimateTextWidth(label, 10) + 12, label).toBeLessThanOrEqual(box.width)
+        expect(rect).toHaveClass('stroke-diagram-managed')
+      }
+      expect(diagram().querySelector('.stroke-diagram-resource, .fill-diagram-resource')).toBeNull()
+
+      for (const [id, wording] of Object.entries(groupLabels)) {
+        const box = readBox(diagram().querySelector(`[data-group="${id}"]`)!)
+        const groupLabel = diagram().querySelector(`[data-group-label="${id}"]`)!
+        expect(groupLabel.textContent).toBe(wording)
+        expect(groupLabel).toHaveAttribute('font-size', '9')
+        const x = Number(groupLabel.getAttribute('x'))
+        expect(x, wording).toBe(box.x + 10)
+        expect(Number(groupLabel.getAttribute('y')), wording).toBe(box.y + 14)
+        expect(x + estimateTextWidth(wording, 9), wording).toBeLessThanOrEqual(box.x + box.width)
+      }
+    })
+
+    it.each(expectedScenarios)('$label: 세로형과 같은 노드·경로·곁말·캡션을 보이고 곁말은 viewBox 안에서 노드·그룹 라벨과 겹치지 않는다', async (scenario) => {
+      const { container } = render(<StateMachineDiagram />)
+      await selectScenario(scenario.label)
+
+      for (const node of diagram().querySelectorAll('[data-node]')) {
+        expect(node).toHaveAttribute('opacity', scenario.nodes.includes(node.getAttribute('data-node')!) ? '1' : '0.25')
+      }
+      for (const group of diagram().querySelectorAll('[data-group], [data-group-label]')) expect(group.closest('[opacity]')).toBeNull()
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(scenario.paths)
+      for (const path of paths) {
+        expect(path).toHaveAttribute('d', widePaths[path.getAttribute('data-path')!])
+        expect(path).toHaveAttribute('stroke-width', '2')
+        expect(path).toHaveAttribute('marker-end', `url(#${diagram().querySelector('marker')!.id})`)
+        expect(path).toHaveClass('stroke-title')
+        expect(path.closest('[opacity]')).toBeNull()
+      }
+      const nodeBoxes = Array.from(diagram().querySelectorAll('[data-node] rect'), readBox)
+      const groupLabelBox = textBox(diagram().querySelector('[data-group-label="machine"]')!)
+      const shownNotes = Array.from(diagram().querySelectorAll('[data-note]'))
+      expect(shownNotes.map((note) => note.getAttribute('data-note'))).toEqual(scenario.notes)
+      for (const note of shownNotes) {
+        const id = note.getAttribute('data-note')! as keyof typeof wideNotes
+        expect(note.textContent).toBe(notes[id].label)
+        expect(note).toHaveAttribute('x', String(wideNotes[id].x))
+        expect(note).toHaveAttribute('y', String(wideNotes[id].y))
+        expect(note).toHaveAttribute('text-anchor', wideNotes[id].anchor)
+        expect(note).toHaveAttribute('font-size', '9')
+        expect(note).toHaveClass('fill-muted')
+        expect(note.closest('[opacity]')).toBeNull()
+        const box = textBox(note)
+        expect(boxesOutsideViewBox([box], [0, 0, 440, 168]), id).toEqual([])
+        expect(overlaps(box, groupLabelBox), `${id} ↔ 그룹 라벨`).toBe(false)
+        for (const node of nodeBoxes) expect(overlaps(box, node), `${id} ↔ ${node.id}`).toBe(false)
+      }
+      expect(container.querySelector('figcaption')!.textContent).toBe(scenario.caption)
+      expect(container.querySelector('figcaption')).toHaveAttribute('aria-live', 'polite')
+      expect(screen.getByRole('button', { name: scenario.label })).toHaveAttribute('aria-pressed', 'true')
+      expect(screen.getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'false')
+    })
+
+    it('실행 시작 경로는 수평선 하나로 상태 머신 왼쪽 변을 지나 첫 태스크 왼쪽 변에 닿고 그룹 라벨과 겹치지 않는다', async () => {
+      render(<StateMachineDiagram />)
+      await selectScenario('업로드로 시작')
+      const machine = machineBox()
+      const task = nodeBox('task-a')
+      const groupLabelBox = textBox(diagram().querySelector('[data-group-label="machine"]')!)
+      const list = segments(diagram().querySelector('[data-path="rule-task"]')!.getAttribute('d')!)
+
+      expect(list).toHaveLength(1)
+      const [{ x1, y1, x2, y2 }] = list
+      expect(y2).toBe(y1)
+      expect(y1).toBeGreaterThan(machine.y)
+      expect(y1).toBeLessThan(machine.y + machine.height)
+      expect(x1).toBeLessThan(machine.x)
+      expect(x2).toBeGreaterThan(machine.x)
+      expect(x2).toBe(task.x)
+      expect(y1).toBeGreaterThan(task.y)
+      expect(y1).toBeLessThan(task.y + task.height)
+      const line = { id: 'rule-task', x: Math.min(x1, x2), y: y1, width: Math.abs(x2 - x1), height: 0 }
+      expect(line.y < groupLabelBox.y || line.y > groupLabelBox.y + groupLabelBox.height
+        || line.x + line.width < groupLabelBox.x || line.x > groupLabelBox.x + groupLabelBox.width).toBe(true)
+    })
+
+    it('단계 셋만 상태 머신 안에 있고 재시도 고리는 상태 머신 안에 머문다', async () => {
+      render(<StateMachineDiagram />)
+      const machine = machineBox()
+      const frame: [number, number, number, number] = [machine.x, machine.y, machine.width, machine.height]
+
+      for (const id of ['task-a', 'approval', 'task-b']) expect(boxesOutsideViewBox([nodeBox(id)], frame), id).toEqual([])
+      for (const id of ['s3', 'rule', 'one-lambda']) expect(boxesOutsideViewBox([nodeBox(id)], frame), id).toHaveLength(1)
+
+      await selectScenario('실패하면 재시도')
+      for (const { x1, y1, x2, y2 } of segments(diagram().querySelector('[data-path="retry"]')!.getAttribute('d')!)) {
+        for (const [x, y] of [[x1, y1], [x2, y2]]) {
+          expect(x, `(${x},${y})`).toBeGreaterThan(machine.x)
+          expect(x, `(${x},${y})`).toBeLessThan(machine.x + machine.width)
+          expect(y, `(${x},${y})`).toBeGreaterThan(machine.y)
+          expect(y, `(${x},${y})`).toBeLessThan(machine.y + machine.height)
+        }
+      }
+    })
+
+    it('경로 양 끝이 출발 노드와 도착 노드의 변에 닿는다', async () => {
+      render(<StateMachineDiagram />)
+      const ends: Record<string, [string, string, string]> = {
+        's3-rule': ['업로드로 시작', 's3', 'rule'],
+        'rule-task': ['업로드로 시작', 'rule', 'task-a'],
+        retry: ['실패하면 재시도', 'task-a', 'task-a'],
+        'task-approval': ['관리자 승인', 'task-a', 'approval'],
+        'approval-task': ['관리자 승인', 'approval', 'task-b'],
+      }
+      const onEdge = (x: number, y: number, id: string) => {
+        const { x: left, y: top, width, height } = nodeBox(id)
+        const withinX = x >= left && x <= left + width
+        const withinY = y >= top && y <= top + height
+        return ((x === left || x === left + width) && withinY) || ((y === top || y === top + height) && withinX)
+      }
+
+      for (const [pathId, [label, from, to]] of Object.entries(ends)) {
+        await selectScenario(label)
+        const list = segments(diagram().querySelector(`[data-path="${pathId}"]`)!.getAttribute('d')!)
+        expect(onEdge(list[0].x1, list[0].y1, from), `${pathId} 시작`).toBe(true)
+        expect(onEdge(list[list.length - 1].x2, list[list.length - 1].y2, to), `${pathId} 끝`).toBe(true)
+      }
+    })
+
+    it('세로형에서 고른 시나리오가 폭을 바꾸어도 유지된다', async () => {
+      const { change } = mockMatchMedia(false)
+      const { container } = render(<StateMachineDiagram />)
+      expect(diagram()).toHaveAttribute('viewBox', '0 0 280 256')
+      await selectScenario('업로드로 시작')
+      const caption = container.querySelector('figcaption')!.textContent
+
+      act(() => change(true))
+
+      expect(diagram().getAttribute('viewBox')!.split(' ').map(Number)[2]).toBe(440)
+      expect(screen.getByRole('button', { name: '업로드로 시작' })).toHaveAttribute('aria-pressed', 'true')
+      expect(container.querySelector('figcaption')!.textContent).toBe(caption)
+      const paths = Array.from(diagram().querySelectorAll('[data-path]'))
+      expect(paths.map((path) => path.getAttribute('data-path'))).toEqual(['s3-rule', 'rule-task'])
+      for (const path of paths) expect(path).toHaveAttribute('d', widePaths[path.getAttribute('data-path')!])
+      expect(Array.from(diagram().querySelectorAll('[data-note]'), (note) => note.getAttribute('data-note'))).toEqual(['per-upload'])
+    })
   })
 })
