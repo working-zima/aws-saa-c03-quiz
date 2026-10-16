@@ -1,0 +1,126 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "61-wide-diagrams-rest",
+  "steps": [
+    {
+      "step": 0,
+      "name": "vpc-scope-wide",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "nat-count-wide",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "peering-scale-wide",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "hybrid-paths-wide",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "sg-nacl-boundary-wide",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "sg-nacl-layers-wide",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "messaging-shapes-wide",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "sns-fanout-wide",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "sqs-message-life-wide",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "edge-to-origin-wide",
+      "status": "pending"
+    },
+    {
+      "step": 10,
+      "name": "s3-class-map-wide",
+      "status": "pending"
+    },
+    {
+      "step": 11,
+      "name": "route53-hybrid-dns-wide",
+      "status": "pending"
+    },
+    {
+      "step": 12,
+      "name": "route53-alias-wide",
+      "status": "pending"
+    },
+    {
+      "step": 13,
+      "name": "route53-health-wide",
+      "status": "pending"
+    },
+    {
+      "step": 14,
+      "name": "backup-flow-wide",
+      "status": "pending"
+    },
+    {
+      "step": 15,
+      "name": "dr-choice-wide",
+      "status": "pending"
+    },
+    {
+      "step": 16,
+      "name": "api-endpoint-path-wide",
+      "status": "pending"
+    },
+    {
+      "step": 17,
+      "name": "api-integration-wide",
+      "status": "pending"
+    },
+    {
+      "step": 18,
+      "name": "state-machine-wide",
+      "status": "pending"
+    },
+    {
+      "step": 19,
+      "name": "map-state-wide",
+      "status": "pending"
+    },
+    {
+      "step": 20,
+      "name": "drift-scope-wide",
+      "status": "pending"
+    },
+    {
+      "step": 21,
+      "name": "control-timing-wide",
+      "status": "pending"
+    },
+    {
+      "step": 22,
+      "name": "identity-center-access-wide",
+      "status": "pending"
+    },
+    {
+      "step": 23,
+      "name": "org-scp-scope-wide",
+      "status": "pending"
+    }
+  ]
+}
