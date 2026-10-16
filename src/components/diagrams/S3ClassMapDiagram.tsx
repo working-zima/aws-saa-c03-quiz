@@ -1,3 +1,4 @@
+import { useWideDiagram } from '../../hooks/useWideDiagram'
 import { DiagramFrame } from './DiagramFrame'
 
 // 두 칸에 같은 라벨이 붙는다. 장기 보관은 조회 기준과 직교하는 두 번째 기준이라
@@ -29,10 +30,38 @@ const storageClasses = [
   { id: 'express', label: 'S3 Express One Zone', note: '1밀리초 미만 · 단일 AZ', x: 12, y: 544, width: 256 },
 ]
 
+// 가로형은 두 조회 칸 안에서 클래스를 두 열로 편다. 장기 보관 칸은 각 조회 칸 아래쪽에 전체 폭으로 남고,
+// 대기 조회 칸의 장기 보관 위 빈 자리도 그대로 둔다. 라벨과 점선은 세로형 groups에서 id로 가져온다.
+const wideGroups = [
+  { id: 'immediate', x: 4, y: 4, width: 432, height: 196 },
+  { id: 'longterm-immediate', x: 12, y: 130, width: 416, height: 62 },
+  { id: 'waiting', x: 4, y: 210, width: 432, height: 150 },
+  { id: 'longterm-waiting', x: 12, y: 278, width: 416, height: 74 },
+  { id: 'outside', x: 4, y: 370, width: 432, height: 70 },
+]
+
+// 라벨과 곁말은 세로형 storageClasses에서 id로 가져온다. 곁말이 길어 두 열이 다 찬다.
+const wideStorageClasses = [
+  { id: 'standard', x: 12, y: 26, width: 184 },
+  { id: 'tiering', x: 204, y: 26, width: 224 },
+  { id: 'standard-ia', x: 12, y: 78, width: 184 },
+  { id: 'one-zone-ia', x: 204, y: 78, width: 224 },
+  { id: 'glacier-instant', x: 20, y: 152, width: 176 },
+  { id: 'glacier-flexible', x: 20, y: 300, width: 176 },
+  { id: 'glacier-deep', x: 204, y: 300, width: 216 },
+  { id: 'express', x: 12, y: 392, width: 184 },
+]
+
 // 정적 도식이라 고를 것이 없다. 껍데기는 scenarios가 없으면 버튼 줄을 그리지 않는다.
 const noSelection = () => undefined
 
 export function S3ClassMapDiagram() {
+  const wide = useWideDiagram()
+  const layoutGroups = wide ? wideGroups.map((group) => ({ ...groups.find(({ id }) => id === group.id)!, ...group })) : groups
+  const layoutStorageClasses = wide
+    ? wideStorageClasses.map((storageClass) => ({ ...storageClasses.find(({ id }) => id === storageClass.id)!, ...storageClass }))
+    : storageClasses
+
   return (
     <DiagramFrame
       label="S3 스토리지 클래스 분류 도식"
@@ -41,10 +70,10 @@ export function S3ClassMapDiagram() {
       active={null}
       onSelect={noSelection}
     >
-      <div className="-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0">
-        <svg aria-label="S3 스토리지 클래스 분류" className="block h-auto w-full" role="img" viewBox="0 0 280 596">
+      <div className={wide ? 'w-full' : '-mx-4 w-full max-w-[380px] max-sm:w-[calc(100%+2rem)] sm:mx-0'}>
+        <svg aria-label="S3 스토리지 클래스 분류" className="block h-auto w-full" role="img" viewBox={wide ? '0 0 440 444' : '0 0 280 596'}>
           <g className="fill-none stroke-disabled" strokeWidth="1">
-            {groups.map((group) => (
+            {layoutGroups.map((group) => (
               <rect
                 key={group.id}
                 data-group={group.id}
@@ -58,14 +87,14 @@ export function S3ClassMapDiagram() {
             ))}
           </g>
           <g className="fill-muted" fontSize="9">
-            {groups.map((group) => (
+            {layoutGroups.map((group) => (
               <text key={group.id} data-group-label={group.id} x={group.x + 10} y={group.y + 14}>
                 {group.label}
               </text>
             ))}
           </g>
 
-          {storageClasses.map((storageClass) => (
+          {layoutStorageClasses.map((storageClass) => (
             <g key={storageClass.id} data-node={storageClass.id}>
               <rect
                 className="fill-panel stroke-diagram-managed"
