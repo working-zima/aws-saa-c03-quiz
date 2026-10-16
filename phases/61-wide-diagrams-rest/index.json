@@ -13,7 +13,10 @@
     {
       "step": 1,
       "name": "nat-count-wide",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-16T09:26:46+0900",
+      "summary": "NatCountDiagram에 가로형(viewBox 0 0 440 284, 래퍼 w-full)을 더했다. 가용 영역 셋을 세 열로 나란히 두고 열 안에서 NAT가 위·EC2가 아래다. wideGroups 4개·wideNodes 8개·widePaths 9개와 서브넷 곁말 자리(그룹 x+10, y+28/y+84)는 step 문서의 출발점 좌표 그대로이고 바꾼 값은 없다. 세로형 DOM은 HEAD의 원래 컴포넌트와 새 컴포넌트를 jsdom에서 나란히 렌더해 처음 상태와 시나리오 다섯(useId만 정규화)의 innerHTML이 완전히 같음을 임시 테스트로 확인했고(확인 뒤 삭제), 기존 테스트 23개는 고치지 않고 통과한다. 교차 검사 통과 줄: ✓ 교차 없음 — 세로 노드 208개·경로 177개, 가로 노드 62개·경로 46개를 검사했고 상자 내부를 지나는 선분이 없다. 가로형 테스트 12개(먼저 써서 7개 실패를 확인)를 더해 전체 1460개 통과(기존 1448개), build·lint·check-structure 통과.",
+      "completed_at": "2026-10-16T09:31:04+0900"
     },
     {
       "step": 2,
