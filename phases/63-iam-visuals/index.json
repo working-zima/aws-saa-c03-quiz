@@ -1,0 +1,51 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "63-iam-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "iam-tables",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "group-policy-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "role-paths-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "abac-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "boundary-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "policy-evaluation-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "notaction-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "region-condition-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "delegated-admin-diagram",
+      "status": "pending"
+    }
+  ]
+}
