@@ -47,7 +47,8 @@
       "name": "columnar-diagram",
       "status": "completed",
       "started_at": "2026-10-19T14:07:33+0900",
-      "summary": "ColumnarFormatDiagram(세로형 viewBox 0 0 280 224, 가로형 0 0 440 176, 노드 7·경로 1·그룹 2·장면 둘, 행 기준 장면은 화살표 없음)과 JSON diagrams['columnar']를 더하고 emr-glue-athena.parquet-columnar-format에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 247개·경로 200개, 가로 노드 247개·경로 200개'. 새 테스트 35개(ColumnarFormatDiagram.test.tsx), 전체 1941개 통과."
+      "summary": "ColumnarFormatDiagram(세로형 viewBox 0 0 280 224, 가로형 0 0 440 176, 노드 7·경로 1·그룹 2·장면 둘, 행 기준 장면은 화살표 없음)과 JSON diagrams['columnar']를 더하고 emr-glue-athena.parquet-columnar-format에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 247개·경로 200개, 가로 노드 247개·경로 200개'. 새 테스트 35개(ColumnarFormatDiagram.test.tsx), 전체 1941개 통과.",
+      "completed_at": "2026-10-19T14:12:39+0900"
     }
   ],
   "created_at": "2026-10-19T13:41:28+0900"
