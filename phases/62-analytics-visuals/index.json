@@ -1,0 +1,56 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "62-analytics-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "analytics-tables",
+      "status": "completed",
+      "summary": "src/data/visuals/emr-glue-athena.json(표 service-roles·log-storage, 빈 diagrams·glossary)과 visualsByTopicId['emr-glue-athena'] 키를 더하고, analyticsTables.tsx의 AnalyticsServiceTable을 emr-glue-athena.emr에, LogStorageTable을 emr-glue-athena.log-storage-s3-athena에 붙였다. 새 테스트 13개(analyticsTables.test.tsx), 전체 1749개 통과.",
+      "started_at": "2026-10-19T13:41:28+0900",
+      "completed_at": "2026-10-19T13:44:02+0900"
+    },
+    {
+      "step": 1,
+      "name": "cluster-cost-diagram",
+      "status": "completed",
+      "summary": "EmrClusterCostDiagram(세로형 viewBox 0 0 280 372, 가로형 0 0 440 292, 경로 없음·장면 넷)과 JSON diagrams['cluster-cost']를 더하고 emr-glue-athena.emr-managed-scaling에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 217개·경로 177개, 가로 노드 217개·경로 177개'. 새 테스트 34개(EmrClusterCostDiagram.test.tsx), 전체 1783개 통과.",
+      "started_at": "2026-10-19T13:44:27+0900",
+      "completed_at": "2026-10-19T13:49:59+0900"
+    },
+    {
+      "step": 2,
+      "name": "node-roles-diagram",
+      "status": "completed",
+      "summary": "EmrNodeRolesDiagram(세로형 viewBox 0 0 280 248, 가로형 0 0 440 160, 노드 4·경로 3·장면 넷)과 JSON diagrams['node-roles']를 더하고 emr-glue-athena.emr-node-instance-family-choice에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 221개·경로 180개, 가로 노드 221개·경로 180개'. 새 테스트 41개(EmrNodeRolesDiagram.test.tsx), 전체 1824개 통과.",
+      "started_at": "2026-10-19T13:49:59+0900",
+      "completed_at": "2026-10-19T13:55:05+0900"
+    },
+    {
+      "step": 3,
+      "name": "runtime-role-diagram",
+      "status": "completed",
+      "started_at": "2026-10-19T13:55:05+0900",
+      "summary": "EmrRuntimeRoleDiagram(세로형 viewBox 0 0 280 376, 가로형 0 0 440 232, 노드 10·경로 12·장면 넷)과 JSON diagrams['runtime-role']를 더하고 emr-glue-athena.emr-security-configuration에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 231개·경로 192개, 가로 노드 231개·경로 192개'. 새 테스트 41개(EmrRuntimeRoleDiagram.test.tsx), 전체 1865개 통과.",
+      "completed_at": "2026-10-19T14:00:50+0900"
+    },
+    {
+      "step": 4,
+      "name": "lake-permissions-diagram",
+      "status": "completed",
+      "started_at": "2026-10-19T14:01:03+0900",
+      "summary": "LakePermissionsDiagram(세로형 viewBox 0 0 280 272, 가로형 0 0 440 192, 노드 9·경로 7·그룹 2·장면 넷)과 JSON diagrams['lake-permissions']를 더하고 emr-glue-athena.lake-formation-lf-tags에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 240개·경로 199개, 가로 노드 240개·경로 199개'. 새 테스트 41개(LakePermissionsDiagram.test.tsx), 전체 1906개 통과.",
+      "completed_at": "2026-10-19T14:07:33+0900"
+    },
+    {
+      "step": 5,
+      "name": "columnar-diagram",
+      "status": "completed",
+      "started_at": "2026-10-19T14:07:33+0900",
+      "summary": "ColumnarFormatDiagram(세로형 viewBox 0 0 280 224, 가로형 0 0 440 176, 노드 7·경로 1·그룹 2·장면 둘, 행 기준 장면은 화살표 없음)과 JSON diagrams['columnar']를 더하고 emr-glue-athena.parquet-columnar-format에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 247개·경로 200개, 가로 노드 247개·경로 200개'. 새 테스트 35개(ColumnarFormatDiagram.test.tsx), 전체 1941개 통과.",
+      "completed_at": "2026-10-19T14:12:39+0900"
+    }
+  ],
+  "created_at": "2026-10-19T13:41:28+0900",
+  "completed_at": "2026-10-19T14:12:39+0900"
+}

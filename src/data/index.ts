@@ -2,6 +2,7 @@ import questionsData from './questions.json'
 import topicsData from './topics.json'
 import apiGatewayStepFunctionsVisuals from './visuals/api-gateway-step-functions.json'
 import backupDisasterRecoveryVisuals from './visuals/backup-disaster-recovery.json'
+import emrGlueAthenaVisuals from './visuals/emr-glue-athena.json'
 import governanceIacVisuals from './visuals/governance-iac.json'
 import identityFederationVisuals from './visuals/identity-federation.json'
 import organizationsCloudtrailConfigVisuals from './visuals/organizations-cloudtrail-config.json'
@@ -16,6 +17,7 @@ export const questions: Question[] = questionsData as Question[]
 export const visualsByTopicId: Record<string, TopicVisuals> = {
   'api-gateway-step-functions': apiGatewayStepFunctionsVisuals,
   'backup-disaster-recovery': backupDisasterRecoveryVisuals,
+  'emr-glue-athena': emrGlueAthenaVisuals,
   'governance-iac': governanceIacVisuals,
   'identity-federation': identityFederationVisuals,
   'organizations-cloudtrail-config': organizationsCloudtrailConfigVisuals,
