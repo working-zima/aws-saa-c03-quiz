@@ -39,7 +39,8 @@
       "name": "lake-permissions-diagram",
       "status": "completed",
       "started_at": "2026-10-19T14:01:03+0900",
-      "summary": "LakePermissionsDiagram(세로형 viewBox 0 0 280 272, 가로형 0 0 440 192, 노드 9·경로 7·그룹 2·장면 넷)과 JSON diagrams['lake-permissions']를 더하고 emr-glue-athena.lake-formation-lf-tags에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 240개·경로 199개, 가로 노드 240개·경로 199개'. 새 테스트 41개(LakePermissionsDiagram.test.tsx), 전체 1906개 통과."
+      "summary": "LakePermissionsDiagram(세로형 viewBox 0 0 280 272, 가로형 0 0 440 192, 노드 9·경로 7·그룹 2·장면 넷)과 JSON diagrams['lake-permissions']를 더하고 emr-glue-athena.lake-formation-lf-tags에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 240개·경로 199개, 가로 노드 240개·경로 199개'. 새 테스트 41개(LakePermissionsDiagram.test.tsx), 전체 1906개 통과.",
+      "completed_at": "2026-10-19T14:07:33+0900"
     },
     {
       "step": 5,
