@@ -1,5 +1,64 @@
 {
-  "diagrams": {},
+  "diagrams": {
+    "cluster-cost": {
+      "label": "EMR 클러스터 비용 도식",
+      "svgLabel": "장기 실행·일시적 클러스터와 관리형 스케일링",
+      "question": "EMR 클러스터가 노는 시간은 어떻게 줄일까?",
+      "idleCaption": "방식을 고르면 클러스터와 노드가 언제 놀고 있는지 볼 수 있다.",
+      "legend": "파랑: EMR 클러스터와 노드 · 회색: 작업. 위 박스는 하루가 왼쪽에서 오른쪽으로 흐르며, 막대 길이는 실제 시간의 비율이 아니다.",
+      "nodes": {
+        "job": "작업",
+        "long-running": "장기 실행 클러스터",
+        "transient": "일시적 클러스터",
+        "high-1": "노드",
+        "high-2": "노드",
+        "high-3": "노드",
+        "low-busy": "노드",
+        "low-idle-1": "노는 노드",
+        "low-idle-2": "노는 노드"
+      },
+      "groups": {
+        "day": "하루",
+        "work": "긴 작업 하나가 도는 동안",
+        "high": "부하가 클 때",
+        "low": "부하가 작을 때"
+      },
+      "notes": {
+        "idle-cost": "나머지 시간도 비용",
+        "ends-with-job": "작업과 함께 종료",
+        "idle-nodes-cost": "노는 동안에도 비용",
+        "add-nodes": "부하가 크면 더함",
+        "remove-nodes": "부하가 작으면 뺌"
+      },
+      "scenarios": [
+        {
+          "id": "long-running",
+          "label": "장기 실행",
+          "caption": "클러스터를 계속 띄워 두면 작업이 끝난 뒤 남은 시간의 비용이 그대로 낭비된다.",
+          "sources": ["emr-glue-athena.emr-transient-cluster"]
+        },
+        {
+          "id": "transient",
+          "label": "일시적 클러스터",
+          "caption": "작업이 도는 동안만 살아 있다가 끝나면 종료된다. 매일 몇 시간만 도는 작업에서 비용을 낮춘다.",
+          "sources": ["emr-glue-athena.emr-transient-cluster"]
+        },
+        {
+          "id": "no-scaling",
+          "label": "스케일링 없음",
+          "caption": "작업이 도는 동안에도 부하가 줄면 노드 여럿이 논다. 클러스터의 수명을 줄이는 것과는 다른 문제다.",
+          "sources": ["emr-glue-athena.emr-managed-scaling"]
+        },
+        {
+          "id": "managed",
+          "label": "관리형 스케일링",
+          "caption": "부하를 보고 노드를 더하고 뺀다. 필요할 때만 노드가 붙어 있어 긴 작업 안의 유휴 시간이 준다.",
+          "sources": ["emr-glue-athena.emr-managed-scaling"]
+        }
+      ],
+      "sources": ["emr-glue-athena.emr-transient-cluster", "emr-glue-athena.emr-managed-scaling"]
+    }
+  },
   "tables": {
     "service-roles": {
       "label": "분석 서비스가 맡는 일",

@@ -9,6 +9,7 @@ import { ControlTimingDiagram } from './ControlTimingDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
+import { EmrClusterCostDiagram } from './EmrClusterCostDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
@@ -83,5 +84,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'api-gateway-step-functions.step-functions-long-running-workflow': StateMachineDiagram,
   'api-gateway-step-functions.step-functions-map-state': MapStateDiagram,
   'emr-glue-athena.emr': AnalyticsServiceTable,
+  'emr-glue-athena.emr-managed-scaling': EmrClusterCostDiagram,
   'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
 }
