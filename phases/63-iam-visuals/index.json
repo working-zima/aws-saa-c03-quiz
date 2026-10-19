@@ -15,7 +15,8 @@
       "name": "group-policy-diagram",
       "status": "completed",
       "started_at": "2026-10-19T17:12:52+0900",
-      "summary": "GroupPolicyDiagram(앵커 iam-group-policy-attachment, 시나리오 사용자마다·그룹에·직접 정책을 남기면)을 JSON diagrams['group-policy']·registry에 더했다. viewBox 세로 0 0 280 232·가로 0 0 440 148, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 254개·경로 204개, 가로 노드 254개·경로 204개' 교차 없음. 새 테스트 37개(GroupPolicyDiagram.test.tsx), 전체 2001개 통과"
+      "summary": "GroupPolicyDiagram(앵커 iam-group-policy-attachment, 시나리오 사용자마다·그룹에·직접 정책을 남기면)을 JSON diagrams['group-policy']·registry에 더했다. viewBox 세로 0 0 280 232·가로 0 0 440 148, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 254개·경로 204개, 가로 노드 254개·경로 204개' 교차 없음. 새 테스트 37개(GroupPolicyDiagram.test.tsx), 전체 2001개 통과",
+      "completed_at": "2026-10-19T17:17:43+0900"
     },
     {
       "step": 2,
