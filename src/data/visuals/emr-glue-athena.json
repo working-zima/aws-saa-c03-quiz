@@ -1,0 +1,43 @@
+{
+  "diagrams": {},
+  "tables": {
+    "service-roles": {
+      "label": "분석 서비스가 맡는 일",
+      "columns": ["서비스", "고를 때", "고르지 않을 때"],
+      "columnWidths": ["30%", "35%", "35%"],
+      "sources": [
+        "emr-glue-athena.emr",
+        "emr-glue-athena.spark",
+        "emr-glue-athena.glue",
+        "emr-glue-athena.glue-crawler",
+        "emr-glue-athena.glue-databrew",
+        "emr-glue-athena.glue-etl-with-per-customer-kms-key",
+        "emr-glue-athena.athena",
+        "emr-glue-athena.athena-encrypted-and-pay-per-query",
+        "emr-glue-athena.athena-federated-query",
+        "emr-glue-athena.lake-formation"
+      ],
+      "rows": [
+        { "header": "EMR", "cells": ["대량의 데이터를 처리할 컴퓨팅이 필요할 때", "가끔 실행하는 조회나, 운영 부담이 작아야 하는 ETL일 때"] },
+        { "header": "Spark", "cells": ["여러 서버가 대량의 데이터를 나누어 처리할 때", "실시간 분석이 필요할 때"] },
+        { "header": "Glue", "cells": ["추출, 변환, 적재를 관리형 서비스에 맡길 때", "데이터를 직접 분석해야 할 때"] },
+        { "header": "Glue Crawler", "cells": ["S3에 막 들어온 데이터를 바로 쿼리할 수 있게 준비할 때", "데이터의 형태를 바꾸는 ETL 작업일 때"] },
+        { "header": "Glue DataBrew", "cells": ["분석 전에 값을 정리하고 형태를 고르게 맞출 때", "누가 어느 행을 볼지 접근을 나눌 때"] },
+        { "header": "Athena", "cells": ["S3에 둔 데이터를 옮기지 않고 SQL로 조회할 때", "데이터 웨어하우스에 정기적으로 대량 적재할 때"] },
+        { "header": "Lake Formation", "cells": ["데이터 레이크의 접근 권한을 행·열 수준까지 나눌 때", "분석 전에 값을 정리하고 다듬을 때"] }
+      ]
+    },
+    "log-storage": {
+      "label": "조회 빈도로 고르는 로그 저장 위치",
+      "columns": ["저장 위치", "맞는 쓰임"],
+      "columnWidths": ["34%", "66%"],
+      "sources": ["emr-glue-athena.log-storage-s3-athena", "emr-glue-athena.athena-encrypted-and-pay-per-query"],
+      "rows": [
+        { "header": "S3와 Athena", "cells": ["오래 보관하면서 가끔만 조회할 때. 저장은 객체 스토리지 값이고 조회는 실행한 만큼만 내서 가장 싸다."] },
+        { "header": "OpenSearch", "cells": ["검색이 잦고 응답이 빨라야 할 때. 클러스터를 띄워 두는 비용이 계속 붙는다."] },
+        { "header": "CloudWatch Logs", "cells": ["지금 벌어지는 일을 실시간으로 볼 때. 대용량 장기 보관과 분석에는 맞지 않는다."] }
+      ]
+    }
+  },
+  "glossary": []
+}

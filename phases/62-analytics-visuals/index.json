@@ -5,7 +5,9 @@
     {
       "step": 0,
       "name": "analytics-tables",
-      "status": "pending"
+      "status": "completed",
+      "summary": "src/data/visuals/emr-glue-athena.json(표 service-roles·log-storage, 빈 diagrams·glossary)과 visualsByTopicId['emr-glue-athena'] 키를 더하고, analyticsTables.tsx의 AnalyticsServiceTable을 emr-glue-athena.emr에, LogStorageTable을 emr-glue-athena.log-storage-s3-athena에 붙였다. 새 테스트 13개(analyticsTables.test.tsx), 전체 1749개 통과.",
+      "started_at": "2026-10-19T13:41:28+0900"
     },
     {
       "step": 1,
@@ -32,5 +34,6 @@
       "name": "columnar-diagram",
       "status": "pending"
     }
-  ]
+  ],
+  "created_at": "2026-10-19T13:41:28+0900"
 }

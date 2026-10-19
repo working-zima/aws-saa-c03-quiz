@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { AnalyticsServiceTable, LogStorageTable } from './analyticsTables'
 import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
 import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
@@ -81,4 +82,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'api-gateway-step-functions.api-gateway-behind-cloudfront': ApiEndpointPathDiagram,
   'api-gateway-step-functions.step-functions-long-running-workflow': StateMachineDiagram,
   'api-gateway-step-functions.step-functions-map-state': MapStateDiagram,
+  'emr-glue-athena.emr': AnalyticsServiceTable,
+  'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
 }
