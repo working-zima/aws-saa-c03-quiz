@@ -1,5 +1,51 @@
 {
-  "diagrams": {},
+  "diagrams": {
+    "group-policy": {
+      "label": "IAM 그룹 정책 도식",
+      "svgLabel": "사용자마다 붙인 정책과 그룹에 붙인 정책",
+      "question": "권한 기준을 바꾸려면 몇 곳을 고쳐야 할까?",
+      "idleCaption": "붙이는 방식을 고르면 정책이 어디에 붙고 기준을 바꿀 때 몇 곳을 고치는지 볼 수 있다.",
+      "legend": "파랑: IAM 정책 · 회색: IAM 사용자. 큰 박스가 IAM 그룹 하나다.",
+      "nodes": {
+        "group-policy": "그룹에 붙인 정책",
+        "policy-a": "직접 붙인 정책",
+        "policy-b": "직접 붙인 정책",
+        "policy-c": "직접 붙인 정책",
+        "user-a": "사용자 A",
+        "user-b": "사용자 B",
+        "user-c": "사용자 C"
+      },
+      "groups": {
+        "group": "IAM 그룹"
+      },
+      "notes": {
+        "three-places": "고칠 곳 셋",
+        "one-place": "고칠 곳 하나",
+        "leftover": "그룹 기준과 따로 남음"
+      },
+      "scenarios": [
+        {
+          "id": "per-user",
+          "label": "사용자마다",
+          "caption": "정책을 사람마다 붙이면 붙는 곳이 사람 수만큼 생긴다. 기준을 바꿀 때 전부를 훑어야 한다.",
+          "sources": ["iam-permissions.iam-group-policy-attachment"]
+        },
+        {
+          "id": "group",
+          "label": "그룹에",
+          "caption": "직무별 그룹에 정책을 붙이고 사용자를 그룹에 넣으면 권한의 기준이 그룹 하나에 모인다.",
+          "sources": ["iam-permissions.iam-group-policy-attachment"]
+        },
+        {
+          "id": "leftover",
+          "label": "직접 정책을 남기면",
+          "caption": "사용자에게 직접 붙어 있던 정책을 떼지 않으면 그룹의 기준과 따로 살아 있는 권한이 된다.",
+          "sources": ["iam-permissions.iam-group-policy-attachment"]
+        }
+      ],
+      "sources": ["iam-permissions.iam-group-policy-attachment"]
+    }
+  },
   "tables": {
     "group-members": {
       "label": "IAM 그룹에 넣을 수 있는 것",
