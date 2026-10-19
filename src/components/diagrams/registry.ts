@@ -1,17 +1,23 @@
 import type { ComponentType } from 'react'
+import { AnalyticsServiceTable, LogStorageTable } from './analyticsTables'
 import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
 import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
+import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
+import { EmrClusterCostDiagram } from './EmrClusterCostDiagram'
+import { EmrNodeRolesDiagram } from './EmrNodeRolesDiagram'
+import { EmrRuntimeRoleDiagram } from './EmrRuntimeRoleDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { IdentityCenterAccessDiagram } from './IdentityCenterAccessDiagram'
+import { LakePermissionsDiagram } from './LakePermissionsDiagram'
 import { MapStateDiagram } from './MapStateDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
@@ -81,4 +87,11 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'api-gateway-step-functions.api-gateway-behind-cloudfront': ApiEndpointPathDiagram,
   'api-gateway-step-functions.step-functions-long-running-workflow': StateMachineDiagram,
   'api-gateway-step-functions.step-functions-map-state': MapStateDiagram,
+  'emr-glue-athena.emr': AnalyticsServiceTable,
+  'emr-glue-athena.emr-managed-scaling': EmrClusterCostDiagram,
+  'emr-glue-athena.emr-node-instance-family-choice': EmrNodeRolesDiagram,
+  'emr-glue-athena.emr-security-configuration': EmrRuntimeRoleDiagram,
+  'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
+  'emr-glue-athena.lake-formation-lf-tags': LakePermissionsDiagram,
+  'emr-glue-athena.parquet-columnar-format': ColumnarFormatDiagram,
 }
