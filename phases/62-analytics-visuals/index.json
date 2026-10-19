@@ -24,7 +24,7 @@
       "status": "completed",
       "summary": "EmrNodeRolesDiagram(세로형 viewBox 0 0 280 248, 가로형 0 0 440 160, 노드 4·경로 3·장면 넷)과 JSON diagrams['node-roles']를 더하고 emr-glue-athena.emr-node-instance-family-choice에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 221개·경로 180개, 가로 노드 221개·경로 180개'. 새 테스트 41개(EmrNodeRolesDiagram.test.tsx), 전체 1824개 통과.",
       "started_at": "2026-10-19T13:49:59+0900",
-      "completed_at": "2026-10-19T13:55:00+0900"
+      "completed_at": "2026-10-19T13:55:05+0900"
     },
     {
       "step": 3,
