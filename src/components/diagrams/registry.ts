@@ -16,6 +16,7 @@ import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
 import { IdentityCenterAccessDiagram } from './IdentityCenterAccessDiagram'
+import { LakePermissionsDiagram } from './LakePermissionsDiagram'
 import { MapStateDiagram } from './MapStateDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
@@ -90,4 +91,5 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'emr-glue-athena.emr-node-instance-family-choice': EmrNodeRolesDiagram,
   'emr-glue-athena.emr-security-configuration': EmrRuntimeRoleDiagram,
   'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
+  'emr-glue-athena.lake-formation-lf-tags': LakePermissionsDiagram,
 }

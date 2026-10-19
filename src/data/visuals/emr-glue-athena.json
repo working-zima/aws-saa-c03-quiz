@@ -169,6 +169,62 @@
         }
       ],
       "sources": ["emr-glue-athena.emr-runtime-role", "emr-glue-athena.emr-security-configuration"]
+    },
+    "lake-permissions": {
+      "label": "Lake Formation 권한 경로 도식",
+      "svgLabel": "블루프린트 수집과 Athena 조회에 걸리는 Lake Formation 권한",
+      "question": "데이터 레이크의 열·행 권한은 어디서 걸릴까?",
+      "idleCaption": "경로를 고르면 데이터가 들어오고 읽히는 길에서 권한이 어디서 걸리는지 볼 수 있다.",
+      "legend": "파랑: AWS 서비스와 Lake Formation의 기능 · 회색: 데이터와 그것을 읽는 쪽.",
+      "nodes": {
+        "database": "관계형 데이터베이스",
+        "viz": "시각화 도구",
+        "athena": "Athena",
+        "lf-tags": "LF 태그",
+        "blueprint": "블루프린트",
+        "permissions": "열·행 권한",
+        "table-1": "테이블",
+        "table-2": "테이블",
+        "table-new": "새 테이블"
+      },
+      "groups": {
+        "lake-formation": "Lake Formation",
+        "lake": "데이터 레이크"
+      },
+      "notes": {
+        "ingest": "레이크로 수집",
+        "applied": "열·행 권한 적용",
+        "policy-only": "IAM·버킷 정책만",
+        "by-tag": "태그 기준 권한",
+        "new-table": "태그만 달면 됨"
+      },
+      "scenarios": [
+        {
+          "id": "blueprint",
+          "label": "블루프린트 수집",
+          "caption": "블루프린트가 관계형 데이터베이스의 데이터를 레이크로 가져온다. 수집 파이프라인을 따로 짜지 않는다.",
+          "sources": ["emr-glue-athena.lake-formation-blueprint-and-athena"]
+        },
+        {
+          "id": "via-athena",
+          "label": "Athena로 조회",
+          "caption": "시각화 도구가 Athena로 조회하면 Lake Formation의 열 수준 권한이 그대로 걸린다.",
+          "sources": ["emr-glue-athena.lake-formation-blueprint-and-athena", "emr-glue-athena.lake-formation"]
+        },
+        {
+          "id": "direct-s3",
+          "label": "S3 직접 읽기",
+          "caption": "S3를 직접 읽게 하고 IAM·버킷 정책으로 막으면, SQL 질의 단위의 열 권한이 되지 못한다.",
+          "sources": ["emr-glue-athena.lake-formation-blueprint-and-athena", "emr-glue-athena.lake-formation"]
+        },
+        {
+          "id": "lf-tags",
+          "label": "LF 태그",
+          "caption": "테이블·열에 LF 태그를 달고 역할에는 태그 기준으로 권한을 준다. 새 테이블도 태그만 달면 된다.",
+          "sources": ["emr-glue-athena.lake-formation-lf-tags"]
+        }
+      ],
+      "sources": ["emr-glue-athena.lake-formation", "emr-glue-athena.lake-formation-blueprint-and-athena", "emr-glue-athena.lake-formation-lf-tags"]
     }
   },
   "tables": {
