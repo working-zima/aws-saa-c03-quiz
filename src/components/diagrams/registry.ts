@@ -16,6 +16,7 @@ import { EmrRuntimeRoleDiagram } from './EmrRuntimeRoleDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
+import { AnalyzerToolTable, CredentialTable, GroupMembersTable } from './iamTables'
 import { IdentityCenterAccessDiagram } from './IdentityCenterAccessDiagram'
 import { LakePermissionsDiagram } from './LakePermissionsDiagram'
 import { MapStateDiagram } from './MapStateDiagram'
@@ -94,4 +95,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
   'emr-glue-athena.lake-formation-lf-tags': LakePermissionsDiagram,
   'emr-glue-athena.parquet-columnar-format': ColumnarFormatDiagram,
+  'iam-permissions.iam-user-is-account-scoped': GroupMembersTable,
+  'iam-permissions.iam-role': CredentialTable,
+  'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }

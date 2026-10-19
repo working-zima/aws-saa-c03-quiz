@@ -5,7 +5,9 @@
     {
       "step": 0,
       "name": "iam-tables",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-19T16:51:56+0900",
+      "summary": "src/data/visuals/iam-permissions.json(diagrams 빈 객체·glossary 빈 배열)과 visualsByTopicId['iam-permissions'] 키를 더하고, 비교표 셋 group-members(앵커 iam-user-is-account-scoped)·credentials(iam-role)·analyzer-tools(network-access-analyzer)를 iamTables.tsx의 GroupMembersTable·CredentialTable·AnalyzerToolTable로 registry에 붙였다. 새 테스트 20개(iamTables.test.tsx), 전체 1964개 통과"
     },
     {
       "step": 1,
@@ -47,5 +49,6 @@
       "name": "delegated-admin-diagram",
       "status": "pending"
     }
-  ]
+  ],
+  "created_at": "2026-10-19T16:51:56+0900"
 }

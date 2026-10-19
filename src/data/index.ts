@@ -4,6 +4,7 @@ import apiGatewayStepFunctionsVisuals from './visuals/api-gateway-step-functions
 import backupDisasterRecoveryVisuals from './visuals/backup-disaster-recovery.json'
 import emrGlueAthenaVisuals from './visuals/emr-glue-athena.json'
 import governanceIacVisuals from './visuals/governance-iac.json'
+import iamPermissionsVisuals from './visuals/iam-permissions.json'
 import identityFederationVisuals from './visuals/identity-federation.json'
 import organizationsCloudtrailConfigVisuals from './visuals/organizations-cloudtrail-config.json'
 import route53Visuals from './visuals/route53.json'
@@ -19,6 +20,7 @@ export const visualsByTopicId: Record<string, TopicVisuals> = {
   'backup-disaster-recovery': backupDisasterRecoveryVisuals,
   'emr-glue-athena': emrGlueAthenaVisuals,
   'governance-iac': governanceIacVisuals,
+  'iam-permissions': iamPermissionsVisuals,
   'identity-federation': identityFederationVisuals,
   'organizations-cloudtrail-config': organizationsCloudtrailConfigVisuals,
   'route53': route53Visuals,
