@@ -225,6 +225,45 @@
         }
       ],
       "sources": ["emr-glue-athena.lake-formation", "emr-glue-athena.lake-formation-blueprint-and-athena", "emr-glue-athena.lake-formation-lf-tags"]
+    },
+    "columnar": {
+      "label": "열 지향 형식 도식",
+      "svgLabel": "행 기준과 열 기준(Parquet)으로 담은 같은 데이터",
+      "question": "열 기준으로 담으면 쿼리가 읽는 곳이 어떻게 달라질까?",
+      "idleCaption": "저장 방식을 고르면 열 B의 값이 어디에 담기는지 볼 수 있다.",
+      "legend": "파랑: 저장된 데이터 블록 · 회색: 쿼리. 열 A·B·C와 행 1·2·3은 같은 표의 열과 행이다.",
+      "nodes": {
+        "query": "열 B만 쓰는 쿼리",
+        "row-1": "행 1의 A·B·C",
+        "row-2": "행 2의 A·B·C",
+        "row-3": "행 3의 A·B·C",
+        "col-a": "열 A의 값",
+        "col-b": "열 B의 값",
+        "col-c": "열 C의 값"
+      },
+      "groups": {
+        "row-based": "행 기준",
+        "columnar": "열 기준 (Parquet)"
+      },
+      "notes": {
+        "scattered": "열 B가 세 행에 흩어짐",
+        "only-b": "열 B만 읽음"
+      },
+      "scenarios": [
+        {
+          "id": "row-based",
+          "label": "행 기준",
+          "caption": "행 기준으로 담으면 같은 열의 값이 행마다 흩어진다. 열 B의 값이 세 블록에 다 들어 있다.",
+          "sources": ["emr-glue-athena.parquet-columnar-format"]
+        },
+        {
+          "id": "columnar",
+          "label": "Parquet",
+          "caption": "Parquet는 같은 열을 한데 담아 필요한 열만 읽는다. Athena라면 요금이 붙는 스캔량이 준다.",
+          "sources": ["emr-glue-athena.parquet-columnar-format", "emr-glue-athena.athena-encrypted-and-pay-per-query"]
+        }
+      ],
+      "sources": ["emr-glue-athena.parquet-columnar-format", "emr-glue-athena.athena-encrypted-and-pay-per-query"]
     }
   },
   "tables": {

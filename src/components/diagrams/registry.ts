@@ -5,6 +5,7 @@ import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
 import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
+import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
@@ -92,4 +93,5 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'emr-glue-athena.emr-security-configuration': EmrRuntimeRoleDiagram,
   'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
   'emr-glue-athena.lake-formation-lf-tags': LakePermissionsDiagram,
+  'emr-glue-athena.parquet-columnar-format': ColumnarFormatDiagram,
 }
