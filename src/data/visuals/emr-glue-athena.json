@@ -113,6 +113,62 @@
         }
       ],
       "sources": ["emr-glue-athena.emr", "emr-glue-athena.emr-node-types", "emr-glue-athena.emr-node-instance-family-choice"]
+    },
+    "runtime-role": {
+      "label": "EMR 권한과 암호화 도식",
+      "svgLabel": "인스턴스 프로파일·런타임 역할·보안 구성",
+      "question": "클러스터를 함께 쓰는 팀의 권한과 암호화는 무엇이 정할까?",
+      "idleCaption": "구성을 고르면 작업이 어떤 권한으로 데이터에 닿고 무엇이 암호화되는지 볼 수 있다.",
+      "legend": "파랑: AWS 서비스와 IAM 권한 · 회색: 팀이 제출한 작업. 큰 박스가 EMR 클러스터 하나다.",
+      "nodes": {
+        "job-a": "팀 A의 작업",
+        "job-b": "팀 B의 작업",
+        "role-a": "런타임 역할 A",
+        "role-b": "런타임 역할 B",
+        "profile": "인스턴스 프로파일",
+        "node-1": "노드",
+        "node-2": "노드",
+        "s3-a": "S3 데이터 A",
+        "s3-b": "S3 데이터 B",
+        "security": "보안 구성"
+      },
+      "groups": {
+        "cluster": "EMR 클러스터"
+      },
+      "notes": {
+        "same-permission": "같은 권한",
+        "per-job": "작업마다 역할 지정",
+        "assumes": "역할을 인수",
+        "in-transit": "전송 중",
+        "at-rest": "저장 중: S3와 로컬 디스크"
+      },
+      "scenarios": [
+        {
+          "id": "instance-profile",
+          "label": "기본 구성",
+          "caption": "기본 구성에서는 작업이 인스턴스 프로파일 권한으로 돈다. 작업을 낸 모든 팀이 같은 권한을 갖는다.",
+          "sources": ["emr-glue-athena.emr-runtime-role"]
+        },
+        {
+          "id": "runtime-role",
+          "label": "런타임 역할",
+          "caption": "작업을 제출할 때 IAM 역할을 지정한다. 팀마다 역할을 달리 주면 허용된 S3 데이터에만 닿는다.",
+          "sources": ["emr-glue-athena.emr-runtime-role"]
+        },
+        {
+          "id": "trust",
+          "label": "역할 인수",
+          "caption": "인스턴스 프로파일이 런타임 역할을 인수하므로, 런타임 역할이 인스턴스 프로파일 역할을 신뢰해야 한다.",
+          "sources": ["emr-glue-athena.emr-runtime-role"]
+        },
+        {
+          "id": "encryption",
+          "label": "보안 구성",
+          "caption": "보안 구성 하나를 적용하면 S3·로컬 디스크의 데이터와 노드 사이를 오가는 데이터가 함께 암호화된다.",
+          "sources": ["emr-glue-athena.emr-security-configuration"]
+        }
+      ],
+      "sources": ["emr-glue-athena.emr-runtime-role", "emr-glue-athena.emr-security-configuration"]
     }
   },
   "tables": {

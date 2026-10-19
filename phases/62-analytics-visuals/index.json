@@ -29,7 +29,9 @@
     {
       "step": 3,
       "name": "runtime-role-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-19T13:55:05+0900",
+      "summary": "EmrRuntimeRoleDiagram(세로형 viewBox 0 0 280 376, 가로형 0 0 440 232, 노드 10·경로 12·장면 넷)과 JSON diagrams['runtime-role']를 더하고 emr-glue-athena.emr-security-configuration에 붙였다. 출발점 좌표에서 바꾼 것 없음. 교차 검사 '✓ 교차 없음 — 세로 노드 231개·경로 192개, 가로 노드 231개·경로 192개'. 새 테스트 41개(EmrRuntimeRoleDiagram.test.tsx), 전체 1865개 통과."
     },
     {
       "step": 4,

@@ -11,6 +11,7 @@ import { DriftScopeDiagram } from './DriftScopeDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EmrClusterCostDiagram } from './EmrClusterCostDiagram'
 import { EmrNodeRolesDiagram } from './EmrNodeRolesDiagram'
+import { EmrRuntimeRoleDiagram } from './EmrRuntimeRoleDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
@@ -87,5 +88,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'emr-glue-athena.emr': AnalyticsServiceTable,
   'emr-glue-athena.emr-managed-scaling': EmrClusterCostDiagram,
   'emr-glue-athena.emr-node-instance-family-choice': EmrNodeRolesDiagram,
+  'emr-glue-athena.emr-security-configuration': EmrRuntimeRoleDiagram,
   'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
 }
