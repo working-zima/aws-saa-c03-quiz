@@ -55,7 +55,8 @@
       "name": "notaction-diagram",
       "status": "completed",
       "started_at": "2026-10-21T08:51:18+0900",
-      "summary": "NotActionDenyDiagram(앵커 iam-notaction-deny, 시나리오 허용문만·모두 거부 + 허용·NotAction 거부)을 JSON diagrams['notaction']·registry에 더했다. viewBox 세로 0 0 280 192·가로 0 0 440 144, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 287개·경로 229개, 가로 노드 287개·경로 229개' 교차 없음. 새 테스트 37개(NotActionDenyDiagram.test.tsx), 전체 2179개 통과"
+      "summary": "NotActionDenyDiagram(앵커 iam-notaction-deny, 시나리오 허용문만·모두 거부 + 허용·NotAction 거부)을 JSON diagrams['notaction']·registry에 더했다. viewBox 세로 0 0 280 192·가로 0 0 440 144, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 287개·경로 229개, 가로 노드 287개·경로 229개' 교차 없음. 새 테스트 37개(NotActionDenyDiagram.test.tsx), 전체 2179개 통과",
+      "completed_at": "2026-10-21T08:56:54+0900"
     },
     {
       "step": 7,
