@@ -44,6 +44,57 @@
         }
       ],
       "sources": ["iam-permissions.iam-group-policy-attachment"]
+    },
+    "role-paths": {
+      "label": "IAM 역할을 맡는 경로 도식",
+      "svgLabel": "인스턴스 프로파일·IAM Roles Anywhere·신뢰 정책",
+      "question": "역할을 맡는 쪽은 어떤 길로 임시 자격 증명을 받을까?",
+      "idleCaption": "맡는 쪽을 고르면 어떤 수단을 거쳐 IAM 역할에 이르는지 볼 수 있다. 역할에는 액세스 키가 없다.",
+      "legend": "파랑: IAM 역할과 역할을 맡기는 수단 · 회색: 역할을 맡는 쪽. 데이터 센터와 다른 계정은 박스로 나타냈다.",
+      "nodes": {
+        "ec2": "EC2 인스턴스",
+        "profile": "인스턴스 프로파일",
+        "system": "시스템",
+        "roles-anywhere": "IAM Roles Anywhere",
+        "workload": "워크로드",
+        "trust": "신뢰 정책",
+        "role": "IAM 역할"
+      },
+      "groups": {
+        "datacenter": "데이터 센터",
+        "other-account": "다른 계정"
+      },
+      "notes": {
+        "no-key": "인스턴스에 키를 두지 않음",
+        "cert": "X.509 인증서 제시",
+        "temp": "임시 자격 증명을 받는다"
+      },
+      "scenarios": [
+        {
+          "id": "instance-profile",
+          "label": "EC2",
+          "caption": "EC2에는 IAM 역할을 인스턴스 프로파일에 연결해 붙인다. 인스턴스 안에 액세스 키를 두지 않는다.",
+          "sources": ["iam-permissions.instance-profile", "iam-permissions.iam-role"]
+        },
+        {
+          "id": "roles-anywhere",
+          "label": "데이터 센터",
+          "caption": "신뢰한 인증 기관의 X.509 인증서를 IAM Roles Anywhere가 임시 자격 증명으로 바꾼다.",
+          "sources": ["iam-permissions.iam-roles-anywhere"]
+        },
+        {
+          "id": "trust-policy",
+          "label": "다른 계정",
+          "caption": "자원이 있는 계정의 역할이 신뢰 정책으로 다른 계정의 주체를 허용한다. 그 주체가 역할을 맡는다.",
+          "sources": ["iam-permissions.cross-account-iam-role", "iam-permissions.iam-user-is-account-scoped"]
+        }
+      ],
+      "sources": [
+        "iam-permissions.iam-role",
+        "iam-permissions.instance-profile",
+        "iam-permissions.iam-roles-anywhere",
+        "iam-permissions.cross-account-iam-role"
+      ]
     }
   },
   "tables": {

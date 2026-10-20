@@ -25,6 +25,7 @@ import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
+import { RolePathsDiagram } from './RolePathsDiagram'
 import { Route53AliasDiagram } from './Route53AliasDiagram'
 import { Route53HealthDiagram } from './Route53HealthDiagram'
 import { Route53HybridDnsDiagram } from './Route53HybridDnsDiagram'
@@ -99,5 +100,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.iam-group-policy-attachment': GroupPolicyDiagram,
   'iam-permissions.iam-user-is-account-scoped': GroupMembersTable,
   'iam-permissions.iam-role': CredentialTable,
+  'iam-permissions.cross-account-iam-role': RolePathsDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }

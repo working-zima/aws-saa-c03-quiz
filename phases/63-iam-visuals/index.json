@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "role-paths-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T08:30:15+0900",
+      "summary": "RolePathsDiagram(앵커 cross-account-iam-role, 시나리오 EC2·데이터 센터·다른 계정)을 JSON diagrams['role-paths']·registry에 더했다. viewBox 세로 0 0 280 280·가로 0 0 440 224, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 261개·경로 210개, 가로 노드 261개·경로 210개' 교차 없음. 새 테스트 37개(RolePathsDiagram.test.tsx), 전체 2038개 통과",
+      "completed_at": "2026-10-21T08:35:06+0900"
     },
     {
       "step": 3,
