@@ -29,7 +29,9 @@
     {
       "step": 3,
       "name": "abac-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T08:36:01+0900",
+      "summary": "AbacTagDiagram(앵커 abac, 시나리오 태그 비교·새 키가 생기면·이름을 나열하면)을 JSON diagrams['abac']·registry에 더했다. viewBox 세로 0 0 280 216·가로 0 0 440 192, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 267개·경로 215개, 가로 노드 267개·경로 215개' 교차 없음. 새 테스트 31개(AbacTagDiagram.test.tsx), 전체 2069개 통과"
     },
     {
       "step": 4,

@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { AbacTagDiagram } from './AbacTagDiagram'
 import { AnalyticsServiceTable, LogStorageTable } from './analyticsTables'
 import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
@@ -101,5 +102,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.iam-user-is-account-scoped': GroupMembersTable,
   'iam-permissions.iam-role': CredentialTable,
   'iam-permissions.cross-account-iam-role': RolePathsDiagram,
+  'iam-permissions.abac': AbacTagDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }

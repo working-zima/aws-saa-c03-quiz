@@ -95,6 +95,47 @@
         "iam-permissions.iam-roles-anywhere",
         "iam-permissions.cross-account-iam-role"
       ]
+    },
+    "abac": {
+      "label": "속성 기반 액세스 제어 도식",
+      "svgLabel": "태그 비교와 이름 나열",
+      "question": "리소스가 계속 늘어도 정책을 고치지 않으려면?",
+      "idleCaption": "방식을 고르면 태그로 비교할 때와 이름을 나열할 때 새 키가 어떻게 되는지 볼 수 있다.",
+      "legend": "파랑: 정책과 리소스 · 회색: 요청하는 주체. 팀 A·B는 태그 값을 구별하는 이름이다.",
+      "nodes": {
+        "principal": "역할 · 팀 A",
+        "tag-policy": "태그가 같으면 허용",
+        "list-policy": "이름을 나열한 정책",
+        "key-1": "키 1 · 팀 A",
+        "key-2": "키 2 · 팀 B",
+        "key-new": "새 키 · 팀 A"
+      },
+      "notes": {
+        "mismatch": "태그가 달라 닿지 않음",
+        "auto": "정책 수정 없이 들어옴",
+        "manual": "이름을 더해야 닿음"
+      },
+      "scenarios": [
+        {
+          "id": "tag-compare",
+          "label": "태그 비교",
+          "caption": "주체와 리소스에 붙은 태그를 조건 키로 비교한다. 태그가 같은 리소스에만 접근이 허용된다.",
+          "sources": ["iam-permissions.abac"]
+        },
+        {
+          "id": "new-key",
+          "label": "새 키가 생기면",
+          "caption": "새 키에 같은 태그를 붙이면 정책을 고치지 않아도 규칙에 들어온다. 키가 여러 리전에 생겨도 같다.",
+          "sources": ["iam-permissions.abac"]
+        },
+        {
+          "id": "name-list",
+          "label": "이름을 나열하면",
+          "caption": "리소스 이름을 정책에 나열하면 새 키가 생길 때마다 정책에 이름을 하나씩 추가해야 한다.",
+          "sources": ["iam-permissions.abac"]
+        }
+      ],
+      "sources": ["iam-permissions.abac"]
     }
   },
   "tables": {
