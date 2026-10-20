@@ -24,6 +24,7 @@ import { LakePermissionsDiagram } from './LakePermissionsDiagram'
 import { MapStateDiagram } from './MapStateDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
+import { NotActionDenyDiagram } from './NotActionDenyDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { PermissionsBoundaryDiagram } from './PermissionsBoundaryDiagram'
@@ -107,5 +108,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.abac': AbacTagDiagram,
   'iam-permissions.permissions-boundary': PermissionsBoundaryDiagram,
   'iam-permissions.iam-explicit-deny-precedence': PolicyEvaluationDiagram,
+  'iam-permissions.iam-notaction-deny': NotActionDenyDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }

@@ -235,6 +235,52 @@
         }
       ],
       "sources": ["iam-permissions.iam-explicit-deny-precedence"]
+    },
+    "notaction": {
+      "label": "NotAction 거부 도식",
+      "svgLabel": "허용문·모든 작업 거부·NotAction 거부",
+      "question": "한 서비스만 쓰게 하려면 어떤 문장이 필요할까?",
+      "idleCaption": "정책 구성을 고르면 두 서비스가 열리는지 막히는지 볼 수 있다. 그룹에는 다른 서비스를 허용하는 정책이 이미 붙어 있다.",
+      "legend": "파랑: 정책 문장 · 회색: 요청이 향하는 서비스. 큰 박스가 그룹에 붙은 정책들이다.",
+      "nodes": {
+        "target": "남길 서비스",
+        "other": "다른 서비스",
+        "allow-target": "남길 서비스 허용",
+        "other-allow": "다른 정책의 허용",
+        "deny-all": "모든 작업 거부",
+        "deny-notaction": "NotAction 거부"
+      },
+      "groups": {
+        "policies": "그룹에 붙은 정책"
+      },
+      "notes": {
+        "target-open": "열림",
+        "other-open": "열림",
+        "target-blocked": "막힘",
+        "other-blocked": "막힘",
+        "target-kept": "남음"
+      },
+      "scenarios": [
+        {
+          "id": "allow-only",
+          "label": "허용문만",
+          "caption": "허용문만 쓰면 그룹에 붙은 다른 정책이 다른 서비스를 허용할 때 그대로 열린다.",
+          "sources": ["iam-permissions.iam-notaction-deny"]
+        },
+        {
+          "id": "deny-all",
+          "label": "모두 거부 + 허용",
+          "caption": "모든 작업을 거부하고 한 서비스를 허용하면 거부가 이겨 그 서비스까지 막힌다.",
+          "sources": ["iam-permissions.iam-notaction-deny"]
+        },
+        {
+          "id": "notaction",
+          "label": "NotAction 거부",
+          "caption": "Deny 문의 NotAction에 한 서비스를 적으면 그 서비스만 남는다. 다른 정책이 열어도 같다.",
+          "sources": ["iam-permissions.iam-notaction-deny"]
+        }
+      ],
+      "sources": ["iam-permissions.iam-notaction-deny"]
     }
   },
   "tables": {
