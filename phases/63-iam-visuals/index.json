@@ -47,7 +47,8 @@
       "name": "policy-evaluation-diagram",
       "status": "completed",
       "started_at": "2026-10-21T08:46:37+0900",
-      "summary": "PolicyEvaluationDiagram(앵커 iam-explicit-deny-precedence, 시나리오 조건부 거부·대역 밖 IP·허용만·아무 데도 안 걸림)을 JSON diagrams['policy-evaluation']·registry에 더했다. viewBox 세로 0 0 280 248·가로 0 0 440 128, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 281개·경로 224개, 가로 노드 281개·경로 224개' 교차 없음. 새 테스트 36개(PolicyEvaluationDiagram.test.tsx), 전체 2142개 통과"
+      "summary": "PolicyEvaluationDiagram(앵커 iam-explicit-deny-precedence, 시나리오 조건부 거부·대역 밖 IP·허용만·아무 데도 안 걸림)을 JSON diagrams['policy-evaluation']·registry에 더했다. viewBox 세로 0 0 280 248·가로 0 0 440 128, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 281개·경로 224개, 가로 노드 281개·경로 224개' 교차 없음. 새 테스트 36개(PolicyEvaluationDiagram.test.tsx), 전체 2142개 통과",
+      "completed_at": "2026-10-21T08:51:18+0900"
     },
     {
       "step": 6,
