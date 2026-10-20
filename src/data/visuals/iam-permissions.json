@@ -185,6 +185,56 @@
         }
       ],
       "sources": ["iam-permissions.permissions-boundary", "iam-permissions.iam-policy"]
+    },
+    "policy-evaluation": {
+      "label": "정책 평가 순서 도식",
+      "svgLabel": "명시적 거부·허용·기본 거부",
+      "question": "허용과 거부가 겹치면 어느 쪽이 이길까?",
+      "idleCaption": "요청을 고르면 정책 평가가 어떤 순서로 진행돼 어디에서 끝나는지 볼 수 있다.",
+      "legend": "파랑: 정책을 평가하는 단계 · 회색: 요청과 결과. 명시적 거부부터 차례로 본다.",
+      "nodes": {
+        "request": "요청",
+        "check-deny": "명시적 거부가 걸리나",
+        "denied": "거부 · 403",
+        "check-allow": "허용 문장이 있나",
+        "allowed": "허용",
+        "default-deny": "기본 거부"
+      },
+      "notes": {
+        "yes-1": "예",
+        "no-1": "아니오",
+        "yes-2": "예",
+        "no-2": "아니오",
+        "allow-exists": "허용 문장이 있어도",
+        "source-ip": "aws:SourceIp 대역 밖"
+      },
+      "scenarios": [
+        {
+          "id": "conditional-deny",
+          "label": "조건부 거부",
+          "caption": "모든 리소스에 허용 문장이 있어도 같은 작업의 조건부 거부가 성립하면 막히고 403이 돌아온다.",
+          "sources": ["iam-permissions.iam-explicit-deny-precedence"]
+        },
+        {
+          "id": "source-ip",
+          "label": "대역 밖 IP",
+          "caption": "aws:SourceIp로 대역을 정해 두면 그 밖에서 온 호출은 권한이 있어도 거부 문장에 걸린다.",
+          "sources": ["iam-permissions.iam-explicit-deny-precedence"]
+        },
+        {
+          "id": "allowed",
+          "label": "허용만",
+          "caption": "어느 거부에도 걸리지 않고 허용 문장이 있으면 요청이 허용된다.",
+          "sources": ["iam-permissions.iam-explicit-deny-precedence"]
+        },
+        {
+          "id": "none",
+          "label": "아무 데도 안 걸림",
+          "caption": "거부에도 허용에도 걸리지 않으면 요청은 기본 거부로 막힌다.",
+          "sources": ["iam-permissions.iam-explicit-deny-precedence"]
+        }
+      ],
+      "sources": ["iam-permissions.iam-explicit-deny-precedence"]
     }
   },
   "tables": {
