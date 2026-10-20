@@ -37,7 +37,9 @@
     {
       "step": 4,
       "name": "boundary-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T08:40:59+0900",
+      "summary": "PermissionsBoundaryDiagram(앵커 permissions-boundary, 시나리오 경계를 붙이면·SCP가 부착 요구·나중에 찾아 지움)을 JSON diagrams['boundary']·registry에 더했다. viewBox 세로 0 0 280 344·가로 0 0 440 192, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 275개·경로 219개, 가로 노드 275개·경로 219개' 교차 없음. 새 테스트 37개(PermissionsBoundaryDiagram.test.tsx), 전체 2106개 통과"
     },
     {
       "step": 5,

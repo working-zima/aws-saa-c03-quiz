@@ -136,6 +136,55 @@
         }
       ],
       "sources": ["iam-permissions.abac"]
+    },
+    "boundary": {
+      "label": "권한 경계 도식",
+      "svgLabel": "붙인 정책과 권한 경계가 겹치는 범위, 경계 부착 요구",
+      "question": "넓은 정책을 붙여도 권한이 넘지 않게 하려면?",
+      "idleCaption": "장면을 고르면 경계가 실제 권한을 어떻게 줄이고, 경계 없는 역할을 어떻게 막는지 볼 수 있다.",
+      "legend": "파랑: 실제 권한과 이를 지키는 장치 · 회색: 쓸 수 없는 권한과 역할 생성 쪽. 겹친 두 박스는 붙인 정책과 권한 경계의 범위다.",
+      "nodes": {
+        "policy-only": "경계 밖",
+        "effective": "실제 권한",
+        "boundary-only": "정책에 없음",
+        "request": "경계 없는 역할 생성 요청",
+        "scp": "SCP",
+        "rejected": "생성 거부",
+        "created": "규정 어긴 역할",
+        "found": "나중에 찾아 지움"
+      },
+      "groups": {
+        "policy-range": "붙인 정책",
+        "boundary-range": "권한 경계"
+      },
+      "notes": {
+        "not-usable": "쓸 수 없음",
+        "not-granted": "부여되지 않음",
+        "scp-requires": "경계 부착을 요구",
+        "never-created": "역할이 생기지 않음",
+        "exists-until": "지우기 전까지 존재"
+      },
+      "scenarios": [
+        {
+          "id": "boundary",
+          "label": "경계를 붙이면",
+          "caption": "실제 권한은 붙인 정책과 권한 경계가 겹치는 범위다. 경계만으로는 권한이 생기지 않는다.",
+          "sources": ["iam-permissions.permissions-boundary", "iam-permissions.iam-policy"]
+        },
+        {
+          "id": "scp",
+          "label": "SCP가 부착 요구",
+          "caption": "역할을 만들 때 경계 부착을 요구하는 SCP를 걸면 경계 없는 역할은 처음부터 만들어지지 않는다.",
+          "sources": ["iam-permissions.permissions-boundary"]
+        },
+        {
+          "id": "detect",
+          "label": "나중에 찾아 지움",
+          "caption": "어긴 역할을 나중에 찾아 지우는 방식은 만들어진 뒤에야 작동한다. 지우기 전까지 그 역할이 있다.",
+          "sources": ["iam-permissions.permissions-boundary"]
+        }
+      ],
+      "sources": ["iam-permissions.permissions-boundary", "iam-permissions.iam-policy"]
     }
   },
   "tables": {
