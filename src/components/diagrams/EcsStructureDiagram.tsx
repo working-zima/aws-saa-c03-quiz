@@ -31,10 +31,11 @@ const paths: Record<string, string> = {
 }
 
 // 누가 관리하는지와 멈춘 태스크는 곁말 글자로만 보인다.
+// stopped는 두 태스크 상자 사이에 들므로 한글 글리프 윗선(기준선 위 8)이 위 상자 테두리에 닿지 않게 131에 둔다.
 const notes = [
   { id: 'user-managed', x: 70, y: 208, textAnchor: 'middle' as const, scenarios: ['ec2'] },
   { id: 'aws-managed', x: 210, y: 208, textAnchor: 'middle' as const, scenarios: ['fargate'] },
-  { id: 'stopped', x: 70, y: 128, textAnchor: 'middle' as const, scenarios: ['restart'] },
+  { id: 'stopped', x: 70, y: 131, textAnchor: 'middle' as const, scenarios: ['restart'] },
   { id: 'restarted', x: 70, y: 184, textAnchor: 'middle' as const, scenarios: ['restart'] },
 ]
 

@@ -49,10 +49,12 @@ const ends: Record<string, [string, string]> = {
   'restart': ['node:service', 'node:ec2-task-2'],
 }
 
+// stopped는 두 태스크 상자(아래 변 120, 위 변 136) 사이에 든다. 한글 글리프 윗선이 기준선 위 8이라(Windows Chrome 실측)
+// 128이면 위 상자 테두리에 닿는다. 131이면 위로 2.25, 아래로 3.25가 남는다.
 const tallNotes: NotePlaces = {
   'user-managed': { x: 70, y: 208, anchor: 'middle' },
   'aws-managed': { x: 210, y: 208, anchor: 'middle' },
-  stopped: { x: 70, y: 128, anchor: 'middle' },
+  stopped: { x: 70, y: 131, anchor: 'middle' },
   restarted: { x: 70, y: 184, anchor: 'middle' },
 }
 const wideNotes: NotePlaces = {
