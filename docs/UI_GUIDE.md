@@ -549,6 +549,8 @@ phase 38의 다섯 장은 위 기록에서, phase 39가 메시징 주제에 더�
 - **글자 크기는 노드 라벨 10, 그룹 라벨·곁말 9**(viewBox 단위)다. 라벨을 줄이거나 영문
   약어로 바꾸지 마라. 안 들어가면 노드를 넓히거나 한 줄 전체 폭으로 편다. 본문에 쓰인 말과
   도식에 쓰인 말이 다르면 도식이 본문을 가리키지 못한다.
+  곁말(9)의 한글 글리프 윗선은 기준선 위 8이다(Windows Chrome, phase 64 실측). 곁말을 노드 바로 아래에 둘 때는 기준선을
+  노드 아래 변에서 10 이상 띄운다. 기준선 위 7로 어림하면 테두리에 닿는 자리를 놓친다.
 - **색은 보조 채널이고 위치가 1차 채널이다.** 라벨 붙은 그룹 박스의 안과 밖으로 계층을
   구분한다. 모든 색을 회색으로 바꿔도 읽혀야 한다(ADR-036).
 - **강조는 opacity로 한다.** 선택한 시나리오에 없는 노드는 `0.25`, 있는 노드는 `1`이다.
@@ -574,15 +576,16 @@ S3 클래스 도식의 비용은 본문이 말하는 관계만 SVG 아래 글로
 
 #### 넓은 화면의 가로형 (ADR-047·ADR-048)
 
-화면 폭이 768px 이상이면 도식이 가로형 배치로 바뀐다. 도식 40장이 모두 가로형을 갖는다(phase 60이 시범 세 장, phase 61이 나머지 24장,
-phase 62의 새 다섯 장과 phase 63의 새 여덟 장은 처음부터 두 배치로 만들었다).
+화면 폭이 768px 이상이면 도식이 가로형 배치로 바뀐다. 도식 48장이 모두 가로형을 갖는다(phase 60이 시범 세 장, phase 61이 나머지 24장,
+phase 62의 새 다섯 장과 phase 63·64의 새 여덟 장씩은 처음부터 두 배치로 만들었다).
 새 도식을 만들 때도 두 배치를 함께 짠다.
 
 - **`viewBox` 폭은 440이다.** 글자 크기 단위는 세로형과 같다(노드 라벨 10, 그룹 라벨·곁말 9). 768px 이상에서 도식 틀
   안쪽 폭은 638px(딸린 개념 안 621px)로 고정이라 배율이 1.45(1.41)다. 실측은 [phase 60 실측 기록](../phases/60-wide-diagrams/measurements.md)과
   [phase 61 실측 기록](../phases/61-wide-diagrams-rest/measurements.md)(27장 전부, Windows Chrome, 실시간 전환 포함),
   [phase 62 실측 기록](../phases/62-analytics-visuals/measurements.md)(새 다섯 장),
-  [phase 63 실측 기록](../phases/63-iam-visuals/measurements.md)(새 여덟 장)에 둔다.
+  [phase 63 실측 기록](../phases/63-iam-visuals/measurements.md)(새 여덟 장),
+  [phase 64 실측 기록](../phases/64-container-visuals/measurements.md)(새 여덟 장)에 둔다.
 - **래퍼는 `w-full` 하나다.** `max-w-[380px]`·`-mx-4`·`max-sm:` 보정을 붙이지 마라. 768px 이상은 이미 `sm:` 구간이라 상쇄할 모바일
   여백이 없다.
 - **배치를 고르는 것은 `useWideDiagram()` 하나다.** 기준 폭을 도식마다 다시 쓰지 마라. 이유: 기준이 한 곳에 있어야 도식끼리 같은 폭에서
@@ -637,7 +640,7 @@ phase 62의 새 다섯 장과 phase 63의 새 여덟 장은 처음부터 두 배
 도식 안의 예시 값은 **본문에 나오는 것만** 쓴다(`www.example.com`, `db.corp.local` 등). 설명용 가상 리전·IP를 지어내지 마라.
 예시 곁말은 시나리오와 상관없이 늘 보이고, 자기 노드의 opacity를 따른다. 물음형 제목은 Route 53 도식 셋(시범), 거버넌스 주제의
 도식 둘(phase 48), 조직·Identity Center 도식 둘(phase 50), API Gateway·Step Functions 도식 넷(phase 59),
-EMR·Glue·Athena·Lake Formation 도식 다섯(phase 62), IAM 도식 여덟(phase 63)에 있다.
+EMR·Glue·Athena·Lake Formation 도식 다섯(phase 62), IAM 도식 여덟(phase 63), ECS·EKS·Fargate 도식 여덟(phase 64)에 있다.
 예시는 Route 53 도식 셋에만 있다.
 
 #### 두 줄 노드
@@ -662,6 +665,9 @@ EMR·Glue·Athena·Lake Formation 도식 다섯(phase 62), IAM 도식 여덟(pha
   84px, `스로틀링이`가 70px이고, `CloudFormation`은 101.9px, `WebSocket`(굵기 500)은 70.6px이다(phase 59, 배포 사이트 실측).
   같은 환경에서 `OpenSearch`·`CloudWatch`(굵기 500)는 76.7px, `Formation`은 64.6px, `DataBrew`는 60.2px이다(phase 62, `vite preview` 실측).
   `비활성화하거나`(굵기 400, 98px)는 40% 열(안쪽 폭 100px)에 2px 여유로 들어갔다(phase 63, 같은 환경). 이 칸의 글을 고칠 때 더 긴 낱말을 넣지 마라.
+  컨테이너 주제의 실행 방식 표는 `애플리케이션을`(98px)·`App2Container`(굵기 500, 95.2px)가 38% 열(안쪽 100px)에, Connector·Anywhere 표는
+  `마이그레이션`(굵기 500, 84px)이 34% 열(안쪽 89px)에 들어간다. 이 세 덩어리는 스크롤 막대가 15px를 차지하는 320px(Windows Chrome iframe,
+  표 폭 273px)에서는 끊긴다(phase 64). 앞의 phase들은 그 폭에서도 들어갔다. 이 표들의 글을 고칠 때 더 긴 낱말을 넣지 마라.
   열 폭은 더 넓게 잰 쪽에 맞춘다.
   영문 이름 바로 뒤에 조사를 붙이면 그만큼 한 덩어리가 길어진다. `X-Ray`처럼 하이픈이 있는 이름은
   줄 끝에서 하이픈 뒤로 갈라지므로 칸의 첫머리에 둔다.
