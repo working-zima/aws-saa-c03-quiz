@@ -135,6 +135,45 @@
         }
       ],
       "sources": ["ecs-eks-fargate.ecs-task-role", "ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
+    },
+    "awsvpc": {
+      "label": "awsvpc 네트워크 모드 도식",
+      "svgLabel": "퍼블릭 서브넷의 로드 밸런서·NAT 게이트웨이와 프라이빗 서브넷의 태스크",
+      "question": "프라이빗 서브넷의 태스크로는 어떤 길이 열려 있을까?",
+      "idleCaption": "방향을 고르면 요청이 로드 밸런서와 NAT 게이트웨이 중 어디를 지나는지 볼 수 있다.",
+      "legend": "청록: VPC 안 자원 · 회색: 인터넷. 작은 박스 하나가 태스크 하나다.",
+      "nodes": {
+        "internet": "인터넷",
+        "nat": "NAT 게이트웨이",
+        "lb": "로드 밸런서",
+        "eni-a": "엘라스틱 네트워크 인터페이스",
+        "eni-b": "엘라스틱 네트워크 인터페이스"
+      },
+      "groups": {
+        "vpc": "VPC",
+        "public": "퍼블릭 서브넷",
+        "private": "프라이빗 서브넷",
+        "task-a": "태스크",
+        "task-b": "태스크"
+      },
+      "notes": {
+        "exposed": "로드 밸런서만 드러남"
+      },
+      "scenarios": [
+        {
+          "id": "inbound",
+          "label": "들어오는 요청",
+          "caption": "밖에 드러난 것은 로드 밸런서 하나다. 요청은 태스크마다 붙은 네트워크 인터페이스로 간다.",
+          "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
+        },
+        {
+          "id": "outbound",
+          "label": "나가는 요청",
+          "caption": "태스크는 퍼블릭 서브넷의 NAT 게이트웨이를 거쳐 나간다. 태스크로 바로 들어오는 길은 없다.",
+          "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
     }
   },
   "tables": {

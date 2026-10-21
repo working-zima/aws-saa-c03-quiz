@@ -45,7 +45,9 @@
     {
       "step": 5,
       "name": "awsvpc-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T13:43:15+0900",
+      "summary": "AwsvpcPathDiagram(세로형 viewBox 0 0 280 336, 가로형 0 0 440 216)을 만들어 ecs-eks-fargate.ecs-awsvpc-mode 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"awsvpc\"]에 넣었다. 장면 둘(들어오는 요청·나가는 요청), 물음형 제목, VPC 안에 퍼블릭·프라이빗 서브넷, 프라이빗 서브넷 안에 태스크 박스 둘을 겹친 그룹 다섯을 바깥부터 그린다. 인터넷만 회색이고 나머지 노드는 청록(stroke-diagram-resource)이며, 인터넷에서 엘라스틱 네트워크 인터페이스로 바로 가는 경로는 없다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 321개·경로 254개, 가로 노드 321개·경로 254개\". 새 테스트 AwsvpcPathDiagram.test.tsx 32개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 98개 파일 2408개 통과, check-structure·check-design 통과"
     },
     {
       "step": 6,

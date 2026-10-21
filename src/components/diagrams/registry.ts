@@ -4,6 +4,7 @@ import { AnalyticsServiceTable, LogStorageTable } from './analyticsTables'
 import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
 import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
+import { AwsvpcPathDiagram } from './AwsvpcPathDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
@@ -122,6 +123,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'ecs-eks-fargate.container-orchestration': OrchestrationComputeTable,
   'ecs-eks-fargate.ecs': EcsStructureDiagram,
   'ecs-eks-fargate.ecs-task-role-vs-task-execution-role': EcsRolesDiagram,
+  'ecs-eks-fargate.ecs-awsvpc-mode': AwsvpcPathDiagram,
   'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
   'ecs-eks-fargate.eks-anywhere': EksHybridTable,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,
