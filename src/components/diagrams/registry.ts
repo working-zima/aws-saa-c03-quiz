@@ -8,6 +8,7 @@ import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
+import { DelegatedAdminDiagram } from './DelegatedAdminDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
@@ -111,5 +112,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.iam-explicit-deny-precedence': PolicyEvaluationDiagram,
   'iam-permissions.iam-notaction-deny': NotActionDenyDiagram,
   'iam-permissions.iam-requested-region-condition': RegionConditionDiagram,
+  'iam-permissions.access-analyzer-delegated-administrator': DelegatedAdminDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }

@@ -324,6 +324,46 @@
         }
       ],
       "sources": ["iam-permissions.iam-requested-region-condition"]
+    },
+    "delegated-admin": {
+      "label": "Access Analyzer 위임 관리자 도식",
+      "svgLabel": "관리 계정·감사 계정·구성원 계정",
+      "question": "조직 전체의 Access Analyzer 결과는 어떻게 한곳에 모일까?",
+      "idleCaption": "순서를 고르면 구성원 계정들의 결과가 감사 계정에 모이는지 볼 수 있다.",
+      "legend": "파랑: S3 버킷 · 청록: 계정. 큰 박스가 조직이다.",
+      "nodes": {
+        "management": "관리 계정",
+        "member-1": "구성원 계정",
+        "member-2": "구성원 계정",
+        "audit": "감사 계정",
+        "bucket": "S3 버킷과 정책"
+      },
+      "groups": {
+        "org": "조직"
+      },
+      "notes": {
+        "delegate": "위임 관리자로 지정",
+        "gathered": "결과가 모인다",
+        "not-gathered": "결과가 모이지 않음"
+      },
+      "scenarios": [
+        {
+          "id": "delegate",
+          "label": "위임 관리자 지정",
+          "caption": "관리 계정에서 감사 계정을 위임 관리자로 지정하면 구성원 계정들의 결과가 그 계정에 모인다.",
+          "sources": ["iam-permissions.access-analyzer-delegated-administrator"]
+        },
+        {
+          "id": "bucket-first",
+          "label": "버킷부터 만들면",
+          "caption": "버킷과 정책을 먼저 만들거나 감사 추적을 보내도 분석 결과는 모이지 않는다. 지정이 첫 조치다.",
+          "sources": ["iam-permissions.access-analyzer-delegated-administrator"]
+        }
+      ],
+      "sources": [
+        "iam-permissions.access-analyzer-delegated-administrator",
+        "iam-permissions.iam-access-analyzer"
+      ]
     }
   },
   "tables": {
