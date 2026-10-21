@@ -2,9 +2,28 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "65-roles-anywhere-steps",
   "steps": [
-    { "step": 0, "name": "step-list-parse", "status": "pending" },
-    { "step": 1, "name": "step-list-render", "status": "pending" },
-    { "step": 2, "name": "roles-anywhere-concept", "status": "pending" },
-    { "step": 3, "name": "roles-anywhere-step-figures", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "step-list-parse",
+      "status": "completed",
+      "started_at": "2026-10-22T08:18:19+0900",
+      "summary": "src/lib/paragraph-blocks.ts의 ParagraphBlock에 kind 'steps'(start·items)를 더하고 새 타입 StepItem·SubBlock·SubItem을 export했다. groupParagraphs가 0단 `N. `을 단계 목록으로, 2칸·4칸 문단을 바로 위 한 단 얕은 항목의 하위 글머리(bullets)·이어지는 문단으로 묶고, 부모 없는 문단·0/2/4칸 밖 들여쓰기는 던지지 않고 0단 일반 문단으로 둔다. stripListMarker는 들여쓰기와 표지(0단 번호, 어느 단이든 `- `)를 떼고 isListItem은 그대로다. 단계 목록이 없는 입력의 결과는 전과 같다. 새 테스트 9개(이 중 8개는 구현 전 실패 확인, isListItem 단언 1개는 원래 통과)로 paragraph-blocks.test.ts가 17개가 됐고, changes.json의 실제 95문단이 단계 목록 셋(start 1·9·16, 항목 8·7·4)으로 나뉘고 펼치면 원래 순서·글과 같음을 단언한다. build·lint 통과, 테스트 102개 파일 2604개 통과"
+    },
+    {
+      "step": 1,
+      "name": "step-list-render",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "roles-anywhere-concept",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "roles-anywhere-step-figures",
+      "status": "pending"
+    }
+  ],
+  "created_at": "2026-10-22T08:18:19+0900"
 }
