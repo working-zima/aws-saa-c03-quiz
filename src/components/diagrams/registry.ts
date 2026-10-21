@@ -4,14 +4,21 @@ import { AnalyticsServiceTable, LogStorageTable } from './analyticsTables'
 import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
 import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
+import { AwsvpcPathDiagram } from './AwsvpcPathDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
+import { ContainerImageDiagram } from './ContainerImageDiagram'
+import { ComputeChoiceTable, EksHybridTable, EksRoutingTable, OrchestrationComputeTable } from './containerTables'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
 import { DelegatedAdminDiagram } from './DelegatedAdminDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
+import { EcsRolesDiagram } from './EcsRolesDiagram'
+import { EcsStructureDiagram } from './EcsStructureDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
+import { EksComputeDiagram } from './EksComputeDiagram'
+import { EksScalingDiagram } from './EksScalingDiagram'
 import { EmrClusterCostDiagram } from './EmrClusterCostDiagram'
 import { EmrNodeRolesDiagram } from './EmrNodeRolesDiagram'
 import { EmrRuntimeRoleDiagram } from './EmrRuntimeRoleDiagram'
@@ -29,6 +36,7 @@ import { NotActionDenyDiagram } from './NotActionDenyDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { PermissionsBoundaryDiagram } from './PermissionsBoundaryDiagram'
+import { PodPermissionsDiagram } from './PodPermissionsDiagram'
 import { PolicyEvaluationDiagram } from './PolicyEvaluationDiagram'
 import { RegionConditionDiagram } from './RegionConditionDiagram'
 import { RolePathsDiagram } from './RolePathsDiagram'
@@ -43,6 +51,7 @@ import { SgNaclCompareTable } from './sgNaclTables'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
 import { StateMachineDiagram } from './StateMachineDiagram'
+import { TaskPlacementDiagram } from './TaskPlacementDiagram'
 import { VpcDestinationDiagram } from './VpcDestinationDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
 import { VpcScopeDiagram } from './VpcScopeDiagram'
@@ -114,4 +123,16 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.iam-requested-region-condition': RegionConditionDiagram,
   'iam-permissions.access-analyzer-delegated-administrator': DelegatedAdminDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
+  'ecs-eks-fargate.container': ContainerImageDiagram,
+  'ecs-eks-fargate.container-orchestration': OrchestrationComputeTable,
+  'ecs-eks-fargate.ecs': EcsStructureDiagram,
+  'ecs-eks-fargate.ecs-task-role-vs-task-execution-role': EcsRolesDiagram,
+  'ecs-eks-fargate.ecs-awsvpc-mode': AwsvpcPathDiagram,
+  'ecs-eks-fargate.ecs-task-placement-strategy': TaskPlacementDiagram,
+  'ecs-eks-fargate.eks-fargate-pod-isolation': EksComputeDiagram,
+  'ecs-eks-fargate.eks-cluster-autoscaler': EksScalingDiagram,
+  'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
+  'ecs-eks-fargate.eks-anywhere': EksHybridTable,
+  'ecs-eks-fargate.eks-irsa': PodPermissionsDiagram,
+  'ecs-eks-fargate.app2container': ComputeChoiceTable,
 }
