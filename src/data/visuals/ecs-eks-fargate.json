@@ -174,6 +174,44 @@
         }
       ],
       "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
+    },
+    "task-placement": {
+      "label": "ECS 태스크 배치 도식",
+      "svgLabel": "가용 영역 셋에 나눠 놓은 ECS 태스크",
+      "question": "가용 영역 하나가 빠져도 ECS 서비스가 계속 돌까?",
+      "idleCaption": "상황을 고르면 분산 전략으로 나눠 놓은 태스크가 영역이 빠질 때 어떻게 남는지 볼 수 있다.",
+      "legend": "회색: ECS 서비스와 태스크. 큰 박스 하나가 가용 영역 하나다.",
+      "nodes": {
+        "service": "ECS 서비스",
+        "task-a": "태스크",
+        "task-b": "태스크",
+        "task-c": "태스크"
+      },
+      "groups": {
+        "az-a": "가용 영역 A",
+        "az-b": "가용 영역 B",
+        "az-c": "가용 영역 C"
+      },
+      "notes": {
+        "down": "장애",
+        "each": "영역마다 하나씩",
+        "continue": "남은 영역이 서비스를 잇는다"
+      },
+      "scenarios": [
+        {
+          "id": "spread",
+          "label": "영역마다 분산",
+          "caption": "분산 전략에 가용 영역 속성을 주고 최소 용량을 영역 수만큼 잡으면 영역마다 하나씩 남는다.",
+          "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
+        },
+        {
+          "id": "az-down",
+          "label": "영역 A가 빠지면",
+          "caption": "가용 영역 A가 통째로 빠져도 B와 C에 남은 태스크로 서비스가 계속된다.",
+          "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
     }
   },
   "tables": {

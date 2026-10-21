@@ -53,7 +53,9 @@
     {
       "step": 6,
       "name": "task-placement-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T13:48:26+0900",
+      "summary": "TaskPlacementDiagram(세로형 viewBox 0 0 280 160, 가로형 0 0 440 160)을 만들어 ecs-eks-fargate.ecs-task-placement-strategy 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"task-placement\"]에 넣었다. 장면 둘(영역마다 분산·영역 A가 빠지면), 물음형 제목, 가용 영역 박스 셋에 태스크를 하나씩 두고 노드는 모두 회색이다. 영역 A가 빠지면 태스크 A가 0.25로 흐려지고 그리로 가는 경로가 사라지며 곁말 장애가 영역 A 라벨 오른쪽에 붙는다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 325개·경로 257개, 가로 노드 325개·경로 257개\". 새 테스트 TaskPlacementDiagram.test.tsx 31개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 99개 파일 2439개 통과, check-structure·check-design 통과"
     },
     {
       "step": 7,

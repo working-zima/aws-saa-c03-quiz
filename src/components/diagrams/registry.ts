@@ -48,6 +48,7 @@ import { SgNaclCompareTable } from './sgNaclTables'
 import { SnsFanoutDiagram } from './SnsFanoutDiagram'
 import { SqsMessageLifeDiagram } from './SqsMessageLifeDiagram'
 import { StateMachineDiagram } from './StateMachineDiagram'
+import { TaskPlacementDiagram } from './TaskPlacementDiagram'
 import { VpcDestinationDiagram } from './VpcDestinationDiagram'
 import { VpcPathsDiagram } from './VpcPathsDiagram'
 import { VpcScopeDiagram } from './VpcScopeDiagram'
@@ -124,6 +125,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'ecs-eks-fargate.ecs': EcsStructureDiagram,
   'ecs-eks-fargate.ecs-task-role-vs-task-execution-role': EcsRolesDiagram,
   'ecs-eks-fargate.ecs-awsvpc-mode': AwsvpcPathDiagram,
+  'ecs-eks-fargate.ecs-task-placement-strategy': TaskPlacementDiagram,
   'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
   'ecs-eks-fargate.eks-anywhere': EksHybridTable,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,
