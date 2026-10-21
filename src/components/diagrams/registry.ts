@@ -13,6 +13,7 @@ import { ControlTimingDiagram } from './ControlTimingDiagram'
 import { DelegatedAdminDiagram } from './DelegatedAdminDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
+import { EcsStructureDiagram } from './EcsStructureDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EmrClusterCostDiagram } from './EmrClusterCostDiagram'
 import { EmrNodeRolesDiagram } from './EmrNodeRolesDiagram'
@@ -118,6 +119,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
   'ecs-eks-fargate.container': ContainerImageDiagram,
   'ecs-eks-fargate.container-orchestration': OrchestrationComputeTable,
+  'ecs-eks-fargate.ecs': EcsStructureDiagram,
   'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
   'ecs-eks-fargate.eks-anywhere': EksHybridTable,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,

@@ -44,6 +44,52 @@
         }
       ],
       "sources": ["ecs-eks-fargate.container"]
+    },
+    "ecs-structure": {
+      "label": "ECS 구성 도식",
+      "svgLabel": "태스크 정의·서비스·EC2 인스턴스와 Fargate의 태스크",
+      "question": "ECS에서 태스크는 무엇으로 만들어지고 어디에서 돌까?",
+      "idleCaption": "방식을 고르면 서비스가 태스크 정의로 띄운 태스크가 어디에서 도는지 볼 수 있다.",
+      "legend": "회색: 태스크 정의·서비스·태스크. 왼쪽 큰 박스가 EC2 인스턴스, 오른쪽이 Fargate다.",
+      "nodes": {
+        "taskdef": "태스크 정의",
+        "service": "서비스",
+        "ec2-task-1": "태스크",
+        "ec2-task-2": "태스크",
+        "fg-task-1": "태스크",
+        "fg-task-2": "태스크"
+      },
+      "groups": {
+        "ec2": "EC2 인스턴스",
+        "fargate": "Fargate"
+      },
+      "notes": {
+        "user-managed": "사용자가 관리",
+        "aws-managed": "AWS가 관리",
+        "stopped": "멈춘 태스크",
+        "restarted": "같은 정의로 새로 시작"
+      },
+      "scenarios": [
+        {
+          "id": "ec2",
+          "label": "EC2 기반",
+          "caption": "태스크가 사용자가 관리하는 EC2 인스턴스에서 돈다. 구성을 조정할 수 있지만 운영 부담이 크다.",
+          "sources": ["ecs-eks-fargate.ecs"]
+        },
+        {
+          "id": "fargate",
+          "label": "Fargate 기반",
+          "caption": "서버 관리와 확장·축소를 AWS가 맡는다. 사용자가 관리할 인스턴스가 없다.",
+          "sources": ["ecs-eks-fargate.ecs", "ecs-eks-fargate.fargate"]
+        },
+        {
+          "id": "restart",
+          "label": "태스크가 멈추면",
+          "caption": "태스크가 멈추면 서비스가 같은 태스크 정의로 새 태스크를 시작해 정해 둔 수를 맞춘다.",
+          "sources": ["ecs-eks-fargate.ecs"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs", "ecs-eks-fargate.fargate"]
     }
   },
   "tables": {
