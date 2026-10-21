@@ -212,6 +212,52 @@
         }
       ],
       "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
+    },
+    "eks-compute": {
+      "label": "EKS 컴퓨팅 방식 도식",
+      "svgLabel": "컨트롤 플레인·EC2 인스턴스 노드·Fargate 프로필과 격리된 환경",
+      "question": "EKS에서 파드가 올라가는 컴퓨팅은 누가 관리할까?",
+      "idleCaption": "방식을 고르면 파드가 어디에 올라가고 그 컴퓨팅을 누가 관리하는지 볼 수 있다.",
+      "legend": "파랑: AWS가 운영하는 컨트롤 플레인 · 회색: 파드와 Fargate 프로필. 큰 박스는 파드가 올라가는 자리다.",
+      "nodes": {
+        "cp": "컨트롤 플레인",
+        "pod-a": "파드",
+        "pod-b": "파드",
+        "profile": "Fargate 프로필",
+        "pod-c": "파드",
+        "pod-d": "파드"
+      },
+      "groups": {
+        "node": "노드 (EC2 인스턴스)",
+        "fg-1": "격리된 환경",
+        "fg-2": "격리된 환경"
+      },
+      "notes": {
+        "self": "사용자가 띄우고 관리",
+        "managed": "만들기·교체는 거들지만 패치는 사용자",
+        "fargate": "인스턴스 없이 파드마다 따로"
+      },
+      "scenarios": [
+        {
+          "id": "self",
+          "label": "자체 관리형 노드",
+          "caption": "사용자가 EC2 인스턴스를 직접 띄우고 관리한다. 한 노드의 파드들은 자원을 함께 쓴다.",
+          "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
+        },
+        {
+          "id": "managed",
+          "label": "관리형 노드 그룹",
+          "caption": "노드를 만들고 교체하는 일은 EKS가 거들지만 인스턴스의 패치와 관리는 사용자 몫이다.",
+          "sources": ["ecs-eks-fargate.eks-compute-options"]
+        },
+        {
+          "id": "fargate",
+          "label": "Fargate",
+          "caption": "Fargate 프로필로 고른 파드는 격리된 환경에서 돌아 CPU·메모리·네트워크를 나눠 쓰지 않는다.",
+          "sources": ["ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
     }
   },
   "tables": {
