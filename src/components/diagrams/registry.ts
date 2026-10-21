@@ -18,6 +18,7 @@ import { EcsRolesDiagram } from './EcsRolesDiagram'
 import { EcsStructureDiagram } from './EcsStructureDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
 import { EksComputeDiagram } from './EksComputeDiagram'
+import { EksScalingDiagram } from './EksScalingDiagram'
 import { EmrClusterCostDiagram } from './EmrClusterCostDiagram'
 import { EmrNodeRolesDiagram } from './EmrNodeRolesDiagram'
 import { EmrRuntimeRoleDiagram } from './EmrRuntimeRoleDiagram'
@@ -128,6 +129,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'ecs-eks-fargate.ecs-awsvpc-mode': AwsvpcPathDiagram,
   'ecs-eks-fargate.ecs-task-placement-strategy': TaskPlacementDiagram,
   'ecs-eks-fargate.eks-fargate-pod-isolation': EksComputeDiagram,
+  'ecs-eks-fargate.eks-cluster-autoscaler': EksScalingDiagram,
   'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
   'ecs-eks-fargate.eks-anywhere': EksHybridTable,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,

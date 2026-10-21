@@ -69,7 +69,9 @@
     {
       "step": 8,
       "name": "eks-scaling-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T13:58:28+0900",
+      "summary": "EksScalingDiagram(세로형 viewBox 0 0 280 252, 가로형 0 0 440 176)을 만들어 ecs-eks-fargate.eks-cluster-autoscaler 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"eks-scaling\"]에 넣었다. 장면 셋(파드 오토스케일러만·Cluster Autoscaler·Auto Scaling 그룹만), 물음형 제목, 새 노드는 그룹 박스가 아니라 청록(stroke-diagram-resource) 노드 상자이고 나머지 노드는 회색이다. Cluster Autoscaler 장면의 경로 둘은 새 노드 상자의 변에서 끝나고, Auto Scaling 그룹만 장면에는 경로가 없다. 약어 HPA는 어디에도 쓰지 않았다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 338개·경로 263개, 가로 노드 338개·경로 263개\". 새 테스트 EksScalingDiagram.test.tsx 39개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 101개 파일 2513개 통과, check-structure·check-design 통과"
     },
     {
       "step": 9,

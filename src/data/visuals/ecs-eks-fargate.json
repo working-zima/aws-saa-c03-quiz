@@ -258,6 +258,51 @@
         }
       ],
       "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
+    },
+    "eks-scaling": {
+      "label": "EKS 확장 도식",
+      "svgLabel": "Horizontal Pod Autoscaler·Cluster Autoscaler·Auto Scaling 그룹과 대기 중인 파드",
+      "question": "노드가 가득 차면 늘어난 파드는 어디에 올라갈까?",
+      "idleCaption": "켜 둔 기능을 고르면 늘어난 파드가 올라갈 노드를 얻는지 볼 수 있다.",
+      "legend": "청록: 새로 늘린 노드(EC2 인스턴스) · 회색: 파드와 확장 기능. 큰 박스가 가득 찬 노드다.",
+      "nodes": {
+        "hpa": "Horizontal Pod Autoscaler",
+        "pending": "대기 중인 파드",
+        "pod-1": "파드",
+        "pod-2": "파드",
+        "new-node": "새 노드",
+        "ca": "Cluster Autoscaler",
+        "asg": "Auto Scaling 그룹"
+      },
+      "groups": {
+        "node": "가득 찬 노드"
+      },
+      "notes": {
+        "waiting": "올릴 노드가 없어 대기",
+        "added": "노드를 늘림",
+        "unaware": "대기 중인 파드를 모름"
+      },
+      "scenarios": [
+        {
+          "id": "hpa-only",
+          "label": "파드 오토스케일러만",
+          "caption": "파드 오토스케일러는 파드 수만 늘린다. 노드에 여유가 없으면 새 파드는 기다린다.",
+          "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+        },
+        {
+          "id": "with-ca",
+          "label": "Cluster Autoscaler",
+          "caption": "대기 중인 파드를 감지해 노드를 늘리면, 늘어난 노드에 그 파드가 올라간다.",
+          "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+        },
+        {
+          "id": "asg-only",
+          "label": "Auto Scaling 그룹만",
+          "caption": "Auto Scaling 그룹은 인스턴스를 늘릴 수 있어도 파드가 대기 중이라는 사실을 모른다.",
+          "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
     }
   },
   "tables": {
