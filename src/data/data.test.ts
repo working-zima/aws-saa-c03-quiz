@@ -7149,3 +7149,47 @@ describe('ADR-039 확장 — 유출된 액세스 키는 비활성화하거나 �
     })
   })
 })
+
+describe('ADR-049 후속 — 컨테이너 용어는 주제마다 처음 나오는 개념에서 풀린다(ADR-029)', () => {
+  const concepts = topics.flatMap((topic) => topic.concepts)
+  const byId = Object.fromEntries(concepts.map((concept) => [concept.id, concept]))
+  const textOf = ({ name, summary, paragraphs }: (typeof concepts)[number]) => [name, summary, ...paragraphs].join('\n')
+
+  // 풀이의 표지는 ecs-eks-fargate.container·container-orchestration 본문과 같은 사실이다.
+  const terms: { word: RegExp; definition: RegExp }[] = [
+    { word: /컨테이너/u, definition: /파일·라이브러리와 한 덩어리로 묶은 실행 단위/u },
+    { word: /컨테이너 이미지/u, definition: /읽기 전용 꾸러미/u },
+    { word: /쿠버네티스/u, definition: /쿠버네티스\S*는 [^.]*오픈 소스[^.]*도구/u },
+    { word: /Docker|도커/u, definition: /(Docker|도커)\S*는 [^.]*대표적인 도구/u },
+  ]
+
+  it.each(topics.map((topic) => [topic.id, topic] as const))('%s: 처음 나오는 개념의 본문이 그 낱말을 푼다', (_id, topic) => {
+    for (const { word, definition } of terms) {
+      const first = topic.concepts.find((concept) => word.test(textOf(concept)))
+      if (!first) continue
+      expect(first.paragraphs.join('\n'), `${first.id} — ${word.source}`).toMatch(definition)
+    }
+  })
+
+  it('EC2 주제의 GPU 개념이 컨테이너를 오케스트레이션한다는 말을 푼다', () => {
+    expect(byId['ec2-autoscaling.gpu-instance-family'].paragraphs[1]).toContain(
+      '오케스트레이션은 여러 서버에 걸친 컨테이너를 어디에 올릴지 정하고, 실패하면 다시 띄우고, 부하에 따라 늘리고 줄이는 일을 자동으로 맡는 것이다.',
+    )
+  })
+
+  it('Snowball Edge 현장 컴퓨팅 개념이 EKS Anywhere 클러스터를 푼다', () => {
+    expect(byId['data-transfer-services.snowball-edge-compute'].paragraphs[1]).toMatch(
+      /^EKS Anywhere 클러스터는 AWS 밖에서 직접 운영하는 쿠버네티스 클러스터다\./u,
+    )
+  })
+
+  it('컨테이너 주제에서 리포지토리는 ECR 개념에서 처음 나오고 그 자리에서 정의된다', () => {
+    const topic = topics.find((candidate) => candidate.id === 'ecs-eks-fargate')!
+    const first = topic.concepts.find((concept) => textOf(concept).includes('리포지토리'))
+
+    expect(first?.id).toBe('ecs-eks-fargate.ecr-image-scan-on-push')
+    expect(first?.paragraphs[0]).toContain(
+      'AWS 계정마다 기본 프라이빗 레지스트리가 하나 있고, 이미지는 그 레지스트리 안의 **리포지토리**(repository)에 담긴다.',
+    )
+  })
+})

@@ -2453,3 +2453,19 @@ App2Container다(오답 보기는 같은 범주 안에서 고른다). 정답 위
 EC2·Auto Scaling(`gpu-instance-family`), 데이터 전송(`snowball-edge-compute`), 마이그레이션(`application-migration-service`), CloudFront
 (`cloudfront-reduces-data-transfer-cost`), Kinesis(`kinesis-client-library`), CloudWatch(`cloudwatch-container-insights`), Inspector(`inspector-scans-ecr-images`)다.
 ADR-029대로면 주제마다 한 번 풀어야 하지만 이번 요청의 범위가 아니다. ECR 개념의 `리포지토리`도 정의할 근거를 공식 문서에서 찾지 못해 그대로 둔다.
+
+**2026-10-21 후속 — 남겨 둔 것을 메운다**: phase 64를 배포한 뒤 사용자가 남은 것도 하라고 했다.
+- **다른 주제 여덟의 풀이**: 각 주제에서 `컨테이너`·`컨테이너 이미지`·`쿠버네티스`·`도커`가 처음 나오는 개념에 한 문장씩 풀이를 붙였다(ADR-029). 새 출처는
+  없다. ADR-029 「주제 밖 서비스의 성격 한 줄」과 같은 논리로, 근거는 `ecs-eks-fargate.container`·`container-orchestration` 본문과 그 근거인
+  `docs/source/aws-docs.md` 「컨테이너·…·쿠버네티스」 절이다. 풀이는 주제마다 같은 말로 쓴다. 컨테이너는 「애플리케이션 코드를 실행에 필요한 파일·라이브러리와
+  한 덩어리로 묶은 실행 단위」, 컨테이너 이미지는 「그 컨테이너를 만드는 읽기 전용 꾸러미」, 쿠버네티스는 「여러 서버에 걸친 컨테이너를 어디에 올릴지 정하고,
+  실패하면 다시 띄우고, 부하에 따라 늘리고 줄이는 일을 자동으로 맡는 오픈 소스 도구」다. 위 목록의 Lambda 둘 중 `serverless-runtime-no-os-access`는 같은
+  주제의 `lambda-container-image`가 먼저 풀므로 고치지 않았다. 풀이 문장이 다른 낱말을 끌고 오는 자리는 그 낱말도 함께 풀었다. EC2 주제의 `컨테이너화`·
+  `오케스트레이션`, CloudWatch 주제의 `클러스터`, Snowball Edge 개념의 `EKS Anywhere 클러스터`, Inspector 개념의 `푸시`다. 오케스트레이션은 Step Functions·
+  EventBridge 쪽에서 워크플로의 뜻으로도 쓰이므로 일반 규칙으로 묶지 않았다.
+- **ECR의 리포지토리**: 앞서 읽은 `what-is-ecr.html`에는 정의가 없었지만, 같은 사용 설명서의 레지스트리·리포지토리 페이지에 있었다. ADR-039의 원래 범위
+  (쓰기만 하고 정의하지 않는 기초 용어를 공식 문서로 정의한다)에 그대로 들어맞는다. `ecr-image-scan-on-push` 첫 문단에 「AWS 계정마다 기본 프라이빗 레지스트리가
+  하나 있고, 이미지는 그 레지스트리 안의 리포지토리에 담긴다」를 더했다. 근거는 `docs/source/aws-docs.md` 「ECR의 레지스트리와 리포지토리」에 있다.
+- **테스트**: `src/data/data.test.ts`가 모든 주제에 대해, 네 낱말이 처음 나오는 개념의 본문이 그 낱말을 푸는지 단언한다. 예외 목록은 없다.
+  컨테이너 주제도 같은 단언을 통과한다.
+- id·name·summary·개념 수와 문항은 그대로다. Snowball Edge 개념만 문단이 둘에서 셋이 된다.

@@ -299,7 +299,27 @@ S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은
 - 출처: https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html
 - 가져온 사실: ECR은 AWS의 관리형 컨테이너 이미지 레지스트리 서비스이고, 원하는 명령줄 도구로 이미지를 올리고(push) 내려받는다(pull).
 - 이 파일을 근거로 쓰지 않는 것: 커널을 공유한다는 표현(읽은 페이지 어디에도 없다), 이미지 레이어, 컨테이너 런타임의 종류(containerd·podman·nerdctl 등),
-  쿠버네티스 객체(Deployment·Service·Ingress 등)와 kubectl·kind·minikube·kubeadm, Docker Hub·Red Hat Quay의 세부, 레지스트리 안의 리포지토리 정의(찾지 못했다),
-  「이미지 하나로 컨테이너를 여럿 띄운다」(태스크 정의·파드 템플릿의 구조로만 짐작되고 문장으로 확인하지 못했다), Docker를 「컨테이너를 위한 운영 체제」라고
-  부르는 비유, EKS Hybrid Nodes.
+  쿠버네티스 객체(Deployment·Service·Ingress 등)와 kubectl·kind·minikube·kubeadm, Docker Hub·Red Hat Quay의 세부, 레지스트리 안의 리포지토리 정의(위 페이지들에는
+  없다 — 아래 「ECR의 레지스트리와 리포지토리」 절에서 다른 페이지로 찾았다), 「이미지 하나로 컨테이너를 여럿 띄운다」(태스크 정의·파드 템플릿의 구조로만
+  짐작되고 문장으로 확인하지 못했다), Docker를 「컨테이너를 위한 운영 체제」라고 부르는 비유, EKS Hybrid Nodes.
 - 쓰인 곳: 새 개념 `ecs-eks-fargate.container`의 네 문단과 `ecs-eks-fargate.container-orchestration`의 세 문단, 새 문항 q740·q741과 그 해설.
+- 쓰인 곳(2026-10-21 후속, ADR-049): 다른 주제 여덟에서 `컨테이너`·`컨테이너 이미지`·`쿠버네티스`·`도커`가 처음 나오는 개념에 붙인 한 문장 풀이는 이 절의
+  사실을 줄인 것이다(ADR-029). `data-transfer-services.snowball-edge-compute`, `storage-gateway-migration.application-migration-service`,
+  `ec2-autoscaling.gpu-instance-family`(컨테이너화·오케스트레이션 포함), `cloudfront-global-accelerator.cloudfront-reduces-data-transfer-cost`,
+  `lambda.lambda-container-image`, `kinesis-streaming.kinesis-client-library`, `cloudwatch-xray.cloudwatch-container-insights`(클러스터 포함),
+  `guardduty-macie-inspector.inspector-scans-ecr-images`.
+
+## ECR의 레지스트리와 리포지토리 (Amazon ECR)
+
+확인한 날: 2026-10-21. `ecs-eks-fargate.ecr-image-scan-on-push`가 "리포지토리에 올라오는 새 이미지"라고 쓰지만 리포지토리가 무엇인지 말하는 문장이 없다.
+위 절을 쓸 때는 `what-is-ecr.html`만 읽어 정의를 찾지 못했다(ADR-049 「남겨 둔 것」). 리포지토리·레지스트리 페이지에 있었다.
+
+- 출처: https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html
+- 가져온 사실: AWS 계정마다 기본 프라이빗 ECR 레지스트리가 하나 주어진다. 프라이빗 레지스트리로 Docker·OCI 이미지의 프라이빗 이미지 리포지토리를 관리한다.
+- 출처: https://docs.aws.amazon.com/AmazonECR/latest/userguide/Repositories.html
+- 가져온 사실: ECR 프라이빗 리포지토리는 Docker 이미지, OCI 이미지와 OCI 호환 아티팩트를 담는다. 계정은 기본 레지스트리의 리포지토리들에 읽기·쓰기 권한을 갖는다.
+- 출처: https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html
+- 가져온 사실: 리포지토리마다 푸시 시 스캔을 설정할 수 있다.
+- 이 파일을 근거로 쓰지 않는 것: OCI 아티팩트의 종류, 리포지토리 정책·수명 주기 정책, 레지스트리 복제(리전 간·계정 간), 퍼블릭 레지스트리, 기본 스캔의
+  리포지토리 필터.
+- 쓰인 곳: `ecs-eks-fargate.ecr-image-scan-on-push`의 첫 문단 마지막 문장.
