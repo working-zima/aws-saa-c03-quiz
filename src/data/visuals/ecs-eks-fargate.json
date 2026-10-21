@@ -1,5 +1,51 @@
 {
-  "diagrams": {},
+  "diagrams": {
+    "image-flow": {
+      "label": "컨테이너 이미지 흐름 도식",
+      "svgLabel": "Dockerfile·컨테이너 이미지·Amazon ECR·서버의 컨테이너",
+      "question": "컨테이너 이미지는 어디에서 만들어져 어디에서 실행될까?",
+      "idleCaption": "단계를 고르면 이미지가 만들어져 레지스트리에 오르고 서버에서 컨테이너로 실행되는 길을 볼 수 있다.",
+      "legend": "파랑: AWS의 레지스트리 · 회색: 파일과 컨테이너. 큰 박스가 서버 한 대다.",
+      "nodes": {
+        "dockerfile": "Dockerfile",
+        "image": "컨테이너 이미지",
+        "registry": "Amazon ECR",
+        "other": "다른 컨테이너",
+        "container": "컨테이너",
+        "os": "서버의 운영 체제"
+      },
+      "groups": {
+        "server": "서버"
+      },
+      "notes": {
+        "build": "빌드",
+        "push": "올린다",
+        "pull": "내려받아 실행",
+        "shared-os": "운영 체제 하나를 함께 쓴다"
+      },
+      "scenarios": [
+        {
+          "id": "build",
+          "label": "만들어 올리기",
+          "caption": "Dockerfile에 적은 대로 빌드하면 이미지가 생기고, 그 이미지를 레지스트리인 ECR에 올린다.",
+          "sources": ["ecs-eks-fargate.container"]
+        },
+        {
+          "id": "run",
+          "label": "내려받아 실행",
+          "caption": "서버가 ECR에서 이미지를 내려받아 실행한 것이 컨테이너다. ECR은 이미지를 보관만 한다.",
+          "sources": ["ecs-eks-fargate.container"]
+        },
+        {
+          "id": "share",
+          "label": "한 서버 안에서",
+          "caption": "컨테이너는 운영 체제를 따로 담지 않고 서버의 운영 체제를 함께 쓴다. 그래서 가볍다.",
+          "sources": ["ecs-eks-fargate.container"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.container"]
+    }
+  },
   "tables": {
     "orchestration-compute": {
       "label": "오케스트레이션 서비스와 컨테이너를 올리는 곳",

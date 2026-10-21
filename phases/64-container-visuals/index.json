@@ -21,7 +21,10 @@
     {
       "step": 2,
       "name": "image-flow-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T13:27:21+0900",
+      "summary": "ContainerImageDiagram(세로형 viewBox 0 0 280 296, 가로형 0 0 440 200)을 만들어 ecs-eks-fargate.container 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"image-flow\"]에 넣었다. 장면 셋(만들어 올리기·내려받아 실행·한 서버 안에서), 물음형 제목, ECR에서 내려받는 화살표는 컨테이너 하나로만 간다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 303개·경로 240개, 가로 노드 303개·경로 240개\". 새 테스트 ContainerImageDiagram.test.tsx 37개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 95개 파일 2306개 통과, check-structure 통과",
+      "completed_at": "2026-10-21T13:31:20+0900"
     },
     {
       "step": 3,
