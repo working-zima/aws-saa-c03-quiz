@@ -2,6 +2,7 @@ import questionsData from './questions.json'
 import topicsData from './topics.json'
 import apiGatewayStepFunctionsVisuals from './visuals/api-gateway-step-functions.json'
 import backupDisasterRecoveryVisuals from './visuals/backup-disaster-recovery.json'
+import ecsEksFargateVisuals from './visuals/ecs-eks-fargate.json'
 import emrGlueAthenaVisuals from './visuals/emr-glue-athena.json'
 import governanceIacVisuals from './visuals/governance-iac.json'
 import iamPermissionsVisuals from './visuals/iam-permissions.json'
@@ -18,6 +19,7 @@ export const questions: Question[] = questionsData as Question[]
 export const visualsByTopicId: Record<string, TopicVisuals> = {
   'api-gateway-step-functions': apiGatewayStepFunctionsVisuals,
   'backup-disaster-recovery': backupDisasterRecoveryVisuals,
+  'ecs-eks-fargate': ecsEksFargateVisuals,
   'emr-glue-athena': emrGlueAthenaVisuals,
   'governance-iac': governanceIacVisuals,
   'iam-permissions': iamPermissionsVisuals,

@@ -7,6 +7,7 @@ import { ApiIntegrationDiagram } from './ApiIntegrationDiagram'
 import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
+import { ComputeChoiceTable, EksHybridTable, EksRoutingTable, OrchestrationComputeTable } from './containerTables'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
 import { DelegatedAdminDiagram } from './DelegatedAdminDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
@@ -114,4 +115,8 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.iam-requested-region-condition': RegionConditionDiagram,
   'iam-permissions.access-analyzer-delegated-administrator': DelegatedAdminDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
+  'ecs-eks-fargate.container-orchestration': OrchestrationComputeTable,
+  'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
+  'ecs-eks-fargate.eks-anywhere': EksHybridTable,
+  'ecs-eks-fargate.app2container': ComputeChoiceTable,
 }
