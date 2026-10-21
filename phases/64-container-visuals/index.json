@@ -31,7 +31,8 @@
       "name": "ecs-structure-diagram",
       "status": "completed",
       "started_at": "2026-10-21T13:32:09+0900",
-      "summary": "EcsStructureDiagram(세로형 viewBox 0 0 280 216, 가로형 0 0 440 192)을 만들어 ecs-eks-fargate.ecs 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"ecs-structure\"]에 넣었다. 장면 셋(EC2 기반·Fargate 기반·태스크가 멈추면), 물음형 제목, 서비스에서 나가는 화살표는 EC2 인스턴스·Fargate 박스의 변에서 끝나고 다시 시작하는 화살표는 EC2 쪽 ec2-task-2로만 간다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 테스트의 곁말 상자는 check-design.mjs와 같이 기준선 위 7·아래 2로 잡았다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 309개·경로 244개, 가로 노드 309개·경로 244개\". 새 테스트 EcsStructureDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 96개 파일 2341개 통과, check-structure 통과"
+      "summary": "EcsStructureDiagram(세로형 viewBox 0 0 280 216, 가로형 0 0 440 192)을 만들어 ecs-eks-fargate.ecs 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"ecs-structure\"]에 넣었다. 장면 셋(EC2 기반·Fargate 기반·태스크가 멈추면), 물음형 제목, 서비스에서 나가는 화살표는 EC2 인스턴스·Fargate 박스의 변에서 끝나고 다시 시작하는 화살표는 EC2 쪽 ec2-task-2로만 간다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 테스트의 곁말 상자는 check-design.mjs와 같이 기준선 위 7·아래 2로 잡았다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 309개·경로 244개, 가로 노드 309개·경로 244개\". 새 테스트 EcsStructureDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 96개 파일 2341개 통과, check-structure 통과",
+      "completed_at": "2026-10-21T13:37:34+0900"
     },
     {
       "step": 4,
