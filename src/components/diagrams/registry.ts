@@ -29,6 +29,7 @@ import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { PermissionsBoundaryDiagram } from './PermissionsBoundaryDiagram'
 import { PolicyEvaluationDiagram } from './PolicyEvaluationDiagram'
+import { RegionConditionDiagram } from './RegionConditionDiagram'
 import { RolePathsDiagram } from './RolePathsDiagram'
 import { Route53AliasDiagram } from './Route53AliasDiagram'
 import { Route53HealthDiagram } from './Route53HealthDiagram'
@@ -109,5 +110,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'iam-permissions.permissions-boundary': PermissionsBoundaryDiagram,
   'iam-permissions.iam-explicit-deny-precedence': PolicyEvaluationDiagram,
   'iam-permissions.iam-notaction-deny': NotActionDenyDiagram,
+  'iam-permissions.iam-requested-region-condition': RegionConditionDiagram,
   'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }

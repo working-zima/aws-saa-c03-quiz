@@ -281,6 +281,49 @@
         }
       ],
       "sources": ["iam-permissions.iam-notaction-deny"]
+    },
+    "region-condition": {
+      "label": "리전 조건 키 도식",
+      "svgLabel": "aws:RequestedRegion·aws:SourceIp·사후 알림",
+      "question": "승인된 리전 밖으로 가는 요청은 무엇이 막을까?",
+      "idleCaption": "구성을 고르면 조건이 요청의 어느 쪽을 보고, 승인되지 않은 리전으로 가는 요청이 어떻게 되는지 볼 수 있다.",
+      "legend": "파랑: 정책 평가와 리전, 알림 구성 · 회색: 요청을 보내는 사용자. 리전 A·B는 구별하는 이름이다.",
+      "nodes": {
+        "user": "사용자",
+        "policy": "정책 평가",
+        "region-a": "리전 A · 승인됨",
+        "region-b": "리전 B · 승인 안 됨",
+        "notify": "일어난 뒤 알림"
+      },
+      "notes": {
+        "origin": "출발지를 본다",
+        "destination": "목적지를 본다",
+        "a-allowed": "허용",
+        "b-denied": "요청 시점에 거부",
+        "b-reached": "막지 못함",
+        "happened": "이미 일어남"
+      },
+      "scenarios": [
+        {
+          "id": "requested-region",
+          "label": "aws:RequestedRegion",
+          "caption": "aws:RequestedRegion은 요청이 향한 리전을 본다. 목록 밖 리전이면 요청 시점에 막힌다.",
+          "sources": ["iam-permissions.iam-requested-region-condition"]
+        },
+        {
+          "id": "source-ip",
+          "label": "aws:SourceIp",
+          "caption": "aws:SourceIp는 요청이 출발한 곳을 본다. 목적지 리전은 전혀 제한하지 못한다.",
+          "sources": ["iam-permissions.iam-requested-region-condition"]
+        },
+        {
+          "id": "after-fact",
+          "label": "일어난 뒤 알림",
+          "caption": "규정에 어긋난 동작을 일어난 뒤에 알리는 구성은 실수로 일어나는 것 자체를 막지 못한다.",
+          "sources": ["iam-permissions.iam-requested-region-condition"]
+        }
+      ],
+      "sources": ["iam-permissions.iam-requested-region-condition"]
     }
   },
   "tables": {
