@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
- "conceptLineCount": 633,
- "questionsSha256": "ebdba13eded2bca482fc2947080211dc2927bc32a2ca3db68bffcd0b420c8f4b",
+ "conceptLineCount": 635,
+ "questionsSha256": "761f73f2a20be0804f97b30b6f0e1a9d667be3b0488d402ac7c04b443cc8543e",
  "topics": [
   {
    "id": "aws-core-services",
@@ -1520,6 +1520,14 @@
     26
    ],
    "concepts": [
+    {
+     "id": "ecs-eks-fargate.container",
+     "name": "컨테이너와 컨테이너 이미지"
+    },
+    {
+     "id": "ecs-eks-fargate.container-orchestration",
+     "name": "컨테이너 오케스트레이션과 쿠버네티스"
+    },
     {
      "id": "ecs-eks-fargate.ecs",
      "name": "ECS"
