@@ -63,7 +63,8 @@
       "name": "region-condition-diagram",
       "status": "completed",
       "started_at": "2026-10-21T08:56:55+0900",
-      "summary": "RegionConditionDiagram(앵커 iam-requested-region-condition, 시나리오 aws:RequestedRegion·aws:SourceIp·일어난 뒤 알림)을 JSON diagrams['region-condition']·registry에 더했다. viewBox 세로 0 0 280 288·가로 0 0 440 208, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 292개·경로 233개, 가로 노드 292개·경로 233개' 교차 없음. 새 테스트 35개(RegionConditionDiagram.test.tsx), 전체 2214개 통과"
+      "summary": "RegionConditionDiagram(앵커 iam-requested-region-condition, 시나리오 aws:RequestedRegion·aws:SourceIp·일어난 뒤 알림)을 JSON diagrams['region-condition']·registry에 더했다. viewBox 세로 0 0 280 288·가로 0 0 440 208, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 292개·경로 233개, 가로 노드 292개·경로 233개' 교차 없음. 새 테스트 35개(RegionConditionDiagram.test.tsx), 전체 2214개 통과",
+      "completed_at": "2026-10-21T09:02:08+0900"
     },
     {
       "step": 8,
