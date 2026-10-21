@@ -1,0 +1,88 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "64-container-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "container-basics",
+      "status": "completed",
+      "started_at": "2026-10-21T13:02:09+0900",
+      "summary": "ecs-eks-fargate 주제 맨 앞(ecs 앞)에 기본 개념 ecs-eks-fargate.container·ecs-eks-fargate.container-orchestration을, 문항 끝에 q740·q741을 changes.json 글자 그대로 넣었다(개념 633→635, 문항 739→741). data-test.patch로 바뀐 테스트 둘(네트워크 데이터 주제 개념 수 24→26, 컨테이너 주제 블록 순서)을 먼저 실패시킨 뒤 통과시켰고, topics-baseline.json의 항목 둘·conceptLineCount 635·questionsSha256을 손으로 고쳤다. build·lint 통과, 테스트 93개 파일 2245개 통과, check-structure·sync-baseline --dry-run·verify-content 모두 통과",
+      "completed_at": "2026-10-21T13:04:55+0900"
+    },
+    {
+      "step": 1,
+      "name": "container-tables",
+      "status": "completed",
+      "started_at": "2026-10-21T13:23:37+0900",
+      "summary": "src/data/visuals/ecs-eks-fargate.json(diagrams {}·glossary [])을 만들고 src/data/index.ts에 visualsByTopicId['ecs-eks-fargate'] 키를 더했다. 비교표 넷을 승인본 문구·열 폭 그대로 넣었다 — orchestration-compute(container-orchestration)·eks-routing(eks-aws-load-balancer-controller)·eks-hybrid(eks-anywhere)·compute-choice(app2container). 래퍼 OrchestrationComputeTable·EksRoutingTable·EksHybridTable·ComputeChoiceTable(containerTables.tsx)을 registry에 이었다. 새 테스트 containerTables.test.tsx 24개를 먼저 실패시킨 뒤 통과시켰다(JSON 표는 design-spec.mjs의 tables와 일치). build·lint 통과, 테스트 94개 파일 2269개 통과, check-structure·경로 교차 검사(세로·가로 노드 297개·경로 237개) 통과",
+      "completed_at": "2026-10-21T13:27:21+0900"
+    },
+    {
+      "step": 2,
+      "name": "image-flow-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:27:21+0900",
+      "summary": "ContainerImageDiagram(세로형 viewBox 0 0 280 296, 가로형 0 0 440 200)을 만들어 ecs-eks-fargate.container 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"image-flow\"]에 넣었다. 장면 셋(만들어 올리기·내려받아 실행·한 서버 안에서), 물음형 제목, ECR에서 내려받는 화살표는 컨테이너 하나로만 간다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 303개·경로 240개, 가로 노드 303개·경로 240개\". 새 테스트 ContainerImageDiagram.test.tsx 37개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 95개 파일 2306개 통과, check-structure 통과",
+      "completed_at": "2026-10-21T13:32:09+0900"
+    },
+    {
+      "step": 3,
+      "name": "ecs-structure-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:32:09+0900",
+      "summary": "EcsStructureDiagram(세로형 viewBox 0 0 280 216, 가로형 0 0 440 192)을 만들어 ecs-eks-fargate.ecs 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"ecs-structure\"]에 넣었다. 장면 셋(EC2 기반·Fargate 기반·태스크가 멈추면), 물음형 제목, 서비스에서 나가는 화살표는 EC2 인스턴스·Fargate 박스의 변에서 끝나고 다시 시작하는 화살표는 EC2 쪽 ec2-task-2로만 간다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 테스트의 곁말 상자는 check-design.mjs와 같이 기준선 위 7·아래 2로 잡았다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 309개·경로 244개, 가로 노드 309개·경로 244개\". 새 테스트 EcsStructureDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 96개 파일 2341개 통과, check-structure 통과",
+      "completed_at": "2026-10-21T13:37:34+0900"
+    },
+    {
+      "step": 4,
+      "name": "ecs-roles-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:37:34+0900",
+      "summary": "EcsRolesDiagram(세로형 viewBox 0 0 280 280, 가로형 0 0 440 200)을 만들어 ecs-eks-fargate.ecs-task-role-vs-task-execution-role 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"ecs-roles\"]에 넣었다. 장면 셋(태스크 역할·인스턴스 역할·태스크 실행 역할), 물음형 제목, 역할 노드 셋은 파랑(stroke-diagram-managed)이고 나머지는 회색이다. 태스크 역할의 화살표는 태스크 A 상자의 변에서, 인스턴스 역할의 화살표는 EC2 인스턴스 박스의 변에서 끝난다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 316개·경로 249개, 가로 노드 316개·경로 249개\". 새 테스트 EcsRolesDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 97개 파일 2376개 통과, check-structure·check-design 통과",
+      "completed_at": "2026-10-21T13:43:15+0900"
+    },
+    {
+      "step": 5,
+      "name": "awsvpc-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:43:15+0900",
+      "summary": "AwsvpcPathDiagram(세로형 viewBox 0 0 280 336, 가로형 0 0 440 216)을 만들어 ecs-eks-fargate.ecs-awsvpc-mode 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"awsvpc\"]에 넣었다. 장면 둘(들어오는 요청·나가는 요청), 물음형 제목, VPC 안에 퍼블릭·프라이빗 서브넷, 프라이빗 서브넷 안에 태스크 박스 둘을 겹친 그룹 다섯을 바깥부터 그린다. 인터넷만 회색이고 나머지 노드는 청록(stroke-diagram-resource)이며, 인터넷에서 엘라스틱 네트워크 인터페이스로 바로 가는 경로는 없다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 321개·경로 254개, 가로 노드 321개·경로 254개\". 새 테스트 AwsvpcPathDiagram.test.tsx 32개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 98개 파일 2408개 통과, check-structure·check-design 통과",
+      "completed_at": "2026-10-21T13:48:26+0900"
+    },
+    {
+      "step": 6,
+      "name": "task-placement-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:48:26+0900",
+      "summary": "TaskPlacementDiagram(세로형 viewBox 0 0 280 160, 가로형 0 0 440 160)을 만들어 ecs-eks-fargate.ecs-task-placement-strategy 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"task-placement\"]에 넣었다. 장면 둘(영역마다 분산·영역 A가 빠지면), 물음형 제목, 가용 영역 박스 셋에 태스크를 하나씩 두고 노드는 모두 회색이다. 영역 A가 빠지면 태스크 A가 0.25로 흐려지고 그리로 가는 경로가 사라지며 곁말 장애가 영역 A 라벨 오른쪽에 붙는다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 325개·경로 257개, 가로 노드 325개·경로 257개\". 새 테스트 TaskPlacementDiagram.test.tsx 31개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 99개 파일 2439개 통과, check-structure·check-design 통과",
+      "completed_at": "2026-10-21T13:53:11+0900"
+    },
+    {
+      "step": 7,
+      "name": "eks-compute-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:53:12+0900",
+      "summary": "EksComputeDiagram(세로형 viewBox 0 0 280 304, 가로형 0 0 440 192)을 만들어 ecs-eks-fargate.eks-fargate-pod-isolation 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"eks-compute\"]에 넣었다. 장면 셋(자체 관리형 노드·관리형 노드 그룹·Fargate), 물음형 제목, 컨트롤 플레인만 파랑(stroke-diagram-managed)이고 나머지 노드는 회색이다. 노드 (EC2 인스턴스) 박스에 파드 둘, 격리된 환경 박스 둘에 파드 하나씩을 두고, 경로 셋은 모두 그 박스의 변에서 끝난다. 자체 관리형과 관리형 노드 그룹은 선명한 노드·경로가 같고 곁말만 다르다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 331개·경로 260개, 가로 노드 331개·경로 260개\". 새 테스트 EksComputeDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 100개 파일 2474개 통과, check-structure·check-design 통과",
+      "completed_at": "2026-10-21T13:58:27+0900"
+    },
+    {
+      "step": 8,
+      "name": "eks-scaling-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T13:58:28+0900",
+      "summary": "EksScalingDiagram(세로형 viewBox 0 0 280 252, 가로형 0 0 440 176)을 만들어 ecs-eks-fargate.eks-cluster-autoscaler 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"eks-scaling\"]에 넣었다. 장면 셋(파드 오토스케일러만·Cluster Autoscaler·Auto Scaling 그룹만), 물음형 제목, 새 노드는 그룹 박스가 아니라 청록(stroke-diagram-resource) 노드 상자이고 나머지 노드는 회색이다. Cluster Autoscaler 장면의 경로 둘은 새 노드 상자의 변에서 끝나고, Auto Scaling 그룹만 장면에는 경로가 없다. 약어 HPA는 어디에도 쓰지 않았다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 338개·경로 263개, 가로 노드 338개·경로 263개\". 새 테스트 EksScalingDiagram.test.tsx 39개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 101개 파일 2513개 통과, check-structure·check-design 통과",
+      "completed_at": "2026-10-21T14:03:21+0900"
+    },
+    {
+      "step": 9,
+      "name": "pod-permissions-diagram",
+      "status": "completed",
+      "summary": "PodPermissionsDiagram(세로형 viewBox 0 0 280 288, 가로형 0 0 440 184)을 만들어 ecs-eks-fargate.eks-irsa 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"pod-permissions\"]에 넣었다. 장면 셋(노드 역할에 붙이면·서비스 계정에 붙이면·네트워크 정책은), 물음형 제목, 노드 IAM 역할·OIDC 공급자·IAM 역할만 파랑(stroke-diagram-managed)이고 나머지 노드는 회색이다. 노드 IAM 역할의 화살표는 노드 박스의 변에서, 서비스 계정의 화살표는 파드 A 상자의 변에서 끝나고, IAM 쪽 경로 넷은 어느 것도 파드 B에 닿지 않는다. 약어 IRSA는 라벨·버튼·캡션 어디에도 쓰지 않았다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 345개·경로 268개, 가로 노드 345개·경로 268개\". 새 테스트 PodPermissionsDiagram.test.tsx 39개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 102개 파일 2552개 통과, check-structure·check-design 통과",
+      "started_at": "2026-10-21T14:03:22+0900",
+      "completed_at": "2026-10-21T14:08:51+0900"
+    }
+  ],
+  "created_at": "2026-10-21T13:02:09+0900",
+  "completed_at": "2026-10-21T14:08:52+0900"
+}

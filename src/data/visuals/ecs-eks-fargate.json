@@ -1,0 +1,419 @@
+{
+  "diagrams": {
+    "image-flow": {
+      "label": "컨테이너 이미지 흐름 도식",
+      "svgLabel": "Dockerfile·컨테이너 이미지·Amazon ECR·서버의 컨테이너",
+      "question": "컨테이너 이미지는 어디에서 만들어져 어디에서 실행될까?",
+      "idleCaption": "단계를 고르면 이미지가 만들어져 레지스트리에 오르고 서버에서 컨테이너로 실행되는 길을 볼 수 있다.",
+      "legend": "파랑: AWS의 레지스트리 · 회색: 파일과 컨테이너. 큰 박스가 서버 한 대다.",
+      "nodes": {
+        "dockerfile": "Dockerfile",
+        "image": "컨테이너 이미지",
+        "registry": "Amazon ECR",
+        "other": "다른 컨테이너",
+        "container": "컨테이너",
+        "os": "서버의 운영 체제"
+      },
+      "groups": {
+        "server": "서버"
+      },
+      "notes": {
+        "build": "빌드",
+        "push": "올린다",
+        "pull": "내려받아 실행",
+        "shared-os": "운영 체제 하나를 함께 쓴다"
+      },
+      "scenarios": [
+        {
+          "id": "build",
+          "label": "만들어 올리기",
+          "caption": "Dockerfile에 적은 대로 빌드하면 이미지가 생기고, 그 이미지를 레지스트리인 ECR에 올린다.",
+          "sources": ["ecs-eks-fargate.container"]
+        },
+        {
+          "id": "run",
+          "label": "내려받아 실행",
+          "caption": "서버가 ECR에서 이미지를 내려받아 실행한 것이 컨테이너다. ECR은 이미지를 보관만 한다.",
+          "sources": ["ecs-eks-fargate.container"]
+        },
+        {
+          "id": "share",
+          "label": "한 서버 안에서",
+          "caption": "컨테이너는 운영 체제를 따로 담지 않고 서버의 운영 체제를 함께 쓴다. 그래서 가볍다.",
+          "sources": ["ecs-eks-fargate.container"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.container"]
+    },
+    "ecs-structure": {
+      "label": "ECS 구성 도식",
+      "svgLabel": "태스크 정의·서비스·EC2 인스턴스와 Fargate의 태스크",
+      "question": "ECS에서 태스크는 무엇으로 만들어지고 어디에서 돌까?",
+      "idleCaption": "방식을 고르면 서비스가 태스크 정의로 띄운 태스크가 어디에서 도는지 볼 수 있다.",
+      "legend": "회색: 태스크 정의·서비스·태스크. 왼쪽 큰 박스가 EC2 인스턴스, 오른쪽이 Fargate다.",
+      "nodes": {
+        "taskdef": "태스크 정의",
+        "service": "서비스",
+        "ec2-task-1": "태스크",
+        "ec2-task-2": "태스크",
+        "fg-task-1": "태스크",
+        "fg-task-2": "태스크"
+      },
+      "groups": {
+        "ec2": "EC2 인스턴스",
+        "fargate": "Fargate"
+      },
+      "notes": {
+        "user-managed": "사용자가 관리",
+        "aws-managed": "AWS가 관리",
+        "stopped": "멈춘 태스크",
+        "restarted": "같은 정의로 새로 시작"
+      },
+      "scenarios": [
+        {
+          "id": "ec2",
+          "label": "EC2 기반",
+          "caption": "태스크가 사용자가 관리하는 EC2 인스턴스에서 돈다. 구성을 조정할 수 있지만 운영 부담이 크다.",
+          "sources": ["ecs-eks-fargate.ecs"]
+        },
+        {
+          "id": "fargate",
+          "label": "Fargate 기반",
+          "caption": "서버 관리와 확장·축소를 AWS가 맡는다. 사용자가 관리할 인스턴스가 없다.",
+          "sources": ["ecs-eks-fargate.ecs", "ecs-eks-fargate.fargate"]
+        },
+        {
+          "id": "restart",
+          "label": "태스크가 멈추면",
+          "caption": "태스크가 멈추면 서비스가 같은 태스크 정의로 새 태스크를 시작해 정해 둔 수를 맞춘다.",
+          "sources": ["ecs-eks-fargate.ecs"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs", "ecs-eks-fargate.fargate"]
+    },
+    "ecs-roles": {
+      "label": "ECS 역할 도식",
+      "svgLabel": "태스크 역할·인스턴스 역할·태스크 실행 역할",
+      "question": "ECS에서 역할을 어디에 붙이면 권한이 어디까지 닿을까?",
+      "idleCaption": "역할을 고르면 그 역할의 권한이 어느 태스크까지 닿는지 볼 수 있다.",
+      "legend": "파랑: IAM 역할 · 회색: 태스크와 그 밖의 것. 큰 박스가 EC2 인스턴스 한 대다.",
+      "nodes": {
+        "task-role": "태스크 역할",
+        "instance-role": "인스턴스 역할",
+        "task-a": "태스크 A",
+        "task-b": "태스크 B",
+        "bucket": "비공개 버킷",
+        "exec-role": "태스크 실행 역할",
+        "image-log": "이미지와 로그"
+      },
+      "groups": {
+        "instance": "EC2 인스턴스"
+      },
+      "notes": {
+        "only-a": "태스크 A만 읽는다",
+        "both": "태스크 B도 같은 권한",
+        "no-app": "코드의 권한은 여기에 없음"
+      },
+      "scenarios": [
+        {
+          "id": "task-role",
+          "label": "태스크 역할",
+          "caption": "태스크 역할은 그 태스크의 코드가 쓰는 신원이다. 권한이 그 태스크 밖으로 새지 않는다.",
+          "sources": ["ecs-eks-fargate.ecs-task-role", "ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
+        },
+        {
+          "id": "instance-role",
+          "label": "인스턴스 역할",
+          "caption": "인스턴스 역할에 붙이면 같은 인스턴스에서 도는 다른 태스크까지 같은 권한을 얻는다.",
+          "sources": ["ecs-eks-fargate.ecs-task-role"]
+        },
+        {
+          "id": "exec-role",
+          "label": "태스크 실행 역할",
+          "caption": "실행 역할은 ECS가 태스크를 띄우며 이미지를 가져오고 로그를 내보낼 때 쓰는 신원이다.",
+          "sources": ["ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs-task-role", "ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
+    },
+    "awsvpc": {
+      "label": "awsvpc 네트워크 모드 도식",
+      "svgLabel": "퍼블릭 서브넷의 로드 밸런서·NAT 게이트웨이와 프라이빗 서브넷의 태스크",
+      "question": "프라이빗 서브넷의 태스크로는 어떤 길이 열려 있을까?",
+      "idleCaption": "방향을 고르면 요청이 로드 밸런서와 NAT 게이트웨이 중 어디를 지나는지 볼 수 있다.",
+      "legend": "청록: VPC 안 자원 · 회색: 인터넷. 작은 박스 하나가 태스크 하나다.",
+      "nodes": {
+        "internet": "인터넷",
+        "nat": "NAT 게이트웨이",
+        "lb": "로드 밸런서",
+        "eni-a": "엘라스틱 네트워크 인터페이스",
+        "eni-b": "엘라스틱 네트워크 인터페이스"
+      },
+      "groups": {
+        "vpc": "VPC",
+        "public": "퍼블릭 서브넷",
+        "private": "프라이빗 서브넷",
+        "task-a": "태스크",
+        "task-b": "태스크"
+      },
+      "notes": {
+        "exposed": "로드 밸런서만 드러남"
+      },
+      "scenarios": [
+        {
+          "id": "inbound",
+          "label": "들어오는 요청",
+          "caption": "밖에 드러난 것은 로드 밸런서 하나다. 요청은 태스크마다 붙은 네트워크 인터페이스로 간다.",
+          "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
+        },
+        {
+          "id": "outbound",
+          "label": "나가는 요청",
+          "caption": "태스크는 퍼블릭 서브넷의 NAT 게이트웨이를 거쳐 나간다. 태스크로 바로 들어오는 길은 없다.",
+          "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs-awsvpc-mode"]
+    },
+    "task-placement": {
+      "label": "ECS 태스크 배치 도식",
+      "svgLabel": "가용 영역 셋에 나눠 놓은 ECS 태스크",
+      "question": "가용 영역 하나가 빠져도 ECS 서비스가 계속 돌까?",
+      "idleCaption": "상황을 고르면 분산 전략으로 나눠 놓은 태스크가 영역이 빠질 때 어떻게 남는지 볼 수 있다.",
+      "legend": "회색: ECS 서비스와 태스크. 큰 박스 하나가 가용 영역 하나다.",
+      "nodes": {
+        "service": "ECS 서비스",
+        "task-a": "태스크",
+        "task-b": "태스크",
+        "task-c": "태스크"
+      },
+      "groups": {
+        "az-a": "가용 영역 A",
+        "az-b": "가용 영역 B",
+        "az-c": "가용 영역 C"
+      },
+      "notes": {
+        "down": "장애",
+        "each": "영역마다 하나씩",
+        "continue": "남은 영역이 서비스를 잇는다"
+      },
+      "scenarios": [
+        {
+          "id": "spread",
+          "label": "영역마다 분산",
+          "caption": "분산 전략에 가용 영역 속성을 주고 최소 용량을 영역 수만큼 잡으면 영역마다 하나씩 남는다.",
+          "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
+        },
+        {
+          "id": "az-down",
+          "label": "영역 A가 빠지면",
+          "caption": "가용 영역 A가 통째로 빠져도 B와 C에 남은 태스크로 서비스가 계속된다.",
+          "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs-task-placement-strategy"]
+    },
+    "eks-compute": {
+      "label": "EKS 컴퓨팅 방식 도식",
+      "svgLabel": "컨트롤 플레인·EC2 인스턴스 노드·Fargate 프로필과 격리된 환경",
+      "question": "EKS에서 파드가 올라가는 컴퓨팅은 누가 관리할까?",
+      "idleCaption": "방식을 고르면 파드가 어디에 올라가고 그 컴퓨팅을 누가 관리하는지 볼 수 있다.",
+      "legend": "파랑: AWS가 운영하는 컨트롤 플레인 · 회색: 파드와 Fargate 프로필. 큰 박스는 파드가 올라가는 자리다.",
+      "nodes": {
+        "cp": "컨트롤 플레인",
+        "pod-a": "파드",
+        "pod-b": "파드",
+        "profile": "Fargate 프로필",
+        "pod-c": "파드",
+        "pod-d": "파드"
+      },
+      "groups": {
+        "node": "노드 (EC2 인스턴스)",
+        "fg-1": "격리된 환경",
+        "fg-2": "격리된 환경"
+      },
+      "notes": {
+        "self": "사용자가 띄우고 관리",
+        "managed": "만들기·교체는 거들지만 패치는 사용자",
+        "fargate": "인스턴스 없이 파드마다 따로"
+      },
+      "scenarios": [
+        {
+          "id": "self",
+          "label": "자체 관리형 노드",
+          "caption": "사용자가 EC2 인스턴스를 직접 띄우고 관리한다. 한 노드의 파드들은 자원을 함께 쓴다.",
+          "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
+        },
+        {
+          "id": "managed",
+          "label": "관리형 노드 그룹",
+          "caption": "노드를 만들고 교체하는 일은 EKS가 거들지만 인스턴스의 패치와 관리는 사용자 몫이다.",
+          "sources": ["ecs-eks-fargate.eks-compute-options"]
+        },
+        {
+          "id": "fargate",
+          "label": "Fargate",
+          "caption": "Fargate 프로필로 고른 파드는 격리된 환경에서 돌아 CPU·메모리·네트워크를 나눠 쓰지 않는다.",
+          "sources": ["ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-compute-options", "ecs-eks-fargate.eks-fargate-pod-isolation"]
+    },
+    "eks-scaling": {
+      "label": "EKS 확장 도식",
+      "svgLabel": "Horizontal Pod Autoscaler·Cluster Autoscaler·Auto Scaling 그룹과 대기 중인 파드",
+      "question": "노드가 가득 차면 늘어난 파드는 어디에 올라갈까?",
+      "idleCaption": "켜 둔 기능을 고르면 늘어난 파드가 올라갈 노드를 얻는지 볼 수 있다.",
+      "legend": "청록: 새로 늘린 노드(EC2 인스턴스) · 회색: 파드와 확장 기능. 큰 박스가 가득 찬 노드다.",
+      "nodes": {
+        "hpa": "Horizontal Pod Autoscaler",
+        "pending": "대기 중인 파드",
+        "pod-1": "파드",
+        "pod-2": "파드",
+        "new-node": "새 노드",
+        "ca": "Cluster Autoscaler",
+        "asg": "Auto Scaling 그룹"
+      },
+      "groups": {
+        "node": "가득 찬 노드"
+      },
+      "notes": {
+        "waiting": "올릴 노드가 없어 대기",
+        "added": "노드를 늘림",
+        "unaware": "대기 중인 파드를 모름"
+      },
+      "scenarios": [
+        {
+          "id": "hpa-only",
+          "label": "파드 오토스케일러만",
+          "caption": "파드 오토스케일러는 파드 수만 늘린다. 노드에 여유가 없으면 새 파드는 기다린다.",
+          "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+        },
+        {
+          "id": "with-ca",
+          "label": "Cluster Autoscaler",
+          "caption": "대기 중인 파드를 감지해 노드를 늘리면, 늘어난 노드에 그 파드가 올라간다.",
+          "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+        },
+        {
+          "id": "asg-only",
+          "label": "Auto Scaling 그룹만",
+          "caption": "Auto Scaling 그룹은 인스턴스를 늘릴 수 있어도 파드가 대기 중이라는 사실을 모른다.",
+          "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+    },
+    "pod-permissions": {
+      "label": "EKS 파드 권한 도식",
+      "svgLabel": "노드 IAM 역할·서비스 계정용 IAM 역할·네트워크 정책",
+      "question": "파드 하나에만 AWS 권한을 주려면 역할을 어디에 붙일까?",
+      "idleCaption": "붙이는 곳을 고르면 권한이 어느 파드까지 닿는지 볼 수 있다.",
+      "legend": "파랑: IAM 역할과 OIDC 공급자 · 회색: 쿠버네티스 쪽. 큰 박스가 노드 하나다.",
+      "nodes": {
+        "node-role": "노드 IAM 역할",
+        "oidc": "OIDC 공급자",
+        "irsa-role": "IAM 역할",
+        "sa": "서비스 계정",
+        "netpol": "네트워크 정책",
+        "pod-a": "파드 A",
+        "pod-b": "파드 B"
+      },
+      "groups": {
+        "node": "노드"
+      },
+      "notes": {
+        "all-pods": "파드 A와 B가 같은 권한",
+        "trust": "신뢰 관계",
+        "only-a": "파드 A만 역할을 맡는다",
+        "traffic-only": "통신 경로만 다룬다"
+      },
+      "scenarios": [
+        {
+          "id": "node-role",
+          "label": "노드 역할에 붙이면",
+          "caption": "노드의 IAM 역할에 정책을 붙이면 그 노드에서 도는 모든 파드가 같은 권한을 쓴다.",
+          "sources": ["ecs-eks-fargate.eks-irsa"]
+        },
+        {
+          "id": "irsa",
+          "label": "서비스 계정에 붙이면",
+          "caption": "역할 ARN을 서비스 계정에 적고 OIDC 공급자와 신뢰를 세우면 그 계정의 파드만 역할을 맡는다.",
+          "sources": ["ecs-eks-fargate.eks-irsa"]
+        },
+        {
+          "id": "netpol",
+          "label": "네트워크 정책은",
+          "caption": "네트워크 정책은 파드 사이의 통신 경로를 다룬다. AWS API를 부를 권한은 주지 않는다.",
+          "sources": ["ecs-eks-fargate.eks-irsa"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.eks-irsa"]
+    }
+  },
+  "tables": {
+    "orchestration-compute": {
+      "label": "오케스트레이션 서비스와 컨테이너를 올리는 곳",
+      "columns": ["서비스", "EC2 인스턴스에 올리면", "Fargate에 올리면"],
+      "columnWidths": ["20%", "40%", "40%"],
+      "sources": [
+        "ecs-eks-fargate.container-orchestration",
+        "ecs-eks-fargate.ecs",
+        "ecs-eks-fargate.fargate",
+        "ecs-eks-fargate.eks",
+        "ecs-eks-fargate.eks-compute-options"
+      ],
+      "rows": [
+        { "header": "ECS", "cells": ["사용자가 EC2 인스턴스를 직접 관리한다. 구성을 조정할 수 있는 대신 운영 부담이 크다", "서버 관리와 확장·축소를 AWS가 맡는다"] },
+        { "header": "EKS", "cells": ["EC2 인스턴스의 패치와 관리가 사용자 몫이다. 관리를 거드는 방식을 써도 그대로다", "인스턴스도 클러스터 용량도 프로비저닝하지 않는다"] }
+      ]
+    },
+    "eks-routing": {
+      "label": "경로별로 나눠 보낼 때 견주는 구성",
+      "columns": ["구성", "하는 일", "비용과 운영"],
+      "columnWidths": ["30%", "38%", "32%"],
+      "sources": ["ecs-eks-fargate.eks-aws-load-balancer-controller"],
+      "rows": [
+        { "header": "Ingress와 ALB", "cells": ["컨트롤러가 Ingress를 읽어 ALB를 만들고, ALB가 7계층에서 경로별로 나눈다", "클러스터 안에 라우팅 계층을 더 세우지 않는다"] },
+        { "header": "NLB와 인그레스 게이트웨이", "cells": ["NLB는 4계층이라 경로를 보지 못해 게이트웨이를 따로 붙인다", "비용과 운영이 함께 늘어난다"] },
+        { "header": "API Gateway", "cells": ["스로틀링이나 사용량 계획 같은 API 관리 기능을 더한다", "단순한 경로 분기에는 요청당 비용과 구성이 더 붙는다"] }
+      ]
+    },
+    "eks-hybrid": {
+      "label": "AWS 밖의 쿠버네티스 클러스터를 다룰 때 견주는 것",
+      "columns": ["방법", "기존 클러스터", "하는 일"],
+      "columnWidths": ["34%", "24%", "42%"],
+      "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-connector", "ecs-eks-fargate.eks-anywhere"],
+      "rows": [
+        { "header": "EKS Connector", "cells": ["그대로 둔다", "외부 클러스터를 AWS에 등록해 EKS 콘솔에서 함께 보이게 한다"] },
+        { "header": "EKS Anywhere", "cells": ["데이터 센터에 새로 세운다", "자기 데이터 센터에서 쿠버네티스를 운영한다. 흩어진 클러스터를 모아 보는 수단은 아니다"] },
+        { "header": "EKS로 마이그레이션", "cells": ["AWS로 옮긴다", "코드와 배포 프로세스를 그대로 쓰며 EKS에서 운영한다"] },
+        { "header": "모니터링 도구", "cells": ["그대로 둔다", "지표와 로그로 클러스터의 상태를 보여 준다. 클러스터 목록은 모으지 않는다"] }
+      ]
+    },
+    "compute-choice": {
+      "label": "컨테이너와 함께 비교되는 실행 방식",
+      "columns": ["서비스", "서버 관리", "맞는 작업"],
+      "columnWidths": ["38%", "24%", "38%"],
+      "sources": [
+        "ecs-eks-fargate.fargate",
+        "ecs-eks-fargate.fargate-no-time-limit",
+        "ecs-eks-fargate.fargate-per-second-billing",
+        "ecs-eks-fargate.ecs",
+        "ecs-eks-fargate.elastic-beanstalk",
+        "ecs-eks-fargate.aws-batch",
+        "ecs-eks-fargate.batch-fargate-compute-environment",
+        "ecs-eks-fargate.app2container"
+      ],
+      "rows": [
+        { "header": "AWS Lambda", "cells": ["없다", "15분 안에 끝나는 짧은 작업. 수십 초짜리는 Fargate보다 싸다"] },
+        { "header": "AWS Fargate", "cells": ["없다", "15분을 넘기는 컨테이너 작업. 실행 시간 제한이 없고 최소 1분이 과금된다"] },
+        { "header": "EC2 기반 ECS", "cells": ["사용자가 EC2를 관리한다", "구성을 직접 조정해야 하는 컨테이너 작업"] },
+        { "header": "AWS Elastic Beanstalk", "cells": ["줄지만 EC2가 남는다", "함수 단위로 쪼갤 수 없는 애플리케이션을 코드 그대로 올릴 때"] },
+        { "header": "AWS Batch", "cells": ["Fargate 환경이면 없다", "여러 작업을 모아 처리하는 배치. 순서대로 잇는 워크플로는 Step Functions 몫이다"] },
+        { "header": "AWS App2Container", "cells": ["실행 환경이 아니다", "기존 Java·.NET 애플리케이션을 컨테이너 이미지로 바꿀 때"] }
+      ]
+    }
+  },
+  "glossary": []
+}
