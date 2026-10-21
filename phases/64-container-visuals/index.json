@@ -1,0 +1,56 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "64-container-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "container-basics",
+      "status": "pending"
+    },
+    {
+      "step": 1,
+      "name": "container-tables",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "name": "image-flow-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "name": "ecs-structure-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "name": "ecs-roles-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "name": "awsvpc-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 6,
+      "name": "task-placement-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 7,
+      "name": "eks-compute-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 8,
+      "name": "eks-scaling-diagram",
+      "status": "pending"
+    },
+    {
+      "step": 9,
+      "name": "pod-permissions-diagram",
+      "status": "pending"
+    }
+  ]
+}

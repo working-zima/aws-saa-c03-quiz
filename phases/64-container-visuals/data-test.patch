@@ -1,0 +1,27 @@
+diff --git a/src/data/data.test.ts b/src/data/data.test.ts
+index 0c1747a..fe64398 100644
+--- a/src/data/data.test.ts
++++ b/src/data/data.test.ts
+@@ -2663,8 +2663,9 @@ describe('학습 데이터 무결성', () => {
+     // 16에서 18(ALB·NLB), ecs-eks-fargate가 23에서 24(Fargate)가 됐다(ADR-041 개정).
+     // phase 55가 기본 개념을 더해 rds-storage-features가 22(자동 백업과 DB 스냅샷), ec2-autoscaling이 21(인스턴스 유형과
+     // 제품군), backup-disaster-recovery가 12(재해 복구 전략)가 됐다(ADR-043).
++    // phase 64가 주제 맨 앞에 컨테이너와 오케스트레이션의 기본 개념 둘을 더해 ecs-eks-fargate가 24에서 26이 됐다(ADR-049).
+     expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
+-      22, 18, 18, 14, 21, 18, 24, 18, 24, 20, 33, 12, 20, 9, 19,
++      22, 18, 18, 14, 21, 18, 24, 18, 26, 20, 33, 12, 20, 9, 19,
+     ])
+   })
+ 
+@@ -3677,7 +3678,11 @@ describe('학습 데이터 무결성', () => {
+     //   phase 54가 더했다 — 세부 넷을 그 아래로 들여쓰려고(ADR-041 개정).
+     // EKS의 Fargate 파드 격리와 Batch의 Fargate 컴퓨팅 환경이 Fargate를 전제로 쓰므로 둘 다 Fargate 블록 뒤.
+     // App2Container는 본문이 Elastic Beanstalk와 대비하므로 그 뒤에 둔다.
++    // phase 64가 모든 블록이 전제로 쓰는 컨테이너·컨테이너 이미지와 오케스트레이션·쿠버네티스의 기본 개념 둘을
++    //   ECS 블록 앞에 더했다(ADR-049).
+     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
++      'ecs-eks-fargate.container',
++      'ecs-eks-fargate.container-orchestration',
+       'ecs-eks-fargate.ecs',
+       'ecs-eks-fargate.ecs-task-role',
+       'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
