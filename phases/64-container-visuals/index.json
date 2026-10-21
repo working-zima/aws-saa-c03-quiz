@@ -77,7 +77,9 @@
     {
       "step": 9,
       "name": "pod-permissions-diagram",
-      "status": "pending"
+      "status": "completed",
+      "summary": "PodPermissionsDiagram(세로형 viewBox 0 0 280 288, 가로형 0 0 440 184)을 만들어 ecs-eks-fargate.eks-irsa 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"pod-permissions\"]에 넣었다. 장면 셋(노드 역할에 붙이면·서비스 계정에 붙이면·네트워크 정책은), 물음형 제목, 노드 IAM 역할·OIDC 공급자·IAM 역할만 파랑(stroke-diagram-managed)이고 나머지 노드는 회색이다. 노드 IAM 역할의 화살표는 노드 박스의 변에서, 서비스 계정의 화살표는 파드 A 상자의 변에서 끝나고, IAM 쪽 경로 넷은 어느 것도 파드 B에 닿지 않는다. 약어 IRSA는 라벨·버튼·캡션 어디에도 쓰지 않았다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 345개·경로 268개, 가로 노드 345개·경로 268개\". 새 테스트 PodPermissionsDiagram.test.tsx 39개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 102개 파일 2552개 통과, check-structure·check-design 통과",
+      "started_at": "2026-10-21T14:03:22+0900"
     }
   ],
   "created_at": "2026-10-21T13:02:09+0900"

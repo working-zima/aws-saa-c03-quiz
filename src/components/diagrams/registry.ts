@@ -36,6 +36,7 @@ import { NotActionDenyDiagram } from './NotActionDenyDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
 import { PermissionsBoundaryDiagram } from './PermissionsBoundaryDiagram'
+import { PodPermissionsDiagram } from './PodPermissionsDiagram'
 import { PolicyEvaluationDiagram } from './PolicyEvaluationDiagram'
 import { RegionConditionDiagram } from './RegionConditionDiagram'
 import { RolePathsDiagram } from './RolePathsDiagram'
@@ -132,5 +133,6 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'ecs-eks-fargate.eks-cluster-autoscaler': EksScalingDiagram,
   'ecs-eks-fargate.eks-aws-load-balancer-controller': EksRoutingTable,
   'ecs-eks-fargate.eks-anywhere': EksHybridTable,
+  'ecs-eks-fargate.eks-irsa': PodPermissionsDiagram,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,
 }

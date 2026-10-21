@@ -303,6 +303,52 @@
         }
       ],
       "sources": ["ecs-eks-fargate.eks-cluster-autoscaler"]
+    },
+    "pod-permissions": {
+      "label": "EKS 파드 권한 도식",
+      "svgLabel": "노드 IAM 역할·서비스 계정용 IAM 역할·네트워크 정책",
+      "question": "파드 하나에만 AWS 권한을 주려면 역할을 어디에 붙일까?",
+      "idleCaption": "붙이는 곳을 고르면 권한이 어느 파드까지 닿는지 볼 수 있다.",
+      "legend": "파랑: IAM 역할과 OIDC 공급자 · 회색: 쿠버네티스 쪽. 큰 박스가 노드 하나다.",
+      "nodes": {
+        "node-role": "노드 IAM 역할",
+        "oidc": "OIDC 공급자",
+        "irsa-role": "IAM 역할",
+        "sa": "서비스 계정",
+        "netpol": "네트워크 정책",
+        "pod-a": "파드 A",
+        "pod-b": "파드 B"
+      },
+      "groups": {
+        "node": "노드"
+      },
+      "notes": {
+        "all-pods": "파드 A와 B가 같은 권한",
+        "trust": "신뢰 관계",
+        "only-a": "파드 A만 역할을 맡는다",
+        "traffic-only": "통신 경로만 다룬다"
+      },
+      "scenarios": [
+        {
+          "id": "node-role",
+          "label": "노드 역할에 붙이면",
+          "caption": "노드의 IAM 역할에 정책을 붙이면 그 노드에서 도는 모든 파드가 같은 권한을 쓴다.",
+          "sources": ["ecs-eks-fargate.eks-irsa"]
+        },
+        {
+          "id": "irsa",
+          "label": "서비스 계정에 붙이면",
+          "caption": "역할 ARN을 서비스 계정에 적고 OIDC 공급자와 신뢰를 세우면 그 계정의 파드만 역할을 맡는다.",
+          "sources": ["ecs-eks-fargate.eks-irsa"]
+        },
+        {
+          "id": "netpol",
+          "label": "네트워크 정책은",
+          "caption": "네트워크 정책은 파드 사이의 통신 경로를 다룬다. AWS API를 부를 권한은 주지 않는다.",
+          "sources": ["ecs-eks-fargate.eks-irsa"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.eks-irsa"]
     }
   },
   "tables": {
