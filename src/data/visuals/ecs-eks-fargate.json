@@ -382,7 +382,7 @@
     "eks-hybrid": {
       "label": "AWS 밖의 쿠버네티스 클러스터를 다룰 때 견주는 것",
       "columns": ["방법", "기존 클러스터", "하는 일"],
-      "columnWidths": ["34%", "24%", "42%"],
+      "columnWidths": ["35%", "24%", "41%"],
       "sources": ["ecs-eks-fargate.eks", "ecs-eks-fargate.eks-connector", "ecs-eks-fargate.eks-anywhere"],
       "rows": [
         { "header": "EKS Connector", "cells": ["그대로 둔다", "외부 클러스터를 AWS에 등록해 EKS 콘솔에서 함께 보이게 한다"] },
@@ -394,7 +394,7 @@
     "compute-choice": {
       "label": "컨테이너와 함께 비교되는 실행 방식",
       "columns": ["서비스", "서버 관리", "맞는 작업"],
-      "columnWidths": ["38%", "24%", "38%"],
+      "columnWidths": ["39%", "24%", "37%"],
       "sources": [
         "ecs-eks-fargate.fargate",
         "ecs-eks-fargate.fargate-no-time-limit",
@@ -409,9 +409,9 @@
         { "header": "AWS Lambda", "cells": ["없다", "15분 안에 끝나는 짧은 작업. 수십 초짜리는 Fargate보다 싸다"] },
         { "header": "AWS Fargate", "cells": ["없다", "15분을 넘기는 컨테이너 작업. 실행 시간 제한이 없고 최소 1분이 과금된다"] },
         { "header": "EC2 기반 ECS", "cells": ["사용자가 EC2를 관리한다", "구성을 직접 조정해야 하는 컨테이너 작업"] },
-        { "header": "AWS Elastic Beanstalk", "cells": ["줄지만 EC2가 남는다", "함수 단위로 쪼갤 수 없는 애플리케이션을 코드 그대로 올릴 때"] },
+        { "header": "AWS Elastic Beanstalk", "cells": ["줄지만 EC2가 남는다", "함수 단위로 쪼갤 수 없는 애플리케이션 코드를 그대로 올릴 때"] },
         { "header": "AWS Batch", "cells": ["Fargate 환경이면 없다", "여러 작업을 모아 처리하는 배치. 순서대로 잇는 워크플로는 Step Functions 몫이다"] },
-        { "header": "AWS App2Container", "cells": ["실행 환경이 아니다", "기존 Java·.NET 애플리케이션을 컨테이너 이미지로 바꿀 때"] }
+        { "header": "AWS App2Container", "cells": ["실행 환경이 아니다", "이미 돌고 있는 Java·.NET 애플리케이션. 거의 고치지 않고 컨테이너 이미지로 바꾼다"] }
       ]
     }
   },
