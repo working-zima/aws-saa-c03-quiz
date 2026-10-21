@@ -63,7 +63,8 @@
       "name": "eks-compute-diagram",
       "status": "completed",
       "started_at": "2026-10-21T13:53:12+0900",
-      "summary": "EksComputeDiagram(세로형 viewBox 0 0 280 304, 가로형 0 0 440 192)을 만들어 ecs-eks-fargate.eks-fargate-pod-isolation 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"eks-compute\"]에 넣었다. 장면 셋(자체 관리형 노드·관리형 노드 그룹·Fargate), 물음형 제목, 컨트롤 플레인만 파랑(stroke-diagram-managed)이고 나머지 노드는 회색이다. 노드 (EC2 인스턴스) 박스에 파드 둘, 격리된 환경 박스 둘에 파드 하나씩을 두고, 경로 셋은 모두 그 박스의 변에서 끝난다. 자체 관리형과 관리형 노드 그룹은 선명한 노드·경로가 같고 곁말만 다르다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 331개·경로 260개, 가로 노드 331개·경로 260개\". 새 테스트 EksComputeDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 100개 파일 2474개 통과, check-structure·check-design 통과"
+      "summary": "EksComputeDiagram(세로형 viewBox 0 0 280 304, 가로형 0 0 440 192)을 만들어 ecs-eks-fargate.eks-fargate-pod-isolation 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"eks-compute\"]에 넣었다. 장면 셋(자체 관리형 노드·관리형 노드 그룹·Fargate), 물음형 제목, 컨트롤 플레인만 파랑(stroke-diagram-managed)이고 나머지 노드는 회색이다. 노드 (EC2 인스턴스) 박스에 파드 둘, 격리된 환경 박스 둘에 파드 하나씩을 두고, 경로 셋은 모두 그 박스의 변에서 끝난다. 자체 관리형과 관리형 노드 그룹은 선명한 노드·경로가 같고 곁말만 다르다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 331개·경로 260개, 가로 노드 331개·경로 260개\". 새 테스트 EksComputeDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 100개 파일 2474개 통과, check-structure·check-design 통과",
+      "completed_at": "2026-10-21T13:58:27+0900"
     },
     {
       "step": 8,
