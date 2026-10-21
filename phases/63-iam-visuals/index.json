@@ -1,0 +1,80 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "63-iam-visuals",
+  "steps": [
+    {
+      "step": 0,
+      "name": "iam-tables",
+      "status": "completed",
+      "started_at": "2026-10-19T16:51:56+0900",
+      "summary": "src/data/visuals/iam-permissions.json(diagrams 빈 객체·glossary 빈 배열)과 visualsByTopicId['iam-permissions'] 키를 더하고, 비교표 셋 group-members(앵커 iam-user-is-account-scoped)·credentials(iam-role)·analyzer-tools(network-access-analyzer)를 iamTables.tsx의 GroupMembersTable·CredentialTable·AnalyzerToolTable로 registry에 붙였다. 새 테스트 20개(iamTables.test.tsx), 전체 1964개 통과",
+      "completed_at": "2026-10-19T16:55:42+0900"
+    },
+    {
+      "step": 1,
+      "name": "group-policy-diagram",
+      "status": "completed",
+      "started_at": "2026-10-19T17:12:52+0900",
+      "summary": "GroupPolicyDiagram(앵커 iam-group-policy-attachment, 시나리오 사용자마다·그룹에·직접 정책을 남기면)을 JSON diagrams['group-policy']·registry에 더했다. viewBox 세로 0 0 280 232·가로 0 0 440 148, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 254개·경로 204개, 가로 노드 254개·경로 204개' 교차 없음. 새 테스트 37개(GroupPolicyDiagram.test.tsx), 전체 2001개 통과",
+      "completed_at": "2026-10-19T17:17:43+0900"
+    },
+    {
+      "step": 2,
+      "name": "role-paths-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T08:30:15+0900",
+      "summary": "RolePathsDiagram(앵커 cross-account-iam-role, 시나리오 EC2·데이터 센터·다른 계정)을 JSON diagrams['role-paths']·registry에 더했다. viewBox 세로 0 0 280 280·가로 0 0 440 224, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 261개·경로 210개, 가로 노드 261개·경로 210개' 교차 없음. 새 테스트 37개(RolePathsDiagram.test.tsx), 전체 2038개 통과",
+      "completed_at": "2026-10-21T08:36:00+0900"
+    },
+    {
+      "step": 3,
+      "name": "abac-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T08:36:01+0900",
+      "summary": "AbacTagDiagram(앵커 abac, 시나리오 태그 비교·새 키가 생기면·이름을 나열하면)을 JSON diagrams['abac']·registry에 더했다. viewBox 세로 0 0 280 216·가로 0 0 440 192, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 267개·경로 215개, 가로 노드 267개·경로 215개' 교차 없음. 새 테스트 31개(AbacTagDiagram.test.tsx), 전체 2069개 통과",
+      "completed_at": "2026-10-21T08:40:28+0900"
+    },
+    {
+      "step": 4,
+      "name": "boundary-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T08:40:59+0900",
+      "summary": "PermissionsBoundaryDiagram(앵커 permissions-boundary, 시나리오 경계를 붙이면·SCP가 부착 요구·나중에 찾아 지움)을 JSON diagrams['boundary']·registry에 더했다. viewBox 세로 0 0 280 344·가로 0 0 440 192, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 275개·경로 219개, 가로 노드 275개·경로 219개' 교차 없음. 새 테스트 37개(PermissionsBoundaryDiagram.test.tsx), 전체 2106개 통과",
+      "completed_at": "2026-10-21T08:46:37+0900"
+    },
+    {
+      "step": 5,
+      "name": "policy-evaluation-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T08:46:37+0900",
+      "summary": "PolicyEvaluationDiagram(앵커 iam-explicit-deny-precedence, 시나리오 조건부 거부·대역 밖 IP·허용만·아무 데도 안 걸림)을 JSON diagrams['policy-evaluation']·registry에 더했다. viewBox 세로 0 0 280 248·가로 0 0 440 128, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 281개·경로 224개, 가로 노드 281개·경로 224개' 교차 없음. 새 테스트 36개(PolicyEvaluationDiagram.test.tsx), 전체 2142개 통과",
+      "completed_at": "2026-10-21T08:51:18+0900"
+    },
+    {
+      "step": 6,
+      "name": "notaction-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T08:51:18+0900",
+      "summary": "NotActionDenyDiagram(앵커 iam-notaction-deny, 시나리오 허용문만·모두 거부 + 허용·NotAction 거부)을 JSON diagrams['notaction']·registry에 더했다. viewBox 세로 0 0 280 192·가로 0 0 440 144, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 287개·경로 229개, 가로 노드 287개·경로 229개' 교차 없음. 새 테스트 37개(NotActionDenyDiagram.test.tsx), 전체 2179개 통과",
+      "completed_at": "2026-10-21T08:56:54+0900"
+    },
+    {
+      "step": 7,
+      "name": "region-condition-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T08:56:55+0900",
+      "summary": "RegionConditionDiagram(앵커 iam-requested-region-condition, 시나리오 aws:RequestedRegion·aws:SourceIp·일어난 뒤 알림)을 JSON diagrams['region-condition']·registry에 더했다. viewBox 세로 0 0 280 288·가로 0 0 440 208, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 292개·경로 233개, 가로 노드 292개·경로 233개' 교차 없음. 새 테스트 35개(RegionConditionDiagram.test.tsx), 전체 2214개 통과",
+      "completed_at": "2026-10-21T09:02:08+0900"
+    },
+    {
+      "step": 8,
+      "name": "delegated-admin-diagram",
+      "status": "completed",
+      "started_at": "2026-10-21T09:02:09+0900",
+      "summary": "DelegatedAdminDiagram(앵커 access-analyzer-delegated-administrator, 시나리오 위임 관리자 지정·버킷부터 만들면, 조직 그룹 박스 하나)을 JSON diagrams['delegated-admin']·registry에 더했다. viewBox 세로 0 0 280 304·가로 0 0 440 192, 출발점 좌표는 바꾼 것 없음. 교차 검사 '세로 노드 297개·경로 237개, 가로 노드 297개·경로 237개' 교차 없음. 새 테스트 31개(DelegatedAdminDiagram.test.tsx), 전체 2245개 통과",
+      "completed_at": "2026-10-21T09:07:25+0900"
+    }
+  ],
+  "created_at": "2026-10-19T16:51:56+0900",
+  "completed_at": "2026-10-21T09:07:25+0900"
+}

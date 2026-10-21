@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { AbacTagDiagram } from './AbacTagDiagram'
 import { AnalyticsServiceTable, LogStorageTable } from './analyticsTables'
 import { ApiEndpointPathDiagram } from './ApiEndpointPathDiagram'
 import { ApiAccessControlTable, ApiTypeTable } from './apiGatewayTables'
@@ -7,6 +8,7 @@ import { BackupFlowDiagram } from './BackupFlowDiagram'
 import { BackupPolicyScopeTable, CopyDestinationTable, Ec2AssignmentTable } from './backupTables'
 import { ColumnarFormatDiagram } from './ColumnarFormatDiagram'
 import { ControlTimingDiagram } from './ControlTimingDiagram'
+import { DelegatedAdminDiagram } from './DelegatedAdminDiagram'
 import { DrChoiceDiagram } from './DrChoiceDiagram'
 import { DriftScopeDiagram } from './DriftScopeDiagram'
 import { EdgeToOriginDiagram } from './EdgeToOriginDiagram'
@@ -15,14 +17,21 @@ import { EmrNodeRolesDiagram } from './EmrNodeRolesDiagram'
 import { EmrRuntimeRoleDiagram } from './EmrRuntimeRoleDiagram'
 import { EventBridgeRoutingDiagram } from './EventBridgeRoutingDiagram'
 import { GovernanceToolTable } from './governanceTables'
+import { GroupPolicyDiagram } from './GroupPolicyDiagram'
 import { HybridPathsDiagram } from './HybridPathsDiagram'
+import { AnalyzerToolTable, CredentialTable, GroupMembersTable } from './iamTables'
 import { IdentityCenterAccessDiagram } from './IdentityCenterAccessDiagram'
 import { LakePermissionsDiagram } from './LakePermissionsDiagram'
 import { MapStateDiagram } from './MapStateDiagram'
 import { MessagingShapesDiagram } from './MessagingShapesDiagram'
 import { NatCountDiagram } from './NatCountDiagram'
+import { NotActionDenyDiagram } from './NotActionDenyDiagram'
 import { OrgScpScopeDiagram } from './OrgScpScopeDiagram'
 import { PeeringScaleDiagram } from './PeeringScaleDiagram'
+import { PermissionsBoundaryDiagram } from './PermissionsBoundaryDiagram'
+import { PolicyEvaluationDiagram } from './PolicyEvaluationDiagram'
+import { RegionConditionDiagram } from './RegionConditionDiagram'
+import { RolePathsDiagram } from './RolePathsDiagram'
 import { Route53AliasDiagram } from './Route53AliasDiagram'
 import { Route53HealthDiagram } from './Route53HealthDiagram'
 import { Route53HybridDnsDiagram } from './Route53HybridDnsDiagram'
@@ -94,4 +103,15 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'emr-glue-athena.log-storage-s3-athena': LogStorageTable,
   'emr-glue-athena.lake-formation-lf-tags': LakePermissionsDiagram,
   'emr-glue-athena.parquet-columnar-format': ColumnarFormatDiagram,
+  'iam-permissions.iam-group-policy-attachment': GroupPolicyDiagram,
+  'iam-permissions.iam-user-is-account-scoped': GroupMembersTable,
+  'iam-permissions.iam-role': CredentialTable,
+  'iam-permissions.cross-account-iam-role': RolePathsDiagram,
+  'iam-permissions.abac': AbacTagDiagram,
+  'iam-permissions.permissions-boundary': PermissionsBoundaryDiagram,
+  'iam-permissions.iam-explicit-deny-precedence': PolicyEvaluationDiagram,
+  'iam-permissions.iam-notaction-deny': NotActionDenyDiagram,
+  'iam-permissions.iam-requested-region-condition': RegionConditionDiagram,
+  'iam-permissions.access-analyzer-delegated-administrator': DelegatedAdminDiagram,
+  'iam-permissions.network-access-analyzer': AnalyzerToolTable,
 }
