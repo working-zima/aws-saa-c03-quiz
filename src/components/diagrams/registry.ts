@@ -136,3 +136,7 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'ecs-eks-fargate.eks-irsa': PodPermissionsDiagram,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,
 }
+
+// 개념 id → 단계 목록의 번호 항목마다 그 항목 글 바로 아래에 붙는 단계 그림(ADR-050).
+// 본문 뒤의 도식과 달리 단계 번호를 받는다.
+export const stepFiguresByConceptId: Record<string, ComponentType<{ step: number }>> = {}

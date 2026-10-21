@@ -13,7 +13,9 @@
     {
       "step": 1,
       "name": "step-list-render",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-22T08:24:00+0900",
+      "summary": "ConceptList가 kind 'steps' 블록을 `<ol start>`(list-decimal space-y-4 pl-7 + 본문 글자)로 그리고, 하위 글머리를 mt-2 ul(1단 list-disc·2단 list-[circle])로, 이어지는 문단을 `<p class=\"mt-2\">`로 그린다. 글은 모두 EmphasizedText이고 약어 조각은 원래 문단 index로 찾는다. 새 선택 prop `stepFigures`(기본값 registry.ts의 새 빈 객체 `stepFiguresByConceptId: Record<string, ComponentType<{ step: number }>>`)에 개념이 등록돼 있으면 번호 항목마다 항목 글 바로 뒤·하위 블록 앞에 `<StepFigure step={number} />`를 그린다. 기존 문단·`- ` 목록 마크업은 그대로다. ConceptList.test.tsx에 새 테스트 7개(구현 전 6개 실패 확인, 'stepFigures를 주지 않으면 그림이 없다' 1개는 원래 통과)를 더해 32개가 됐다. 계획 밖으로 registry.test.tsx의 vi.mock 팩토리에 `stepFiguresByConceptId: {}` 한 줄을 더했다 — 모듈 전체를 대체하는 mock에 새 export가 없어 기존 테스트가 깨졌기 때문이고 단언은 그대로다. build·lint 통과, 테스트 102개 파일 2611개 통과"
     },
     {
       "step": 2,
