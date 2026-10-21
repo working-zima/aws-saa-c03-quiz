@@ -37,7 +37,9 @@
     {
       "step": 4,
       "name": "ecs-roles-diagram",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-21T13:37:34+0900",
+      "summary": "EcsRolesDiagram(세로형 viewBox 0 0 280 280, 가로형 0 0 440 200)을 만들어 ecs-eks-fargate.ecs-task-role-vs-task-execution-role 뒤에 registry로 붙이고 문구를 src/data/visuals/ecs-eks-fargate.json의 diagrams[\"ecs-roles\"]에 넣었다. 장면 셋(태스크 역할·인스턴스 역할·태스크 실행 역할), 물음형 제목, 역할 노드 셋은 파랑(stroke-diagram-managed)이고 나머지는 회색이다. 태스크 역할의 화살표는 태스크 A 상자의 변에서, 인스턴스 역할의 화살표는 EC2 인스턴스 박스의 변에서 끝난다. 좌표·문구는 출발점(design-spec.mjs) 그대로이고 바꾼 것은 없다. 경로 교차 검사 \"✓ 교차 없음 — 세로 노드 316개·경로 249개, 가로 노드 316개·경로 249개\". 새 테스트 EcsRolesDiagram.test.tsx 35개를 먼저 실패시킨 뒤 통과시켰다. build·lint 통과, 테스트 97개 파일 2376개 통과, check-structure·check-design 통과"
     },
     {
       "step": 5,

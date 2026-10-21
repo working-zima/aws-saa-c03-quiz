@@ -90,6 +90,51 @@
         }
       ],
       "sources": ["ecs-eks-fargate.ecs", "ecs-eks-fargate.fargate"]
+    },
+    "ecs-roles": {
+      "label": "ECS 역할 도식",
+      "svgLabel": "태스크 역할·인스턴스 역할·태스크 실행 역할",
+      "question": "ECS에서 역할을 어디에 붙이면 권한이 어디까지 닿을까?",
+      "idleCaption": "역할을 고르면 그 역할의 권한이 어느 태스크까지 닿는지 볼 수 있다.",
+      "legend": "파랑: IAM 역할 · 회색: 태스크와 그 밖의 것. 큰 박스가 EC2 인스턴스 한 대다.",
+      "nodes": {
+        "task-role": "태스크 역할",
+        "instance-role": "인스턴스 역할",
+        "task-a": "태스크 A",
+        "task-b": "태스크 B",
+        "bucket": "비공개 버킷",
+        "exec-role": "태스크 실행 역할",
+        "image-log": "이미지와 로그"
+      },
+      "groups": {
+        "instance": "EC2 인스턴스"
+      },
+      "notes": {
+        "only-a": "태스크 A만 읽는다",
+        "both": "태스크 B도 같은 권한",
+        "no-app": "코드의 권한은 여기에 없음"
+      },
+      "scenarios": [
+        {
+          "id": "task-role",
+          "label": "태스크 역할",
+          "caption": "태스크 역할은 그 태스크의 코드가 쓰는 신원이다. 권한이 그 태스크 밖으로 새지 않는다.",
+          "sources": ["ecs-eks-fargate.ecs-task-role", "ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
+        },
+        {
+          "id": "instance-role",
+          "label": "인스턴스 역할",
+          "caption": "인스턴스 역할에 붙이면 같은 인스턴스에서 도는 다른 태스크까지 같은 권한을 얻는다.",
+          "sources": ["ecs-eks-fargate.ecs-task-role"]
+        },
+        {
+          "id": "exec-role",
+          "label": "태스크 실행 역할",
+          "caption": "실행 역할은 ECS가 태스크를 띄우며 이미지를 가져오고 로그를 내보낼 때 쓰는 신원이다.",
+          "sources": ["ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
+        }
+      ],
+      "sources": ["ecs-eks-fargate.ecs-task-role", "ecs-eks-fargate.ecs-task-role-vs-task-execution-role"]
     }
   },
   "tables": {
