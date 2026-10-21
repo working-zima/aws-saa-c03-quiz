@@ -7111,3 +7111,36 @@ describe('ADR-039 확장 — ECS의 태스크와 EKS의 파드', () => {
     expect(firstUse('노드')).toBe(ids.indexOf('ecs-eks-fargate.eks'))
   })
 })
+
+describe('ADR-039 확장 — 유출된 액세스 키는 비활성화하거나 삭제할 수 있다', () => {
+  const byId = Object.fromEntries(
+    topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+  )
+  const questionById = Object.fromEntries(questions.map((question) => [question.id, question]))
+
+  it('학습자가 읽는 어느 글도 유출된 액세스 키를 회수할 방법이 없다고 말하지 않는다', () => {
+    const learnerFacingText = [
+      ...topics.flatMap((topic) =>
+        topic.concepts.flatMap((concept) => [concept.name, concept.summary, ...concept.paragraphs]),
+      ),
+      ...questions.flatMap((question) => [question.prompt, ...question.choices, question.explanation]),
+    ].join('\n')
+
+    expect(learnerFacingText).not.toMatch(/회수할 방법이 없/)
+  })
+
+  it('IAM 개념 둘이 키가 비활성화하거나 삭제하기 전까지 계속 유효하다고 말하고 문단 수를 유지한다', () => {
+    expect(byId['iam-permissions.iam'].paragraphs).toHaveLength(3)
+    expect(byId['iam-permissions.iam'].paragraphs[1]).toContain('비활성화하거나 삭제하기 전까지')
+    expect(byId['iam-permissions.iam-user'].paragraphs[0]).toContain('비활성화하거나 삭제하기 전까지')
+  })
+
+  it('q156·q157·q160의 보기와 정답 위치를 유지하고 해설만 같은 사실로 맞춘다', () => {
+    expect(questionById.q156.answerIndex).toBe(3)
+    expect(questionById.q157.answerIndex).toBe(0)
+    expect(questionById.q160.answerIndex).toBe(3)
+    ;['q156', 'q157', 'q160'].forEach((id) => {
+      expect(questionById[id].explanation).toContain('비활성화하거나 삭제하기 전까지')
+    })
+  })
+})

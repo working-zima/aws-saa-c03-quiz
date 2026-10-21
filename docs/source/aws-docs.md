@@ -254,3 +254,18 @@ S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은
 - 쓰인 곳: `ecs-eks-fargate.ecs`의 셋째·넷째 문단과 `ecs-eks-fargate.eks`의 셋째·넷째 문단. `lambda.lambda-container-image` 둘째 문단의 "컨테이너를
   어떤 설정으로 실행할지 적는 태스크 정의, 태스크를 정한 수만큼 유지하는 서비스"는 이 절의 사실을 한 구절로 줄인 것이다. Lambda 주제에서 이 두 말이 처음
   나오는 자리라서다(ADR-029).
+
+## 액세스 키의 비활성화와 삭제 (IAM)
+
+확인한 날: 2026-10-19. 데이터는 "액세스 키에는 만료 시점이 없다"와 함께 "유출되면 회수할 방법이 없다"고 썼다. 앞의 것은 문서와 맞고 뒤의 것은
+어긋난다(ADR-039 「2026-10-19 확장」).
+
+- 출처: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+- 가져온 사실: 액세스 키는 IAM 사용자(또는 루트 사용자)의 장기 자격 증명이다. 모범 사례는 액세스 키 같은 장기 자격 증명을 만드는 대신 IAM 역할
+  같은 임시 자격 증명을 쓰는 것이다.
+- 출처: https://docs.aws.amazon.com/IAM/latest/UserGuide/access-keys-admin-managed.html
+- 가져온 사실: IAM 관리자는 사용자의 액세스 키를 비활성화하고 삭제할 수 있다. 비활성화한 키는 더는 API 호출에 쓸 수 없고, 필요하면 다시
+  활성화할 수 있다. 삭제한 키는 되살릴 수 없다.
+- 이 파일을 근거로 쓰지 않는 것: 사용자당 액세스 키 최대 개수, 키 교체 절차, 마지막 사용 시각 조회와 자격 증명 보고서, CloudTrail·CloudWatch
+  모니터링 권고, 비밀 액세스 키는 만들 때만 볼 수 있다는 사실.
+- 쓰인 곳: `iam-permissions.iam`의 둘째 문단, `iam-permissions.iam-user`의 첫 문단, q156·q157·q160의 해설.
