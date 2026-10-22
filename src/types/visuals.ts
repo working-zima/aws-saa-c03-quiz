@@ -41,8 +41,18 @@ export interface GlossaryTerm {
   sourceConceptId: string
 }
 
+// 단계 그림 한 장의 문구. 좌표는 컴포넌트에 둔다(ADR-050).
+export interface StepFigureText {
+  label: string // figure aria-label
+  nodes: Record<string, string> // 노드 id → 라벨
+  groups?: Record<string, string>
+  notes?: Record<string, string> // 곁말 id → 글
+  sources: string[]
+}
+
 export interface TopicVisuals {
   diagrams: Record<string, VisualDiagramText>
   tables: Record<string, ComparisonTable>
   glossary: GlossaryTerm[]
+  stepFigures?: Record<string, Record<string, StepFigureText>> // 개념 id → 단계 번호("1"~"19") → 문구
 }

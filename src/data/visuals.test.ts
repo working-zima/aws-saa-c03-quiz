@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { markFirstOccurrences } from '../lib/glossary'
+import { groupParagraphs } from '../lib/paragraph-blocks'
 import { topics, visualsByTopicId } from './index'
 
 describe('시각 요소 데이터 무결성', () => {
@@ -80,5 +81,29 @@ describe('시각 요소 데이터 무결성', () => {
 
   it('VPC 주제의 약어는 IAM·EC2·ACL·VPN 넷이다', () => {
     expect(visualsByTopicId['vpc-networking'].glossary.map(({ term }) => term)).toEqual(['IAM', 'EC2', 'ACL', 'VPN'])
+  })
+
+  it('단계 그림의 근거는 실제 개념 id이고, 키가 단계 목록을 가진 개념이며 단계 번호가 그 개념의 번호 항목과 같다', () => {
+    const conceptIds = new Set(topics.flatMap(({ concepts }) => concepts.map(({ id }) => id)))
+    const withStepFigures = Object.entries(visualsByTopicId).filter(([, visuals]) => visuals.stepFigures)
+
+    expect(withStepFigures.map(([topicId]) => topicId)).toContain('identity-federation')
+    for (const [topicId, visuals] of withStepFigures) {
+      const topic = topics.find(({ id }) => id === topicId)!
+      for (const [conceptId, figures] of Object.entries(visuals.stepFigures!)) {
+        const concept = topic.concepts.find(({ id }) => id === conceptId)
+        expect(concept, conceptId).toBeDefined()
+        const numbers = groupParagraphs(concept!.paragraphs)
+          .flatMap((block) => (block.kind === 'steps' ? block.items.map(({ number }) => number) : []))
+        expect(numbers.length, conceptId).toBeGreaterThan(0)
+        expect(Object.keys(figures).map(Number), conceptId).toEqual(numbers)
+        for (const { sources } of Object.values(figures)) {
+          expect(sources.length).toBeGreaterThan(0)
+          for (const source of sources) {
+            expect(conceptIds.has(source), source).toBe(true)
+          }
+        }
+      }
+    }
   })
 })

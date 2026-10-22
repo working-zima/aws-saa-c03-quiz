@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "roles-anywhere-step-figures",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-22T10:16:17+0900",
+      "summary": "src/components/diagrams/RolesAnywhereStepFigure.tsx에 RolesAnywhereStepFigure({ step })를 만들어 registry.ts의 stepFiguresByConceptId에 identity-federation.iam-roles-anywhere로 등록했다 — 단계 그림 19장(노드 43·경로 27), 버튼·캡션 없는 정지 SVG(viewBox 폭 208, w-full max-w-[288px]), figure mt-2 rounded-md border border-border bg-panel. 좌표·노드 색은 step-figures.mjs에서 스크립트로 옮겨 컴포넌트 상수로 두었고 바꾼 좌표·라벨·곁말은 없다. 문구는 src/types/visuals.ts의 새 StepFigureText와 TopicVisuals.stepFigures(선택)로 타입을 두고 identity-federation.json의 stepFigures(개념 id → \"1\"~\"19\" → label·nodes·groups·notes·sources)에 넣었으며 기존 diagrams·tables·glossary는 그대로다. 새 테스트 79개(RolesAnywhereStepFigure.test.tsx 78 — 설계본을 옮긴 상수로 단계마다 이름·좌표·viewBox 경계와 라벨 폭·글을 단언하고, 실제 주제를 ConceptList로 그려 번호 항목 19개 글 바로 뒤에만 그 번호의 그림이 있음을 단언 / visuals.test.ts 1 — 단계 그림의 키 개념이 그 주제의 단계 목록 개념이고 번호가 번호 항목과 같으며 근거가 실제 개념 id)는 구현 전 실패를 확인했다. ConceptList.test.tsx는 고치지 않았다. check-steps.mjs 통과. check-path-crossings.mjs는 통과했지만 파일 이름이 *Diagram.tsx인 것만 읽어서 새 컴포넌트는 검사 대상에 들어가지 않는다(세로·가로 노드 345·경로 268 그대로) — 좌표는 check-steps.mjs가 검사했다. build·lint 통과, 테스트 103개 파일 2694개 통과",
+      "completed_at": "2026-10-22T10:26:30+0900"
     }
   ],
   "created_at": "2026-10-22T08:18:19+0900"
