@@ -23,7 +23,8 @@
       "name": "roles-anywhere-concept",
       "status": "completed",
       "started_at": "2026-10-22T10:13:06+0900",
-      "summary": "changes.json 그대로 src/data/topics.json의 identity-federation.sts-assume-role 줄 바로 아래에 딸린 개념 identity-federation.iam-roles-anywhere(parentId identity-federation.sts, 문단 95개) 한 줄을, src/data/questions.json 끝(q741 뒤)에 q742(정답 IAM Roles Anywhere, answerIndex 0) 한 줄을 넣었다(줄 단위 치환, 재직렬화 없음). scripts/topics-baseline.json은 손으로 sts-assume-role 항목 뒤에 새 항목을 넣고 conceptLineCount 635→636, questionsSha256을 새 해시로 바꿨다. data-test.patch를 적용해 data.test.ts의 단언 둘(보안·운영 주제 개념 수 identity-federation 11→12, 이 주제의 개념 순서)을 바꾸고 describe 'ADR-050 — 단계 목록'(it 넷)을 더했다 — 데이터 적용 전 정확히 넷(개념 수·개념 순서·단계 목록 개념은 하나뿐·번호 1~19)이 실패함을 확인했다. 개념 636개, 문항 742개. verify-content.mjs·check-structure.mjs·sync-baseline.mjs --dry-run·check-steps.mjs(단계 그림 19장) 통과, build·lint 통과, 테스트 102개 파일 2615개 통과. 명세 문장은 고치지 않았고 이상한 곳은 찾지 못했다"
+      "summary": "changes.json 그대로 src/data/topics.json의 identity-federation.sts-assume-role 줄 바로 아래에 딸린 개념 identity-federation.iam-roles-anywhere(parentId identity-federation.sts, 문단 95개) 한 줄을, src/data/questions.json 끝(q741 뒤)에 q742(정답 IAM Roles Anywhere, answerIndex 0) 한 줄을 넣었다(줄 단위 치환, 재직렬화 없음). scripts/topics-baseline.json은 손으로 sts-assume-role 항목 뒤에 새 항목을 넣고 conceptLineCount 635→636, questionsSha256을 새 해시로 바꿨다. data-test.patch를 적용해 data.test.ts의 단언 둘(보안·운영 주제 개념 수 identity-federation 11→12, 이 주제의 개념 순서)을 바꾸고 describe 'ADR-050 — 단계 목록'(it 넷)을 더했다 — 데이터 적용 전 정확히 넷(개념 수·개념 순서·단계 목록 개념은 하나뿐·번호 1~19)이 실패함을 확인했다. 개념 636개, 문항 742개. verify-content.mjs·check-structure.mjs·sync-baseline.mjs --dry-run·check-steps.mjs(단계 그림 19장) 통과, build·lint 통과, 테스트 102개 파일 2615개 통과. 명세 문장은 고치지 않았고 이상한 곳은 찾지 못했다",
+      "completed_at": "2026-10-22T10:16:17+0900"
     },
     {
       "step": 3,
