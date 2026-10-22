@@ -2605,8 +2605,9 @@ describe('학습 데이터 무결성', () => {
     // 늘리고, AI·ML 신규 6으로 ai-ml-services를 배열 끝에 세웠다.
     // phase 54가 iam-permissions에 IAM 사용자·IAM 역할의 기본 개념 둘을 더해 18이 20이 됐다(ADR-041 개정).
     // phase 55가 IAM 정책·루트 사용자와 Systems Manager의 기본 개념을 더해 iam-permissions가 22, systems-manager가 8이 됐다(ADR-043).
+    // phase 65가 STS 아래에 IAM Roles Anywhere 19단계 개념을 더해 identity-federation이 12가 됐다(ADR-050).
     expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 20, 15, 11, 22, 11, 16, 17, 7, 8, 6,
+      13, 20, 16, 11, 11, 20, 15, 11, 22, 12, 16, 17, 7, 8, 6,
     ])
   })
 
@@ -4549,16 +4550,18 @@ describe('학습 데이터 무결성', () => {
     const topic = topics.find((candidate) => candidate.id === 'identity-federation')
 
     // ADR-033 서비스 블록 순서 — 블록마다 기본 → 주요 기능·갈림길 → 세부 기능·설정·한계.
-    // 블록: IAM Identity Center(3) → STS(2) → Directory Service(1) → 페더레이션 — ID 브로커와 SAML 2.0(2) →
+    // 블록: IAM Identity Center(3) → STS(3) → Directory Service(1) → 페더레이션 — ID 브로커와 SAML 2.0(2) →
     //   Cognito(3).
     // 페더레이션 블록은 사내 디렉터리를 STS와 SAML로 잇는 두 방식이라 STS·Directory Service 뒤.
     // 앱 사용자를 다루는 Cognito는 사내 사용자 쪽 블록을 다 본 뒤에 둔다.
+    // phase 65가 STS로 임시 자격 증명을 받는 실제 절차(IAM Roles Anywhere 19단계)를 그 바로 뒤에 더했다(ADR-050).
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'identity-federation.identity-center',
       'identity-federation.identity-center-external-idp',
       'identity-federation.identity-center-permission-set',
       'identity-federation.sts',
       'identity-federation.sts-assume-role',
+      'identity-federation.iam-roles-anywhere',
       'identity-federation.aws-directory-service',
       'identity-federation.custom-identity-broker-for-non-saml',
       'identity-federation.saml-federation-role-to-ad-group-mapping',
@@ -7191,5 +7194,55 @@ describe('ADR-049 후속 — 컨테이너 용어는 주제마다 처음 나오�
     expect(first?.paragraphs[0]).toContain(
       'AWS 계정마다 기본 프라이빗 레지스트리가 하나 있고, 이미지는 그 레지스트리 안의 **리포지토리**(repository)에 담긴다.',
     )
+  })
+})
+
+describe('ADR-050 — 단계 목록', () => {
+  const concepts = topics.flatMap((topic) => topic.concepts)
+  // 들여쓰기 칸 수와 표지를 문자열에서 바로 읽는다. 화면 쪽 규칙(src/lib/paragraph-blocks.ts)에 기대지 않는다.
+  const indentOf = (paragraph: string) => paragraph.match(/^ */)![0].length
+  const isStep = (paragraph: string) => /^\d+\. \S/.test(paragraph)
+  const isItem = (paragraph: string) => isStep(paragraph) || /^ *- \S/.test(paragraph)
+
+  it('번호 목록과 들여쓴 문단이 있는 개념은 이 하나뿐이다', () => {
+    // 단계 목록은 따라 하는 절차에만 쓴다. 늘리려면 ADR-050의 기준을 먼저 고친다.
+    expect(
+      concepts.filter(({ paragraphs }) => paragraphs.some((paragraph) => isStep(paragraph) || indentOf(paragraph) > 0)).map(({ id }) => id),
+    ).toEqual(['identity-federation.iam-roles-anywhere'])
+  })
+
+  it('들여쓰기는 2칸·4칸이고 번호는 맨 바깥에만 온다', () => {
+    concepts.forEach(({ id, paragraphs }) => {
+      paragraphs.forEach((paragraph, index) => {
+        const indent = indentOf(paragraph)
+        const message = `${id} 문단 ${index}`
+
+        expect([0, 2, 4], message).toContain(indent)
+        if (indent > 0) {
+          expect(paragraph.slice(indent), message).toMatch(/^\S/)
+          expect(/^\d+\. /.test(paragraph.slice(indent)), message).toBe(false)
+        }
+      })
+    })
+  })
+
+  it('들여쓴 문단은 한 칸 얕은 항목 아래에 온다', () => {
+    concepts.forEach(({ id, paragraphs }) => {
+      paragraphs.forEach((paragraph, index) => {
+        const depth = indentOf(paragraph) / 2
+        if (depth === 0) return
+
+        // 위로 올라가며 처음 만나는 더 얕은 문단이 바로 한 칸 얕은 항목이어야 한다.
+        const parent = paragraphs.slice(0, index).reverse().find((previous) => indentOf(previous) / 2 < depth)
+        expect(parent !== undefined && indentOf(parent) / 2 === depth - 1 && isItem(parent), `${id} 문단 ${index}`).toBe(true)
+      })
+    })
+  })
+
+  it('IAM Roles Anywhere 개념의 단계 번호가 1부터 19까지 빠짐없이 이어진다', () => {
+    const concept = concepts.find(({ id }) => id === 'identity-federation.iam-roles-anywhere')
+    const numbers = concept?.paragraphs.filter(isStep).map((paragraph) => Number(paragraph.match(/^\d+/)![0]))
+
+    expect(numbers).toEqual(Array.from({ length: 19 }, (_, index) => index + 1))
   })
 })

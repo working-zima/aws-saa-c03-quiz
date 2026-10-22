@@ -49,5 +49,300 @@
     }
   },
   "tables": {},
-  "glossary": []
+  "glossary": [],
+  "stepFigures": {
+    "identity-federation.iam-roles-anywhere": {
+      "1": {
+        "label": "1단계 그림: 인증 기관에서 OpenSSL로 private.key를 만든다",
+        "nodes": {
+          "private-key": "private.key"
+        },
+        "groups": {
+          "ca": "인증 기관"
+        },
+        "notes": {
+          "make": "OpenSSL로 생성"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "2": {
+        "label": "2단계 그림: private.key로 자체 서명해 ca.crt를 만든다",
+        "nodes": {
+          "private-key": "private.key",
+          "ca-crt": "ca.crt"
+        },
+        "groups": {
+          "ca": "인증 기관"
+        },
+        "notes": {
+          "sign": "자체 서명"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "3": {
+        "label": "3단계 그림: ca.crt를 IAM Roles Anywhere에 등록해 신뢰 앵커를 만든다",
+        "nodes": {
+          "ca-crt": "ca.crt",
+          "trust-anchor": "신뢰 앵커"
+        },
+        "groups": {
+          "ca": "인증 기관",
+          "roles-anywhere": "IAM Roles Anywhere"
+        },
+        "notes": {
+          "register": "등록"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "4": {
+        "label": "4단계 그림: 회사 서버에서 OpenSSL로 server.key를 만든다",
+        "nodes": {
+          "server-key": "server.key"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "make": "OpenSSL로 생성"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "5": {
+        "label": "5단계 그림: server.key의 공개키와 서버 이름으로 server.csr를 만든다",
+        "nodes": {
+          "server-key": "server.key",
+          "server-csr": "server.csr"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "request": "공개키·서버 이름"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "6": {
+        "label": "6단계 그림: server.csr를 인증 기관에 내고 server.crt를 발급받는다",
+        "nodes": {
+          "private-key": "private.key",
+          "ca-crt": "ca.crt",
+          "server-crt": "server.crt",
+          "server-csr": "server.csr"
+        },
+        "groups": {
+          "ca": "인증 기관",
+          "server": "회사 서버"
+        },
+        "notes": {
+          "request": "신청",
+          "issue": "발급"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "7": {
+        "label": "7단계 그림: S3UploadRole에 권한 정책과 신뢰 정책을 둔다",
+        "nodes": {
+          "role": "S3UploadRole"
+        },
+        "groups": {
+          "iam": "IAM"
+        },
+        "notes": {
+          "permission": "권한 정책: s3:PutObject 허용",
+          "trust": "신뢰 정책: 서비스 주체",
+          "principal": "rolesanywhere.amazonaws.com"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "8": {
+        "label": "8단계 그림: S3UploadProfile에 S3UploadRole을 지정한다",
+        "nodes": {
+          "profile": "S3UploadProfile",
+          "role": "S3UploadRole"
+        },
+        "groups": {
+          "roles-anywhere": "IAM Roles Anywhere",
+          "iam": "IAM"
+        },
+        "notes": {
+          "assign": "지정"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "9": {
+        "label": "9단계 그림: 회사 서버에 aws_signing_helper를 설치한다",
+        "nodes": {
+          "helper": "aws_signing_helper"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "install": "설치"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "10": {
+        "label": "10단계 그림: server.crt·server.key·ARN 셋으로 aws_signing_helper가 IAM Roles Anywhere에 발급을 요청한다",
+        "nodes": {
+          "server-crt": "server.crt",
+          "server-key": "server.key",
+          "helper": "aws_signing_helper",
+          "arns": "ARN 셋",
+          "ra": "IAM Roles Anywhere"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "request": "발급 요청 (테스트)"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "11": {
+        "label": "11단계 그림: server.key로 만든 디지털 서명과 server.crt를 IAM Roles Anywhere에 보낸다",
+        "nodes": {
+          "server-key": "server.key",
+          "server-crt": "server.crt",
+          "signature": "디지털 서명",
+          "ra": "IAM Roles Anywhere"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "with-arns": "세 ARN과 함께 전송",
+          "no-key": "개인키 자체는 보내지 않는다"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "12": {
+        "label": "12단계 그림: 공개키로 디지털 서명을 검증한 뒤 ca.crt로 server.crt를 확인한다",
+        "nodes": {
+          "signature": "디지털 서명",
+          "server-crt": "server.crt",
+          "trust-anchor": "신뢰 앵커"
+        },
+        "groups": {
+          "roles-anywhere": "IAM Roles Anywhere"
+        },
+        "notes": {
+          "first": "1 공개키로 검증",
+          "second": "2 ca.crt로 확인"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "13": {
+        "label": "13단계 그림: 프로필에 역할이 등록돼 있는지, 역할의 신뢰 정책이 IAM Roles Anywhere를 신뢰하는지 확인한다",
+        "nodes": {
+          "profile": "S3UploadProfile",
+          "role": "S3UploadRole",
+          "trust-policy": "신뢰 정책"
+        },
+        "groups": {
+          "roles-anywhere": "IAM Roles Anywhere",
+          "iam": "IAM"
+        },
+        "notes": {
+          "in-profile": "1 등록돼 있나",
+          "trusts": "2 신뢰하나"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "14": {
+        "label": "14단계 그림: IAM Roles Anywhere가 STS에 AssumeRole을 호출해 임시 자격 증명을 받는다",
+        "nodes": {
+          "ra": "IAM Roles Anywhere",
+          "sts": "STS"
+        },
+        "notes": {
+          "assume": "AssumeRole",
+          "credentials": "임시 자격 증명"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "15": {
+        "label": "15단계 그림: 임시 자격 증명이 aws_signing_helper에 전달돼 네 값이 JSON으로 출력된다",
+        "nodes": {
+          "ra": "IAM Roles Anywhere",
+          "helper": "aws_signing_helper"
+        },
+        "groups": {
+          "server": "회사 서버",
+          "json": "JSON"
+        },
+        "notes": {
+          "deliver": "임시 자격 증명",
+          "print": "출력",
+          "access-key-id": "Access Key ID",
+          "secret-access-key": "Secret Access Key",
+          "session-token": "Session Token",
+          "expiration": "Expiration"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "16": {
+        "label": "16단계 그림: 회사 서버에 AWS CLI를 설치한다",
+        "nodes": {
+          "cli": "AWS CLI"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "install": "설치"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "17": {
+        "label": "17단계 그림: AWS CLI가 ~/.aws/config의 s3-logs 프로필을 읽어 aws_signing_helper를 실행한다",
+        "nodes": {
+          "cli": "AWS CLI",
+          "helper": "aws_signing_helper"
+        },
+        "groups": {
+          "server": "회사 서버",
+          "config": "~/.aws/config"
+        },
+        "notes": {
+          "read": "읽는다",
+          "run": "실행",
+          "profile": "[profile s3-logs]",
+          "process": "credential_process = …",
+          "region": "region = ap-northeast-2"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "18": {
+        "label": "18단계 그림: S3 버킷을 만들거나 확인하고, S3UploadRole이 그 버킷에 s3:PutObject를 허용하는지 본다",
+        "nodes": {
+          "role": "S3UploadRole",
+          "bucket": "S3 버킷"
+        },
+        "notes": {
+          "allow": "s3:PutObject 허용",
+          "check": "생성 또는 확인"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      },
+      "19": {
+        "label": "19단계 그림: AWS CLI가 aws_signing_helper로 임시 자격 증명을 받아 aws s3 cp로 S3 버킷에 올린다",
+        "nodes": {
+          "cli": "AWS CLI",
+          "helper": "aws_signing_helper",
+          "bucket": "S3 버킷"
+        },
+        "groups": {
+          "server": "회사 서버"
+        },
+        "notes": {
+          "run": "실행",
+          "credentials": "임시 자격 증명",
+          "rerun": "11~15단계가 다시 일어난다",
+          "upload": "aws s3 cp"
+        },
+        "sources": ["identity-federation.iam-roles-anywhere"]
+      }
+    }
+  }
 }

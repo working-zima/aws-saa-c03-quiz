@@ -40,6 +40,7 @@ import { PodPermissionsDiagram } from './PodPermissionsDiagram'
 import { PolicyEvaluationDiagram } from './PolicyEvaluationDiagram'
 import { RegionConditionDiagram } from './RegionConditionDiagram'
 import { RolePathsDiagram } from './RolePathsDiagram'
+import { RolesAnywhereStepFigure } from './RolesAnywhereStepFigure'
 import { Route53AliasDiagram } from './Route53AliasDiagram'
 import { Route53HealthDiagram } from './Route53HealthDiagram'
 import { Route53HybridDnsDiagram } from './Route53HybridDnsDiagram'
@@ -135,4 +136,10 @@ export const diagramsByConceptId: Record<string, ComponentType | ComponentType[]
   'ecs-eks-fargate.eks-anywhere': EksHybridTable,
   'ecs-eks-fargate.eks-irsa': PodPermissionsDiagram,
   'ecs-eks-fargate.app2container': ComputeChoiceTable,
+}
+
+// 개념 id → 단계 목록의 번호 항목마다 그 항목 글 바로 아래에 붙는 단계 그림(ADR-050).
+// 본문 뒤의 도식과 달리 단계 번호를 받는다.
+export const stepFiguresByConceptId: Record<string, ComponentType<{ step: number }>> = {
+  'identity-federation.iam-roles-anywhere': RolesAnywhereStepFigure,
 }

@@ -2,9 +2,39 @@
   "project": "AWS SAA-C03 개념 학습 앱",
   "phase": "65-roles-anywhere-steps",
   "steps": [
-    { "step": 0, "name": "step-list-parse", "status": "pending" },
-    { "step": 1, "name": "step-list-render", "status": "pending" },
-    { "step": 2, "name": "roles-anywhere-concept", "status": "pending" },
-    { "step": 3, "name": "roles-anywhere-step-figures", "status": "pending" }
-  ]
+    {
+      "step": 0,
+      "name": "step-list-parse",
+      "status": "completed",
+      "started_at": "2026-10-22T08:18:19+0900",
+      "summary": "src/lib/paragraph-blocks.ts의 ParagraphBlock에 kind 'steps'(start·items)를 더하고 새 타입 StepItem·SubBlock·SubItem을 export했다. groupParagraphs가 0단 `N. `을 단계 목록으로, 2칸·4칸 문단을 바로 위 한 단 얕은 항목의 하위 글머리(bullets)·이어지는 문단으로 묶고, 부모 없는 문단·0/2/4칸 밖 들여쓰기는 던지지 않고 0단 일반 문단으로 둔다. stripListMarker는 들여쓰기와 표지(0단 번호, 어느 단이든 `- `)를 떼고 isListItem은 그대로다. 단계 목록이 없는 입력의 결과는 전과 같다. 새 테스트 9개(이 중 8개는 구현 전 실패 확인, isListItem 단언 1개는 원래 통과)로 paragraph-blocks.test.ts가 17개가 됐고, changes.json의 실제 95문단이 단계 목록 셋(start 1·9·16, 항목 8·7·4)으로 나뉘고 펼치면 원래 순서·글과 같음을 단언한다. build·lint 통과, 테스트 102개 파일 2604개 통과",
+      "completed_at": "2026-10-22T08:23:59+0900"
+    },
+    {
+      "step": 1,
+      "name": "step-list-render",
+      "status": "completed",
+      "started_at": "2026-10-22T08:24:00+0900",
+      "summary": "ConceptList가 kind 'steps' 블록을 `<ol start>`(list-decimal space-y-4 pl-7 + 본문 글자)로 그리고, 하위 글머리를 mt-2 ul(1단 list-disc·2단 list-[circle])로, 이어지는 문단을 `<p class=\"mt-2\">`로 그린다. 글은 모두 EmphasizedText이고 약어 조각은 원래 문단 index로 찾는다. 새 선택 prop `stepFigures`(기본값 registry.ts의 새 빈 객체 `stepFiguresByConceptId: Record<string, ComponentType<{ step: number }>>`)에 개념이 등록돼 있으면 번호 항목마다 항목 글 바로 뒤·하위 블록 앞에 `<StepFigure step={number} />`를 그린다. 기존 문단·`- ` 목록 마크업은 그대로다. ConceptList.test.tsx에 새 테스트 7개(구현 전 6개 실패 확인, 'stepFigures를 주지 않으면 그림이 없다' 1개는 원래 통과)를 더해 32개가 됐다. 계획 밖으로 registry.test.tsx의 vi.mock 팩토리에 `stepFiguresByConceptId: {}` 한 줄을 더했다 — 모듈 전체를 대체하는 mock에 새 export가 없어 기존 테스트가 깨졌기 때문이고 단언은 그대로다. build·lint 통과, 테스트 102개 파일 2611개 통과",
+      "completed_at": "2026-10-22T08:30:02+0900"
+    },
+    {
+      "step": 2,
+      "name": "roles-anywhere-concept",
+      "status": "completed",
+      "started_at": "2026-10-22T10:13:06+0900",
+      "summary": "changes.json 그대로 src/data/topics.json의 identity-federation.sts-assume-role 줄 바로 아래에 딸린 개념 identity-federation.iam-roles-anywhere(parentId identity-federation.sts, 문단 95개) 한 줄을, src/data/questions.json 끝(q741 뒤)에 q742(정답 IAM Roles Anywhere, answerIndex 0) 한 줄을 넣었다(줄 단위 치환, 재직렬화 없음). scripts/topics-baseline.json은 손으로 sts-assume-role 항목 뒤에 새 항목을 넣고 conceptLineCount 635→636, questionsSha256을 새 해시로 바꿨다. data-test.patch를 적용해 data.test.ts의 단언 둘(보안·운영 주제 개념 수 identity-federation 11→12, 이 주제의 개념 순서)을 바꾸고 describe 'ADR-050 — 단계 목록'(it 넷)을 더했다 — 데이터 적용 전 정확히 넷(개념 수·개념 순서·단계 목록 개념은 하나뿐·번호 1~19)이 실패함을 확인했다. 개념 636개, 문항 742개. verify-content.mjs·check-structure.mjs·sync-baseline.mjs --dry-run·check-steps.mjs(단계 그림 19장) 통과, build·lint 통과, 테스트 102개 파일 2615개 통과. 명세 문장은 고치지 않았고 이상한 곳은 찾지 못했다",
+      "completed_at": "2026-10-22T10:16:17+0900"
+    },
+    {
+      "step": 3,
+      "name": "roles-anywhere-step-figures",
+      "status": "completed",
+      "started_at": "2026-10-22T10:16:17+0900",
+      "summary": "src/components/diagrams/RolesAnywhereStepFigure.tsx에 RolesAnywhereStepFigure({ step })를 만들어 registry.ts의 stepFiguresByConceptId에 identity-federation.iam-roles-anywhere로 등록했다 — 단계 그림 19장(노드 43·경로 27), 버튼·캡션 없는 정지 SVG(viewBox 폭 208, w-full max-w-[288px]), figure mt-2 rounded-md border border-border bg-panel. 좌표·노드 색은 step-figures.mjs에서 스크립트로 옮겨 컴포넌트 상수로 두었고 바꾼 좌표·라벨·곁말은 없다. 문구는 src/types/visuals.ts의 새 StepFigureText와 TopicVisuals.stepFigures(선택)로 타입을 두고 identity-federation.json의 stepFigures(개념 id → \"1\"~\"19\" → label·nodes·groups·notes·sources)에 넣었으며 기존 diagrams·tables·glossary는 그대로다. 새 테스트 79개(RolesAnywhereStepFigure.test.tsx 78 — 설계본을 옮긴 상수로 단계마다 이름·좌표·viewBox 경계와 라벨 폭·글을 단언하고, 실제 주제를 ConceptList로 그려 번호 항목 19개 글 바로 뒤에만 그 번호의 그림이 있음을 단언 / visuals.test.ts 1 — 단계 그림의 키 개념이 그 주제의 단계 목록 개념이고 번호가 번호 항목과 같으며 근거가 실제 개념 id)는 구현 전 실패를 확인했다. ConceptList.test.tsx는 고치지 않았다. check-steps.mjs 통과. check-path-crossings.mjs는 통과했지만 파일 이름이 *Diagram.tsx인 것만 읽어서 새 컴포넌트는 검사 대상에 들어가지 않는다(세로·가로 노드 345·경로 268 그대로) — 좌표는 check-steps.mjs가 검사했다. build·lint 통과, 테스트 103개 파일 2694개 통과",
+      "completed_at": "2026-10-22T10:26:50+0900"
+    }
+  ],
+  "created_at": "2026-10-22T08:18:19+0900",
+  "completed_at": "2026-10-22T10:26:50+0900"
 }
