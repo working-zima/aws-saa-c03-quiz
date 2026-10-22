@@ -246,13 +246,29 @@ describe('RolesAnywhereStepFigure', () => {
     const figure = renderFigure(step)
 
     expect(stepTexts[step].label).toBe(design[step].label)
-    expect(figure).toHaveClass('mt-2 rounded-md border border-border bg-panel', { exact: true })
+    expect(figure).toHaveClass('mt-2 !ml-0 max-w-[290px] rounded-md border border-border bg-panel', { exact: true })
     const svg = within(figure).getByRole('img', { name: design[step].label })
     expect(svg).toHaveAttribute('viewBox', `0 0 208 ${design[step].height}`)
     expect(svg).toHaveClass('block h-auto w-full max-w-[288px]', { exact: true })
     expect(within(figure).queryByRole('button')).toBeNull()
     expect(within(figure).queryByRole('heading')).toBeNull()
     expect(figure.querySelector('figcaption')).toBeNull()
+  })
+
+  // 실측(2026-10-22): 틀에 폭 제한이 없으면 1024px에서 틀이 511px로 퍼지고 그림은 왼쪽 288px에 멈춰 오른쪽 절반이 빈다.
+  // 또 딸린 개념 무리의 `max-sm:[&_figure]:-ml-[37px]`(본문 뒤 도식을 화면 끝까지 펼치는 규칙)가 목록 안의 이 틀까지 끌어내
+  // 320px에서 틀이 번호 칸 너머로 튀어나왔다. 단계 그림은 그 단계 글과 한 항목으로 묶여야 한다(UI_GUIDE 「단계 그림」).
+  it('틀이 그림 폭(288px + 테두리 2px)에서 멈추고, 딸린 개념 무리의 왼쪽 당김을 받지 않는다', () => {
+    const { container } = render(
+      <ConceptList
+        concepts={topics.find(({ id }) => id === topicId)!.concepts}
+        headingLevel={2}
+      />,
+    )
+    const figure = container.querySelector<HTMLElement>(`[id="${conceptId}"] figure`)!
+
+    expect(figure.closest('.max-sm\\:\\[\\&_figure\\]\\:-ml-\\[37px\\]')).not.toBeNull()
+    expect(figure).toHaveClass('max-w-[290px]', '!ml-0')
   })
 
   it.each(steps)('%i단계: 노드·그룹·경로·곁말의 id와 좌표가 설계본과 같다', (step) => {

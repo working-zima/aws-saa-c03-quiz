@@ -185,8 +185,10 @@ export function RolesAnywhereStepFigure({ step }: { step: number }) {
   const text = texts[step]
   const { height, groups, nodes, paths, notes } = layouts[step]
 
+  // 틀은 그림 폭(288 + 테두리 2)에서 멈춘다. 딸린 개념 무리가 본문 뒤 도식을 화면 끝까지 끌어내는 `-ml-[37px]`는
+  // 목록 안의 이 틀에는 맞지 않아 `!ml-0`으로 막는다 — 그림은 그 단계 글과 한 항목으로 묶여야 한다.
   return (
-    <figure aria-label={text.label} className="mt-2 rounded-md border border-border bg-panel">
+    <figure aria-label={text.label} className="mt-2 !ml-0 max-w-[290px] rounded-md border border-border bg-panel">
       <svg aria-label={text.label} className="block h-auto w-full max-w-[288px]" role="img" viewBox={`0 0 208 ${height}`}>
         <defs>
           <marker id={arrowId} markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto" viewBox="0 0 6 6">

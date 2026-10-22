@@ -650,8 +650,11 @@ EMR·Glue·Athena·Lake Formation 도식 다섯(phase 62), IAM 도식 여덟(pha
 
 - **`viewBox` 폭은 208, 배치는 하나다.** 목록 안이라 320px 화면에서 그림 폭이 약 235px이고(딸린 개념 263px − 번호 들여쓰기 28px) 배율이 1.13이라
   노드 라벨이 다른 도식의 320px 값(11.43px)과 비슷하다. SVG는 `w-full max-w-[288px]`라 넓은 화면에서도 288px(배율 1.38)에서 멈춘다. 가로형을 두지 않는다.
-- **틀은 가볍게 둔다.** `figure`는 `mt-2 rounded-md border border-border bg-panel`이고 안쪽 여백은 SVG 좌표의 8로 낸다. 다른 도식처럼 화면 끝까지
+- **틀은 가볍게 둔다.** `figure`는 `mt-2 !ml-0 max-w-[290px] rounded-md border border-border bg-panel`이고 안쪽 여백은 SVG 좌표의 8로 낸다. 다른 도식처럼 화면 끝까지
   펼치지 않는다 — 단계와 그림이 한 항목으로 묶여 보여야 한다.
+  - `max-w-[290px]`(그림 288px + 테두리 2px): 빼면 틀만 항목 폭까지 퍼진다. 실측(2026-10-22) 1024px에서 틀 511px 안에 그림이 왼쪽 288px만 차지했다.
+  - `!ml-0`: 이 개념은 딸린 개념이라, 딸린 무리의 `max-sm:[&_figure]:-ml-[37px]`(본문 뒤 도식을 화면 끝까지 펼치는 규칙)가 목록 안의 틀까지 끌어낸다.
+    그 규칙의 선택자 `.… figure`가 클래스 하나보다 구체적이라 `!`로 막는다. 빼면 320px에서 틀이 항목 글보다 37px 왼쪽, 번호 칸 너머로 튀어나온다.
 - 글자 크기(노드 10, 그룹 라벨·곁말 9)와 색(파랑·청록·회색) 규칙, 경계·라벨 폭·교차 검사는 다른 도식과 같다. 경로는 노드 변이나 그룹 박스 변에서
   시작하고 끝난다. 설계 검사기는 `phases/65-roles-anywhere-steps/tools/check-steps.mjs`다.
 - 같은 대상은 모든 그림에서 같은 라벨·색이다(`private.key`, `S3UploadRole`, `IAM Roles Anywhere` 등). 본문에 이름이 있는 것은 이름으로 쓴다(ADR-038 「예시」).
