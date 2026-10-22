@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
- "conceptLineCount": 635,
- "questionsSha256": "761f73f2a20be0804f97b30b6f0e1a9d667be3b0488d402ac7c04b443cc8543e",
+ "conceptLineCount": 636,
+ "questionsSha256": "f78246abcc11f43b2c08b0bbd9eb1776a1ee88ad656ab32aeb93db77892c3dc3",
  "topics": [
   {
    "id": "aws-core-services",
@@ -3011,6 +3011,11 @@
      "id": "identity-federation.sts-assume-role",
      "parentId": "identity-federation.sts",
      "name": "STS로 임시 자격 증명 받기"
+    },
+    {
+     "id": "identity-federation.iam-roles-anywhere",
+     "parentId": "identity-federation.sts",
+     "name": "IAM Roles Anywhere로 임시 자격 증명 받기"
     },
     {
      "id": "identity-federation.aws-directory-service",

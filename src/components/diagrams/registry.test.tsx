@@ -7,6 +7,7 @@ vi.mock('./registry', () => ({
   diagramsByConceptId: {
     'x.y': () => <figure aria-label="등록한 도식" />,
   },
+  stepFiguresByConceptId: {},
 }))
 
 describe('diagramsByConceptId', () => {

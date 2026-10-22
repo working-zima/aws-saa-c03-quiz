@@ -323,3 +323,49 @@ S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은
 - 이 파일을 근거로 쓰지 않는 것: OCI 아티팩트의 종류, 리포지토리 정책·수명 주기 정책, 레지스트리 복제(리전 간·계정 간), 퍼블릭 레지스트리, 기본 스캔의
   리포지토리 필터.
 - 쓰인 곳: `ecs-eks-fargate.ecr-image-scan-on-push`의 첫 문단 마지막 문장.
+
+## IAM Roles Anywhere와 AWS CLI의 외부 자격 증명 프로세스
+
+확인한 날: 2026-10-21. 사용자가 `identity-federation.sts-assume-role`의 「STS로 역할을 맡아 임시 자격 증명을 받는다」를 이해하려고 19단계 절차를 정리해 와서
+공식 문서와 대조해 달라고 했다(ADR-039 「2026-10-21 확장 — IAM Roles Anywhere」, ADR-050). 아래는 대조에 쓴 문서와 가져온 사실이다.
+
+- 출처: https://docs.aws.amazon.com/rolesanywhere/latest/userguide/introduction.html
+- 가져온 사실: AWS 밖에서 도는 서버·컨테이너·애플리케이션이 IAM 임시 자격 증명을 받게 해 주고, 그 워크로드에 장기 자격 증명을 둘 필요가 없게 한다. 회사
+  인증 기관이 발급한 X.509 인증서를 쓰고, 그 인증 기관을 신뢰 앵커로 등록한다. 신뢰 앵커는 AWS Private CA나 외부 인증 기관의 인증서를 가리킨다. 역할이
+  IAM Roles Anywhere 서비스 주체를 신뢰해야 IAM Roles Anywhere가 그 역할을 맡아 임시 자격 증명을 내준다. 프로필은 IAM Roles Anywhere가 맡을 역할을
+  지정한다. 모든 리소스는 리전 단위이고 같은 계정·같은 리전에 있어야 함께 쓴다.
+- 출처: https://docs.aws.amazon.com/rolesanywhere/latest/userguide/getting-started.html
+- 가져온 사실: 외부 인증 기관을 쓰려면 신뢰 앵커를 만들 때 외부 인증서 번들(External certificate bundle)을 고르고 인증 기관 인증서 본문을 PEM 형식으로
+  붙여 넣는다. 공인 인증 기관의 인증서는 신뢰 앵커로 쓸 수 없다. 역할의 신뢰 정책에 `rolesanywhere.amazonaws.com`을 넣고 `sts:AssumeRole`·
+  `sts:TagSession`·`sts:SetSourceIdentity`를 허용한다. 조건이 없으면 그 인증 기관(과 그 아래 인증 기관)이 발급한 유효한 인증서는 무엇이든 역할을 맡을 수
+  있어서 주체·발급자 조건이 권장된다. 프로필을 만들 때 그 역할을 고른다.
+- 출처: https://docs.aws.amazon.com/rolesanywhere/latest/userguide/trust-model.html
+- 가져온 사실: 요청의 서명을 인증서의 키 종류에 맞는 알고리즘으로 먼저 검증하고, 그다음 인증서가 신뢰 앵커로 등록한 인증 기관이 발급한 것인지 확인한다.
+  인증에 쓰는 인증서는 X.509 v3이고, 기본 제약의 `CA` 값이 있으면 false, 키 용도에 Digital Signature, 서명 알고리즘은 SHA256 이상이다(MD5·SHA1 거부).
+  신뢰 앵커로 쓰는 인증서는 키 용도에 Certificate Sign, 기본 제약에 `CA: true`다. 신뢰 정책에 `aws:SourceArn`(신뢰 앵커 ARN)과 인증서 주체 조건
+  (`aws:PrincipalTag/x509Subject/CN` 등)을 거는 것이 권장된다.
+- 출처: https://docs.aws.amazon.com/rolesanywhere/latest/userguide/authentication-sign-process.html
+- 가져온 사실: 서명 과정은 SigV4와 같고, 서명은 인증서의 개인키로 만든다. 인증서는 `X-Amz-X509` 헤더로 보낸다. 개인키 자체는 요청에 들어가지 않는다.
+- 출처: https://docs.aws.amazon.com/rolesanywhere/latest/userguide/authentication-create-session.html
+- 가져온 사실: CreateSession 요청에는 프로필 ARN·역할 ARN·신뢰 앵커 ARN이 들어간다. CreateSession은 AssumeRole을 X.509로 감싼 것이고, AssumeRole이 내준
+  임시 자격 증명을 IAM Roles Anywhere가 바꾸지 않고 그대로 넘긴다. 자격 증명은 액세스 키 ID·비밀 액세스 키·세션 토큰·만료 시각이다.
+- 출처: https://docs.aws.amazon.com/rolesanywhere/latest/userguide/credential-helper.html
+- 가져온 사실: IAM Roles Anywhere가 제공하는 credential helper(`aws_signing_helper`)가 인증서로 서명을 만들어 임시 자격 증명을 받아 오고, 표준 JSON
+  (Version·AccessKeyId·SecretAccessKey·SessionToken·Expiration)으로 돌려준다. `credential-process` 명령에는 `--certificate`·`--private-key`·
+  `--trust-anchor-arn`·`--profile-arn`·`--role-arn`이 필요하다. 운영 체제별 파일을 이 페이지에서 내려받는다. AWS CLI에서는 `config` 파일의 프로필에
+  `credential_process`로 이 명령을 적고 `region`을 함께 적는다. ARN 꼴: `arn:aws:rolesanywhere:리전:계정:trust-anchor/…`,
+  `arn:aws:rolesanywhere:리전:계정:profile/…`, `arn:aws:iam::계정:role/…`. `credential-process`는 AWS CLI가 명령마다 부른다.
+- 출처: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html
+- 가져온 사실: `credential_process`는 `config` 파일의 프로필에 적는다. 경로에 `~`나 환경 변수를 쓰지 말고 전체 경로를 쓴다. AWS CLI는 외부 프로세스의 출력
+  JSON을 읽고, Expiration이 있으면 임시 자격 증명으로 보고 만료 전에 명령을 다시 실행해 갱신한다. AWS CLI는 외부 프로세스 자격 증명을 assume-role처럼
+  캐시하지 않는다. `config` 파일과 관련 파일을 보호하라고 경고한다.
+- 출처: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html
+- 가져온 사실: AssumeRole은 IAM 사용자나 역할이 부르는 API다 — 같은 계정의 사용자가 역할을 맡으려면 그 사용자에게 AssumeRole을 부를 권한을 주거나 역할의
+  신뢰 정책에 그 사용자를 주체로 넣는다. 요청은 호출자의 자격 증명으로 서명한다. 신뢰 정책은 누가 역할을 맡을 수 있는지, 권한 정책은 역할로 무엇을 할 수
+  있는지 정한다. 개념 본문의 「AssumeRole은 원래 이미 AWS 자격 증명을 가진 쪽이 호출하는 기능이다」는 이 사실을 줄인 것이다.
+- 출처: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_examples_s3_rw-bucket.html
+- 가져온 사실: 버킷 안 객체에 대한 동작(PutObject 등)은 리소스를 `arn:aws:s3:::버킷이름/*`로 적는다.
+- 일반 IT 용어(ADR-010 예외, 이 파일의 근거가 아니다): OpenSSL, 인증 기관(CA), 개인키·공개키, 인증서, 인증서 서명 요청(CSR), 자체 서명 인증서, 디지털 서명.
+- 이 파일을 근거로 쓰지 않는 것: 세션 정책, 인증서 해지 목록(CRL), 소스 아이덴티티 규칙, `update`·`serve` 명령과 OS 인증서 저장소·PKCS#11·TPM,
+  세션 기간의 범위(900~43200초)와 역할의 최대 세션 기간, AWS Private CA로 인증 기관을 만드는 법, OpenSSL 명령줄.
+- 쓰인 곳: 새 개념 `identity-federation.iam-roles-anywhere`의 본문과 단계 그림 19장, 새 문항 q742와 그 해설.

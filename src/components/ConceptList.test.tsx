@@ -257,3 +257,150 @@ describe('본문 목록 (ADR-046)', () => {
     }
   })
 })
+
+describe('단계 목록 (ADR-050)', () => {
+  const steps: Concept = {
+    id: 'steps.example',
+    name: '단계 개념',
+    summary: '단계 요약',
+    paragraphs: [
+      '머리 문단',
+      '1. 첫 단계',
+      '  - 첫 하위',
+      '    - 깊은 하위',
+      '    깊은 하위의 이어지는 문단',
+      '  첫 단계의 이어지는 문단',
+      '2. **둘째** 단계에서 `aws_signing_helper`를 쓴다',
+      '3. 셋째 단계',
+      '**구간 제목**',
+      '9. 아홉째 단계',
+      '10. 열째 단계',
+    ],
+  }
+  const plain: Concept = { id: 'steps.plain', name: '이웃 개념', summary: '이웃 요약', paragraphs: ['1. 이웃 단계', '2. 이웃 둘째'] }
+
+  function FakeStepFigure({ step }: { step: number }) {
+    return <figure aria-label={`${step}단계 그림`} data-step={step} />
+  }
+
+  const orderedLists = (root: HTMLElement) => Array.from(root.querySelectorAll('ol'))
+  const directItems = (list: Element) => Array.from(list.children).filter((child): child is HTMLElement => child.tagName === 'LI')
+
+  it('번호 항목을 ol로 묶고 첫 번호를 start로 두며, 구간 제목 문단이 끼면 ol을 나눈다', () => {
+    render(<ConceptList concepts={[steps]} diagrams={{}} headingLevel={2} />)
+
+    const article = screen.getByRole('article')
+    const [first, second] = orderedLists(article)
+    expect(orderedLists(article)).toHaveLength(2)
+    expect(first).toHaveAttribute('start', '1')
+    expect(second).toHaveAttribute('start', '9')
+    expect(directItems(first)).toHaveLength(3)
+    expect(directItems(second)).toHaveLength(2)
+
+    const head = within(article).getByText('머리 문단')
+    const section = within(article).getByText('구간 제목').parentElement!
+    expect(section.tagName).toBe('P')
+    expect(Array.from(head.parentElement!.children)).toEqual([head, first, section, second])
+    for (const list of [first, second]) {
+      expect(list).toHaveClass(
+        'list-decimal space-y-4 pl-7 text-[15px] leading-7 text-neutral-300 marker:text-neutral-500',
+        { exact: true },
+      )
+      for (const item of directItems(list)) expect(item).toHaveClass('break-keep', { exact: true })
+    }
+  })
+
+  it('하위 글머리는 번호 li 안의 ul로, 2단 글머리는 그 안의 ul로, 이어지는 문단은 그 li 안의 p로 그린다', () => {
+    render(<ConceptList concepts={[steps]} diagrams={{}} headingLevel={2} />)
+
+    const [firstStep] = directItems(orderedLists(screen.getByRole('article'))[0])
+    const outerList = firstStep.querySelector(':scope > ul')!
+    expect(outerList).toHaveClass('mt-2 list-disc space-y-2 pl-5 marker:text-neutral-500', { exact: true })
+    const [outerItem] = directItems(outerList)
+    expect(outerItem).toHaveClass('break-keep', { exact: true })
+    expect(outerItem.firstChild?.textContent).toBe('첫 하위')
+
+    const innerList = outerItem.querySelector(':scope > ul')!
+    expect(innerList).toHaveClass('mt-2 list-[circle] space-y-2 pl-5 marker:text-neutral-500', { exact: true })
+    expect(directItems(innerList).map((item) => item.textContent)).toEqual(['깊은 하위'])
+    for (const item of directItems(innerList)) expect(item).toHaveClass('break-keep', { exact: true })
+
+    const innerParagraph = screen.getByText('깊은 하위의 이어지는 문단')
+    expect(innerParagraph.tagName).toBe('P')
+    expect(innerParagraph).toHaveClass('mt-2', { exact: true })
+    expect(Array.from(outerItem.children)).toEqual([innerList, innerParagraph])
+
+    const stepParagraph = screen.getByText('첫 단계의 이어지는 문단')
+    expect(stepParagraph.tagName).toBe('P')
+    expect(stepParagraph).toHaveClass('mt-2', { exact: true })
+    expect(Array.from(firstStep.children)).toEqual([outerList, stepParagraph])
+  })
+
+  it('번호·글머리 표지와 들여쓰기 공백을 글자로 남기지 않는다', () => {
+    render(<ConceptList concepts={[steps]} diagrams={{}} headingLevel={2} />)
+
+    const article = screen.getByRole('article')
+    const items = Array.from(article.querySelectorAll('li'))
+    expect(items).toHaveLength(7)
+    for (const item of items) expect(item.textContent).not.toMatch(/^(\s|- |\d+\. )/)
+    expect(directItems(orderedLists(article)[1]).map((item) => item.textContent)).toEqual(['아홉째 단계', '열째 단계'])
+    expect(screen.getByText('깊은 하위의 이어지는 문단').textContent).toBe('깊은 하위의 이어지는 문단')
+    expect(screen.getByText('첫 단계의 이어지는 문단').textContent).toBe('첫 단계의 이어지는 문단')
+  })
+
+  it('단계 목록 안에서도 굵게와 백틱을 strong·code로 그린다', () => {
+    render(<ConceptList concepts={[steps]} diagrams={{}} headingLevel={2} />)
+
+    const secondStep = directItems(orderedLists(screen.getByRole('article'))[0])[1]
+    expect(secondStep.textContent).toBe('둘째 단계에서 aws_signing_helper를 쓴다')
+    expect(within(secondStep).getByText('둘째').tagName).toBe('STRONG')
+    expect(within(secondStep).getByText('aws_signing_helper').tagName).toBe('CODE')
+  })
+
+  it('등록된 단계 그림을 번호 항목마다 항목 글 뒤·하위 목록 앞에 그 번호로 그리고, 등록이 없는 개념에는 그리지 않는다', () => {
+    render(
+      <ConceptList concepts={[steps, plain]} diagrams={{}} headingLevel={2} stepFigures={{ [steps.id]: FakeStepFigure }} />,
+    )
+
+    const [article, neighbor] = screen.getAllByRole('article')
+    const figures = within(article).getAllByRole('figure')
+    expect(figures.map((figure) => figure.getAttribute('data-step'))).toEqual(['1', '2', '3', '9', '10'])
+    const stepItems = orderedLists(article).flatMap(directItems)
+    figures.forEach((figure, index) => expect(figure.parentElement).toBe(stepItems[index]))
+
+    const [firstStep] = stepItems
+    const firstFigure = within(article).getByRole('figure', { name: '1단계 그림' })
+    expect(firstStep.firstChild?.textContent).toBe('첫 단계')
+    expect(firstStep.firstElementChild).toBe(firstFigure)
+    expect(firstFigure.nextElementSibling).toBe(firstStep.querySelector(':scope > ul'))
+    expect(within(neighbor).queryByRole('figure')).not.toBeInTheDocument()
+  })
+
+  it('stepFigures를 주지 않으면 등록된 그림이 없어 아무것도 끼우지 않는다', () => {
+    render(<ConceptList concepts={[steps]} diagrams={{}} headingLevel={2} />)
+
+    expect(screen.queryByRole('figure')).not.toBeInTheDocument()
+  })
+
+  it('들여쓴 문단 안의 약어에도 개념 안에서 처음 나오는 한 곳에만 툴팁을 단다', () => {
+    const withTerms: Concept = {
+      id: 'steps.terms',
+      name: '약어 단계',
+      summary: '약어 요약',
+      paragraphs: ['1. 첫 단계', '  NFS를 쓴다', '  - NFS 하위', '2. NFS 둘째'],
+    }
+    const glossary = [
+      { term: 'NFS', expansion: 'Network File System', meaning: '네트워크 파일 시스템', sourceConceptId: 'efs-fsx.efs' },
+    ]
+    render(<ConceptList concepts={[withTerms]} diagrams={{}} glossary={glossary} headingLevel={2} />)
+
+    const buttons = screen.getAllByRole('button', { name: 'NFS' })
+    expect(buttons).toHaveLength(1)
+    const paragraph = buttons[0].closest('p')!
+    expect(paragraph.textContent).toBe('NFS를 쓴다')
+    expect(paragraph.parentElement?.tagName).toBe('LI')
+    expect(paragraph.parentElement?.parentElement?.tagName).toBe('OL')
+    const items = Array.from(screen.getByRole('article').querySelectorAll('li'))
+    expect(items.map((item) => item.firstChild?.textContent)).toEqual(['첫 단계', 'NFS 하위', 'NFS 둘째'])
+  })
+})
