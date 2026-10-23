@@ -39,7 +39,8 @@
       "name": "vs-concepts",
       "status": "completed",
       "started_at": "2026-10-23T15:40:10+0900",
-      "summary": "vs 딸린 개념 넷과 문항 넷을 더함(changes.json newConcepts·newQuestions 그대로): rds-storage-features.multi-az-vs-read-replica(q743), efs-fsx.efs-vs-ebs(q745), sqs-sns-eventbridge.eventbridge-vs-sns(q744), cost-management.compute-vs-ec2-instance-savings-plans(q746) → 개념 640·문항 746, topics-baseline 항목 넷·conceptLineCount 640·questionsSha256 갱신. tests-concepts.patch 적용 후 예상한 일곱(보안·운영/네트워크 개념 수, EFS·FSx/RDS/메시징/비용 관리 순서, 목록 개념 25개)만 실패하는 것을 확인했고, 적용 뒤 전체 2698개 통과·build·lint·check-structure·sync-baseline(갱신할 것 없음)·verify-content --through D·coverage 640/640·explanation-audit 통과, content-audit ⑤ 장문 4건·③ 노출 efs-fsx 4·rds 3·sqs 4·cost 0(설계 전과 같음)"
+      "summary": "vs 딸린 개념 넷과 문항 넷을 더함(changes.json newConcepts·newQuestions 그대로): rds-storage-features.multi-az-vs-read-replica(q743), efs-fsx.efs-vs-ebs(q745), sqs-sns-eventbridge.eventbridge-vs-sns(q744), cost-management.compute-vs-ec2-instance-savings-plans(q746) → 개념 640·문항 746, topics-baseline 항목 넷·conceptLineCount 640·questionsSha256 갱신. tests-concepts.patch 적용 후 예상한 일곱(보안·운영/네트워크 개념 수, EFS·FSx/RDS/메시징/비용 관리 순서, 목록 개념 25개)만 실패하는 것을 확인했고, 적용 뒤 전체 2698개 통과·build·lint·check-structure·sync-baseline(갱신할 것 없음)·verify-content --through D·coverage 640/640·explanation-audit 통과, content-audit ⑤ 장문 4건·③ 노출 efs-fsx 4·rds 3·sqs 4·cost 0(설계 전과 같음)",
+      "completed_at": "2026-10-23T15:43:02+0900"
     }
   ],
   "created_at": "2026-10-23T14:47:23+0900"
