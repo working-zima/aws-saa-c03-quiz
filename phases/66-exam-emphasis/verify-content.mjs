@@ -30,6 +30,11 @@ const ALLOWED = new Set([
   // step 2(강조 굵기)가 고치는 화면 파일
   'src/components/EmphasizedText.tsx',
   'src/components/EmphasizedText.test.tsx',
+  // step 2가 함께 고치는 테스트 — 강조 클래스를 `font-medium`으로 못박아 두었다. 설계 때 이 목록에서 빠졌다.
+  'src/components/QuizRunner.test.tsx',
+  'src/pages/ConceptReadPage.test.tsx',
+  // 이 파일 — step 2가 위 두 줄을 더했다
+  'phases/66-exam-emphasis/verify-content.mjs',
   'phases/66-exam-emphasis/index.json',
   'phases/index.json',
 ])

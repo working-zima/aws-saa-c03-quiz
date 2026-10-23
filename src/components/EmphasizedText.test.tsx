@@ -11,6 +11,17 @@ const iam: GlossaryEntry = {
   sourceConceptId: 'iam-permissions.iam',
 }
 
+describe('본문 속 강조 (ADR-051)', () => {
+  it('강조를 굵기 600으로 그리고 색은 그대로 둔다', () => {
+    const { container } = render(<p><EmphasizedText text="장애 조치는 **다중 AZ**가 맡는다" /></p>)
+
+    const strong = container.querySelector('strong')
+    expect(strong).toHaveTextContent(/^다중 AZ$/)
+    expect(strong).toHaveClass('font-semibold', 'text-neutral-100')
+    expect(strong).not.toHaveClass('font-medium')
+  })
+})
+
 describe('본문 속 코드 표기 (ADR-044)', () => {
   it('백틱 한 쌍을 백틱 없는 code 요소로 그리고 글꼴과 크기만 바꾼다', () => {
     const { container } = render(<p><EmphasizedText text="`NotAction`은 나머지 작업을 가리킨다" /></p>)

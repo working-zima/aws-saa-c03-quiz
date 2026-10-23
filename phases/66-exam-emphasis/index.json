@@ -21,7 +21,9 @@
     {
       "step": 2,
       "name": "emphasis-weight",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-23T14:52:53+0900",
+      "summary": "EmphasizedText의 <strong> 클래스를 font-medium → font-semibold로 바꿈(text-neutral-100 그대로). EmphasizedText.test.tsx에 「강조를 굵기 600으로 그리고 색은 그대로 둔다」를 더해 구현 전 실패를 확인함. 명세가 놓친 기존 단언 셋(QuizRunner.test.tsx 1, ConceptReadPage.test.tsx 2)이 font-medium을 못박고 있어 클래스 이름만 font-semibold로 맞췄고, 같은 이유로 verify-content.mjs의 허용 목록에 그 두 파일과 스크립트 자신을 더함. 전체 2698개 통과·build·lint·verify-content --through B 통과"
     },
     {
       "step": 3,
