@@ -29,7 +29,10 @@
     {
       "step": 3,
       "name": "vs-titles",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-23T15:37:33+0900",
+      "summary": "두 대안을 견주는 개념 제목 43개를 「A vs B」 꼴로 바꿈(changes.json renames 그대로, id 그대로): topics.json·topics-baseline.json 각 43줄. tests-renames.patch 적용 후 「S3 스토리지 클래스 주제가 클래스 8개 다음에 갈림길 7개와 비용 개념 2개를 둔다」 하나만 실패하는 것을 확인했고, 적용 뒤 전체 2698개 통과·build·lint·check-structure·sync-baseline(갱신할 것 없음)·verify-content --through C 통과, content-audit ① 제목 0건. 참고: 「REST API vs HTTP API의 통합 타임아웃」·「KMS 대칭 키 vs 비대칭 키의 자동 교체」는 「의」가 뒤쪽 대안에만 걸려 읽힐 여지가 있다(승인된 결과라 그대로 둠)",
+      "completed_at": "2026-10-23T15:39:08+0900"
     },
     {
       "step": 4,
