@@ -196,9 +196,9 @@ describe('ConceptReadPage', () => {
     expect(emphasized).toHaveLength(2)
     emphasized.forEach((node) => {
       expect(node.tagName).toBe('STRONG')
-      expect(node).toHaveClass('font-medium', 'text-neutral-100')
+      expect(node).toHaveClass('font-semibold', 'text-neutral-100')
     })
-    expect(screen.getByText('거버넌스 모드')).toHaveClass('font-medium', 'text-neutral-100')
+    expect(screen.getByText('거버넌스 모드')).toHaveClass('font-semibold', 'text-neutral-100')
   })
 
   it('강조 표기 기호를 화면에 노출하지 않는다', () => {

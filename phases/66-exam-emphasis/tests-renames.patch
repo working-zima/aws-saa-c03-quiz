@@ -1,0 +1,18 @@
+--- a/src/data/data.test.ts
++++ b/src/data/data.test.ts
+@@ -2738,12 +2738,12 @@
+       'S3 Express One Zone',
+     ])
+     expect(topic?.concepts.slice(8).map((concept) => concept.name)).toEqual([
+-      '즉시 조회와 대기 조회',
+-      'Glacier와 Standard-IA 중 고르기',
++      '즉시 조회 vs 대기 조회',
++      'Glacier vs Standard-IA',
+       'Glacier Flexible Retrieval의 표준 검색 시간',
+       'Glacier Flexible Retrieval의 신속 검색',
+       '아카이브 계열의 비용 순서',
+-      '수명 주기 규칙과 자동 계층화의 갈림길',
++      '수명 주기 규칙 vs 자동 계층화',
+       'S3 스토리지 클래스 분석',
+       '스토리지 클래스마다 다른 검색 요금',
+       'Intelligent-Tiering의 객체별 감시 요금',
