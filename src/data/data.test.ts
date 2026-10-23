@@ -279,6 +279,7 @@ describe('학습 데이터 무결성', () => {
   })
 
   it('보충 개념 추가 후에도 39개 주제의 메타데이터가 그대로다', () => {
+    // phase 66이 노션 「시험 문제 출제 유형」의 우선순위로 별점을 다시 매겼다. 1·2순위 항목을 담은 주제만 ★★★다(ADR-051).
     expect(topics.map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -293,19 +294,19 @@ describe('학습 데이터 무결성', () => {
       { id: 's3-access-control', title: 'S3 접근 제어·액세스 포인트·Storage Lens', importance: 3, sourcePages: [0, 0] },
       // phase 26 step 4가 block-file-storage를 둘로 갈랐다. EFS ↔ FSx는 공유 파일
       // 스토리지 선택이라 한 주제에 둔다(PRD "사용자").
-      { id: 'ebs-instance-store', title: 'EBS·인스턴스 스토어·스냅샷·배치 그룹', importance: 3, sourcePages: [14, 15] },
-      { id: 'efs-fsx', title: 'EFS·FSx(Windows·Lustre·ONTAP)', importance: 3, sourcePages: [14, 15] },
+      { id: 'ebs-instance-store', title: 'EBS·인스턴스 스토어·스냅샷·배치 그룹', importance: 2, sourcePages: [14, 15] },
+      { id: 'efs-fsx', title: 'EFS·FSx(Windows·Lustre·ONTAP)', importance: 2, sourcePages: [14, 15] },
       // phase 26 step 5가 data-transfer-services를 둘로 갈랐다. "이미 있는 것을 옮긴다"는
       // Storage Gateway·DMS·MGN이 뒤쪽 주제로 나가고, 앞쪽은 전송 도구만 남는다.
-      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·S3 전송', importance: 3, sourcePages: [16, 18] },
-      { id: 'storage-gateway-migration', title: 'Storage Gateway·DMS·Application Migration Service', importance: 3, sourcePages: [16, 18] },
+      { id: 'data-transfer-services', title: 'DataSync·Snowball Edge·Transfer Family·S3 전송', importance: 2, sourcePages: [16, 18] },
+      { id: 'storage-gateway-migration', title: 'Storage Gateway·DMS·Application Migration Service', importance: 2, sourcePages: [16, 18] },
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
       // phase 26 step 7이 aurora-dynamodb-cache를 셋으로 갈랐다. Aurora는 RDS 바로
       // 뒤에 두어 관리형 관계형 DB의 두 갈래가 맞붙게 하고, 캐시 갈림길
       // (ElastiCache ↔ DAX)은 목적별 데이터베이스와 한 주제에 남는다.
       { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
-      { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
-      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
+      { id: 'dynamodb', title: 'DynamoDB', importance: 2, sourcePages: [21, 21] },
+      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 2, sourcePages: [21, 21] },
       // phase 26 step 8이 compute-delivery에서 EC2·ASG와 로드 밸런서를 빼내 앞에
       // 놓았고, step 9가 남은 CloudFront·Global Accelerator를 옮기며 그 주제를
       // 없앴다. 셋은 같은 조각이라 배열에서 연속으로 놓인다.
@@ -316,22 +317,22 @@ describe('학습 데이터 무결성', () => {
       // step 11이 남은 껍데기를 둘로 갈라 그 자리에 놓으며 주제를 없앴다. 셋은 같은
       // 조각이라 배열에서 연속으로 놓인다.
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
-      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
-      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
+      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 2, sourcePages: [25, 26] },
+      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 2, sourcePages: [25, 26] },
       // phase 26 step 12가 messaging-backup의 메시징 계열을 빼내 그 자리에 놓았고,
       // step 13이 AWS Backup 계열과 dump-gaps의 재해 복구 계열을 그 뒤에 세웠다.
       // SQS ↔ SNS ↔ EventBridge는 메시징 세 갈래의 선택이라, DR 전략 둘은 RTO·RPO로
       // 갈리는 한 벌이라 각각 한 주제에 둔다(PRD "사용자").
       // 남아 있던 messaging-backup은 step 15가 MSK를 kinesis-streaming으로 가져가며 없앴다.
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
-      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
+      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 2, sourcePages: [27, 29] },
       // phase 26 step 14가 security-groups-nacl을 vpc-networking 바로 뒤로 옮겼다.
       // VPC를 읽은 자리에서 트래픽을 거르는 두 장치를 이어 읽고, step 14가 맡은
       // 세 주제가 배열에서 한 덩어리가 된다(topic-plan "배열 위치 근거").
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
-      { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
-      { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
+      { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 2, sourcePages: [34, 35] },
+      { id: 'route53', title: 'Route 53', importance: 3, sourcePages: [36, 37] },
       // phase 26 step 15가 analytics-monitoring에서 분석·스트리밍 계열을 세 주제로
       // 빼냈다. Kinesis 4종은 한 주제에, Athena ↔ Redshift ↔ Spectrum의 갈림길은
       // 웨어하우스 쪽에 둔다(topic-plan "헷갈리는 짝 배치"). 남은 CloudWatch·X-Ray는
@@ -346,16 +347,16 @@ describe('학습 데이터 무결성', () => {
       // threat-protection을 그 자리에서 둘로 갈랐다. WAF ↔ Shield ↔ Shield Advanced는
       // 계층과 대상이 갈리는 한 벌이라, GuardDuty ↔ Macie ↔ Inspector ↔ Security Hub는
       // 탐지 서비스 갈림길이라 각각 한 주제에 둔다(topic-plan "헷갈리는 짝 배치").
-      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 3, sourcePages: [44, 44] },
-      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 3, sourcePages: [45, 47] },
-      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 3, sourcePages: [45, 47] },
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 2, sourcePages: [44, 44] },
+      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 2, sourcePages: [45, 47] },
+      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 2, sourcePages: [45, 47] },
       // phase 26 step 17이 identity-access를 셋으로 갈라 그 자리에 놓았다. IAM 역할 ↔
       // 사용자 ↔ 정책 ↔ 권한 경계를 한 주제에, Identity Center ↔ SAML ↔ Cognito를 다른
       // 한 주제에 둔다(topic-plan "헷갈리는 짝 배치"). 감사 쪽인 CloudTrail·Config는
       // Organizations와 함께 셋째로 갈리되 배열에서 바로 뒤에 붙는다.
       { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
       { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
-      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
+      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 2, sourcePages: [48, 49] },
       // phase 26 step 19가 cost-management 뒤에 관리·거버넌스 계열 둘을 신설했다.
       // CloudFormation ↔ Service Catalog ↔ Control Tower는 거버넌스 갈림길이라,
       // Systems Manager의 기능들은 한 서비스의 하위 기능이라 각각 한 주제에 둔다
@@ -2562,23 +2563,24 @@ describe('학습 데이터 무결성', () => {
     // step 18이 threat-protection을 둘로 갈라 열둘이 됐다.
     // step 19가 governance-iac·systems-manager를 배열 끝에 신설해 열넷이 됐고,
     // step 20이 ai-ml-services를 그 뒤에 신설해 열다섯이 됐다.
+    // phase 66이 별점을 다시 매겼다(ADR-051).
     expect(topics.slice(24, 39).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
       importance,
       sourcePages,
     }))).toEqual([
-      { id: 'route53', title: 'Route 53', importance: 2, sourcePages: [36, 37] },
+      { id: 'route53', title: 'Route 53', importance: 3, sourcePages: [36, 37] },
       { id: 'emr-glue-athena', title: 'EMR·Spark·Glue·Athena·Lake Formation', importance: 2, sourcePages: [38, 40] },
       { id: 'kinesis-streaming', title: 'Kinesis Data Streams·Data Firehose·Flink·Video Streams·MSK', importance: 2, sourcePages: [38, 40] },
       { id: 'redshift-opensearch-quicksight', title: 'Redshift·Redshift Spectrum·OpenSearch·QuickSight', importance: 2, sourcePages: [38, 40] },
       { id: 'cloudwatch-xray', title: 'CloudWatch·X-Ray·Performance Insights·Managed Grafana', importance: 2, sourcePages: [38, 40] },
-      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 3, sourcePages: [44, 44] },
-      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 3, sourcePages: [45, 47] },
-      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 3, sourcePages: [45, 47] },
+      { id: 'secrets-encryption', title: 'Secrets Manager·Parameter Store·KMS·ACM·CloudHSM', importance: 2, sourcePages: [44, 44] },
+      { id: 'waf-shield', title: 'WAF·Shield·Firewall Manager', importance: 2, sourcePages: [45, 47] },
+      { id: 'guardduty-macie-inspector', title: 'GuardDuty·Macie·Inspector·Security Hub', importance: 2, sourcePages: [45, 47] },
       { id: 'iam-permissions', title: 'IAM 사용자·그룹·역할·정책·권한 경계·Access Analyzer', importance: 3, sourcePages: [48, 49] },
       { id: 'identity-federation', title: 'IAM Identity Center·STS·Cognito·Directory Service·SAML', importance: 3, sourcePages: [48, 49] },
-      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 3, sourcePages: [48, 49] },
+      { id: 'organizations-cloudtrail-config', title: 'Organizations·SCP·CloudTrail·Config·Audit Manager', importance: 2, sourcePages: [48, 49] },
       { id: 'cost-management', title: '절약 플랜·Budgets·Cost Explorer·Trusted Advisor', importance: 2, sourcePages: [50, 50] },
       { id: 'governance-iac', title: 'CloudFormation·Service Catalog·Control Tower·RAM', importance: 2, sourcePages: [0, 0] },
       { id: 'systems-manager', title: 'Systems Manager·AppConfig·EC2 Instance Connect', importance: 2, sourcePages: [0, 0] },
@@ -2606,8 +2608,9 @@ describe('학습 데이터 무결성', () => {
     // phase 54가 iam-permissions에 IAM 사용자·IAM 역할의 기본 개념 둘을 더해 18이 20이 됐다(ADR-041 개정).
     // phase 55가 IAM 정책·루트 사용자와 Systems Manager의 기본 개념을 더해 iam-permissions가 22, systems-manager가 8이 됐다(ADR-043).
     // phase 65가 STS 아래에 IAM Roles Anywhere 19단계 개념을 더해 identity-federation이 12가 됐다(ADR-050).
+    // phase 66이 절약 플랜 아래에 컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜을 더해 cost-management가 18이 됐다(ADR-051).
     expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 20, 15, 11, 22, 12, 16, 17, 7, 8, 6,
+      13, 20, 16, 11, 11, 20, 15, 11, 22, 12, 16, 18, 7, 8, 6,
     ])
   })
 
@@ -2615,6 +2618,7 @@ describe('학습 데이터 무결성', () => {
     // step 14가 security-groups-nacl을 vpc-networking과 hybrid-connectivity 사이로
     // 옮겨 이 묶음이 하나 늘었고, step 15가 껍데기만 남았던 messaging-backup을
     // 없애면서 다시 하나 줄었다.
+    // phase 66이 별점을 다시 매겼다(ADR-051).
     expect(topics.slice(9, 24).map(({ id, title, importance, sourcePages }) => ({
       id,
       title,
@@ -2623,23 +2627,23 @@ describe('학습 데이터 무결성', () => {
     }))).toEqual([
       { id: 'rds-storage-features', title: 'RDS 스토리지 유형과 기능', importance: 3, sourcePages: [19, 20] },
       { id: 'aurora', title: 'Aurora·Aurora Serverless·글로벌 데이터베이스', importance: 3, sourcePages: [21, 21] },
-      { id: 'dynamodb', title: 'DynamoDB', importance: 3, sourcePages: [21, 21] },
-      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 3, sourcePages: [21, 21] },
+      { id: 'dynamodb', title: 'DynamoDB', importance: 2, sourcePages: [21, 21] },
+      { id: 'elasticache-purpose-built-db', title: 'ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream', importance: 2, sourcePages: [21, 21] },
       { id: 'ec2-autoscaling', title: 'EC2 인스턴스 유형·구매 옵션·Auto Scaling', importance: 3, sourcePages: [22, 24] },
       { id: 'elastic-load-balancing', title: 'ALB·NLB·Gateway Load Balancer', importance: 3, sourcePages: [22, 24] },
       { id: 'cloudfront-global-accelerator', title: 'CloudFront·Global Accelerator·엣지 함수', importance: 3, sourcePages: [22, 24] },
       // phase 26 step 10이 serverless-containers에서 Lambda 계열을 빼내 세웠고,
       // step 11이 남은 껍데기를 ECS 계열과 API Gateway 계열로 갈랐다.
       { id: 'lambda', title: 'Lambda', importance: 3, sourcePages: [25, 26] },
-      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 3, sourcePages: [25, 26] },
-      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 3, sourcePages: [25, 26] },
+      { id: 'ecs-eks-fargate', title: 'ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk', importance: 2, sourcePages: [25, 26] },
+      { id: 'api-gateway-step-functions', title: 'API Gateway·Step Functions', importance: 2, sourcePages: [25, 26] },
       // phase 26 step 12가 messaging-backup에서 메시징 계열을 빼내 그 자리에 놓았고,
       // step 13이 AWS Backup 계열과 재해 복구 계열을 그 뒤에 세웠다.
       { id: 'sqs-sns-eventbridge', title: 'SQS·SNS·EventBridge·Amazon MQ·SES', importance: 3, sourcePages: [27, 29] },
-      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 3, sourcePages: [27, 29] },
+      { id: 'backup-disaster-recovery', title: 'AWS Backup·재해 복구 전략·Elastic Disaster Recovery', importance: 2, sourcePages: [27, 29] },
       { id: 'vpc-networking', title: 'VPC·서브넷·인터넷/NAT 게이트웨이·VPC Endpoint·PrivateLink·피어링', importance: 3, sourcePages: [30, 33] },
       { id: 'security-groups-nacl', title: '보안 그룹·NACL', importance: 3, sourcePages: [41, 43] },
-      { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 3, sourcePages: [34, 35] },
+      { id: 'hybrid-connectivity', title: 'Site-to-Site VPN·Direct Connect·Transit Gateway', importance: 2, sourcePages: [34, 35] },
     ])
   })
 
@@ -2665,8 +2669,10 @@ describe('학습 데이터 무결성', () => {
     // phase 55가 기본 개념을 더해 rds-storage-features가 22(자동 백업과 DB 스냅샷), ec2-autoscaling이 21(인스턴스 유형과
     // 제품군), backup-disaster-recovery가 12(재해 복구 전략)가 됐다(ADR-043).
     // phase 64가 주제 맨 앞에 컨테이너와 오케스트레이션의 기본 개념 둘을 더해 ecs-eks-fargate가 24에서 26이 됐다(ADR-049).
+    // phase 66이 vs 개념을 더해 rds-storage-features가 23(다중 AZ 배포 vs 읽기 전용 복제본), sqs-sns-eventbridge가
+    // 34(EventBridge vs SNS)가 됐다(ADR-051).
     expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
-      22, 18, 18, 14, 21, 18, 24, 18, 26, 20, 33, 12, 20, 9, 19,
+      23, 18, 18, 14, 21, 18, 24, 18, 26, 20, 34, 12, 20, 9, 19,
     ])
   })
 
@@ -2735,12 +2741,12 @@ describe('학습 데이터 무결성', () => {
       'S3 Express One Zone',
     ])
     expect(topic?.concepts.slice(8).map((concept) => concept.name)).toEqual([
-      '즉시 조회와 대기 조회',
-      'Glacier와 Standard-IA 중 고르기',
+      '즉시 조회 vs 대기 조회',
+      'Glacier vs Standard-IA',
       'Glacier Flexible Retrieval의 표준 검색 시간',
       'Glacier Flexible Retrieval의 신속 검색',
       '아카이브 계열의 비용 순서',
-      '수명 주기 규칙과 자동 계층화의 갈림길',
+      '수명 주기 규칙 vs 자동 계층화',
       'S3 스토리지 클래스 분석',
       '스토리지 클래스마다 다른 검색 요금',
       'Intelligent-Tiering의 객체별 감시 요금',
@@ -3186,6 +3192,7 @@ describe('학습 데이터 무결성', () => {
     // FSx File Gateway: FSx 파일 시스템이 아니라 온프레미스 쪽 접점이라 FSx 종류를 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'efs-fsx.efs',
+      'efs-fsx.efs-vs-ebs',
       'efs-fsx.efs-throughput-modes',
       'efs-fsx.efs-elastic-throughput',
       'efs-fsx.efs-performance-modes',
@@ -3299,6 +3306,7 @@ describe('학습 데이터 무결성', () => {
       'rds-storage-features.storage-types',
       'rds-storage-features.storage-type-names',
       'rds-storage-features.features',
+      'rds-storage-features.multi-az-vs-read-replica',
       'rds-storage-features.multi-az-standby-limits',
       'rds-storage-features.rds-multi-az-db-cluster',
       'rds-storage-features.rds-multi-az-failover-rto',
@@ -3822,7 +3830,7 @@ describe('학습 데이터 무결성', () => {
     // SNS: 기본 → FIFO 주제 → 본문 재작성 제약 → 암호화된 주제의 게시 권한.
     // SQS와 SNS의 조합: 버퍼인가 발행-구독인가, 소비자마다 큐를 두는 팬아웃, 계정 간 발행. 두 서비스를
     //   가르거나 함께 쓰는 개념이라 두 블록 뒤에 둔다.
-    // EventBridge: 기본 → Scheduler → Step Functions와의 갈림길 → 보장하지 않는 것·이벤트 패턴·
+    // EventBridge: 기본 → Scheduler → Step Functions와의 갈림길 → SNS와의 갈림길(phase 66, ADR-051) → 보장하지 않는 것·이벤트 패턴·
     //   버스·파이프·대상·리소스 변경 규칙.
     // Amazon MQ. SES: 기본 → 수신 규칙.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
@@ -3849,6 +3857,7 @@ describe('학습 데이터 무결성', () => {
       'sqs-sns-eventbridge.eventbridge',
       'sqs-sns-eventbridge.eventbridge-scheduler',
       'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+      'sqs-sns-eventbridge.eventbridge-vs-sns',
       'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
       'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
       'sqs-sns-eventbridge.eventbridge-event-bus-types',
@@ -4964,6 +4973,7 @@ describe('학습 데이터 무결성', () => {
     // Cost Explorer·Budgets와 대비하므로 둘 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cost-management.savings-plan',
+      'cost-management.compute-vs-ec2-instance-savings-plans',
       'cost-management.savings-plan-details',
       'cost-management.savings-plan-baseline-vs-spike',
       'cost-management.rds-reserved-instance',
@@ -6698,7 +6708,7 @@ describe('ADR-039 확장 — Lambda 동시 실행 수와 예약된 동시성', (
     expect(concept.paragraphs[1]).toContain('실행 환경은 요청이 온 뒤에 만든다')
     expect(concept.paragraphs[1]).toContain('콜드 스타트는 그대로 남는다')
     expect(concept.paragraphs[2]).toBe(
-      '피크 시간대에도 일관되게 낮은 지연이 필요하면 프로비저닝된 동시성을 쓴다. 예약된 동시성으로는 그 조건을 채울 수 없다.',
+      '피크 시간대에도 **일관되게 낮은 지연이 필요하면 프로비저닝된 동시성**을 쓴다. 예약된 동시성으로는 그 조건을 채울 수 없다.',
     )
   })
 
@@ -6855,16 +6865,18 @@ describe('ADR-046 — 개념 본문 목록', () => {
     })
   })
 
-  it('목록이 있는 개념은 이 21개뿐이다', () => {
-    // 목록을 늘리려면 ADR-046의 기준과 표를 먼저 고친다.
+  it('목록이 있는 개념은 이 25개뿐이다', () => {
+    // 목록을 늘리려면 ADR-046의 기준과 표를 먼저 고친다. phase 66이 vs 개념 넷을 더했다(ADR-051).
     const conceptsWithLists = [
       'backup-disaster-recovery.dr-strategies',
+      'cost-management.compute-vs-ec2-instance-savings-plans',
       'dynamodb.dynamodb',
       'ebs-instance-store.ebs-volume-type-names',
       'ebs-instance-store.placement-groups',
       'ec2-autoscaling.ec2',
       'ec2-autoscaling.ec2-purchase-options',
       'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'efs-fsx.efs-vs-ebs',
       'efs-fsx.fsx',
       'elastic-load-balancing.elb',
       'governance-iac.control-tower-controls',
@@ -6872,10 +6884,12 @@ describe('ADR-046 — 개념 본문 목록', () => {
       'iam-permissions.iam-policy',
       'lambda.lambda-invocation-types',
       'rds-storage-features.features',
+      'rds-storage-features.multi-az-vs-read-replica',
       'rds-storage-features.rds-backups',
       'route53.routing-policies',
       's3-encryption-batch.sse-types',
       's3-versioning-lifecycle.object-lock',
+      'sqs-sns-eventbridge.eventbridge-vs-sns',
       'sqs-sns-eventbridge.sqs',
       'storage-gateway-migration.storage-gateway',
       'waf-shield.cloudfront',
@@ -7003,7 +7017,7 @@ describe('ADR-039 확장 — WAF의 Web ACL', () => {
       '방어 범위는 **L7 애플리케이션 계층**이다. TCP와 UDP가 속한 L4 전송 계층 공격은 WAF로 막을 수 없다.',
     )
     expect(concept.paragraphs[2]).toBe(
-      'IP 세트를 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 SQL Injection과 XSS 공격을 방어한다. SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다.',
+      'IP 세트를 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 **SQL Injection과 XSS 공격을 방어한다**. SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다.',
     )
     expect(concept.paragraphs[3]).toBe(
       '**Web ACL**(Web Access Control List)은 WAF가 요청을 검사할 규칙을 담아 두는 묶음이다. 규칙 하나는 요청의 어느 부분을 어떤 조건으로 볼지와, 그 조건에 맞는 요청을 허용할지 차단할지를 함께 정한다. 규칙은 Web ACL 안에 직접 쓸 수도 있고, 여러 규칙을 묶은 규칙 그룹을 통째로 넣을 수도 있다. 만든 Web ACL을 ALB나 CloudFront 같은 리소스에 연결해야 그 리소스로 들어오는 요청이 검사된다.',

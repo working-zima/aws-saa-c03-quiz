@@ -1,0 +1,48 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "66-exam-emphasis",
+  "steps": [
+    {
+      "step": 0,
+      "name": "topic-importance",
+      "status": "completed",
+      "started_at": "2026-10-23T14:47:23+0900",
+      "summary": "주제 별점을 노션 우선순위로 다시 매김: 3→2 열넷(ebs-instance-store·efs-fsx·data-transfer-services·storage-gateway-migration·dynamodb·elasticache-purpose-built-db·ecs-eks-fargate·api-gateway-step-functions·backup-disaster-recovery·hybrid-connectivity·secrets-encryption·waf-shield·guardduty-macie-inspector·organizations-cloudtrail-config), 2→3 하나(route53) → ★★★ 15·★★☆ 23. topics.json·topics-baseline.json 각 15줄. tests-importance.patch 적용 후 별점 표 단언 셋(39개 주제 메타데이터·보안·운영 주제·네트워크 주제)만 실패하는 것을 확인했고, 적용 뒤 전체 2697개 통과·check-structure·sync-baseline·verify-content --through A 통과",
+      "completed_at": "2026-10-23T14:49:56+0900"
+    },
+    {
+      "step": 1,
+      "name": "core-emphasis",
+      "status": "completed",
+      "started_at": "2026-10-23T14:49:56+0900",
+      "summary": "노션 핵심의 판단 구절을 개념 본문에서 **…**로 감쌈(changes.json emphasis 그대로, 표지만 더함): topics.json 개념 줄 78개·문단 89개. tests-emphasis.patch 적용 후 문단 전체를 toBe로 못박은 단언 둘(Lambda 예약된 동시성 셋째 문단, WAF 셋째 문단)만 실패하는 것을 확인했고(비교표 테스트는 적용 전에도 통과), 적용 뒤 전체 2697개 통과·build·lint·check-structure·sync-baseline·verify-content --through B·coverage 636개념 100% 통과",
+      "completed_at": "2026-10-23T14:52:52+0900"
+    },
+    {
+      "step": 2,
+      "name": "emphasis-weight",
+      "status": "completed",
+      "started_at": "2026-10-23T14:52:53+0900",
+      "summary": "EmphasizedText의 <strong> 클래스를 font-medium → font-semibold로 바꿈(text-neutral-100 그대로). EmphasizedText.test.tsx에 「강조를 굵기 600으로 그리고 색은 그대로 둔다」를 더해 구현 전 실패를 확인함. 명세가 놓친 기존 단언 셋(QuizRunner.test.tsx 1, ConceptReadPage.test.tsx 2)이 font-medium을 못박고 있어 클래스 이름만 font-semibold로 맞췄고, 같은 이유로 verify-content.mjs의 허용 목록에 그 두 파일과 스크립트 자신을 더함. 전체 2698개 통과·build·lint·verify-content --through B 통과",
+      "completed_at": "2026-10-23T14:58:06+0900"
+    },
+    {
+      "step": 3,
+      "name": "vs-titles",
+      "status": "completed",
+      "started_at": "2026-10-23T15:37:33+0900",
+      "summary": "두 대안을 견주는 개념 제목 43개를 「A vs B」 꼴로 바꿈(changes.json renames 그대로, id 그대로): topics.json·topics-baseline.json 각 43줄. tests-renames.patch 적용 후 「S3 스토리지 클래스 주제가 클래스 8개 다음에 갈림길 7개와 비용 개념 2개를 둔다」 하나만 실패하는 것을 확인했고, 적용 뒤 전체 2698개 통과·build·lint·check-structure·sync-baseline(갱신할 것 없음)·verify-content --through C 통과, content-audit ① 제목 0건. 참고: 「REST API vs HTTP API의 통합 타임아웃」·「KMS 대칭 키 vs 비대칭 키의 자동 교체」는 「의」가 뒤쪽 대안에만 걸려 읽힐 여지가 있다(승인된 결과라 그대로 둠)",
+      "completed_at": "2026-10-23T15:40:09+0900"
+    },
+    {
+      "step": 4,
+      "name": "vs-concepts",
+      "status": "completed",
+      "started_at": "2026-10-23T15:40:10+0900",
+      "summary": "vs 딸린 개념 넷과 문항 넷을 더함(changes.json newConcepts·newQuestions 그대로): rds-storage-features.multi-az-vs-read-replica(q743), efs-fsx.efs-vs-ebs(q745), sqs-sns-eventbridge.eventbridge-vs-sns(q744), cost-management.compute-vs-ec2-instance-savings-plans(q746) → 개념 640·문항 746, topics-baseline 항목 넷·conceptLineCount 640·questionsSha256 갱신. tests-concepts.patch 적용 후 예상한 일곱(보안·운영/네트워크 개념 수, EFS·FSx/RDS/메시징/비용 관리 순서, 목록 개념 25개)만 실패하는 것을 확인했고, 적용 뒤 전체 2698개 통과·build·lint·check-structure·sync-baseline(갱신할 것 없음)·verify-content --through D·coverage 640/640·explanation-audit 통과, content-audit ⑤ 장문 4건·③ 노출 efs-fsx 4·rds 3·sqs 4·cost 0(설계 전과 같음)",
+      "completed_at": "2026-10-23T15:43:02+0900"
+    }
+  ],
+  "created_at": "2026-10-23T14:47:23+0900",
+  "completed_at": "2026-10-23T15:43:02+0900"
+}

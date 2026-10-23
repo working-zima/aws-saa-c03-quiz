@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
- "conceptLineCount": 636,
- "questionsSha256": "f78246abcc11f43b2c08b0bbd9eb1776a1ee88ad656ab32aeb93db77892c3dc3",
+ "conceptLineCount": 640,
+ "questionsSha256": "fd90c55e99cf6b60b5457619117513a2573471463ea0d9fcb5da3ddff00dc573",
  "topics": [
   {
    "id": "aws-core-services",
@@ -129,11 +129,11 @@
     },
     {
      "id": "s3-storage-classes.retrieval-time",
-     "name": "즉시 조회와 대기 조회"
+     "name": "즉시 조회 vs 대기 조회"
     },
     {
      "id": "s3-storage-classes.glacier-or-standard-ia",
-     "name": "Glacier와 Standard-IA 중 고르기"
+     "name": "Glacier vs Standard-IA"
     },
     {
      "id": "s3-storage-classes.glacier-flexible-retrieval-standard-time",
@@ -149,7 +149,7 @@
     },
     {
      "id": "s3-storage-classes.lifecycle-vs-intelligent-tiering",
-     "name": "수명 주기 규칙과 자동 계층화의 갈림길"
+     "name": "수명 주기 규칙 vs 자동 계층화"
     },
     {
      "id": "s3-storage-classes.s3-storage-class-analysis",
@@ -281,7 +281,7 @@
     {
      "id": "s3-encryption-batch.batch-copy-vs-replication",
      "parentId": "s3-encryption-batch.batch-operations",
-     "name": "일회성 대량 복사와 지속 복제"
+     "name": "일회성 대량 복사 vs 지속 복제"
     },
     {
      "id": "s3-encryption-batch.s3-batch-operations-lambda-invoke",
@@ -364,7 +364,7 @@
   {
    "id": "ebs-instance-store",
    "title": "EBS·인스턴스 스토어·스냅샷·배치 그룹",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     14,
     15
@@ -451,7 +451,7 @@
   {
    "id": "efs-fsx",
    "title": "EFS·FSx(Windows·Lustre·ONTAP)",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     14,
     15
@@ -462,9 +462,14 @@
      "name": "EFS (Elastic File System)"
     },
     {
+     "id": "efs-fsx.efs-vs-ebs",
+     "parentId": "efs-fsx.efs",
+     "name": "EFS vs EBS"
+    },
+    {
      "id": "efs-fsx.efs-throughput-modes",
      "parentId": "efs-fsx.efs",
-     "name": "EFS의 버스팅 처리량과 프로비저닝된 처리량"
+     "name": "EFS의 버스팅 처리량 vs 프로비저닝된 처리량"
     },
     {
      "id": "efs-fsx.efs-elastic-throughput",
@@ -474,7 +479,7 @@
     {
      "id": "efs-fsx.efs-performance-modes",
      "parentId": "efs-fsx.efs",
-     "name": "EFS의 범용 성능 모드와 최대 I/O 성능 모드"
+     "name": "EFS의 범용 성능 모드 vs 최대 I/O 성능 모드"
     },
     {
      "id": "efs-fsx.efs-one-zone",
@@ -586,7 +591,7 @@
   {
    "id": "data-transfer-services",
    "title": "DataSync·Snowball Edge·Transfer Family·S3 전송",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     16,
     18
@@ -599,7 +604,7 @@
     {
      "id": "data-transfer-services.file-gateway-vs-datasync-continuous",
      "parentId": "data-transfer-services.datasync",
-     "name": "지속 수집과 예약 전송의 갈림길"
+     "name": "지속 수집 vs 예약 전송"
     },
     {
      "id": "data-transfer-services.datasync-scope-limits",
@@ -688,7 +693,7 @@
   {
    "id": "storage-gateway-migration",
    "title": "Storage Gateway·DMS·Application Migration Service",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     16,
     18
@@ -706,7 +711,7 @@
     {
      "id": "storage-gateway-migration.storage-gateway-volume-modes",
      "parentId": "storage-gateway-migration.storage-gateway",
-     "name": "저장 볼륨 게이트웨이와 캐시된 볼륨 게이트웨이"
+     "name": "저장 볼륨 게이트웨이 vs 캐시된 볼륨 게이트웨이"
     },
     {
      "id": "storage-gateway-migration.tape-gateway-archive-tiers",
@@ -755,6 +760,11 @@
      "name": "RDS 기능"
     },
     {
+     "id": "rds-storage-features.multi-az-vs-read-replica",
+     "parentId": "rds-storage-features.features",
+     "name": "다중 AZ 배포 vs 읽기 전용 복제본"
+    },
+    {
      "id": "rds-storage-features.multi-az-standby-limits",
      "parentId": "rds-storage-features.features",
      "name": "다중 AZ 대기 인스턴스로는 할 수 없는 것"
@@ -762,7 +772,7 @@
     {
      "id": "rds-storage-features.rds-multi-az-db-cluster",
      "parentId": "rds-storage-features.features",
-     "name": "다중 AZ DB 인스턴스 배포와 다중 AZ DB 클러스터 배포"
+     "name": "다중 AZ DB 인스턴스 배포 vs 다중 AZ DB 클러스터 배포"
     },
     {
      "id": "rds-storage-features.rds-multi-az-failover-rto",
@@ -789,7 +799,7 @@
     },
     {
      "id": "rds-storage-features.rds-backups",
-     "name": "RDS 자동 백업과 DB 스냅샷"
+     "name": "RDS 자동 백업 vs DB 스냅샷"
     },
     {
      "id": "rds-storage-features.rds-snapshot-cross-region-copy",
@@ -920,7 +930,7 @@
     },
     {
      "id": "aurora.aurora-storage-configurations",
-     "name": "Aurora Standard와 Aurora I/O-Optimized"
+     "name": "Aurora Standard vs Aurora I/O-Optimized"
     },
     {
      "id": "aurora.aurora-zdr-and-activity-streams",
@@ -931,7 +941,7 @@
   {
    "id": "dynamodb",
    "title": "DynamoDB",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     21,
     21
@@ -979,7 +989,7 @@
     },
     {
      "id": "dynamodb.dynamodb-capacity-modes",
-     "name": "프로비저닝된 용량과 온디맨드 용량"
+     "name": "프로비저닝된 용량 vs 온디맨드 용량"
     },
     {
      "id": "dynamodb.dynamodb-auto-scaling-target-utilization",
@@ -988,11 +998,11 @@
     },
     {
      "id": "dynamodb.dynamodb-read-consistency",
-     "name": "최종 일관성 읽기와 강력한 일관성 읽기"
+     "name": "최종 일관성 읽기 vs 강력한 일관성 읽기"
     },
     {
      "id": "dynamodb.dynamodb-s3-export-vs-streams",
-     "name": "분석용 적재의 S3 내보내기와 스트림 경로"
+     "name": "분석용 적재의 S3 내보내기 vs 스트림 경로"
     },
     {
      "id": "dynamodb.dynamodb-incremental-export",
@@ -1023,7 +1033,7 @@
   {
    "id": "elasticache-purpose-built-db",
    "title": "ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     21,
     21
@@ -1036,7 +1046,7 @@
     {
      "id": "elasticache-purpose-built-db.elasticache-redis-vs-memcached",
      "parentId": "elasticache-purpose-built-db.elasticache",
-     "name": "Redis와 Memcached의 갈림길"
+     "name": "Redis vs Memcached"
     },
     {
      "id": "elasticache-purpose-built-db.elasticache-multi-az-failover",
@@ -1143,7 +1153,7 @@
     {
      "id": "ec2-autoscaling.reserved-instance-types",
      "parentId": "ec2-autoscaling.ec2-purchase-options",
-     "name": "표준 예약 인스턴스와 전환 가능 예약 인스턴스"
+     "name": "표준 예약 인스턴스 vs 전환 가능 예약 인스턴스"
     },
     {
      "id": "ec2-autoscaling.spot-workload-fit",
@@ -1157,12 +1167,12 @@
     {
      "id": "ec2-autoscaling.scheduled-scaling",
      "parentId": "ec2-autoscaling.ec2-auto-scaling",
-     "name": "예약된 조정과 대상 추적의 갈림길"
+     "name": "예약된 조정 vs 대상 추적"
     },
     {
      "id": "ec2-autoscaling.target-tracking-vs-simple-scaling",
      "parentId": "ec2-autoscaling.ec2-auto-scaling",
-     "name": "대상 추적과 단순 조정의 갈림길"
+     "name": "대상 추적 vs 단순 조정"
     },
     {
      "id": "ec2-autoscaling.predictive-scaling",
@@ -1220,7 +1230,7 @@
     },
     {
      "id": "elastic-load-balancing.alb-l7-vs-nlb-l4",
-     "name": "계층으로 나뉘는 ALB와 NLB"
+     "name": "ALB vs NLB"
     },
     {
      "id": "elastic-load-balancing.alb",
@@ -1447,7 +1457,7 @@
     },
     {
      "id": "lambda.lambda-invocation-types",
-     "name": "이벤트 호출과 요청-응답 호출"
+     "name": "이벤트 호출 vs 요청-응답 호출"
     },
     {
      "id": "lambda.lambda-kinesis-event-source",
@@ -1480,7 +1490,7 @@
     },
     {
      "id": "lambda.lambda-reserved-concurrency",
-     "name": "예약된 동시성과 프로비저닝된 동시성"
+     "name": "예약된 동시성 vs 프로비저닝된 동시성"
     },
     {
      "id": "lambda.lambda-provisioned-concurrency-autoscaling",
@@ -1514,7 +1524,7 @@
   {
    "id": "ecs-eks-fargate",
    "title": "ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     25,
     26
@@ -1535,12 +1545,12 @@
     {
      "id": "ecs-eks-fargate.ecs-task-role",
      "parentId": "ecs-eks-fargate.ecs",
-     "name": "태스크 역할과 인스턴스 역할"
+     "name": "태스크 역할 vs 인스턴스 역할"
     },
     {
      "id": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
      "parentId": "ecs-eks-fargate.ecs",
-     "name": "태스크 역할과 태스크 실행 역할"
+     "name": "태스크 역할 vs 태스크 실행 역할"
     },
     {
      "id": "ecs-eks-fargate.ecs-awsvpc-mode",
@@ -1593,7 +1603,7 @@
     {
      "id": "ecs-eks-fargate.eks-cluster-autoscaler",
      "parentId": "ecs-eks-fargate.eks",
-     "name": "Horizontal Pod Autoscaler와 Cluster Autoscaler"
+     "name": "Horizontal Pod Autoscaler vs Cluster Autoscaler"
     },
     {
      "id": "ecs-eks-fargate.eks-aws-load-balancer-controller",
@@ -1646,7 +1656,7 @@
   {
    "id": "api-gateway-step-functions",
    "title": "API Gateway·Step Functions",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     25,
     26
@@ -1664,7 +1674,7 @@
     {
      "id": "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
      "parentId": "api-gateway-step-functions.api-gateway",
-     "name": "REST API와 HTTP API의 통합 타임아웃"
+     "name": "통합 타임아웃: REST API vs HTTP API"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-rest-only-features",
@@ -1689,7 +1699,7 @@
     {
      "id": "api-gateway-step-functions.api-gateway-endpoint-types",
      "parentId": "api-gateway-step-functions.api-gateway",
-     "name": "엣지 최적화 엔드포인트와 리전 엔드포인트"
+     "name": "엣지 최적화 엔드포인트 vs 리전 엔드포인트"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-behind-cloudfront",
@@ -1845,7 +1855,7 @@
     },
     {
      "id": "sqs-sns-eventbridge.sns-is-not-a-queue",
-     "name": "SQS 대기열과 SNS 발행-구독"
+     "name": "SQS 대기열 vs SNS 발행-구독"
     },
     {
      "id": "sqs-sns-eventbridge.sns-sqs-fanout-per-consumer",
@@ -1867,7 +1877,12 @@
     {
      "id": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
      "parentId": "sqs-sns-eventbridge.eventbridge",
-     "name": "이벤트 라우팅과 워크플로 오케스트레이션"
+     "name": "이벤트 라우팅 vs 워크플로 오케스트레이션"
+    },
+    {
+     "id": "sqs-sns-eventbridge.eventbridge-vs-sns",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
+     "name": "EventBridge vs SNS"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-ordering-and-retention",
@@ -1877,7 +1892,7 @@
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling",
      "parentId": "sqs-sns-eventbridge.eventbridge",
-     "name": "이벤트 패턴 규칙과 주기적 폴링"
+     "name": "이벤트 패턴 규칙 vs 주기적 폴링"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-event-bus-types",
@@ -1922,7 +1937,7 @@
   {
    "id": "backup-disaster-recovery",
    "title": "AWS Backup·재해 복구 전략·Elastic Disaster Recovery",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     27,
     29
@@ -2058,7 +2073,7 @@
     },
     {
      "id": "vpc-networking.nat-instance",
-     "name": "NAT 인스턴스와 NAT 게이트웨이의 차이"
+     "name": "NAT 인스턴스 vs NAT 게이트웨이"
     },
     {
      "id": "vpc-networking.vpc-peering",
@@ -2132,18 +2147,18 @@
     },
     {
      "id": "security-groups-nacl.security-group-stateful-vs-nacl-stateless",
-     "name": "상태 저장과 상태 비저장"
+     "name": "상태 저장 vs 상태 비저장"
     },
     {
      "id": "security-groups-nacl.web-acl-vs-nacl",
-     "name": "Web ACL과 네트워크 ACL의 차이"
+     "name": "Web ACL vs 네트워크 ACL"
     }
    ]
   },
   {
    "id": "hybrid-connectivity",
    "title": "Site-to-Site VPN·Direct Connect·Transit Gateway",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     34,
     35
@@ -2238,7 +2253,7 @@
   {
    "id": "route53",
    "title": "Route 53",
-   "importance": 2,
+   "importance": 3,
    "sourcePages": [
     36,
     37
@@ -2283,7 +2298,7 @@
     },
     {
      "id": "route53.private-hosted-zone",
-     "name": "프라이빗 호스팅 영역과 퍼블릭 호스팅 영역"
+     "name": "프라이빗 호스팅 영역 vs 퍼블릭 호스팅 영역"
     },
     {
      "id": "route53.route53-zone-file-import",
@@ -2326,7 +2341,7 @@
     {
      "id": "emr-glue-athena.emr-transient-cluster",
      "parentId": "emr-glue-athena.emr",
-     "name": "일시적 클러스터와 장기 실행 클러스터"
+     "name": "일시적 클러스터 vs 장기 실행 클러스터"
     },
     {
      "id": "emr-glue-athena.emr-managed-scaling",
@@ -2446,7 +2461,7 @@
     {
      "id": "kinesis-streaming.kinesis-capacity-mode",
      "parentId": "kinesis-streaming.kinesis-data-streams",
-     "name": "Kinesis 스트림의 프로비저닝 모드와 온디맨드 모드"
+     "name": "Kinesis 스트림의 프로비저닝 모드 vs 온디맨드 모드"
     },
     {
      "id": "kinesis-streaming.data-firehose",
@@ -2516,12 +2531,12 @@
     {
      "id": "redshift-opensearch-quicksight.oltp-vs-olap",
      "parentId": "redshift-opensearch-quicksight.redshift",
-     "name": "OLTP와 OLAP"
+     "name": "OLTP vs OLAP"
     },
     {
      "id": "redshift-opensearch-quicksight.athena-vs-redshift-workload",
      "parentId": "redshift-opensearch-quicksight.redshift",
-     "name": "임시 쿼리와 반복되는 고성능 쿼리"
+     "name": "임시 쿼리 vs 반복되는 고성능 쿼리"
     },
     {
      "id": "redshift-opensearch-quicksight.redshift-hot-cold-split",
@@ -2583,7 +2598,7 @@
     {
      "id": "cloudwatch-xray.log-analysis-options",
      "parentId": "cloudwatch-xray.cloudwatch",
-     "name": "로그 분석 선택지: OpenSearch와 CloudWatch Logs Insights"
+     "name": "로그 분석 선택지: OpenSearch vs CloudWatch Logs Insights"
     },
     {
      "id": "cloudwatch-xray.cloudwatch-agent-memory-metric",
@@ -2622,7 +2637,7 @@
   {
    "id": "secrets-encryption",
    "title": "Secrets Manager·Parameter Store·KMS·ACM·CloudHSM",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     44,
     44
@@ -2681,7 +2696,7 @@
     {
      "id": "secrets-encryption.kms-symmetric-vs-asymmetric-rotation",
      "parentId": "secrets-encryption.kms",
-     "name": "KMS 대칭 키와 비대칭 키의 자동 교체"
+     "name": "자동 키 교체: KMS 대칭 키 vs 비대칭 키"
     },
     {
      "id": "secrets-encryption.imported-key-material-rotation",
@@ -2726,7 +2741,7 @@
   {
    "id": "waf-shield",
    "title": "WAF·Shield·Firewall Manager",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     45,
     47
@@ -2808,7 +2823,7 @@
   {
    "id": "guardduty-macie-inspector",
    "title": "GuardDuty·Macie·Inspector·Security Hub",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     45,
     47
@@ -3036,7 +3051,7 @@
     {
      "id": "identity-federation.cognito-pools",
      "parentId": "identity-federation.cognito",
-     "name": "Cognito 사용자 풀과 자격 증명 풀"
+     "name": "Cognito 사용자 풀 vs 자격 증명 풀"
     },
     {
      "id": "identity-federation.cognito-social-idp-federation",
@@ -3048,7 +3063,7 @@
   {
    "id": "organizations-cloudtrail-config",
    "title": "Organizations·SCP·CloudTrail·Config·Audit Manager",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     48,
     49
@@ -3061,7 +3076,7 @@
     {
      "id": "organizations-cloudtrail-config.organizations-tag-policy",
      "parentId": "organizations-cloudtrail-config.organizations-scp",
-     "name": "태그 정책과 SCP"
+     "name": "태그 정책 vs SCP"
     },
     {
      "id": "organizations-cloudtrail-config.organizations-consolidated-billing",
@@ -3119,7 +3134,7 @@
     {
      "id": "organizations-cloudtrail-config.cloudtrail-data-events",
      "parentId": "organizations-cloudtrail-config.cloudtrail",
-     "name": "관리 이벤트와 데이터 이벤트"
+     "name": "관리 이벤트 vs 데이터 이벤트"
     },
     {
      "id": "organizations-cloudtrail-config.cloudtrail-log-file-validation",
@@ -3144,6 +3159,11 @@
     {
      "id": "cost-management.savings-plan",
      "name": "절약 플랜 (Savings Plan)"
+    },
+    {
+     "id": "cost-management.compute-vs-ec2-instance-savings-plans",
+     "parentId": "cost-management.savings-plan",
+     "name": "컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜"
     },
     {
      "id": "cost-management.savings-plan-details",
@@ -3247,7 +3267,7 @@
     {
      "id": "governance-iac.control-tower-controls",
      "parentId": "governance-iac.control-tower-landing-zone",
-     "name": "Control Tower의 사전 예방적 제어와 탐지 제어"
+     "name": "Control Tower의 사전 예방적 제어 vs 탐지 제어"
     },
     {
      "id": "governance-iac.resource-access-manager",

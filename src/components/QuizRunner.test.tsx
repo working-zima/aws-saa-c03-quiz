@@ -196,7 +196,7 @@ describe('QuizRunner', () => {
 
     await user.click(screen.getByRole('button', { name: '개념 보기' }))
 
-    expect(screen.getByText('첫 번째 요약')).toHaveClass('font-medium', 'text-neutral-100')
+    expect(screen.getByText('첫 번째 요약')).toHaveClass('font-semibold', 'text-neutral-100')
     expect(container.textContent).not.toContain('**')
   })
 

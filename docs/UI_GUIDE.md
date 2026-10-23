@@ -780,10 +780,15 @@ VPC 주제의 개념 본문에서, 데이터 안에 뜻풀이 근거가 있는 �
 | 개념 이름 | `text-base font-medium text-neutral-100` |
 | 한 줄 요약 | `text-sm text-neutral-400` |
 | 본문 | `text-[15px] text-neutral-300 leading-7` |
+| 본문 속 강조 (ADR-051) | `<strong>`: `font-semibold text-neutral-100` — 강조색·배경 없이 굵기와 밝기만 올린다 |
 | 본문 속 코드 표기 | `font-mono text-[0.9em]` — 색·배경 없이 본문 색을 물려받는다 |
 | 본문 목록 | `<ul>`: `list-disc space-y-2 pl-5 text-[15px] leading-7 text-neutral-300 marker:text-neutral-500`, `<li>`: `break-keep` |
 | 단계 목록 (ADR-050) | `<ol start>`: `list-decimal space-y-4 pl-7` + 본문 글자, 하위 `<ul>`: 1단 `list-disc`·2단 `list-[circle]` `mt-2 space-y-2 pl-5`, 항목 안 문단: `mt-2`. 번호·글머리 기호는 `marker:text-neutral-500` |
 | 라벨·메타 | `text-xs text-neutral-500` |
+
+**본문 속 강조(ADR-051)**: 개념 요약·본문의 `**…**`는 `<strong>`으로 그리고 표지는 지운다. 굵기는 600(`font-semibold`)이다 — 500이던 때는 본문(400)과
+차이가 작아 강조로 읽히지 않았다. 강조색·밑줄·배경을 붙이지 마라. 이유: 색은 정답/오답/중요도에만 쓰고, 배경은 하이라이트다. 무엇을 감싸는지는
+데이터의 일이다 — 시험에서 판단을 가르는 구절만 감싸고, 개념 하나에 셋 이하다(ADR-051 「기준 2」).
 
 **본문 속 코드 표기(ADR-044)**: 개념 요약·본문에서 백틱 한 쌍으로 감싼 말(정책 요소·조건 키·예외 이름·경로처럼 그대로 치는 글자)은
 `<code>`로 그리고 백틱 기호는 지운다. 배경 칩·테두리·색을 붙이지 마라. 이유: 색은 정답/오답/중요도에만 쓰고, 배경은 하이라이트다.

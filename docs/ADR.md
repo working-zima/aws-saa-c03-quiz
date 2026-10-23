@@ -1956,6 +1956,18 @@ Glue를 「데이터를 모아 분석하기 좋은 형태로 가공하는 서버
 이 주제에서 이 개념이 처음 쓰므로 첫 문단이 「서버나 클러스터를 직접 띄우고 관리하지 않는다」로 함께 푼다. 문항과 해설, 비교표의 Glue 행은 바꾸지 않는다.
 데이터 소스의 수, Data Catalog의 구조, Glue Studio, 스트리밍 ETL, 작업 북마크는 가져오지 않는다.
 
+**2026-10-23 확장 — 절약 플랜의 두 유형(phase 66)**: 노션 「시험 문제 출제 유형」이 비용 관리 유형의 핵심으로 「컴퓨팅 절약 플랜 vs EC2 인스턴스 절약
+플랜」을 짚었고, 사용자가 헷갈리는 짝을 「A vs B」로 세우는 것을 좋다고 했다(ADR-051). 앱은 컴퓨팅 절약 플랜의 적용 범위와 EC2 인스턴스 절약 플랜이
+인스턴스 유형·리전을 정해 약정한다는 것까지만 말한다. 그렇게 묶이는 대가로 무엇을 얻는지가 없어 「언제 EC2 인스턴스 절약 플랜을 고르는가」가 서지 않는다.
+덤프 Q879의 「할인율이 높다」는 AI 작성 해설이라 채택되지 않았다. 사용자가 공식 문서로 넣는 안을 골랐다(2026-10-23). 근거는 `docs/source/aws-docs.md`
+「절약 플랜의 두 유형」에 있다. 가져오는 사실은 셋이다.
+- 컴퓨팅 절약 플랜은 인스턴스 제품군·크기·리전·운영 체제와 관계없이 EC2 사용량에 적용되고 Fargate·Lambda에도 적용되며, 할인 폭은 온디맨드보다 최대 66% 낮다.
+- EC2 인스턴스 절약 플랜은 한 리전의 한 인스턴스 제품군에 약정하고, 그 안에서는 크기·운영 체제가 바뀌어도 할인이 이어지며, 할인 폭은 최대 72% 낮다.
+- 둘 다 1년이나 3년 동안 시간당 사용량을 약정한다.
+
+자리는 ADR-051의 새 개념 `cost-management.compute-vs-ec2-instance-savings-plans`와 새 문항 q746이다. 기존 개념의 본문은 고치지 않는다. 두 유형 밖의
+절약 플랜, 약정 금액 권장 사항, 산 뒤 바꿀 수 없다는 규칙은 가져오지 않는다.
+
 ### ADR-040: 원본 PDF의 키워드 퀴즈를 암호로 잠가 숨은 화면으로 둔다 (ADR-009 예외)
 
 **결정**: 원본 PDF(`concepts-raw.md`의 원본)의 `✅` 키워드와 그 정의를 **원문 그대로** 모아 키워드 퀴즈를 만든다. 이 데이터는
@@ -2556,3 +2568,95 @@ IAM Roles Anywhere, 오답은 같은 주제의 IAM Identity Center·AWS Director
 
 **남겨 둔 것**: 처음 미리보기의 구간 버튼 도식(`tools/design-spec.mjs`의 `roles-anywhere-steps`)은 쓰지 않는다. 설계 기록으로만 남긴다. 미리보기:
 https://claude.ai/artifact/KQDhbNNYEW4ZxfBDSEXF9T (구간 버튼 도식판, 단계 그림판은 아직 미리보기가 없다).
+
+### ADR-051: 노션 「시험 문제 출제 유형」을 강조 기준으로 삼아 별점·굵은 글씨·「A vs B」 제목을 다시 매긴다 (PRD 「원본」 개정 / ADR-046 「목록 개념」 확장 / UI_GUIDE 「타이포그래피」 확장 / ADR-039 확장)
+
+**결정**: JSCODE 노션 페이지 「시험 문제 출제 유형」(`docs/source/exam-types.md`에 직접 쓴 정리)을 **무엇을 강조할지** 고르는 기준으로 인정한다. 사실의
+출처로는 쓰지 않는다. 이 기준으로 넷을 바꾼다. 변경은 `phases/66-exam-emphasis/changes.json`에 글자 그대로 있다.
+
+1. **주제 별점** — 노션 우선순위의 1·2순위 하위 항목을 담은 주제만 ★★★, 나머지는 ★★☆, 기초 주제는 별점 없음. ★★★ 28 → 15, ★★☆ 10 → 23.
+2. **본문 굵은 글씨** — 노션 출제 유형의 「핵심」과 우선순위 하위 항목이 가리키는 판단 문장을 개념 본문에서 찾아 `**…**`로 감싼다. 개념 78개, 문단 89개,
+   구절 93개. 글자는 바꾸지 않는다.
+3. **굵기** — 본문 속 강조(`<strong>`)를 `font-medium`(500)에서 `font-semibold`(600)로 올린다. 색은 그대로 `text-neutral-100`이다.
+4. **「A vs B」** — 두 대안을 견주는 개념의 제목 43개를 「A vs B」 꼴로 바꾸고, 노션의 vs 짝 가운데 앱에 전용 자리가 없던 넷에 딸린 개념과 문항을 세운다.
+   개념 636 → 640개, 문항 742 → 746개(q743~q746).
+
+**사용자 결정(2026-10-23)**: 사용자가 노션 링크를 주며 "여기 내용 참고해서 내용이 강조 되면 좋을 거 같아"라고 했다. 강조의 방식으로 본문 굵게와 별점
+재조정 「둘 다」를 골랐고, 이어서 "헷갈리는 부분을 'vs' 구조로 한 것도 좋았어"라고 했다. vs 제목의 범위는 「앱 전체」, 절약 플랜 vs 개념의 근거는 「공식 문서로
+넣기」(ADR-039 「2026-10-23 확장 — 절약 플랜의 두 유형」), 굵기는 「600으로 올리기」를 골랐다. 미리보기(개발 서버)로 결과를 본 뒤 정했다.
+
+**정정 — Direct Connect 게이트웨이**: 설계 중 「노션 핵심 가운데 앱에 없는 것은 Direct Connect 게이트웨이와 Transit Gateway 멀티캐스트」라고 보고했고,
+사용자는 「DX 게이트웨이만 추가」를 골랐다. 그런데 앱에는 이미 `hybrid-connectivity.direct-connect-gateway`와 `direct-connect-vif-types`가 있었다(검색어의
+대소문자를 놓쳤다). 새 개념을 만들지 않고 두 개념의 판단 문장을 굵게 하는 것으로 돌렸다. 멀티캐스트는 사용자 결정대로 넣지 않는다.
+
+**노션을 사실의 출처로 쓰지 않는 이유**: 노션은 족보 문항을 유형으로 묶고 각 유형의 핵심을 한 줄로 적은 학습 노트다. 서비스 동작의 근거(덤프 해설 인용이나
+공식 문서)가 붙어 있지 않고, 문항 번호도 앱의 880문항 덤프와 다른 족보의 번호다(노션 Q9는 RDS 고가용성, 덤프 Q009는 SQS 배치). 그래서 「무엇이 자주
+나오는가」의 신호로는 쓸 만하지만 「무엇이 맞는가」의 근거로는 쓸 수 없다. 강조한 문장의 사실은 모두 이미 앱에 있던 것이고, 새 개념 넷도 기존 개념의 사실로
+썼다(절약 플랜의 할인 폭만 ADR-039 확장으로 공식 문서에서 가져왔다).
+
+**기준 1 — 별점**: PRD 「원본」은 별점을 원본 PDF가 매긴 값이라고 했다. 그 값은 39개 주제 중 28개가 ★★★라 무엇을 먼저 읽을지 가르지 못한다(ADR-026이
+「중요도는 무엇을 먼저 읽을지를 정하는 값」이라고 한 그 역할이다). 노션 우선순위는 15개 서비스만 1~3순위로 세운다. 규칙은 「1·2순위의 하위 항목을 담은
+주제」다 — 하위 항목이 가리키는 개념이 그 주제에 있으면 ★★★다.
+
+| 노션 우선순위 | ★★★가 되는 주제 |
+|---|---|
+| 1순위 EC2 | ec2-autoscaling(Auto Scaling·구매 옵션), elastic-load-balancing(ALB vs NLB) |
+| 1순위 VPC | vpc-networking(서브넷·NAT), security-groups-nacl |
+| 1순위 S3 | s3-storage-classes, s3-versioning-lifecycle(버전 관리·수명 주기), s3-access-control(정적 웹 호스팅) |
+| 1순위 RDS·Aurora | rds-storage-features(다중 AZ·읽기 전용 복제본·백업과 스냅샷), aurora |
+| 1순위 IAM | iam-permissions(역할 vs 사용자·최소 권한), identity-federation(STS의 AssumeRole) |
+| 2순위 | elastic-load-balancing, cloudfront-global-accelerator, route53(★★☆ → ★★★), sqs-sns-eventbridge, lambda |
+
+★★★에서 ★★☆로 내려가는 주제는 열넷이다: ebs-instance-store, efs-fsx, data-transfer-services, storage-gateway-migration(3순위의 EBS·EFS·Snowball·Storage
+Gateway), dynamodb, elasticache-purpose-built-db(3순위 ElastiCache), ecs-eks-fargate, api-gateway-step-functions, backup-disaster-recovery(3순위 AWS Backup),
+hybrid-connectivity, secrets-encryption, waf-shield, guardduty-macie-inspector, organizations-cloudtrail-config. s3-encryption-batch와 분석·관리 주제들은
+원래 ★★☆라 그대로다. 3순위는 별점으로는 순위 밖과 갈리지 않는다 — 별점이 두 단계뿐이라 세 단계를 담지 못한다. 3순위 항목의 판단 문장은 기준 2로 굵게 했다.
+
+**기준 2 — 굵은 글씨**: 노션 출제 유형 25개의 「핵심」(예: 장애 조치는 다중 AZ, 읽기 분산은 읽기 전용 복제본)과 우선순위 하위 항목이 가리키는 개념을 찾고,
+그 개념 본문에서 **판단을 가르는 구절**을 감싼다. 지킨 규칙은 다섯이다.
+- 표지만 더한다. `**`를 지운 글은 원래 문단과 한 글자도 다르지 않다(`verify-content.mjs`와 설계 스크립트가 확인한다).
+- 개념 하나에 구절 셋 이하. 짝을 가르는 개념(규정 준수 모드 vs 거버넌스 모드처럼)은 양쪽을 하나씩 감싸 둘이 된다.
+- 문장 전체가 아니라 판단 기준이 되는 구절이다. 예외는 짝의 축 자체가 한 문장인 `secrets-manager-vs-parameter-store`의 첫 문장이다.
+- 요약(`summary`)은 감싸지 않는다. 요약은 이미 한 줄이라 감싸면 줄 전체가 굵어진다.
+- 약어 툴팁(ADR-037)은 `**` 안의 약어를 표시하지 않는다. 감싼 구절이 어떤 개념에서 약어의 유일한 첫 등장을 삼키면 툴팁이 사라지므로, 그런 구절은 고르지
+  않았다(설계 스크립트가 개념마다 확인했다 — 사라진 곳 0).
+
+**기준 3 — 굵기 600**: 앱의 `<strong>`은 `font-medium text-neutral-100`이라 본문(`text-neutral-300`, 굵기 400)과 굵기 차이가 100뿐이다. 미리보기에서 굵게 한
+구절이 강조로 읽히기에 약했다. 강조색·배경은 UI_GUIDE가 막으므로(색은 정답/오답/중요도에만) 굵기를 600으로 올린다. 기존 굵은 글씨(목록 항목 이름 등)에도
+같이 적용된다. 개념 이름(`font-medium`, 500)보다 본문 강조가 굵어지지만, 개념 이름은 글자가 더 크고 따로 한 줄이라 위계가 무너지지 않는다.
+
+**기준 4 — 「A vs B」 제목**: 개념이 **같은 자리에 놓이는 두 대안 가운데 무엇을 고르는가**를 다루면 제목을 「A vs B」로 쓴다. 기존 제목의 낱말은 그대로
+두고 「A와 B」·「A와 B의 갈림길」·「A와 B의 차이」·「A와 B 중 고르기」의 연결만 ` vs `로 바꾼다(예외: 「계층으로 나뉘는 ALB와 NLB」 → 「ALB vs NLB」).
+**뒤에 「의 …」가 붙는 제목은 그 축을 앞으로 빼 「축: A vs B」로 쓴다** — 「REST API vs HTTP API의 통합 타임아웃」은 「의 통합 타임아웃」이 오른쪽 대안에만
+걸린 것처럼 읽혔다. 그래서 「통합 타임아웃: REST API vs HTTP API」, 「자동 키 교체: KMS 대칭 키 vs 비대칭 키」로 고쳤다(phase 66 후속, 사용자 승인
+2026-10-23). 이미 있던 「로그 분석 선택지: OpenSearch vs CloudWatch Logs Insights」와 같은 꼴이다. `changes.json`의 `renames`는 step 3이 적용한 그대로 둔다.
+ADR-030 기준 1(명사구)에 맞는다. 바꾸지 않는 것은 넷이다.
+- 함께 쓰이거나 서로를 담는 관계 — DMS와 SCT, AMI와 시작 템플릿, AWS Organizations와 SCP, AWS Directory Service와 AD Connector.
+- 한 축의 관계나 조건을 말하는 제목 — 가시성 타임아웃과 소비자의 처리 시간, CloudFront TTL과 캐시 무효화의 관계, 캐시가 효과를 내지 못하는 조건.
+- 종류를 셋 이상 `·`로 늘어놓은 제목 — 기본·사용자 지정·파트너 이벤트 버스(ADR-046 목록의 이름 규칙과 같다).
+- 비교표의 제목(`tables`의 `label`) — 표는 이미 나란히 놓는 형식이라 바꾸지 않는다.
+
+**새 개념과 문항**: 노션 vs 짝 가운데 앱에 짝을 세운 자리가 없던 넷이다. 넷 다 머리 개념 바로 아래 딸린 개념(ADR-041)이고, 본문은 두 항목의 목록(ADR-046)과
+판단 문장 하나다. 문항은 ADR-026(개념마다 문항)과 ADR-030(정답 이름을 프롬프트에 쓰지 않는다, 오답은 같은 범주)을 따르고, 정답 위치는 1·2·3·3번이다
+(0~3번이 188·186·186·186개가 된다). 해설의 약어에는 풀네임을 붙였다(ADR-015).
+
+| 새 개념 | 자리 | 사실의 출처 | 문항 |
+|---|---|---|---|
+| 다중 AZ 배포 vs 읽기 전용 복제본 | rds-storage-features.features 아래 | 같은 주제의 features·multi-az-standby-limits·read-replica-vs-cache·rds-multi-az-db-cluster | q743 — 다중 AZ를 켠 상태에서 읽기 부하를 덜려면 |
+| EFS vs EBS | efs-fsx.efs 아래 | ebs·efs·efs-cross-account-mount·fsx-windows-file-server | q745 — 여러 가용 영역의 인스턴스가 파일을 함께 쓰려면 |
+| EventBridge vs SNS | eventbridge-vs-step-functions 다음, eventbridge 아래 | eventbridge 계열(패턴 규칙·파트너 버스·Scheduler)·sns·sns-sqs-fanout-per-consumer | q744 — 외부 SaaS 이벤트를 규칙으로 골라 Lambda로 |
+| 컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜 | cost-management.savings-plan 아래 | savings-plan·savings-plan-details와 ADR-039 「2026-10-23 확장」 | q746 — EC2·Fargate·Lambda를 쓰고 리전도 옮길 회사 |
+
+목록 항목의 영문 이름은 `aws-docs.md` 「목록 항목의 영문 이름」 표에 더했다(Multi-AZ Deployment·Read Replica·Compute Savings Plan·EC2 Instance Savings
+Plan). EBS·EFS는 이미 있던 풀네임을 쓴다. ADR-046의 「목록이 있는 개념」은 21개에서 25개가 된다.
+
+**테스트**: 바뀌는 단언은 모두 이 결정의 결과를 못박은 스냅샷이다. step마다 패치가 따로 있다(`tests-importance.patch`·`tests-emphasis.patch`·
+`tests-renames.patch`·`tests-concepts.patch`). 별점 표 셋, 문단 전체를 `toBe`로 못박은 둘(Lambda 동시성 셋째 문단, WAF 셋째 문단), 렌더된 글을 원문
+문단과 비교하던 비교표 테스트(`**`를 지우고 비교), S3 주제의 제목 목록, 개념 수 둘, 개념 순서 넷, 목록 개념 목록. `toContain`으로 문장 일부를 확인하는
+단언은 감싼 구절이 그 문장을 가르지 않게 골라서 건드리지 않았다.
+
+**트레이드오프**: 별점이 원본 PDF의 값이 아니게 된다. 원본이 ★★★로 둔 하이브리드 연결과 WAF·Shield는 노션 출제 유형에서 각각 13문항이 걸린 유형인데도
+우선순위 목록에 없어 ★★☆가 된다. 두 주제의 판단 문장은 굵게 했다. 별점은 「먼저 읽을 것」을 정하는 값이지 출제 여부가 아니다(ADR-026).
+
+**남겨 둔 것**: Transit Gateway 멀티캐스트(사용자 결정으로 넣지 않음). 비교표 제목의 「A와 B」 꼴. 테스트 안 고정 데이터와 테스트 제목에 남은 옛 제목
+(`S3ClassMapDiagram.test.tsx`의 「즉시 조회와 대기 조회」, `SgNaclBoundaryDiagram.test.tsx`의 테스트 이름) — 데이터를 읽지 않는 자리라 그대로 둔다.
