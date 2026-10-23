@@ -220,6 +220,8 @@ S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은
 | rds-storage-features.rds-backups | 자동 백업 → Automated Backup, DB 스냅샷 → DB Snapshot | https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_CommonTasks.BackupRestore.html |
 | ecs-eks-fargate.ecs-task-role-vs-task-execution-role | 태스크 실행 역할 → Task Execution Role, 태스크 역할 → Task Role | https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html, https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html |
 | waf-shield.cloudfront | 캐시 무효화 → Invalidation | https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html |
+| rds-storage-features.multi-az-vs-read-replica (phase 66) | 다중 AZ 배포 → Multi-AZ Deployment, 읽기 전용 복제본 → Read Replica | https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.MultiAZ.html, https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html |
+| cost-management.compute-vs-ec2-instance-savings-plans (phase 66) | 컴퓨팅 절약 플랜 → Compute Savings Plan, EC2 인스턴스 절약 플랜 → EC2 Instance Savings Plan | https://docs.aws.amazon.com/savingsplans/latest/userguide/plan-types.html |
 
 영문을 붙이지 않은 것: 멀티 오리진(공식 문서에 딱 맞는 단일 기능명이 없다), 이름이 이미 영문이거나 영문이 이미 붙어 있던 항목.
 
@@ -390,3 +392,21 @@ S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은
 - 이 파일을 근거로 쓰지 않는 것: 연결할 수 있는 데이터 소스의 수, Data Catalog의 구조, Glue Studio의 시각적 편집기, 스트리밍 ETL, 작업 북마크,
   DynamicFrame, 머신 러닝·애플리케이션 개발 용도.
 - 쓰인 곳: `emr-glue-athena.glue`의 `summary`와 세 문단.
+
+## 절약 플랜의 두 유형 (Savings Plans)
+
+확인한 날: 2026-10-23. 노션 「시험 문제 출제 유형」이 비용 관리 유형의 핵심으로 「컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜」을 짚었다(ADR-051). 앱의
+`cost-management.savings-plan`·`savings-plan-details`는 컴퓨팅 절약 플랜의 적용 범위와 EC2 인스턴스 절약 플랜이 인스턴스 유형·리전을 정해 약정한다는 것까지만
+말하고, 그렇게 묶이는 대신 무엇을 얻는지(할인 폭)는 말하지 않는다. 덤프 해설 Q879의 「EC2 인스턴스 절약 플랜이 할인율이 높다」는 AI 작성 해설이라 채택하지
+않았다(`dump-gaps/Q851-Q880.md`). 그래서 두 유형을 견주는 근거를 공식 문서에서 가져온다(ADR-039 「2026-10-23 확장 — 절약 플랜의 두 유형」).
+
+- 출처: https://docs.aws.amazon.com/savingsplans/latest/userguide/plan-types.html
+- 가져온 사실: 컴퓨팅 절약 플랜은 가장 유연한 유형이고 할인 폭은 온디맨드 요금보다 최대 66% 낮다. 인스턴스 제품군·크기·리전·운영 체제·테넌시와 관계없이
+  EC2 사용량에 적용되고, Fargate와 Lambda 사용량에도 적용된다. 그래서 c5에서 m5로, 한 리전에서 다른 리전으로, EC2에서 Fargate로 옮겨도 할인이 이어진다.
+- 가져온 사실: EC2 인스턴스 절약 플랜은 한 리전의 한 인스턴스 제품군(예: 버지니아의 m5)에 약정하고, 할인 폭은 온디맨드 요금보다 최대 72% 낮다. 그 제품군
+  안에서는 크기·운영 체제·테넌시가 바뀌어도 할인이 적용된다.
+- 출처: https://docs.aws.amazon.com/savingsplans/latest/userguide/what-is-savings-plans.html
+- 가져온 사실: 절약 플랜은 1년이나 3년 동안 시간당 일정한 컴퓨팅 사용량을 약정하는 대가로 온디맨드보다 낮은 요금을 받는 모델이다. 결제는 전액 선결제·부분
+  선결제·선결제 없음 가운데 고른다.
+- 이 파일을 근거로 쓰지 않는 것: 두 유형 밖의 절약 플랜, 테넌시의 세부 종류, 약정 금액을 정하는 권장 사항, 약정을 산 뒤 바꿀 수 없다는 규칙.
+- 쓰인 곳: 새 개념 `cost-management.compute-vs-ec2-instance-savings-plans`의 본문과 새 문항 q746과 그 해설.

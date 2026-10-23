@@ -1,0 +1,11 @@
+{
+  "project": "AWS SAA-C03 개념 학습 앱",
+  "phase": "66-exam-emphasis",
+  "steps": [
+    { "step": 0, "name": "topic-importance", "status": "pending" },
+    { "step": 1, "name": "core-emphasis", "status": "pending" },
+    { "step": 2, "name": "emphasis-weight", "status": "pending" },
+    { "step": 3, "name": "vs-titles", "status": "pending" },
+    { "step": 4, "name": "vs-concepts", "status": "pending" }
+  ]
+}

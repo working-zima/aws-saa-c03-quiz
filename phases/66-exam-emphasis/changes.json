@@ -1,0 +1,896 @@
+{
+  "importance": {
+    "ebs-instance-store": 2,
+    "efs-fsx": 2,
+    "data-transfer-services": 2,
+    "storage-gateway-migration": 2,
+    "dynamodb": 2,
+    "elasticache-purpose-built-db": 2,
+    "ecs-eks-fargate": 2,
+    "api-gateway-step-functions": 2,
+    "backup-disaster-recovery": 2,
+    "hybrid-connectivity": 2,
+    "secrets-encryption": 2,
+    "waf-shield": 2,
+    "guardduty-macie-inspector": 2,
+    "organizations-cloudtrail-config": 2,
+    "route53": 3
+  },
+  "renames": [
+    {
+      "conceptId": "s3-storage-classes.retrieval-time",
+      "before": "즉시 조회와 대기 조회",
+      "after": "즉시 조회 vs 대기 조회"
+    },
+    {
+      "conceptId": "s3-storage-classes.glacier-or-standard-ia",
+      "before": "Glacier와 Standard-IA 중 고르기",
+      "after": "Glacier vs Standard-IA"
+    },
+    {
+      "conceptId": "s3-storage-classes.lifecycle-vs-intelligent-tiering",
+      "before": "수명 주기 규칙과 자동 계층화의 갈림길",
+      "after": "수명 주기 규칙 vs 자동 계층화"
+    },
+    {
+      "conceptId": "s3-encryption-batch.batch-copy-vs-replication",
+      "before": "일회성 대량 복사와 지속 복제",
+      "after": "일회성 대량 복사 vs 지속 복제"
+    },
+    {
+      "conceptId": "efs-fsx.efs-throughput-modes",
+      "before": "EFS의 버스팅 처리량과 프로비저닝된 처리량",
+      "after": "EFS의 버스팅 처리량 vs 프로비저닝된 처리량"
+    },
+    {
+      "conceptId": "efs-fsx.efs-performance-modes",
+      "before": "EFS의 범용 성능 모드와 최대 I/O 성능 모드",
+      "after": "EFS의 범용 성능 모드 vs 최대 I/O 성능 모드"
+    },
+    {
+      "conceptId": "data-transfer-services.file-gateway-vs-datasync-continuous",
+      "before": "지속 수집과 예약 전송의 갈림길",
+      "after": "지속 수집 vs 예약 전송"
+    },
+    {
+      "conceptId": "storage-gateway-migration.storage-gateway-volume-modes",
+      "before": "저장 볼륨 게이트웨이와 캐시된 볼륨 게이트웨이",
+      "after": "저장 볼륨 게이트웨이 vs 캐시된 볼륨 게이트웨이"
+    },
+    {
+      "conceptId": "rds-storage-features.rds-multi-az-db-cluster",
+      "before": "다중 AZ DB 인스턴스 배포와 다중 AZ DB 클러스터 배포",
+      "after": "다중 AZ DB 인스턴스 배포 vs 다중 AZ DB 클러스터 배포"
+    },
+    {
+      "conceptId": "rds-storage-features.rds-backups",
+      "before": "RDS 자동 백업과 DB 스냅샷",
+      "after": "RDS 자동 백업 vs DB 스냅샷"
+    },
+    {
+      "conceptId": "aurora.aurora-storage-configurations",
+      "before": "Aurora Standard와 Aurora I/O-Optimized",
+      "after": "Aurora Standard vs Aurora I/O-Optimized"
+    },
+    {
+      "conceptId": "dynamodb.dynamodb-capacity-modes",
+      "before": "프로비저닝된 용량과 온디맨드 용량",
+      "after": "프로비저닝된 용량 vs 온디맨드 용량"
+    },
+    {
+      "conceptId": "dynamodb.dynamodb-read-consistency",
+      "before": "최종 일관성 읽기와 강력한 일관성 읽기",
+      "after": "최종 일관성 읽기 vs 강력한 일관성 읽기"
+    },
+    {
+      "conceptId": "dynamodb.dynamodb-s3-export-vs-streams",
+      "before": "분석용 적재의 S3 내보내기와 스트림 경로",
+      "after": "분석용 적재의 S3 내보내기 vs 스트림 경로"
+    },
+    {
+      "conceptId": "elasticache-purpose-built-db.elasticache-redis-vs-memcached",
+      "before": "Redis와 Memcached의 갈림길",
+      "after": "Redis vs Memcached"
+    },
+    {
+      "conceptId": "ec2-autoscaling.reserved-instance-types",
+      "before": "표준 예약 인스턴스와 전환 가능 예약 인스턴스",
+      "after": "표준 예약 인스턴스 vs 전환 가능 예약 인스턴스"
+    },
+    {
+      "conceptId": "ec2-autoscaling.scheduled-scaling",
+      "before": "예약된 조정과 대상 추적의 갈림길",
+      "after": "예약된 조정 vs 대상 추적"
+    },
+    {
+      "conceptId": "ec2-autoscaling.target-tracking-vs-simple-scaling",
+      "before": "대상 추적과 단순 조정의 갈림길",
+      "after": "대상 추적 vs 단순 조정"
+    },
+    {
+      "conceptId": "elastic-load-balancing.alb-l7-vs-nlb-l4",
+      "before": "계층으로 나뉘는 ALB와 NLB",
+      "after": "ALB vs NLB"
+    },
+    {
+      "conceptId": "lambda.lambda-invocation-types",
+      "before": "이벤트 호출과 요청-응답 호출",
+      "after": "이벤트 호출 vs 요청-응답 호출"
+    },
+    {
+      "conceptId": "lambda.lambda-reserved-concurrency",
+      "before": "예약된 동시성과 프로비저닝된 동시성",
+      "after": "예약된 동시성 vs 프로비저닝된 동시성"
+    },
+    {
+      "conceptId": "ecs-eks-fargate.ecs-task-role",
+      "before": "태스크 역할과 인스턴스 역할",
+      "after": "태스크 역할 vs 인스턴스 역할"
+    },
+    {
+      "conceptId": "ecs-eks-fargate.ecs-task-role-vs-task-execution-role",
+      "before": "태스크 역할과 태스크 실행 역할",
+      "after": "태스크 역할 vs 태스크 실행 역할"
+    },
+    {
+      "conceptId": "ecs-eks-fargate.eks-cluster-autoscaler",
+      "before": "Horizontal Pod Autoscaler와 Cluster Autoscaler",
+      "after": "Horizontal Pod Autoscaler vs Cluster Autoscaler"
+    },
+    {
+      "conceptId": "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
+      "before": "REST API와 HTTP API의 통합 타임아웃",
+      "after": "REST API vs HTTP API의 통합 타임아웃"
+    },
+    {
+      "conceptId": "api-gateway-step-functions.api-gateway-endpoint-types",
+      "before": "엣지 최적화 엔드포인트와 리전 엔드포인트",
+      "after": "엣지 최적화 엔드포인트 vs 리전 엔드포인트"
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.sns-is-not-a-queue",
+      "before": "SQS 대기열과 SNS 발행-구독",
+      "after": "SQS 대기열 vs SNS 발행-구독"
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
+      "before": "이벤트 라우팅과 워크플로 오케스트레이션",
+      "after": "이벤트 라우팅 vs 워크플로 오케스트레이션"
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling",
+      "before": "이벤트 패턴 규칙과 주기적 폴링",
+      "after": "이벤트 패턴 규칙 vs 주기적 폴링"
+    },
+    {
+      "conceptId": "vpc-networking.nat-instance",
+      "before": "NAT 인스턴스와 NAT 게이트웨이의 차이",
+      "after": "NAT 인스턴스 vs NAT 게이트웨이"
+    },
+    {
+      "conceptId": "security-groups-nacl.security-group-stateful-vs-nacl-stateless",
+      "before": "상태 저장과 상태 비저장",
+      "after": "상태 저장 vs 상태 비저장"
+    },
+    {
+      "conceptId": "security-groups-nacl.web-acl-vs-nacl",
+      "before": "Web ACL과 네트워크 ACL의 차이",
+      "after": "Web ACL vs 네트워크 ACL"
+    },
+    {
+      "conceptId": "route53.private-hosted-zone",
+      "before": "프라이빗 호스팅 영역과 퍼블릭 호스팅 영역",
+      "after": "프라이빗 호스팅 영역 vs 퍼블릭 호스팅 영역"
+    },
+    {
+      "conceptId": "emr-glue-athena.emr-transient-cluster",
+      "before": "일시적 클러스터와 장기 실행 클러스터",
+      "after": "일시적 클러스터 vs 장기 실행 클러스터"
+    },
+    {
+      "conceptId": "kinesis-streaming.kinesis-capacity-mode",
+      "before": "Kinesis 스트림의 프로비저닝 모드와 온디맨드 모드",
+      "after": "Kinesis 스트림의 프로비저닝 모드 vs 온디맨드 모드"
+    },
+    {
+      "conceptId": "redshift-opensearch-quicksight.oltp-vs-olap",
+      "before": "OLTP와 OLAP",
+      "after": "OLTP vs OLAP"
+    },
+    {
+      "conceptId": "redshift-opensearch-quicksight.athena-vs-redshift-workload",
+      "before": "임시 쿼리와 반복되는 고성능 쿼리",
+      "after": "임시 쿼리 vs 반복되는 고성능 쿼리"
+    },
+    {
+      "conceptId": "cloudwatch-xray.log-analysis-options",
+      "before": "로그 분석 선택지: OpenSearch와 CloudWatch Logs Insights",
+      "after": "로그 분석 선택지: OpenSearch vs CloudWatch Logs Insights"
+    },
+    {
+      "conceptId": "secrets-encryption.kms-symmetric-vs-asymmetric-rotation",
+      "before": "KMS 대칭 키와 비대칭 키의 자동 교체",
+      "after": "KMS 대칭 키 vs 비대칭 키의 자동 교체"
+    },
+    {
+      "conceptId": "identity-federation.cognito-pools",
+      "before": "Cognito 사용자 풀과 자격 증명 풀",
+      "after": "Cognito 사용자 풀 vs 자격 증명 풀"
+    },
+    {
+      "conceptId": "organizations-cloudtrail-config.organizations-tag-policy",
+      "before": "태그 정책과 SCP",
+      "after": "태그 정책 vs SCP"
+    },
+    {
+      "conceptId": "organizations-cloudtrail-config.cloudtrail-data-events",
+      "before": "관리 이벤트와 데이터 이벤트",
+      "after": "관리 이벤트 vs 데이터 이벤트"
+    },
+    {
+      "conceptId": "governance-iac.control-tower-controls",
+      "before": "Control Tower의 사전 예방적 제어와 탐지 제어",
+      "after": "Control Tower의 사전 예방적 제어 vs 탐지 제어"
+    }
+  ],
+  "emphasis": [
+    {
+      "conceptId": "s3-storage-classes.intelligent-tiering",
+      "paragraphIndex": 0,
+      "before": "S3 Standard는 접근이 잦다는 것을 알고 고르는 클래스인데, 언제 얼마나 읽힐지 미리 알 수 없는 데이터도 있다. 이렇게 얼마나 자주 읽힐지 예측하기 어려울 때 S3 Intelligent-Tiering을 선택한다. AWS가 사용 패턴을 분석해 비용 효율적인 계층으로 데이터를 옮겨 준다.",
+      "after": "S3 Standard는 접근이 잦다는 것을 알고 고르는 클래스인데, 언제 얼마나 읽힐지 미리 알 수 없는 데이터도 있다. 이렇게 **얼마나 자주 읽힐지 예측하기 어려울 때** S3 Intelligent-Tiering을 선택한다. AWS가 사용 패턴을 분석해 비용 효율적인 계층으로 데이터를 옮겨 준다."
+    },
+    {
+      "conceptId": "s3-storage-classes.standard-ia",
+      "paragraphIndex": 0,
+      "before": "S3 Standard-IA는 읽는 일 자체가 드문 데이터에 사용한다. 이름에 붙은 IA(Infrequent Access)가 접근이 드물다는 뜻이다. 접근 빈도가 낮은 데이터를 더 싸게 보관하면서도, 조회 요청이 들어오면 기다림 없이 꺼낼 수 있다.",
+      "after": "S3 Standard-IA는 읽는 일 자체가 드문 데이터에 사용한다. 이름에 붙은 IA(Infrequent Access)가 접근이 드물다는 뜻이다. 접근 빈도가 낮은 데이터를 더 싸게 보관하면서도, **조회 요청이 들어오면 기다림 없이 꺼낼 수 있다**."
+    },
+    {
+      "conceptId": "s3-storage-classes.glacier-deep-archive",
+      "paragraphIndex": 0,
+      "before": "거의 읽지 않는 데이터를 맡기며, 꺼낼 때 최대 12시간까지 기다릴 수 있을 때 선택한다. Glacier 계열 셋 가운데 꺼내는 데 가장 오래 걸리는 쪽이다.",
+      "after": "거의 읽지 않는 데이터를 맡기며, **꺼낼 때 최대 12시간까지 기다릴 수 있을 때** 선택한다. Glacier 계열 셋 가운데 꺼내는 데 가장 오래 걸리는 쪽이다."
+    },
+    {
+      "conceptId": "s3-storage-classes.glacier-or-standard-ia",
+      "paragraphIndex": 0,
+      "before": "두 번째 기준은 보관의 목적이다. Glacier 클래스는 법률, 감사 또는 규정 준수를 위해 데이터를 오래 보관할 때 사용한다.",
+      "after": "두 번째 기준은 보관의 목적이다. Glacier 클래스는 **법률, 감사 또는 규정 준수를 위해 데이터를 오래 보관할 때** 사용한다."
+    },
+    {
+      "conceptId": "s3-storage-classes.glacier-or-standard-ia",
+      "paragraphIndex": 1,
+      "before": "이런 장기 보관 목적 없이 단지 접근 빈도만 낮다면 S3 Standard-IA를 선택한다.",
+      "after": "이런 **장기 보관 목적 없이 단지 접근 빈도만 낮다면** S3 Standard-IA를 선택한다."
+    },
+    {
+      "conceptId": "s3-storage-classes.lifecycle-vs-intelligent-tiering",
+      "paragraphIndex": 0,
+      "before": "S3에는 지정한 기간이 지난 객체를 다른 클래스로 자동으로 옮기도록 미리 정해 두는 수명 주기 규칙이 따로 있다. 그 규칙과 S3 Intelligent-Tiering을 가르는 기준은 접근 패턴의 예측 가능성이다. 수명 주기 규칙은 30일이 지나면 옮긴다처럼 시간만 보고 움직이는 정적인 규칙이라, 다시 자주 읽히기 시작한 객체를 되돌리지 못한다. S3 Intelligent-Tiering은 객체마다 실제 접근을 추적해 빈번 계층과 비빈번 계층 사이를 오간다.",
+      "after": "S3에는 지정한 기간이 지난 객체를 다른 클래스로 자동으로 옮기도록 미리 정해 두는 수명 주기 규칙이 따로 있다. 그 규칙과 S3 Intelligent-Tiering을 가르는 기준은 **접근 패턴의 예측 가능성**이다. 수명 주기 규칙은 30일이 지나면 옮긴다처럼 시간만 보고 움직이는 정적인 규칙이라, 다시 자주 읽히기 시작한 객체를 되돌리지 못한다. S3 Intelligent-Tiering은 객체마다 실제 접근을 추적해 빈번 계층과 비빈번 계층 사이를 오간다."
+    },
+    {
+      "conceptId": "s3-versioning-lifecycle.versioning",
+      "paragraphIndex": 1,
+      "before": "버전 관리를 사용하지 않는 버킷에 같은 이름의 파일을 다시 업로드하면 별도 알림 없이 기존 파일이 덮어써지고, 되돌릴 방법이 남지 않는다. 버전 관리를 활성화하면 덮어쓴 뒤에도 이전 파일이 함께 남으므로 이전 상태로 되돌아갈 수 있다.",
+      "after": "버전 관리를 사용하지 않는 버킷에 같은 이름의 파일을 다시 업로드하면 별도 알림 없이 기존 파일이 덮어써지고, 되돌릴 방법이 남지 않는다. 버전 관리를 활성화하면 **덮어쓴 뒤에도 이전 파일이 함께 남으므로 이전 상태로 되돌아갈 수 있다**."
+    },
+    {
+      "conceptId": "s3-versioning-lifecycle.object-lock",
+      "paragraphIndex": 2,
+      "before": "- **거버넌스 모드**(Governance Mode)는 특별 권한을 가진 관리자에게만 수정과 삭제를 허용한다.",
+      "after": "- **거버넌스 모드**(Governance Mode)는 **특별 권한을 가진 관리자에게만** 수정과 삭제를 허용한다."
+    },
+    {
+      "conceptId": "s3-versioning-lifecycle.object-lock",
+      "paragraphIndex": 3,
+      "before": "- **규정 준수 모드**(Compliance Mode)는 루트 사용자를 포함해 누구에게도 이를 허용하지 않는다.",
+      "after": "- **규정 준수 모드**(Compliance Mode)는 **루트 사용자를 포함해 누구에게도** 이를 허용하지 않는다."
+    },
+    {
+      "conceptId": "s3-versioning-lifecycle.lifecycle-policy",
+      "paragraphIndex": 0,
+      "before": "버전 관리와 객체 잠금이 이미 올라온 객체를 지키는 장치라면, 수명 주기 정책은 시간이 지난 객체를 스스로 옮기거나 지우는 장치다. 데이터에 얼마나 자주 접근할지 예상할 수 있다면 수명 주기 정책으로 일정 기간 뒤 객체를 다른 S3 스토리지 클래스로 이동할 수 있다. 스토리지 클래스는 객체를 어느 조건으로 보관할지 고르는 유형이며, 어느 클래스에 두느냐에 따라 보관 비용과 꺼낼 때 걸리는 시간이 달라진다. 보존 기한이 정해진 경우에는 그 기간이 끝난 객체를 곧바로 자동 삭제하도록 설정할 수 있다.",
+      "after": "버전 관리와 객체 잠금이 이미 올라온 객체를 지키는 장치라면, 수명 주기 정책은 시간이 지난 객체를 스스로 옮기거나 지우는 장치다. **데이터에 얼마나 자주 접근할지 예상할 수 있다면** 수명 주기 정책으로 일정 기간 뒤 객체를 다른 S3 스토리지 클래스로 이동할 수 있다. 스토리지 클래스는 객체를 어느 조건으로 보관할지 고르는 유형이며, 어느 클래스에 두느냐에 따라 보관 비용과 꺼낼 때 걸리는 시간이 달라진다. 보존 기한이 정해진 경우에는 그 기간이 끝난 객체를 곧바로 자동 삭제하도록 설정할 수 있다."
+    },
+    {
+      "conceptId": "s3-encryption-batch.sse-types",
+      "paragraphIndex": 1,
+      "before": "- **SSE-KMS**에서는 키 관리 서비스인 AWS KMS가 암호화 키를 생성하고 관리한다. 보안을 철저히 요구할 때 선택하며, 키를 주기적으로 자동 교체하는 기능도 제공한다.",
+      "after": "- **SSE-KMS**에서는 키 관리 서비스인 AWS KMS가 암호화 키를 생성하고 관리한다. 보안을 철저히 요구할 때 선택하며, **키를 주기적으로 자동 교체하는 기능**도 제공한다."
+    },
+    {
+      "conceptId": "s3-access-control.s3-cross-account-bucket-policy",
+      "paragraphIndex": 0,
+      "before": "같은 회사가 소유한 계정이라도 계정이 다르면 서로의 S3 버킷에 닿지 못한다. 접근을 열어 주는 표준 방법은 버킷 쪽에 정책을 붙이는 것이다. 권한을 줄 계정의 AWS 계정 ID를 정책에 적으면 그 계정이 버킷을 쓸 수 있고, 서비스를 새로 두거나 데이터를 복사할 필요가 없다.",
+      "after": "같은 회사가 소유한 계정이라도 계정이 다르면 서로의 S3 버킷에 닿지 못한다. 접근을 열어 주는 표준 방법은 **버킷 쪽에 정책을 붙이는 것**이다. 권한을 줄 계정의 AWS 계정 ID를 정책에 적으면 그 계정이 버킷을 쓸 수 있고, 서비스를 새로 두거나 데이터를 복사할 필요가 없다."
+    },
+    {
+      "conceptId": "s3-access-control.s3-website-endpoint-no-https",
+      "paragraphIndex": 0,
+      "before": "S3는 REST API 접근에 대해서는 HTTPS를 지원하지만, 정적 웹사이트 엔드포인트로 제공하는 사이트는 HTTPS를 지원하지 않는다. 버킷에 인증서를 붙이는 구성이 성립하지 않는 이유가 이것이다.",
+      "after": "S3는 REST API 접근에 대해서는 HTTPS를 지원하지만, **정적 웹사이트 엔드포인트로 제공하는 사이트는 HTTPS를 지원하지 않는다**. 버킷에 인증서를 붙이는 구성이 성립하지 않는 이유가 이것이다."
+    },
+    {
+      "conceptId": "efs-fsx.fsx-windows-file-server",
+      "paragraphIndex": 0,
+      "before": "FSx는 여러 파일 시스템을 묶은 이름이고, FSx for Windows File Server는 그중 Windows 쪽이다. 여러 애플리케이션 서버가 같은 파일을 공유해야 하고 접근 방식이 SMB라면 이 서비스를 쓴다.",
+      "after": "FSx는 여러 파일 시스템을 묶은 이름이고, FSx for Windows File Server는 그중 Windows 쪽이다. **여러 애플리케이션 서버가 같은 파일을 공유해야 하고 접근 방식이 SMB라면** 이 서비스를 쓴다."
+    },
+    {
+      "conceptId": "efs-fsx.fsx-for-lustre",
+      "paragraphIndex": 0,
+      "before": "FSx for Lustre는 FSx 계열 중 계산 집약적인 작업을 맡는 쪽이다. 많은 노드가 같은 파일 시스템에 동시에 접근하면서 초당 입출력 횟수가 높게 유지되어야 하는 워크로드를 위해 만들어졌다.",
+      "after": "FSx for Lustre는 FSx 계열 중 계산 집약적인 작업을 맡는 쪽이다. 많은 노드가 같은 파일 시스템에 동시에 접근하면서 **초당 입출력 횟수가 높게 유지되어야 하는 워크로드**를 위해 만들어졌다."
+    },
+    {
+      "conceptId": "efs-fsx.fsx-ontap-snapmirror",
+      "paragraphIndex": 0,
+      "before": "FSx for NetApp ONTAP은 NetApp의 SnapMirror 복제를 그대로 지원한다. 온프레미스 NetApp 어레이와 이 파일 시스템 사이에 복제를 걸어 데이터를 옮길 수 있다.",
+      "after": "FSx for NetApp ONTAP은 NetApp의 SnapMirror 복제를 그대로 지원한다. **온프레미스 NetApp 어레이와 이 파일 시스템 사이에 복제를 걸어** 데이터를 옮길 수 있다."
+    },
+    {
+      "conceptId": "ebs-instance-store.ebs-elastic-volumes",
+      "paragraphIndex": 0,
+      "before": "볼륨을 떼었다 붙이거나 새 볼륨을 추가하지 않아도 되므로 운영 중단이 발생하지 않는다. 파일 시스템 확장 작업까지 Lambda로 자동화하면 스토리지 확장을 무중단으로 처리할 수 있다.",
+      "after": "볼륨을 떼었다 붙이거나 새 볼륨을 추가하지 않아도 되므로 **운영 중단이 발생하지 않는다**. 파일 시스템 확장 작업까지 Lambda로 자동화하면 스토리지 확장을 무중단으로 처리할 수 있다."
+    },
+    {
+      "conceptId": "efs-fsx.efs-cross-account-mount",
+      "paragraphIndex": 0,
+      "before": "EFS를 함께 쓰는 여러 컴퓨터가 서로 다른 AWS 계정에 있어도 된다. 파일 시스템을 복사하지 않고도 마운트할 수 있고, 필요한 것은 데이터 이동이 아니라 경로다.",
+      "after": "EFS를 함께 쓰는 여러 컴퓨터가 서로 다른 AWS 계정에 있어도 된다. 파일 시스템을 복사하지 않고도 마운트할 수 있고, **필요한 것은 데이터 이동이 아니라 경로다**."
+    },
+    {
+      "conceptId": "efs-fsx.efs-replication-one-way",
+      "paragraphIndex": 0,
+      "before": "EFS에는 파일 시스템을 다른 리전으로 복제하는 기능이 있지만 방향이 하나다. 대상은 읽기 전용이므로 양쪽에서 모두 쓰고 서로 반영되는 구성이 되지 않는다. 대상의 덮어쓰기 보호를 풀어 반대 방향 복제를 더하는 식으로 우회할 수도 없다. 기능의 성격이 단방향이기 때문이다.",
+      "after": "EFS에는 파일 시스템을 다른 리전으로 복제하는 기능이 있지만 방향이 하나다. **대상은 읽기 전용이므로** 양쪽에서 모두 쓰고 서로 반영되는 구성이 되지 않는다. 대상의 덮어쓰기 보호를 풀어 반대 방향 복제를 더하는 식으로 우회할 수도 없다. 기능의 성격이 단방향이기 때문이다."
+    },
+    {
+      "conceptId": "storage-gateway-migration.storage-gateway-gateway-types",
+      "paragraphIndex": 0,
+      "before": "유형을 고르는 기준은 온프레미스가 지금 무엇으로 저장소를 쓰고 있느냐다. NFS나 SMB 파일 공유를 쓰고 그대로 유지하려 하면 파일 게이트웨이다. S3의 객체를 파일 공유처럼 보여 주므로 서버 쪽 접근 방식이 바뀌지 않는다. 블록 장치가 필요하면 볼륨 게이트웨이이고, 백업 소프트웨어가 테이프 장치를 바라보고 있으면 테이프 게이트웨이다.",
+      "after": "유형을 고르는 기준은 **온프레미스가 지금 무엇으로 저장소를 쓰고 있느냐**다. NFS나 SMB 파일 공유를 쓰고 그대로 유지하려 하면 파일 게이트웨이다. S3의 객체를 파일 공유처럼 보여 주므로 서버 쪽 접근 방식이 바뀌지 않는다. 블록 장치가 필요하면 볼륨 게이트웨이이고, 백업 소프트웨어가 테이프 장치를 바라보고 있으면 테이프 게이트웨이다."
+    },
+    {
+      "conceptId": "data-transfer-services.datasync",
+      "paragraphIndex": 0,
+      "before": "DataSync는 AWS 분류로는 마이그레이션 및 전송(Migration and Transfer) 쪽 서비스다. 온프레미스 스토리지와 AWS 시스템 사이에서 대용량 데이터를 전송할 때 쓴다. AWS의 스토리지 서비스끼리 데이터를 옮길 때도 같은 서비스를 쓴다.",
+      "after": "DataSync는 AWS 분류로는 마이그레이션 및 전송(Migration and Transfer) 쪽 서비스다. **온프레미스 스토리지와 AWS 시스템 사이에서 대용량 데이터를 전송할 때** 쓴다. AWS의 스토리지 서비스끼리 데이터를 옮길 때도 같은 서비스를 쓴다."
+    },
+    {
+      "conceptId": "data-transfer-services.transfer-family",
+      "paragraphIndex": 0,
+      "before": "Transfer Family는 AWS 분류로는 마이그레이션 및 전송(Migration and Transfer) 쪽 서비스다. AWS 스토리지와 다른 클라우드 스토리지 시스템 사이에서 데이터를 전송할 때 쓴다. S3와 연결해 파일을 송수신할 수도 있다. FTP(File Transfer Protocol)는 서버에 접속해 파일을 올리고 내려받는 표준 방식이고, SFTP와 FTPS는 그 통신을 암호화한 방식이다.",
+      "after": "Transfer Family는 AWS 분류로는 마이그레이션 및 전송(Migration and Transfer) 쪽 서비스다. AWS 스토리지와 다른 클라우드 스토리지 시스템 사이에서 데이터를 전송할 때 쓴다. **S3와 연결해 파일을 송수신할 수도 있다**. FTP(File Transfer Protocol)는 서버에 접속해 파일을 올리고 내려받는 표준 방식이고, SFTP와 FTPS는 그 통신을 암호화한 방식이다."
+    },
+    {
+      "conceptId": "data-transfer-services.snowball-edge",
+      "paragraphIndex": 1,
+      "before": "장비를 물리적으로 연결해 복사하기 때문에 데이터를 빠르게 담을 수 있다. 작업을 마친 뒤에는 데이터가 든 Snowball Edge를 AWS에 돌려보낸다.",
+      "after": "**장비를 물리적으로 연결해 복사하기 때문에** 데이터를 빠르게 담을 수 있다. 작업을 마친 뒤에는 데이터가 든 Snowball Edge를 AWS에 돌려보낸다."
+    },
+    {
+      "conceptId": "data-transfer-services.transfer-deadline-vs-bandwidth",
+      "paragraphIndex": 0,
+      "before": "전송 수단을 고를 때는 기능 비교보다 산수가 먼저다. 회선 속도로 기한 안에 보낼 수 있는 양을 먼저 계산한다. 그 값이 옮길 데이터에 못 미치면 DataSync·Storage Gateway·DMS처럼 회선을 타는 선택지는 성능이나 기능과 무관하게 전부 탈락한다.",
+      "after": "전송 수단을 고를 때는 기능 비교보다 산수가 먼저다. **회선 속도로 기한 안에 보낼 수 있는 양을 먼저 계산한다**. 그 값이 옮길 데이터에 못 미치면 DataSync·Storage Gateway·DMS처럼 회선을 타는 선택지는 성능이나 기능과 무관하게 전부 탈락한다."
+    },
+    {
+      "conceptId": "storage-gateway-migration.dms-sct",
+      "paragraphIndex": 1,
+      "before": "SCT(Schema Conversion Tool)는 원본과 대상의 데이터베이스 엔진이 다를 때 스키마를 맞춰 주는 도구이고, 보통 DMS와 짝으로 나온다.",
+      "after": "SCT(Schema Conversion Tool)는 **원본과 대상의 데이터베이스 엔진이 다를 때 스키마를 맞춰 주는 도구**이고, 보통 DMS와 짝으로 나온다."
+    },
+    {
+      "conceptId": "rds-storage-features.features",
+      "paragraphIndex": 5,
+      "before": "세 기능은 목적이 다르다. Multi AZ 배포는 고가용성, Read Replica는 읽기 확장, Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다.",
+      "after": "세 기능은 목적이 다르다. **Multi AZ 배포는 고가용성, Read Replica는 읽기 확장**, Multi AZ DB Cluster는 그 둘을 함께 얻는 구성이다."
+    },
+    {
+      "conceptId": "rds-storage-features.connection-issue-heuristic",
+      "paragraphIndex": 0,
+      "before": "\"Too many connections\"와 \"Connection refused\" 오류, 연결이 빈번하게 열리고 닫히면서 생기는 지연, Lambda의 폭발적인 동시 연결은 전부 연결 관리 문제다.",
+      "after": "\"Too many connections\"와 \"Connection refused\" 오류, 연결이 빈번하게 열리고 닫히면서 생기는 지연, Lambda의 폭발적인 동시 연결은 **전부 연결 관리 문제다**."
+    },
+    {
+      "conceptId": "rds-storage-features.rds-proxy-failover",
+      "paragraphIndex": 0,
+      "before": "RDS Proxy는 연결 관리 도구로 알려져 있지만, 읽기 전용 복제본이 쓰기 인스턴스로 승격될 때의 전환 시간도 함께 줄인다. 클라이언트가 데이터베이스 엔드포인트에 직접 붙지 않고 프록시를 거쳐 다시 연결하며, 프록시가 지금 어느 인스턴스가 쓰기를 맡고 있는지 자동으로 식별하기 때문이다.",
+      "after": "RDS Proxy는 연결 관리 도구로 알려져 있지만, 읽기 전용 복제본이 쓰기 인스턴스로 승격될 때의 **전환 시간도 함께 줄인다**. 클라이언트가 데이터베이스 엔드포인트에 직접 붙지 않고 프록시를 거쳐 다시 연결하며, 프록시가 지금 어느 인스턴스가 쓰기를 맡고 있는지 자동으로 식별하기 때문이다."
+    },
+    {
+      "conceptId": "rds-storage-features.rds-backups",
+      "paragraphIndex": 0,
+      "before": "- **자동 백업**(Automated Backup)은 DB 인스턴스의 백업 기간에 RDS가 스스로 만든다. 개별 데이터베이스가 아니라 인스턴스 전체를 스토리지 볼륨 스냅샷으로 뜨고, 정해 둔 보존 기간만큼 보관하며, 그 기간 안의 어느 시점으로든 인스턴스를 복구할 수 있다.",
+      "after": "- **자동 백업**(Automated Backup)은 DB 인스턴스의 백업 기간에 RDS가 스스로 만든다. 개별 데이터베이스가 아니라 인스턴스 전체를 스토리지 볼륨 스냅샷으로 뜨고, 정해 둔 보존 기간만큼 보관하며, **그 기간 안의 어느 시점으로든 인스턴스를 복구할 수 있다**."
+    },
+    {
+      "conceptId": "rds-storage-features.rds-backups",
+      "paragraphIndex": 1,
+      "before": "- **DB 스냅샷**(DB Snapshot)은 사용자가 직접 만드는 백업이다. 자동 백업과 따로 관리되므로 인스턴스를 지워도 수동으로 만든 스냅샷은 남는다.",
+      "after": "- **DB 스냅샷**(DB Snapshot)은 사용자가 직접 만드는 백업이다. 자동 백업과 따로 관리되므로 **인스턴스를 지워도 수동으로 만든 스냅샷은 남는다**."
+    },
+    {
+      "conceptId": "secrets-encryption.secrets-manager-vs-parameter-store",
+      "paragraphIndex": 1,
+      "before": "Secrets Manager는 저장된 암호 값을 일정 주기로 자동 교체하는 순환 기능을 제공하지만 Parameter Store에는 이 기능이 없다. 따라서 보안에 더 특화된 Secrets Manager는 치명적인 비밀값에, Parameter Store는 상대적으로 덜 민감한 설정값에 주로 사용한다.",
+      "after": "**Secrets Manager는 저장된 암호 값을 일정 주기로 자동 교체하는 순환 기능을 제공하지만 Parameter Store에는 이 기능이 없다**. 따라서 보안에 더 특화된 Secrets Manager는 치명적인 비밀값에, Parameter Store는 상대적으로 덜 민감한 설정값에 주로 사용한다."
+    },
+    {
+      "conceptId": "dynamodb.dynamodb",
+      "paragraphIndex": 2,
+      "before": "- DynamoDB Accelerator(**DAX**)는 DynamoDB와 호환되는 캐시로 곧바로 결합할 수 있다. DynamoDB의 성능을 더 높여야 할 때 사용하며 특히 읽기 성능을 개선한다. 캐시는 자주 읽는 데이터를 미리 담아 두었다가 곧바로 돌려주는 저장 공간이다.",
+      "after": "- DynamoDB Accelerator(**DAX**)는 DynamoDB와 호환되는 캐시로 곧바로 결합할 수 있다. DynamoDB의 성능을 더 높여야 할 때 사용하며 **특히 읽기 성능을 개선한다**. 캐시는 자주 읽는 데이터를 미리 담아 두었다가 곧바로 돌려주는 저장 공간이다."
+    },
+    {
+      "conceptId": "dynamodb.dynamodb-single-digit-latency",
+      "paragraphIndex": 0,
+      "before": "DynamoDB는 서버리스 방식의 완전 관리형 분산 NoSQL 데이터베이스이고, 어떤 규모에서도 10밀리초 미만의 성능을 낸다. 사용자 수를 예측할 수 없는 상태에서 응답 시간에 숫자를 걸어야 할 때, 이 두 조건을 함께 만족하는 것이 DynamoDB다. 관계형 데이터베이스는 같은 방식으로 대규모 확장에 대응하지 못한다.",
+      "after": "DynamoDB는 서버리스 방식의 완전 관리형 분산 NoSQL 데이터베이스이고, **어떤 규모에서도 10밀리초 미만의 성능을 낸다**. 사용자 수를 예측할 수 없는 상태에서 응답 시간에 숫자를 걸어야 할 때, 이 두 조건을 함께 만족하는 것이 DynamoDB다. 관계형 데이터베이스는 같은 방식으로 대규모 확장에 대응하지 못한다."
+    },
+    {
+      "conceptId": "elasticache-purpose-built-db.elasticache",
+      "paragraphIndex": 1,
+      "before": "동일한 데이터를 되풀이해 조회하는 상황에 알맞다. 반면 조회할 때마다 결과가 자주 달라지는 데이터에는 적합하지 않다.",
+      "after": "**동일한 데이터를 되풀이해 조회하는 상황에 알맞다**. 반면 조회할 때마다 결과가 자주 달라지는 데이터에는 적합하지 않다."
+    },
+    {
+      "conceptId": "elasticache-purpose-built-db.dax-dynamodb-only",
+      "paragraphIndex": 1,
+      "before": "반대로 RDS의 읽기 부하를 줄이려면 ElastiCache를 쓴다. DAX는 RDS 앞에 붙일 수 없으므로 이 요구의 답이 되지 못한다.",
+      "after": "반대로 **RDS의 읽기 부하를 줄이려면 ElastiCache를 쓴다**. DAX는 RDS 앞에 붙일 수 없으므로 이 요구의 답이 되지 못한다."
+    },
+    {
+      "conceptId": "elasticache-purpose-built-db.elasticache-redis-vs-memcached",
+      "paragraphIndex": 0,
+      "before": "ElastiCache는 엔진을 두 가지 중에서 고른다. Memcached는 단순한 조회 결과를 잠깐 얹어 두는 용도이고, 저장한 데이터를 유지하는 기능이나 고급 기능이 없다. 진행 중인 트랜잭션처럼 사라지면 안 되는 상태를 캐시에 두어야 한다면 Redis를 골라야 한다.",
+      "after": "ElastiCache는 엔진을 두 가지 중에서 고른다. Memcached는 단순한 조회 결과를 잠깐 얹어 두는 용도이고, 저장한 데이터를 유지하는 기능이나 고급 기능이 없다. 진행 중인 트랜잭션처럼 **사라지면 안 되는 상태를 캐시에 두어야 한다면 Redis를 골라야 한다**."
+    },
+    {
+      "conceptId": "elastic-load-balancing.alb-l7-vs-nlb-l4",
+      "paragraphIndex": 1,
+      "before": "웹 애플리케이션의 보안을 이야기할 때 등장하는 L7은 애플리케이션 계층, TCP/UDP를 이야기할 때의 L4는 전송 계층을 가리킨다.",
+      "after": "웹 애플리케이션의 보안을 이야기할 때 등장하는 **L7은 애플리케이션 계층**, TCP/UDP를 이야기할 때의 **L4는 전송 계층**을 가리킨다."
+    },
+    {
+      "conceptId": "elastic-load-balancing.alb-cookie-stickiness",
+      "paragraphIndex": 0,
+      "before": "세션 상태를 서버 메모리에 들고 있는 상태 유지형(stateful) 애플리케이션을 오토 스케일링 그룹으로 옮기면, 같은 사용자의 다음 요청이 같은 인스턴스로 가야 화면이 일관되게 보인다. HTTP·HTTPS 애플리케이션에서 이것을 쿠키로 처리하는 것이 ALB다.",
+      "after": "세션 상태를 서버 메모리에 들고 있는 상태 유지형(stateful) 애플리케이션을 오토 스케일링 그룹으로 옮기면, 같은 사용자의 다음 요청이 같은 인스턴스로 가야 화면이 일관되게 보인다. HTTP·HTTPS 애플리케이션에서 이것을 **쿠키로 처리하는 것이 ALB다**."
+    },
+    {
+      "conceptId": "elastic-load-balancing.nlb",
+      "paragraphIndex": 0,
+      "before": "NLB는 ELB 계열 가운데 4계층, 곧 전송 계층에서 동작하는 로드 밸런서다. TCP와 UDP 트래픽을 모두 다루고 응답 속도가 매우 빠르다. 요청의 내용은 보지 않으므로 URL 경로나 HTTP 헤더로 대상을 나누지 못한다.",
+      "after": "NLB는 ELB 계열 가운데 4계층, 곧 전송 계층에서 동작하는 로드 밸런서다. TCP와 UDP 트래픽을 모두 다루고 **응답 속도가 매우 빠르다**. 요청의 내용은 보지 않으므로 URL 경로나 HTTP 헤더로 대상을 나누지 못한다."
+    },
+    {
+      "conceptId": "elastic-load-balancing.nlb",
+      "paragraphIndex": 1,
+      "before": "대신 ALB에 없는 기능이 있다. UDP 트래픽을 받을 수 있고, 4계층 로드 밸런서이면서도 TLS를 처리해 하나의 공용 진입점이 된다. 대상을 IP 주소로 등록할 수 있어 온프레미스 서버까지 같은 로드 밸런서 뒤에 두고, 고정 IP도 함께 제공한다.",
+      "after": "대신 ALB에 없는 기능이 있다. UDP 트래픽을 받을 수 있고, 4계층 로드 밸런서이면서도 TLS를 처리해 하나의 공용 진입점이 된다. 대상을 IP 주소로 등록할 수 있어 온프레미스 서버까지 같은 로드 밸런서 뒤에 두고, **고정 IP도 함께 제공한다**."
+    },
+    {
+      "conceptId": "ec2-autoscaling.target-tracking-vs-simple-scaling",
+      "paragraphIndex": 0,
+      "before": "단순 조정(Simple Scaling)은 고정된 조정 폭과 경보 임계값에 쿨다운이 붙는다. 15~20분 만에 끝나는 짧은 급증이 매일 되풀이되는 상황에서는 반응이 늦거나 과하게 늘리고, 트래픽이 빠진 뒤에도 인스턴스가 남아 비용이 샌다. 대상 추적은 목표값을 유지하려고 수요에 비례해 늘리고 줄이므로 이런 급증에서 모자람과 남음을 함께 줄인다.",
+      "after": "단순 조정(Simple Scaling)은 고정된 조정 폭과 경보 임계값에 쿨다운이 붙는다. 15~20분 만에 끝나는 짧은 급증이 매일 되풀이되는 상황에서는 반응이 늦거나 과하게 늘리고, 트래픽이 빠진 뒤에도 인스턴스가 남아 비용이 샌다. 대상 추적은 목표값을 유지하려고 **수요에 비례해 늘리고 줄이므로** 이런 급증에서 모자람과 남음을 함께 줄인다."
+    },
+    {
+      "conceptId": "ec2-autoscaling.scheduled-scaling",
+      "paragraphIndex": 0,
+      "before": "예약된 조정(Scheduled Scaling)은 \"매일 아침 9시\"처럼 몰리는 시각을 미리 알 때 용량을 앞당겨 늘려두는 방식이다.",
+      "after": "예약된 조정(Scheduled Scaling)은 \"매일 아침 9시\"처럼 **몰리는 시각을 미리 알 때** 용량을 앞당겨 늘려두는 방식이다."
+    },
+    {
+      "conceptId": "ec2-autoscaling.scheduled-scaling",
+      "paragraphIndex": 1,
+      "before": "\"예측할 수 없는(unpredictable, unexpected) 트래픽 급증\"이라는 조건이 붙으면 예약된 조정은 답이 되지 못하고, 지표 목표값을 벗어나면 즉시 반응하는 대상 추적이 답이다.",
+      "after": "\"예측할 수 없는(unpredictable, unexpected) 트래픽 급증\"이라는 조건이 붙으면 예약된 조정은 답이 되지 못하고, 지표 목표값을 벗어나면 **즉시 반응하는 대상 추적**이 답이다."
+    },
+    {
+      "conceptId": "ec2-autoscaling.ec2-purchase-options",
+      "paragraphIndex": 4,
+      "before": "중단돼도 괜찮은 작업에서 비용을 가장 낮추려면 스팟 인스턴스를 고른다. 오래 계속 쓸 것이 확실한 서버에는 예약 인스턴스를 고른다.",
+      "after": "**중단돼도 괜찮은 작업에서 비용을 가장 낮추려면 스팟 인스턴스**를 고른다. **오래 계속 쓸 것이 확실한 서버에는 예약 인스턴스**를 고른다."
+    },
+    {
+      "conceptId": "ecs-eks-fargate.fargate",
+      "paragraphIndex": 0,
+      "before": "Fargate는 컨테이너를 실행할 서버를 사용자가 관리하지 않는 실행 방식이다. ECS를 Fargate 기반으로 쓰면 서버의 확장과 축소까지 AWS가 맡으므로 관리할 일이 비교적 적고, 예측하기 어려운 트래픽 변화에도 유연하게 대응한다.",
+      "after": "Fargate는 **컨테이너를 실행할 서버를 사용자가 관리하지 않는 실행 방식**이다. ECS를 Fargate 기반으로 쓰면 서버의 확장과 축소까지 AWS가 맡으므로 관리할 일이 비교적 적고, 예측하기 어려운 트래픽 변화에도 유연하게 대응한다."
+    },
+    {
+      "conceptId": "lambda.lambda",
+      "paragraphIndex": 0,
+      "before": "Lambda는 AWS 분류로는 컴퓨팅(Compute) 쪽 서비스다. 서버를 AWS가 관리하고 개발자는 코드에 집중하는 실행 방식을 서버리스라고 한다. Lambda는 요청이 생길 때만 동작하고 요청이 없으면 멈춘 채 기다리므로 비용을 아낄 수 있으며, 가끔 실행하는 작업에 유용하다. S3에 올라온 이미지를 리사이징하거나 정해진 시각에 개발용 RDS를 켜고 끄는 것이 그런 작업의 예다.",
+      "after": "Lambda는 AWS 분류로는 컴퓨팅(Compute) 쪽 서비스다. 서버를 AWS가 관리하고 개발자는 코드에 집중하는 실행 방식을 서버리스라고 한다. Lambda는 **요청이 생길 때만 동작하고 요청이 없으면 멈춘 채 기다리므로** 비용을 아낄 수 있으며, 가끔 실행하는 작업에 유용하다. S3에 올라온 이미지를 리사이징하거나 정해진 시각에 개발용 RDS를 켜고 끄는 것이 그런 작업의 예다."
+    },
+    {
+      "conceptId": "lambda.lambda-reserved-concurrency",
+      "paragraphIndex": 2,
+      "before": "피크 시간대에도 일관되게 낮은 지연이 필요하면 프로비저닝된 동시성을 쓴다. 예약된 동시성으로는 그 조건을 채울 수 없다.",
+      "after": "피크 시간대에도 **일관되게 낮은 지연이 필요하면 프로비저닝된 동시성**을 쓴다. 예약된 동시성으로는 그 조건을 채울 수 없다."
+    },
+    {
+      "conceptId": "s3-versioning-lifecycle.event-notification",
+      "paragraphIndex": 0,
+      "before": "수명 주기 정책이 시간을 신호로 삼는다면, 이벤트 알림은 객체가 새로 생긴 것을 신호로 삼는다. 파일이 업로드되는 즉시 Lambda 같은 다른 서비스를 자동으로 호출해야 할 때 쓴다. Lambda는 서버를 직접 만들어 관리하지 않고 올려 둔 코드만 실행하는 AWS 서비스다. 주기적으로 확인하는 폴링 방식과 달리 확인 주기만큼 기다리는 지연이 없다.",
+      "after": "수명 주기 정책이 시간을 신호로 삼는다면, 이벤트 알림은 객체가 새로 생긴 것을 신호로 삼는다. **파일이 업로드되는 즉시 Lambda 같은 다른 서비스를 자동으로 호출해야 할 때** 쓴다. Lambda는 서버를 직접 만들어 관리하지 않고 올려 둔 코드만 실행하는 AWS 서비스다. 주기적으로 확인하는 폴링 방식과 달리 확인 주기만큼 기다리는 지연이 없다."
+    },
+    {
+      "conceptId": "ebs-instance-store.elastic-fabric-adapter",
+      "paragraphIndex": 2,
+      "before": "저지연 HPC 구성에서는 클러스터 배치 그룹과 짝을 이룬다. 배치 그룹이 인스턴스를 같은 가용 영역의 가까운 하드웨어에 모으고, EFA가 그 위에서 통신 경로를 줄인다. 둘 중 하나만 두거나 분산 배치 그룹이나 여러 가용 영역으로 흩어 놓는 구성은 저지연 요구를 절반만 채운다.",
+      "after": "저지연 HPC 구성에서는 **클러스터 배치 그룹과 짝을 이룬다**. 배치 그룹이 인스턴스를 같은 가용 영역의 가까운 하드웨어에 모으고, EFA가 그 위에서 통신 경로를 줄인다. 둘 중 하나만 두거나 분산 배치 그룹이나 여러 가용 영역으로 흩어 놓는 구성은 저지연 요구를 절반만 채운다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.sqs",
+      "paragraphIndex": 2,
+      "before": "- **표준 대기열**(Standard Queue)은 메시지 순서보다 높은 처리량이 중요한 상황에 알맞다.",
+      "after": "- **표준 대기열**(Standard Queue)은 **메시지 순서보다 높은 처리량**이 중요한 상황에 알맞다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.sqs",
+      "paragraphIndex": 3,
+      "before": "- **선입선출 대기열**(FIFO Queue)은 메시지를 보낸 순서 그대로 정확히 한 번 처리해야 할 때 선택한다.",
+      "after": "- **선입선출 대기열**(FIFO Queue)은 메시지를 **보낸 순서 그대로 정확히 한 번 처리해야 할 때** 선택한다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.sqs-visibility-timeout-vs-processing-time",
+      "paragraphIndex": 1,
+      "before": "이것이 중복 메시지를 처리하게 되는 증상의 정체이고, 고치는 방법은 가시성 타임아웃을 소비자의 최대 처리 시간 이상으로 올리는 것이다. Lambda를 소비자로 쓰면 그 기준은 함수의 타임아웃 값이 된다.",
+      "after": "이것이 중복 메시지를 처리하게 되는 증상의 정체이고, 고치는 방법은 **가시성 타임아웃을 소비자의 최대 처리 시간 이상으로 올리는 것**이다. Lambda를 소비자로 쓰면 그 기준은 함수의 타임아웃 값이 된다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.dead-letter-queue",
+      "paragraphIndex": 0,
+      "before": "큐에 있는 메시지는 처리에 실패해도 사라지지 않고 다시 시도된다. 그래도 계속 실패하는 메시지는 데드레터 큐로 보내 따로 살펴본다. 실패한 하나가 뒤의 메시지를 계속 막는 상황을 막고, 무엇이 왜 실패했는지 확인할 곳을 남기는 장치다.",
+      "after": "큐에 있는 메시지는 처리에 실패해도 사라지지 않고 다시 시도된다. 그래도 **계속 실패하는 메시지는 데드레터 큐로 보내** 따로 살펴본다. 실패한 하나가 뒤의 메시지를 계속 막는 상황을 막고, 무엇이 왜 실패했는지 확인할 곳을 남기는 장치다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.sns-is-not-a-queue",
+      "paragraphIndex": 1,
+      "before": "뒷단의 처리 속도가 앞단의 유입 속도보다 느릴 수 있다면 필요한 것은 내구성 있는 버퍼다. SNS는 발행-구독 방식이라 메시지를 받아 즉시 구독자에게 밀어낼 뿐, 쌓아 두었다가 나중에 꺼내 가게 하거나 실패한 처리를 다시 시도하게 하지 못한다.",
+      "after": "뒷단의 처리 속도가 앞단의 유입 속도보다 느릴 수 있다면 **필요한 것은 내구성 있는 버퍼다**. SNS는 발행-구독 방식이라 메시지를 받아 즉시 구독자에게 밀어낼 뿐, 쌓아 두었다가 나중에 꺼내 가게 하거나 실패한 처리를 다시 시도하게 하지 못한다."
+    },
+    {
+      "conceptId": "vpc-networking.vpc-subnet",
+      "paragraphIndex": 1,
+      "before": "VPC를 나누는 대표적인 기준은 외부에서 접근할 수 있는지 여부다. 접근을 허용하는 영역은 퍼블릭 서브넷, 허용하지 않는 영역은 프라이빗 서브넷으로 구분한다.",
+      "after": "VPC를 나누는 대표적인 기준은 **외부에서 접근할 수 있는지 여부**다. 접근을 허용하는 영역은 퍼블릭 서브넷, 허용하지 않는 영역은 프라이빗 서브넷으로 구분한다."
+    },
+    {
+      "conceptId": "vpc-networking.vpc-endpoint",
+      "paragraphIndex": 1,
+      "before": "게이트웨이 VPC 엔드포인트의 연결 대상은 S3와 DynamoDB다.",
+      "after": "게이트웨이 VPC 엔드포인트의 **연결 대상은 S3와 DynamoDB**다."
+    },
+    {
+      "conceptId": "vpc-networking.vpc-endpoint",
+      "paragraphIndex": 2,
+      "before": "인터페이스 VPC 엔드포인트는 게이트웨이가 덮지 않는 나머지 AWS 서비스에 연결한다. S3는 인터페이스 유형으로도 닿을 수 있지만 시간당 요금이 붙어 게이트웨이 쪽이 기본 선택이고, DynamoDB는 게이트웨이 유형으로만 닿는다.",
+      "after": "인터페이스 VPC 엔드포인트는 **게이트웨이가 덮지 않는 나머지 AWS 서비스에 연결한다**. S3는 인터페이스 유형으로도 닿을 수 있지만 시간당 요금이 붙어 게이트웨이 쪽이 기본 선택이고, DynamoDB는 게이트웨이 유형으로만 닿는다."
+    },
+    {
+      "conceptId": "vpc-networking.privatelink",
+      "paragraphIndex": 0,
+      "before": "PrivateLink는 AWS 분류로는 네트워킹 및 콘텐츠 전송(Networking and Content Delivery) 쪽 서비스다. 인터넷을 경유하지 않고 특정 VPC의 사용자를 다른 VPC에 있는 애플리케이션과 연결한다. 외부망을 피하는 방식이므로 보안이 중요한 연결에 사용한다.",
+      "after": "PrivateLink는 AWS 분류로는 네트워킹 및 콘텐츠 전송(Networking and Content Delivery) 쪽 서비스다. 인터넷을 경유하지 않고 **특정 VPC의 사용자를 다른 VPC에 있는 애플리케이션과 연결한다**. 외부망을 피하는 방식이므로 보안이 중요한 연결에 사용한다."
+    },
+    {
+      "conceptId": "vpc-networking.nat-instance",
+      "paragraphIndex": 0,
+      "before": "관리형인 NAT 게이트웨이와 달리 인스턴스 사양에 묶여 있어 네트워크가 포화되면 그 뒤의 Lambda나 EC2가 간헐적으로 타임아웃을 낸다.",
+      "after": "관리형인 NAT 게이트웨이와 달리 **인스턴스 사양에 묶여 있어** 네트워크가 포화되면 그 뒤의 Lambda나 EC2가 간헐적으로 타임아웃을 낸다."
+    },
+    {
+      "conceptId": "security-groups-nacl.security-group-stateful-vs-nacl-stateless",
+      "paragraphIndex": 0,
+      "before": "적용 범위(리소스 대 서브넷)와 규칙의 종류(허용만 대 허용·차단)에 더해, 두 기능은 상태 추적에서도 나뉜다. 보안 그룹은 상태를 기억한다. 인바운드를 허용한 연결의 응답 트래픽은 아웃바운드 규칙이 없어도 나가고, 그 반대도 마찬가지다. NACL은 상태를 기억하지 않으므로 들어오는 방향과 나가는 방향에 각각 규칙이 있어야 통신이 성립한다.",
+      "after": "적용 범위(리소스 대 서브넷)와 규칙의 종류(허용만 대 허용·차단)에 더해, 두 기능은 상태 추적에서도 나뉜다. **보안 그룹은 상태를 기억한다**. 인바운드를 허용한 연결의 응답 트래픽은 아웃바운드 규칙이 없어도 나가고, 그 반대도 마찬가지다. **NACL은 상태를 기억하지 않으므로** 들어오는 방향과 나가는 방향에 각각 규칙이 있어야 통신이 성립한다."
+    },
+    {
+      "conceptId": "hybrid-connectivity.vpn-vs-direct-connect",
+      "paragraphIndex": 0,
+      "before": "Site-to-Site VPN은 인터넷에 암호화 터널을 구성한다. 설정하기 쉽고 비용이 낮은 대신, 인터넷 상황에 따라 속도가 고르지 않을 수 있다.",
+      "after": "Site-to-Site VPN은 인터넷에 암호화 터널을 구성한다. **설정하기 쉽고 비용이 낮은 대신**, 인터넷 상황에 따라 속도가 고르지 않을 수 있다."
+    },
+    {
+      "conceptId": "hybrid-connectivity.vpn-vs-direct-connect",
+      "paragraphIndex": 1,
+      "before": "Direct Connect는 인터넷 대신 전용선을 설치한다. 구축 기간이 길고 비용도 높지만 일정한 통신 속도를 제공한다.",
+      "after": "Direct Connect는 인터넷 대신 전용선을 설치한다. 구축 기간이 길고 비용도 높지만 **일정한 통신 속도를 제공한다**."
+    },
+    {
+      "conceptId": "hybrid-connectivity.direct-connect-gateway",
+      "paragraphIndex": 0,
+      "before": "\"일관되고 낮은 지연 시간\"(Direct Connect)과 \"수백 개 VPC 연결\"(Transit Gateway)이 동시에 요구되면 이 둘을 Direct Connect Gateway로 통합한다.",
+      "after": "\"일관되고 낮은 지연 시간\"(Direct Connect)과 \"수백 개 VPC 연결\"(Transit Gateway)이 동시에 요구되면 **이 둘을 Direct Connect Gateway로 통합한다**."
+    },
+    {
+      "conceptId": "hybrid-connectivity.direct-connect-vif-types",
+      "paragraphIndex": 1,
+      "before": "계정과 VPC가 많아 Transit Gateway로 묶어 둔 환경에서 온프레미스를 연결하는 조합은 정해져 있다. 트랜짓 VIF로 Direct Connect Gateway에 연결하고, 리전마다 둔 Transit Gateway를 그 게이트웨이에 붙인다. 하나의 Direct Connect Gateway에 여러 리전의 Transit Gateway를 연결할 수 있으므로, 회선 하나로 여러 리전의 VPC에 닿는다.",
+      "after": "계정과 VPC가 많아 Transit Gateway로 묶어 둔 환경에서 온프레미스를 연결하는 조합은 정해져 있다. **트랜짓 VIF로 Direct Connect Gateway에 연결하고**, 리전마다 둔 Transit Gateway를 그 게이트웨이에 붙인다. 하나의 Direct Connect Gateway에 여러 리전의 Transit Gateway를 연결할 수 있으므로, 회선 하나로 여러 리전의 VPC에 닿는다."
+    },
+    {
+      "conceptId": "hybrid-connectivity.transit-gateway",
+      "paragraphIndex": 0,
+      "before": "Transit Gateway는 AWS 분류로는 네트워킹 및 콘텐츠 전송(Networking and Content Delivery) 쪽 서비스다. 여러 VPC와 온프레미스 환경을 하나의 네트워크로 묶어 통신하게 하는 서비스다.",
+      "after": "Transit Gateway는 AWS 분류로는 네트워킹 및 콘텐츠 전송(Networking and Content Delivery) 쪽 서비스다. **여러 VPC와 온프레미스 환경을 하나의 네트워크로 묶어** 통신하게 하는 서비스다."
+    },
+    {
+      "conceptId": "vpc-networking.vpc-peering-scaling-limit",
+      "paragraphIndex": 0,
+      "before": "수백 개 VPC로 확장할 계획이 있다는 조건이 나오면 피어링은 관리가 불가능해진다. 그럴 때는 Transit Gateway를 쓴다.",
+      "after": "**수백 개 VPC로 확장할 계획이 있다는 조건**이 나오면 피어링은 관리가 불가능해진다. 그럴 때는 Transit Gateway를 쓴다."
+    },
+    {
+      "conceptId": "route53.routing-policies",
+      "paragraphIndex": 1,
+      "before": "- **지리적 위치 라우팅**(Geolocation Routing)은 국가를 기준으로 삼는다.",
+      "after": "- **지리적 위치 라우팅**(Geolocation Routing)은 **국가를 기준으로 삼는다**."
+    },
+    {
+      "conceptId": "route53.routing-policies",
+      "paragraphIndex": 2,
+      "before": "- **지리적 근접 라우팅**(Geoproximity Routing)은 사용자와 리소스 사이의 거리를 기준으로 삼는다.",
+      "after": "- **지리적 근접 라우팅**(Geoproximity Routing)은 **사용자와 리소스 사이의 거리를 기준으로 삼는다**."
+    },
+    {
+      "conceptId": "route53.routing-policies",
+      "paragraphIndex": 5,
+      "before": "- **지연시간 기반 라우팅**(Latency-based Routing)은 지연이 가장 짧은 리전을 고른다.",
+      "after": "- **지연시간 기반 라우팅**(Latency-based Routing)은 **지연이 가장 짧은 리전을 고른다**."
+    },
+    {
+      "conceptId": "route53.resolver",
+      "paragraphIndex": 1,
+      "before": "아웃바운드 엔드포인트는 AWS VPC에서 온프레미스로 향한다. 이를 통해 EC2 같은 AWS 서비스가 db.corp.local처럼 온프레미스 내부에서만 쓰는 도메인에 요청할 수 있다.",
+      "after": "아웃바운드 엔드포인트는 **AWS VPC에서 온프레미스로 향한다**. 이를 통해 EC2 같은 AWS 서비스가 db.corp.local처럼 온프레미스 내부에서만 쓰는 도메인에 요청할 수 있다."
+    },
+    {
+      "conceptId": "route53.resolver",
+      "paragraphIndex": 2,
+      "before": "인바운드 엔드포인트는 온프레미스에서 AWS VPC로 들어오는 방향이다. 온프레미스 서버가 app.internal.aws처럼 VPC 내부 전용 도메인에 요청할 때 사용한다.",
+      "after": "인바운드 엔드포인트는 **온프레미스에서 AWS VPC로 들어오는 방향이다**. 온프레미스 서버가 app.internal.aws처럼 VPC 내부 전용 도메인에 요청할 때 사용한다."
+    },
+    {
+      "conceptId": "waf-shield.waf",
+      "paragraphIndex": 2,
+      "before": "IP 세트를 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 SQL Injection과 XSS 공격을 방어한다. SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다.",
+      "after": "IP 세트를 이용하면 특정 IP나 대역을 차단하거나 회사 내부 IP만 허용할 수 있다. 국가별 요청 차단도 지원하며 **SQL Injection과 XSS 공격을 방어한다**. SQL Injection은 입력창에 데이터베이스 명령을 몰래 끼워 넣는 공격이고, XSS(Cross-Site Scripting)는 다른 사용자의 브라우저에서 실행될 스크립트를 심는 공격이다."
+    },
+    {
+      "conceptId": "waf-shield.shield",
+      "paragraphIndex": 0,
+      "before": "Shield는 AWS 분류로는 보안·자격 증명·규정 준수(Security, Identity, and Compliance) 쪽 서비스다. DDoS 위협의 탐지부터 방어까지 자동으로 수행한다. DDoS(Distributed Denial of Service)는 여러 곳에서 한꺼번에 대량의 요청을 보내 서비스를 마비시키는 공격이다.",
+      "after": "Shield는 AWS 분류로는 보안·자격 증명·규정 준수(Security, Identity, and Compliance) 쪽 서비스다. **DDoS 위협의 탐지부터 방어까지 자동으로 수행한다**. DDoS(Distributed Denial of Service)는 여러 곳에서 한꺼번에 대량의 요청을 보내 서비스를 마비시키는 공격이다."
+    },
+    {
+      "conceptId": "cloudfront-global-accelerator.cloudfront-geo-restriction",
+      "paragraphIndex": 1,
+      "before": "지리적 제한은 배포 설정에서 국가 목록을 지정해 허용하거나 거부한다. 지오블로킹이라고도 한다. 코드도 서명 로직도 필요 없어서, 특정 국가 사용자를 막으면서 운영 효율을 가장 높게 두려면 이 설정을 쓴다.",
+      "after": "지리적 제한은 **배포 설정에서 국가 목록을 지정해 허용하거나 거부한다**. 지오블로킹이라고도 한다. 코드도 서명 로직도 필요 없어서, 특정 국가 사용자를 막으면서 운영 효율을 가장 높게 두려면 이 설정을 쓴다."
+    },
+    {
+      "conceptId": "cloudfront-global-accelerator.cloudfront-signed-url",
+      "paragraphIndex": 0,
+      "before": "CloudFront 배포의 콘텐츠에 서명된 URL을 만들면 그 URL을 가진 사람만, 유효 기간 동안만 받아 갈 수 있다. 일회성 다운로드 링크를 나눠 주는 상황에 맞는다.",
+      "after": "CloudFront 배포의 콘텐츠에 서명된 URL을 만들면 **그 URL을 가진 사람만, 유효 기간 동안만** 받아 갈 수 있다. 일회성 다운로드 링크를 나눠 주는 상황에 맞는다."
+    },
+    {
+      "conceptId": "cloudfront-global-accelerator.cloudfront",
+      "paragraphIndex": 0,
+      "before": "CloudFront는 AWS 분류로는 네트워킹 및 콘텐츠 전송(Networking and Content Delivery) 쪽 서비스다. 이미지나 파일 등의 콘텐츠를 캐싱한 뒤 세계 각지의 사용자에게 빠른 속도로 제공한다.",
+      "after": "CloudFront는 AWS 분류로는 네트워킹 및 콘텐츠 전송(Networking and Content Delivery) 쪽 서비스다. 이미지나 파일 등의 **콘텐츠를 캐싱한 뒤 세계 각지의 사용자에게 빠른 속도로 제공한다**."
+    },
+    {
+      "conceptId": "cloudfront-global-accelerator.cloudfront-alb-origin",
+      "paragraphIndex": 0,
+      "before": "CloudFront 배포의 오리진은 S3 버킷만이 아니다. 기존 ALB를 오리진으로 지정한 배포를 만들면 정적·동적 콘텐츠 모두 사용자와 가까운 엣지를 거치게 되고, 애플리케이션 서버의 부하와 지연이 함께 줄어든다. CloudFront를 캐시로 콘텐츠를 빠르게 전달하는 서비스로만 읽으면 \"동적 콘텐츠\"라는 조건에서 이 서비스를 지레 지우게 된다.",
+      "after": "**CloudFront 배포의 오리진은 S3 버킷만이 아니다**. 기존 ALB를 오리진으로 지정한 배포를 만들면 정적·동적 콘텐츠 모두 사용자와 가까운 엣지를 거치게 되고, 애플리케이션 서버의 부하와 지연이 함께 줄어든다. CloudFront를 캐시로 콘텐츠를 빠르게 전달하는 서비스로만 읽으면 \"동적 콘텐츠\"라는 조건에서 이 서비스를 지레 지우게 된다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.eventbridge-event-bus-types",
+      "paragraphIndex": 1,
+      "before": "파트너 이벤트 버스는 성격이 다르다. AWS 밖의 SaaS 공급자가 보내는 이벤트를 받기 위한 통로라, 내 애플리케이션의 주문 이벤트를 여기에 흘리는 구성은 용도가 어긋난다.",
+      "after": "파트너 이벤트 버스는 성격이 다르다. **AWS 밖의 SaaS 공급자가 보내는 이벤트를 받기 위한 통로**라, 내 애플리케이션의 주문 이벤트를 여기에 흘리는 구성은 용도가 어긋난다."
+    },
+    {
+      "conceptId": "sqs-sns-eventbridge.eventbridge-scheduler",
+      "paragraphIndex": 0,
+      "before": "\"평일 업무 시간에만 개발용 RDS를 켜둔다\"와 같은 스케줄 기반 자동화에서 Lambda와 짝을 이뤄 나오는 정석 조합이다.",
+      "after": "\"평일 업무 시간에만 개발용 RDS를 켜둔다\"와 같은 **스케줄 기반 자동화**에서 Lambda와 짝을 이뤄 나오는 정석 조합이다."
+    },
+    {
+      "conceptId": "kinesis-streaming.streaming-services-comparison",
+      "paragraphIndex": 0,
+      "before": "Data Firehose는 데이터를 목적지로 전송·배달하고, Kinesis Data Streams는 데이터를 수집해 스트림 저장소 역할을 한다.",
+      "after": "Data Firehose는 **데이터를 목적지로 전송·배달하고**, Kinesis Data Streams는 **데이터를 수집해 스트림 저장소 역할을 한다**."
+    },
+    {
+      "conceptId": "organizations-cloudtrail-config.organizations-scp",
+      "paragraphIndex": 0,
+      "before": "AWS Organizations는 AWS 분류로는 관리 및 거버넌스(Management and Governance) 쪽 서비스다. SCP(서비스 제어 정책)는 금지 목록을 거는 도구다. 비정상 패턴을 탐지하거나 분석하는 기능은 없으므로, 위협 탐지가 요구인 상황에서는 SCP가 답이 되지 못한다.",
+      "after": "AWS Organizations는 AWS 분류로는 관리 및 거버넌스(Management and Governance) 쪽 서비스다. SCP(서비스 제어 정책)는 **금지 목록을 거는 도구**다. 비정상 패턴을 탐지하거나 분석하는 기능은 없으므로, 위협 탐지가 요구인 상황에서는 SCP가 답이 되지 못한다."
+    },
+    {
+      "conceptId": "governance-iac.control-tower-landing-zone",
+      "paragraphIndex": 1,
+      "before": "그래서 부서마다 계정을 나눠 쓰는 조직에서 계정이 늘어날 때마다 같은 설정을 손으로 되풀이하지 않아도 된다. 계정별로 무엇을 쓸 수 있는지 제한하는 일은 SCP가 맡고, 모든 계정의 루트 사용자에 MFA를 적용하는 것도 이 환경이 걸어 주는 보호 장치에 포함된다. 계정마다 사용자와 역할을 따로 관리하거나 권한 경계로 서비스 제한을 흉내 내는 방식은 중앙에서 통제한다는 목적과 어긋난다.",
+      "after": "그래서 부서마다 계정을 나눠 쓰는 조직에서 **계정이 늘어날 때마다 같은 설정을 손으로 되풀이하지 않아도 된다**. 계정별로 무엇을 쓸 수 있는지 제한하는 일은 SCP가 맡고, 모든 계정의 루트 사용자에 MFA를 적용하는 것도 이 환경이 걸어 주는 보호 장치에 포함된다. 계정마다 사용자와 역할을 따로 관리하거나 권한 경계로 서비스 제한을 흉내 내는 방식은 중앙에서 통제한다는 목적과 어긋난다."
+    },
+    {
+      "conceptId": "cost-management.cost-allocation-tag-activation",
+      "paragraphIndex": 0,
+      "before": "비용 할당 태그는 리소스에 직접 붙이는 사용자 정의 태그로, 부서별로 비용을 나눠 보는 데 쓴다. 순서가 중요하다. 먼저 리소스에 태그를 붙이고, 그다음 결제 콘솔에서 그 사용자 정의 태그를 활성화(Activate)해야 비용 분석 도구에서 쓸 수 있다.",
+      "after": "비용 할당 태그는 리소스에 직접 붙이는 사용자 정의 태그로, 부서별로 비용을 나눠 보는 데 쓴다. 순서가 중요하다. 먼저 리소스에 태그를 붙이고, 그다음 **결제 콘솔에서 그 사용자 정의 태그를 활성화(Activate)해야** 비용 분석 도구에서 쓸 수 있다."
+    },
+    {
+      "conceptId": "identity-federation.identity-center",
+      "paragraphIndex": 0,
+      "before": "AWS IAM Identity Center는 AWS 분류로는 보안·자격 증명·규정 준수(Security, Identity, and Compliance) 쪽 서비스다. 여러 계정의 사용자 인증을 중앙에서 일괄 처리한다. 허용 권한을 미리 정의한 템플릿인 **권한 세트**를 사용자 또는 그룹에 부여해 권한을 인가하며, 그룹을 이용하면 여러 사용자에게 같은 권한을 한 번에 적용할 수 있다.",
+      "after": "AWS IAM Identity Center는 AWS 분류로는 보안·자격 증명·규정 준수(Security, Identity, and Compliance) 쪽 서비스다. **여러 계정의 사용자 인증을 중앙에서 일괄 처리한다**. 허용 권한을 미리 정의한 템플릿인 **권한 세트**를 사용자 또는 그룹에 부여해 권한을 인가하며, 그룹을 이용하면 여러 사용자에게 같은 권한을 한 번에 적용할 수 있다."
+    },
+    {
+      "conceptId": "identity-federation.aws-directory-service",
+      "paragraphIndex": 1,
+      "before": "인증을 어디서 하느냐와 권한을 어떻게 주느냐는 다른 문제다. 기존 인증 소스를 그대로 두고 여러 계정의 접근을 중앙에서 관리하려면 AD Connector로 디렉터리를 잇고 IAM Identity Center의 권한 세트로 계정별 권한을 준다. 개발자마다 IAM 사용자를 만들거나 계정마다 역할을 손으로 배정하는 방식은 관리 부담이 커지고 ID 모델도 약해진다.",
+      "after": "인증을 어디서 하느냐와 권한을 어떻게 주느냐는 다른 문제다. 기존 인증 소스를 그대로 두고 여러 계정의 접근을 중앙에서 관리하려면 **AD Connector로 디렉터리를 잇고** IAM Identity Center의 권한 세트로 계정별 권한을 준다. 개발자마다 IAM 사용자를 만들거나 계정마다 역할을 손으로 배정하는 방식은 관리 부담이 커지고 ID 모델도 약해진다."
+    },
+    {
+      "conceptId": "iam-permissions.cross-account-iam-role",
+      "paragraphIndex": 0,
+      "before": "여러 계정에서 실행되는 워크로드가 한 계정의 자원에 접근해야 할 때, 접근 키를 만들어 나눠 주는 방식은 장기 자격 증명이 흩어진다. 대신 자원이 있는 계정에 역할을 만들고 그 역할의 신뢰 정책에 접근을 허용할 주체를 적는다. 그 주체가 역할을 맡으면 임시 자격 증명으로 일하게 되므로 접근이 일시적이고, 감사할 수 있고, 한곳에서 통제된다.",
+      "after": "여러 계정에서 실행되는 워크로드가 한 계정의 자원에 접근해야 할 때, 접근 키를 만들어 나눠 주는 방식은 장기 자격 증명이 흩어진다. 대신 자원이 있는 계정에 역할을 만들고 그 역할의 **신뢰 정책에 접근을 허용할 주체를 적는다**. 그 주체가 역할을 맡으면 임시 자격 증명으로 일하게 되므로 접근이 일시적이고, 감사할 수 있고, 한곳에서 통제된다."
+    },
+    {
+      "conceptId": "iam-permissions.iam-role",
+      "paragraphIndex": 0,
+      "before": "IAM 역할은 원래 접근 권한이 없는 사용자나 서비스가 AWS 리소스에 접근하도록 권한을 맡긴다. 액세스 키 같은 자격 증명을 서로 건넬 필요가 없고, 필요할 때 언제든 역할을 해제할 수 있다. 역할에는 액세스 키가 없으며, 역할을 맡은 쪽은 임시 자격 증명을 받아 쓴다.",
+      "after": "IAM 역할은 원래 접근 권한이 없는 사용자나 서비스가 AWS 리소스에 접근하도록 권한을 맡긴다. 액세스 키 같은 자격 증명을 서로 건넬 필요가 없고, 필요할 때 언제든 역할을 해제할 수 있다. 역할에는 액세스 키가 없으며, **역할을 맡은 쪽은 임시 자격 증명을 받아 쓴다**."
+    },
+    {
+      "conceptId": "identity-federation.sts-assume-role",
+      "paragraphIndex": 0,
+      "before": "온프레미스 애플리케이션이 S3에 로그를 올려야 하는데 장기 자격 증명을 쓸 수 없다면, STS로 역할을 맡아(AssumeRole) 유효 기간이 있는 임시 자격 증명을 받는다.",
+      "after": "온프레미스 애플리케이션이 S3에 로그를 올려야 하는데 장기 자격 증명을 쓸 수 없다면, STS로 역할을 맡아(AssumeRole) **유효 기간이 있는 임시 자격 증명**을 받는다."
+    },
+    {
+      "conceptId": "backup-disaster-recovery.backup",
+      "paragraphIndex": 0,
+      "before": "AWS Backup은 AWS 분류로는 스토리지(Storage) 쪽 서비스다. 서비스별 백업 작업을 한곳에서 자동화하고 관리할 수 있게 한다.",
+      "after": "AWS Backup은 AWS 분류로는 스토리지(Storage) 쪽 서비스다. **서비스별 백업 작업을 한곳에서 자동화하고 관리**할 수 있게 한다."
+    }
+  ],
+  "newConcepts": [
+    {
+      "topic": "rds-storage-features",
+      "after": "rds-storage-features.features",
+      "concept": {
+        "id": "rds-storage-features.multi-az-vs-read-replica",
+        "parentId": "rds-storage-features.features",
+        "name": "다중 AZ 배포 vs 읽기 전용 복제본",
+        "summary": "장애에 대비하는 것은 다중 AZ 배포이고, 읽기 부하를 나누는 것은 읽기 전용 복제본이다.",
+        "paragraphs": [
+          "두 기능 모두 DB의 복제본을 하나 더 두지만, 그 복제본이 하는 일이 다르다.",
+          "- **다중 AZ 배포**(Multi-AZ Deployment)는 대기 DB를 마련해 두었다가 주 DB에 장애가 나면 대기 DB가 주 DB 역할을 자동으로 넘겨받게 한다. 대기 DB는 평소에 요청을 처리하지 않으므로 읽기 성능은 오르지 않는다.",
+          "- **읽기 전용 복제본**(Read Replica)은 읽기 요청을 맡는 DB를 더해 주 DB에 걸리는 부하를 덜어 준다. 주 DB는 쓰기에 집중하고, 복제는 비동기로 따라간다.",
+          "그래서 **장애 조치는 다중 AZ 배포, 읽기 분산은 읽기 전용 복제본**으로 가른다. 둘을 함께 얻으려면 대기 DB가 읽기도 받는 다중 AZ DB 클러스터 배포를 쓴다."
+        ]
+      }
+    },
+    {
+      "topic": "efs-fsx",
+      "after": "efs-fsx.efs",
+      "concept": {
+        "id": "efs-fsx.efs-vs-ebs",
+        "parentId": "efs-fsx.efs",
+        "name": "EFS vs EBS",
+        "summary": "인스턴스 한 대에 디스크처럼 붙이면 EBS이고, 여러 인스턴스가 같은 파일을 함께 쓰면 EFS다.",
+        "paragraphs": [
+          "둘 다 EC2에 저장 공간을 주지만, 몇 대가 함께 쓰는지와 어디까지 닿는지가 다르다.",
+          "- **EBS**(Elastic Block Store)는 외장 디스크처럼 인스턴스에 붙이는 블록 스토리지다. 하나의 가용 영역 안에서 동작하고, 보통 인스턴스 한 대에 붙는다.",
+          "- **EFS**(Elastic File System)는 여러 인스턴스가 NFS로 같은 파일 시스템에 동시에 접근하는 파일 스토리지다. 여러 가용 영역에서 동작할 수 있고, 파일이 늘어나면 용량도 따라 커진다.",
+          "그래서 **여러 인스턴스나 여러 가용 영역이 같은 파일을 공유해야 하면 EFS**를 고르고, 인스턴스 한 대의 디스크면 EBS로 충분하다."
+        ]
+      }
+    },
+    {
+      "topic": "sqs-sns-eventbridge",
+      "after": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
+      "concept": {
+        "id": "sqs-sns-eventbridge.eventbridge-vs-sns",
+        "parentId": "sqs-sns-eventbridge.eventbridge",
+        "name": "EventBridge vs SNS",
+        "summary": "규칙으로 이벤트를 골라 대상에 보내는 것은 EventBridge이고, 메시지 하나를 구독자 여럿에게 한꺼번에 보내는 것은 SNS다.",
+        "paragraphs": [
+          "두 서비스 모두 이벤트나 메시지를 다른 서비스로 넘기지만, 무엇을 기준으로 보내는지가 다르다.",
+          "- **EventBridge**는 이벤트 패턴으로 규칙을 걸어, 조건에 맞는 이벤트만 골라 대상으로 보낸다. AWS 밖의 SaaS 공급자가 보내는 이벤트는 파트너 이벤트 버스로 받고, 정해진 시각에 작업을 실행하는 일은 EventBridge Scheduler가 맡는다.",
+          "- **SNS**는 주제에 발행된 메시지를 구독자 전부에게 즉시 밀어낸다. 소비자마다 큐를 하나씩 주제에 구독시키면 모든 소비자가 같은 이벤트를 받는 팬아웃이 된다.",
+          "그래서 **SaaS 이벤트를 받거나, 조건으로 골라 보내거나, 시각에 맞춰 실행하면 EventBridge**이고, **같은 메시지를 여러 곳에 한꺼번에 보내면 SNS**다."
+        ]
+      }
+    },
+    {
+      "topic": "cost-management",
+      "after": "cost-management.savings-plan",
+      "concept": {
+        "id": "cost-management.compute-vs-ec2-instance-savings-plans",
+        "parentId": "cost-management.savings-plan",
+        "name": "컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜",
+        "summary": "여러 컴퓨팅 서비스와 리전에 걸쳐 유연하게 쓰려면 컴퓨팅 절약 플랜이고, 한 리전의 한 인스턴스 제품군에 묶이는 대신 할인을 더 받으려면 EC2 인스턴스 절약 플랜이다.",
+        "paragraphs": [
+          "두 유형 모두 1년이나 3년 동안 시간당 사용량을 약정하고 할인을 받는다. 무엇에 묶이는지가 다르다.",
+          "- **컴퓨팅 절약 플랜**(Compute Savings Plan)은 인스턴스 제품군·크기·리전·운영 체제가 바뀌어도 EC2 사용량에 할인이 적용되고, Fargate와 Lambda 사용량에도 적용된다. 할인 폭은 온디맨드 요금보다 최대 66% 낮다.",
+          "- **EC2 인스턴스 절약 플랜**(EC2 Instance Savings Plan)은 한 리전의 한 인스턴스 제품군에 약정한다. 그 제품군 안에서는 크기와 운영 체제를 바꿔도 할인이 이어지고, 할인 폭은 온디맨드 요금보다 최대 72% 낮아 더 크다.",
+          "그래서 **EC2와 Fargate·Lambda를 섞어 쓰거나 리전·제품군을 옮길 수 있으면 컴퓨팅 절약 플랜**이고, **한 제품군을 한 리전에서 계속 쓸 것이 확실하면 EC2 인스턴스 절약 플랜**이다."
+        ]
+      }
+    }
+  ],
+  "newQuestions": [
+    {
+      "id": "q743",
+      "topicId": "rds-storage-features",
+      "conceptId": "rds-storage-features.multi-az-vs-read-replica",
+      "prompt": "RDS를 쓰는 서비스에서 보고서 조회가 늘어 주 DB의 읽기 부하가 커졌다. 장애에 대비한 다중 AZ 배포는 이미 켜 두었다. 주 DB의 읽기 부하를 덜려면 무엇을 해야 하는가?",
+      "choices": [
+        "다중 AZ 배포의 대기 DB로 조회 쿼리를 보낸다",
+        "RDS Proxy를 애플리케이션과 DB 사이에 둔다",
+        "읽기 전용 복제본을 만들어 조회 쿼리를 그쪽으로 보낸다",
+        "블루/그린 배포로 그린 환경을 만들어 조회를 넘긴다"
+      ],
+      "answerIndex": 2,
+      "explanation": "다중 AZ(Availability Zone) 배포는 대기 DB를 마련해 두었다가 주 DB에 장애가 나면 넘겨받게 하는 고가용성 기능이고, 대기 DB는 평소에 요청을 처리하지 않는다. 그래서 조회를 대기 DB로 보낼 수 없고, 다중 AZ 배포를 켜도 읽기 성능은 오르지 않는다. 읽기 부하를 나누는 것은 읽기 전용 복제본이다. 읽기 요청을 맡는 DB를 더하면 주 DB는 쓰기에 집중하고, 복제는 비동기로 따라간다. RDS(Relational Database Service) Proxy는 애플리케이션과 DB 사이에서 연결을 재사용해 연결 수 문제를 푸는 도구라 읽기를 나누지 않는다. 블루/그린 배포는 스테이징 환경에서 변경을 검증한 뒤 운영으로 전환하는 방식이라 평소의 조회 부하와는 관계가 없다."
+    },
+    {
+      "id": "q744",
+      "topicId": "sqs-sns-eventbridge",
+      "conceptId": "sqs-sns-eventbridge.eventbridge-vs-sns",
+      "prompt": "회사가 쓰는 외부 SaaS 서비스가 고객 정보가 바뀔 때마다 이벤트를 보낸다. 이 이벤트를 AWS 계정에서 받아, 정해 둔 규칙에 맞는 것만 골라 Lambda 함수로 넘기려 한다. 어떤 서비스를 쓰는가?",
+      "choices": [
+        "Amazon SNS",
+        "Amazon EventBridge",
+        "Amazon SQS",
+        "AWS Step Functions"
+      ],
+      "answerIndex": 1,
+      "explanation": "EventBridge는 이벤트 패턴으로 규칙을 걸어 조건에 맞는 이벤트만 골라 대상으로 보내는 서비스이고, AWS 밖의 SaaS 공급자가 보내는 이벤트는 파트너 이벤트 버스로 받는다. 그래서 SaaS 이벤트를 받아 규칙으로 골라 Lambda 함수로 넘기는 일은 EventBridge가 맡는다. SNS(Simple Notification Service)는 주제에 발행된 메시지를 구독자 전부에게 즉시 밀어내는 발행-구독 서비스라, 같은 메시지를 여러 곳에 한꺼번에 보낼 때 쓴다. SQS(Simple Queue Service)는 메시지를 쌓아 두었다가 소비자가 꺼내 가게 하는 대기열이고, Step Functions는 여러 단계 작업의 진행 상태를 중앙에서 추적하는 워크플로 서비스라 외부 SaaS의 이벤트를 받는 통로가 아니다."
+    },
+    {
+      "id": "q745",
+      "topicId": "efs-fsx",
+      "conceptId": "efs-fsx.efs-vs-ebs",
+      "prompt": "여러 가용 영역에 나뉘어 있는 EC2 인스턴스 열 대가 같은 이미지 파일들을 함께 읽고 써야 한다. 인스턴스마다 파일을 따로 복사해 두지 않고 저장 공간 하나를 함께 쓰려면 무엇을 쓰는가?",
+      "choices": [
+        "EBS 볼륨",
+        "인스턴스 스토어",
+        "EBS 스냅샷",
+        "EFS 파일 시스템"
+      ],
+      "answerIndex": 3,
+      "explanation": "EFS(Elastic File System)는 여러 인스턴스가 NFS(Network File System)로 같은 파일 시스템에 동시에 접근하는 파일 스토리지이고, 여러 가용 영역에서 동작할 수 있다. 그래서 여러 가용 영역의 인스턴스가 같은 파일을 함께 써야 하면 EFS다. EBS(Elastic Block Store) 볼륨은 외장 디스크처럼 인스턴스에 붙이는 블록 스토리지라 하나의 가용 영역 안에서 동작하고, 보통 인스턴스 한 대에 붙어 여러 대가 함께 쓰는 파일 시스템이 되지 않는다. 인스턴스 스토어는 인스턴스가 멈추면 내용이 사라지는 임시 디스크이고, EBS 스냅샷은 볼륨을 백업해 둔 사본이지 여러 인스턴스가 함께 쓰는 저장 공간이 아니다."
+    },
+    {
+      "id": "q746",
+      "topicId": "cost-management",
+      "conceptId": "cost-management.compute-vs-ec2-instance-savings-plans",
+      "prompt": "회사가 EC2 인스턴스와 함께 Fargate 태스크와 Lambda 함수를 1년 내내 꾸준히 실행한다. 1년 약정으로 실행 요금을 줄이려 하고, 내년에는 일부 워크로드를 다른 리전으로 옮길 계획도 있다. 어떤 약정이 맞는가?",
+      "choices": [
+        "EC2 인스턴스 절약 플랜",
+        "표준 예약 인스턴스",
+        "온디맨드 용량 예약",
+        "컴퓨팅 절약 플랜"
+      ],
+      "answerIndex": 3,
+      "explanation": "컴퓨팅 절약 플랜은 인스턴스 제품군·크기·리전·운영 체제가 바뀌어도 EC2(Elastic Compute Cloud) 사용량에 할인이 적용되고 Fargate와 Lambda 사용량에도 적용되는 가장 유연한 약정이다. EC2와 Fargate·Lambda를 섞어 쓰고 리전도 옮길 계획이면 이쪽이다. EC2 인스턴스 절약 플랜은 한 리전의 한 인스턴스 제품군에 약정하는 대신 할인 폭이 더 크지만(온디맨드보다 최대 72% 낮고, 컴퓨팅 절약 플랜은 최대 66% 낮다), Fargate와 Lambda에는 적용되지 않고 다른 리전으로 옮긴 사용량에는 할인이 이어지지 않는다. 표준 예약 인스턴스는 EC2 인스턴스에 거는 약정이라 Fargate와 Lambda 사용량을 덮지 못하고, 온디맨드 용량 예약은 필요한 시점에 용량을 확보해 두는 기능이지 요금을 깎는 수단이 아니다."
+    }
+  ]
+}

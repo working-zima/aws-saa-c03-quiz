@@ -329,6 +329,10 @@
       "dir": "65-roles-anywhere-steps",
       "status": "completed",
       "completed_at": "2026-10-22T10:26:50+0900"
+    },
+    {
+      "dir": "66-exam-emphasis",
+      "status": "pending"
     }
   ]
 }
