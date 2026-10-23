@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Question, Topic } from '../types/content'
@@ -110,8 +110,14 @@ function renderPage(
   return { ...result, markRead }
 }
 
+function scrollWindowTo(y: number) {
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: y })
+  fireEvent.scroll(window)
+}
+
 afterEach(() => {
   vi.restoreAllMocks()
+  Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 })
 })
 
 describe('ConceptReadPage', () => {
@@ -153,6 +159,38 @@ describe('ConceptReadPage', () => {
     expect(actionBar).toHaveClass('-mx-5', 'px-5', 'sm:mx-0', 'sm:px-0')
     expect(actionBar).not.toHaveClass('sm:-mx-8')
     expect(container.querySelector('section')?.lastElementChild).toBe(actionBar)
+  })
+
+  it('모바일 폭에서 아래로 스크롤하면 하단 바의 고정을 풀고, 위로 스크롤하면 다시 고정한다', () => {
+    renderPage('/topic/storage-topic')
+    const actionBar = screen.getByRole('link', { name: '확인 문제 풀기' }).parentElement?.parentElement
+
+    expect(actionBar).not.toHaveClass('max-sm:static')
+    scrollWindowTo(100)
+    scrollWindowTo(300)
+    expect(actionBar).toHaveClass('sticky', 'max-sm:static')
+    scrollWindowTo(200)
+    expect(actionBar).not.toHaveClass('max-sm:static')
+  })
+
+  it('화면에 들어온 직후의 첫 스크롤은 아래로 움직여도 하단 바의 고정을 풀지 않는다', () => {
+    renderPage('/topic/storage-topic')
+    const actionBar = screen.getByRole('link', { name: '확인 문제 풀기' }).parentElement?.parentElement
+
+    // 뒤로 가기로 돌아오면 브라우저가 떠날 때의 위치로 스크롤을 되돌린다.
+    scrollWindowTo(1800)
+    expect(actionBar).not.toHaveClass('max-sm:static')
+  })
+
+  it('맨 위에서 튕겨 돌아오는 스크롤은 아래로 움직여도 하단 바의 고정을 풀지 않는다', () => {
+    renderPage('/topic/storage-topic')
+    const actionBar = screen.getByRole('link', { name: '확인 문제 풀기' }).parentElement?.parentElement
+
+    scrollWindowTo(300)
+    scrollWindowTo(400)
+    scrollWindowTo(-30)
+    scrollWindowTo(0)
+    expect(actionBar).not.toHaveClass('max-sm:static')
   })
 
   it('가운데 주제에서 이전·다음 주제 링크와 확인 문제 링크를 렌더한다', () => {
