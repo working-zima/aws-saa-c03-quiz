@@ -2627,6 +2627,9 @@ hybrid-connectivity, secrets-encryption, waf-shield, guardduty-macie-inspector, 
 
 **기준 4 — 「A vs B」 제목**: 개념이 **같은 자리에 놓이는 두 대안 가운데 무엇을 고르는가**를 다루면 제목을 「A vs B」로 쓴다. 기존 제목의 낱말은 그대로
 두고 「A와 B」·「A와 B의 갈림길」·「A와 B의 차이」·「A와 B 중 고르기」의 연결만 ` vs `로 바꾼다(예외: 「계층으로 나뉘는 ALB와 NLB」 → 「ALB vs NLB」).
+**뒤에 「의 …」가 붙는 제목은 그 축을 앞으로 빼 「축: A vs B」로 쓴다** — 「REST API vs HTTP API의 통합 타임아웃」은 「의 통합 타임아웃」이 오른쪽 대안에만
+걸린 것처럼 읽혔다. 그래서 「통합 타임아웃: REST API vs HTTP API」, 「자동 키 교체: KMS 대칭 키 vs 비대칭 키」로 고쳤다(phase 66 후속, 사용자 승인
+2026-10-23). 이미 있던 「로그 분석 선택지: OpenSearch vs CloudWatch Logs Insights」와 같은 꼴이다. `changes.json`의 `renames`는 step 3이 적용한 그대로 둔다.
 ADR-030 기준 1(명사구)에 맞는다. 바꾸지 않는 것은 넷이다.
 - 함께 쓰이거나 서로를 담는 관계 — DMS와 SCT, AMI와 시작 템플릿, AWS Organizations와 SCP, AWS Directory Service와 AD Connector.
 - 한 축의 관계나 조건을 말하는 제목 — 가시성 타임아웃과 소비자의 처리 시간, CloudFront TTL과 캐시 무효화의 관계, 캐시가 효과를 내지 못하는 조건.

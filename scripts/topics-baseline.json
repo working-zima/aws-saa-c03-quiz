@@ -1674,7 +1674,7 @@
     {
      "id": "api-gateway-step-functions.api-gateway-rest-vs-http-timeout",
      "parentId": "api-gateway-step-functions.api-gateway",
-     "name": "REST API vs HTTP API의 통합 타임아웃"
+     "name": "통합 타임아웃: REST API vs HTTP API"
     },
     {
      "id": "api-gateway-step-functions.api-gateway-rest-only-features",
@@ -2696,7 +2696,7 @@
     {
      "id": "secrets-encryption.kms-symmetric-vs-asymmetric-rotation",
      "parentId": "secrets-encryption.kms",
-     "name": "KMS 대칭 키 vs 비대칭 키의 자동 교체"
+     "name": "자동 키 교체: KMS 대칭 키 vs 비대칭 키"
     },
     {
      "id": "secrets-encryption.imported-key-material-rotation",
