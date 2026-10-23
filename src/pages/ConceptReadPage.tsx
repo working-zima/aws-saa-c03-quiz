@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ConceptList } from '../components/ConceptList'
 import { questions as defaultQuestions, topics as defaultTopics, visualsByTopicId } from '../data'
@@ -55,6 +55,21 @@ export function ConceptReadPage({ topics = defaultTopics, questions = defaultQue
     document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView()
   }, [hash])
 
+  // iOS 26 Safari는 툴바가 접혀도 하단 sticky 요소를 따라 내리지 않아 바 밑에 본문이 비친다(ADR-052).
+  // 툴바처럼 내릴 때 숨기고 올릴 때 보인다. 맨 위에서 튕기는 스크롤(음수 → 0)은 내림으로 치지 않는다.
+  // 들어온 직후의 첫 스크롤은 브라우저·`Layout`이 옮긴 것(뒤로 가기의 위치 복원, 맨 위로, 앵커)이라 기준점으로만 쓴다.
+  const [scrollingDown, setScrollingDown] = useState(false)
+  useEffect(() => {
+    let lastY: number | null = null
+    function handleScroll() {
+      const y = window.scrollY
+      if (lastY !== null && y !== lastY) setScrollingDown(y > 0 && y > lastY)
+      lastY = y
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   if (!topic) {
     return (
       <section className="max-w-2xl space-y-8 break-keep break-anywhere">
@@ -95,7 +110,7 @@ export function ConceptReadPage({ topics = defaultTopics, questions = defaultQue
         <p className="text-[15px] leading-7 text-muted">이 주제의 확인 문제는 준비 중입니다.</p>
       )}
 
-      <div className="sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0">
+      <div className={`sticky bottom-0 -mx-5 border-t border-border bg-page px-5 py-3 sm:mx-0 sm:px-0 ${scrollingDown ? 'max-sm:static' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           {prev ? (
             <Link aria-label="이전 주제" className={ghostLinkClass} to={`/topic/${prev.id}`}>
