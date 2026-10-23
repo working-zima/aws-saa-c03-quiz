@@ -7,7 +7,8 @@
       "name": "topic-importance",
       "status": "completed",
       "started_at": "2026-10-23T14:47:23+0900",
-      "summary": "주제 별점을 노션 우선순위로 다시 매김: 3→2 열넷(ebs-instance-store·efs-fsx·data-transfer-services·storage-gateway-migration·dynamodb·elasticache-purpose-built-db·ecs-eks-fargate·api-gateway-step-functions·backup-disaster-recovery·hybrid-connectivity·secrets-encryption·waf-shield·guardduty-macie-inspector·organizations-cloudtrail-config), 2→3 하나(route53) → ★★★ 15·★★☆ 23. topics.json·topics-baseline.json 각 15줄. tests-importance.patch 적용 후 별점 표 단언 셋(39개 주제 메타데이터·보안·운영 주제·네트워크 주제)만 실패하는 것을 확인했고, 적용 뒤 전체 2697개 통과·check-structure·sync-baseline·verify-content --through A 통과"
+      "summary": "주제 별점을 노션 우선순위로 다시 매김: 3→2 열넷(ebs-instance-store·efs-fsx·data-transfer-services·storage-gateway-migration·dynamodb·elasticache-purpose-built-db·ecs-eks-fargate·api-gateway-step-functions·backup-disaster-recovery·hybrid-connectivity·secrets-encryption·waf-shield·guardduty-macie-inspector·organizations-cloudtrail-config), 2→3 하나(route53) → ★★★ 15·★★☆ 23. topics.json·topics-baseline.json 각 15줄. tests-importance.patch 적용 후 별점 표 단언 셋(39개 주제 메타데이터·보안·운영 주제·네트워크 주제)만 실패하는 것을 확인했고, 적용 뒤 전체 2697개 통과·check-structure·sync-baseline·verify-content --through A 통과",
+      "completed_at": "2026-10-23T14:49:56+0900"
     },
     {
       "step": 1,
