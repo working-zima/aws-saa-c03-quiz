@@ -364,7 +364,7 @@
   {
    "id": "ebs-instance-store",
    "title": "EBS·인스턴스 스토어·스냅샷·배치 그룹",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     14,
     15
@@ -451,7 +451,7 @@
   {
    "id": "efs-fsx",
    "title": "EFS·FSx(Windows·Lustre·ONTAP)",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     14,
     15
@@ -586,7 +586,7 @@
   {
    "id": "data-transfer-services",
    "title": "DataSync·Snowball Edge·Transfer Family·S3 전송",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     16,
     18
@@ -688,7 +688,7 @@
   {
    "id": "storage-gateway-migration",
    "title": "Storage Gateway·DMS·Application Migration Service",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     16,
     18
@@ -931,7 +931,7 @@
   {
    "id": "dynamodb",
    "title": "DynamoDB",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     21,
     21
@@ -1023,7 +1023,7 @@
   {
    "id": "elasticache-purpose-built-db",
    "title": "ElastiCache·DAX·Neptune·DocumentDB·QLDB·Timestream",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     21,
     21
@@ -1514,7 +1514,7 @@
   {
    "id": "ecs-eks-fargate",
    "title": "ECS·EKS·Fargate·Batch·ECR·Elastic Beanstalk",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     25,
     26
@@ -1646,7 +1646,7 @@
   {
    "id": "api-gateway-step-functions",
    "title": "API Gateway·Step Functions",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     25,
     26
@@ -1922,7 +1922,7 @@
   {
    "id": "backup-disaster-recovery",
    "title": "AWS Backup·재해 복구 전략·Elastic Disaster Recovery",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     27,
     29
@@ -2143,7 +2143,7 @@
   {
    "id": "hybrid-connectivity",
    "title": "Site-to-Site VPN·Direct Connect·Transit Gateway",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     34,
     35
@@ -2238,7 +2238,7 @@
   {
    "id": "route53",
    "title": "Route 53",
-   "importance": 2,
+   "importance": 3,
    "sourcePages": [
     36,
     37
@@ -2622,7 +2622,7 @@
   {
    "id": "secrets-encryption",
    "title": "Secrets Manager·Parameter Store·KMS·ACM·CloudHSM",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     44,
     44
@@ -2726,7 +2726,7 @@
   {
    "id": "waf-shield",
    "title": "WAF·Shield·Firewall Manager",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     45,
     47
@@ -2808,7 +2808,7 @@
   {
    "id": "guardduty-macie-inspector",
    "title": "GuardDuty·Macie·Inspector·Security Hub",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     45,
     47
@@ -3048,7 +3048,7 @@
   {
    "id": "organizations-cloudtrail-config",
    "title": "Organizations·SCP·CloudTrail·Config·Audit Manager",
-   "importance": 3,
+   "importance": 2,
    "sourcePages": [
     48,
     49
