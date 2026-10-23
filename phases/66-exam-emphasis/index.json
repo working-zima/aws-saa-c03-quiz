@@ -13,7 +13,9 @@
     {
       "step": 1,
       "name": "core-emphasis",
-      "status": "pending"
+      "status": "completed",
+      "started_at": "2026-10-23T14:49:56+0900",
+      "summary": "노션 핵심의 판단 구절을 개념 본문에서 **…**로 감쌈(changes.json emphasis 그대로, 표지만 더함): topics.json 개념 줄 78개·문단 89개. tests-emphasis.patch 적용 후 문단 전체를 toBe로 못박은 단언 둘(Lambda 예약된 동시성 셋째 문단, WAF 셋째 문단)만 실패하는 것을 확인했고(비교표 테스트는 적용 전에도 통과), 적용 뒤 전체 2697개 통과·build·lint·check-structure·sync-baseline·verify-content --through B·coverage 636개념 100% 통과"
     },
     {
       "step": 2,

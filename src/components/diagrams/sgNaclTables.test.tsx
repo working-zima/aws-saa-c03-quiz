@@ -83,7 +83,8 @@ describe('보안 그룹과 NACL 비교표', () => {
     expect(article).toHaveAttribute('id', concept.id)
     expect(within(article).getByRole('heading', { level: headingLevel, name: concept.name })).toBeInTheDocument()
     expect(screen.getAllByRole('figure')).toEqual([boundary, table])
-    expect(boundary.previousElementSibling?.textContent).toBe(concept.paragraphs.join(''))
+    // 본문의 `**강조**` 표지는 <strong>이 되어 textContent에 남지 않는다(ADR-051).
+    expect(boundary.previousElementSibling?.textContent).toBe(concept.paragraphs.join('').split('**').join(''))
     expect(boundary.nextElementSibling).toBe(table)
     expect(article.lastElementChild).toBe(table)
   })
