@@ -1,7 +1,7 @@
 {
  "note": "현재 구조 스냅샷. scripts/check-structure.mjs가 이것과 대조한다. 개념 본문(summary·paragraphs)은 검사 대상이 아니다. 개념을 나누거나 문항을 고치는 등 구조를 의도적으로 바꿨다면 이 파일을 함께 갱신한다.",
- "conceptLineCount": 636,
- "questionsSha256": "f78246abcc11f43b2c08b0bbd9eb1776a1ee88ad656ab32aeb93db77892c3dc3",
+ "conceptLineCount": 640,
+ "questionsSha256": "fd90c55e99cf6b60b5457619117513a2573471463ea0d9fcb5da3ddff00dc573",
  "topics": [
   {
    "id": "aws-core-services",
@@ -462,6 +462,11 @@
      "name": "EFS (Elastic File System)"
     },
     {
+     "id": "efs-fsx.efs-vs-ebs",
+     "parentId": "efs-fsx.efs",
+     "name": "EFS vs EBS"
+    },
+    {
      "id": "efs-fsx.efs-throughput-modes",
      "parentId": "efs-fsx.efs",
      "name": "EFS의 버스팅 처리량 vs 프로비저닝된 처리량"
@@ -753,6 +758,11 @@
     {
      "id": "rds-storage-features.features",
      "name": "RDS 기능"
+    },
+    {
+     "id": "rds-storage-features.multi-az-vs-read-replica",
+     "parentId": "rds-storage-features.features",
+     "name": "다중 AZ 배포 vs 읽기 전용 복제본"
     },
     {
      "id": "rds-storage-features.multi-az-standby-limits",
@@ -1868,6 +1878,11 @@
      "id": "sqs-sns-eventbridge.eventbridge-vs-step-functions",
      "parentId": "sqs-sns-eventbridge.eventbridge",
      "name": "이벤트 라우팅 vs 워크플로 오케스트레이션"
+    },
+    {
+     "id": "sqs-sns-eventbridge.eventbridge-vs-sns",
+     "parentId": "sqs-sns-eventbridge.eventbridge",
+     "name": "EventBridge vs SNS"
     },
     {
      "id": "sqs-sns-eventbridge.eventbridge-ordering-and-retention",
@@ -3144,6 +3159,11 @@
     {
      "id": "cost-management.savings-plan",
      "name": "절약 플랜 (Savings Plan)"
+    },
+    {
+     "id": "cost-management.compute-vs-ec2-instance-savings-plans",
+     "parentId": "cost-management.savings-plan",
+     "name": "컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜"
     },
     {
      "id": "cost-management.savings-plan-details",

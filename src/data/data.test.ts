@@ -2608,8 +2608,9 @@ describe('학습 데이터 무결성', () => {
     // phase 54가 iam-permissions에 IAM 사용자·IAM 역할의 기본 개념 둘을 더해 18이 20이 됐다(ADR-041 개정).
     // phase 55가 IAM 정책·루트 사용자와 Systems Manager의 기본 개념을 더해 iam-permissions가 22, systems-manager가 8이 됐다(ADR-043).
     // phase 65가 STS 아래에 IAM Roles Anywhere 19단계 개념을 더해 identity-federation이 12가 됐다(ADR-050).
+    // phase 66이 절약 플랜 아래에 컴퓨팅 절약 플랜 vs EC2 인스턴스 절약 플랜을 더해 cost-management가 18이 됐다(ADR-051).
     expect(topics.slice(24, 39).map((topic) => topic.concepts.length)).toEqual([
-      13, 20, 16, 11, 11, 20, 15, 11, 22, 12, 16, 17, 7, 8, 6,
+      13, 20, 16, 11, 11, 20, 15, 11, 22, 12, 16, 18, 7, 8, 6,
     ])
   })
 
@@ -2668,8 +2669,10 @@ describe('학습 데이터 무결성', () => {
     // phase 55가 기본 개념을 더해 rds-storage-features가 22(자동 백업과 DB 스냅샷), ec2-autoscaling이 21(인스턴스 유형과
     // 제품군), backup-disaster-recovery가 12(재해 복구 전략)가 됐다(ADR-043).
     // phase 64가 주제 맨 앞에 컨테이너와 오케스트레이션의 기본 개념 둘을 더해 ecs-eks-fargate가 24에서 26이 됐다(ADR-049).
+    // phase 66이 vs 개념을 더해 rds-storage-features가 23(다중 AZ 배포 vs 읽기 전용 복제본), sqs-sns-eventbridge가
+    // 34(EventBridge vs SNS)가 됐다(ADR-051).
     expect(topics.slice(9, 24).map((topic) => topic.concepts.length)).toEqual([
-      22, 18, 18, 14, 21, 18, 24, 18, 26, 20, 33, 12, 20, 9, 19,
+      23, 18, 18, 14, 21, 18, 24, 18, 26, 20, 34, 12, 20, 9, 19,
     ])
   })
 
@@ -3189,6 +3192,7 @@ describe('학습 데이터 무결성', () => {
     // FSx File Gateway: FSx 파일 시스템이 아니라 온프레미스 쪽 접점이라 FSx 종류를 다 본 뒤에 둔다.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'efs-fsx.efs',
+      'efs-fsx.efs-vs-ebs',
       'efs-fsx.efs-throughput-modes',
       'efs-fsx.efs-elastic-throughput',
       'efs-fsx.efs-performance-modes',
@@ -3302,6 +3306,7 @@ describe('학습 데이터 무결성', () => {
       'rds-storage-features.storage-types',
       'rds-storage-features.storage-type-names',
       'rds-storage-features.features',
+      'rds-storage-features.multi-az-vs-read-replica',
       'rds-storage-features.multi-az-standby-limits',
       'rds-storage-features.rds-multi-az-db-cluster',
       'rds-storage-features.rds-multi-az-failover-rto',
@@ -3825,7 +3830,7 @@ describe('학습 데이터 무결성', () => {
     // SNS: 기본 → FIFO 주제 → 본문 재작성 제약 → 암호화된 주제의 게시 권한.
     // SQS와 SNS의 조합: 버퍼인가 발행-구독인가, 소비자마다 큐를 두는 팬아웃, 계정 간 발행. 두 서비스를
     //   가르거나 함께 쓰는 개념이라 두 블록 뒤에 둔다.
-    // EventBridge: 기본 → Scheduler → Step Functions와의 갈림길 → 보장하지 않는 것·이벤트 패턴·
+    // EventBridge: 기본 → Scheduler → Step Functions와의 갈림길 → SNS와의 갈림길(phase 66, ADR-051) → 보장하지 않는 것·이벤트 패턴·
     //   버스·파이프·대상·리소스 변경 규칙.
     // Amazon MQ. SES: 기본 → 수신 규칙.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
@@ -3852,6 +3857,7 @@ describe('학습 데이터 무결성', () => {
       'sqs-sns-eventbridge.eventbridge',
       'sqs-sns-eventbridge.eventbridge-scheduler',
       'sqs-sns-eventbridge.eventbridge-vs-step-functions',
+      'sqs-sns-eventbridge.eventbridge-vs-sns',
       'sqs-sns-eventbridge.eventbridge-ordering-and-retention',
       'sqs-sns-eventbridge.eventbridge-event-pattern-vs-polling',
       'sqs-sns-eventbridge.eventbridge-event-bus-types',
@@ -4967,6 +4973,7 @@ describe('학습 데이터 무결성', () => {
     // Cost Explorer·Budgets와 대비하므로 둘 뒤.
     expect(topic?.concepts.map((concept) => concept.id)).toEqual([
       'cost-management.savings-plan',
+      'cost-management.compute-vs-ec2-instance-savings-plans',
       'cost-management.savings-plan-details',
       'cost-management.savings-plan-baseline-vs-spike',
       'cost-management.rds-reserved-instance',
@@ -6858,16 +6865,18 @@ describe('ADR-046 — 개념 본문 목록', () => {
     })
   })
 
-  it('목록이 있는 개념은 이 21개뿐이다', () => {
-    // 목록을 늘리려면 ADR-046의 기준과 표를 먼저 고친다.
+  it('목록이 있는 개념은 이 25개뿐이다', () => {
+    // 목록을 늘리려면 ADR-046의 기준과 표를 먼저 고친다. phase 66이 vs 개념 넷을 더했다(ADR-051).
     const conceptsWithLists = [
       'backup-disaster-recovery.dr-strategies',
+      'cost-management.compute-vs-ec2-instance-savings-plans',
       'dynamodb.dynamodb',
       'ebs-instance-store.ebs-volume-type-names',
       'ebs-instance-store.placement-groups',
       'ec2-autoscaling.ec2',
       'ec2-autoscaling.ec2-purchase-options',
       'ecs-eks-fargate.ecs-task-role-vs-task-execution-role',
+      'efs-fsx.efs-vs-ebs',
       'efs-fsx.fsx',
       'elastic-load-balancing.elb',
       'governance-iac.control-tower-controls',
@@ -6875,10 +6884,12 @@ describe('ADR-046 — 개념 본문 목록', () => {
       'iam-permissions.iam-policy',
       'lambda.lambda-invocation-types',
       'rds-storage-features.features',
+      'rds-storage-features.multi-az-vs-read-replica',
       'rds-storage-features.rds-backups',
       'route53.routing-policies',
       's3-encryption-batch.sse-types',
       's3-versioning-lifecycle.object-lock',
+      'sqs-sns-eventbridge.eventbridge-vs-sns',
       'sqs-sns-eventbridge.sqs',
       'storage-gateway-migration.storage-gateway',
       'waf-shield.cloudfront',
