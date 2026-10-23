@@ -369,3 +369,24 @@ S3 File Gateway, 덤프 원문 Q252는 S3 File Gateway). Lambda 호출 유형은
 - 이 파일을 근거로 쓰지 않는 것: 세션 정책, 인증서 해지 목록(CRL), 소스 아이덴티티 규칙, `update`·`serve` 명령과 OS 인증서 저장소·PKCS#11·TPM,
   세션 기간의 범위(900~43200초)와 역할의 최대 세션 기간, AWS Private CA로 인증 기관을 만드는 법, OpenSSL 명령줄.
 - 쓰인 곳: 새 개념 `identity-federation.iam-roles-anywhere`의 본문과 단계 그림 19장, 새 문항 q742와 그 해설.
+
+## Glue의 정의와 변환 예시 (AWS Glue)
+
+확인한 날: 2026-10-23. 사용자가 `emr-glue-athena.glue`를 읽고 Glue를 잘 이해하지 못했다고 했다. 본문은 ETL의 세 글자를 풀 뿐 Glue가 무슨 데이터를
+어떻게 바꾸는지 예가 없었다. 두 원본과 덤프 해설은 "관리형 ETL 서비스", "크롤러로 스키마를 잡고 ETL 작업으로 열 지향 형식으로 바꾼다"(Q799)까지만
+말한다(ADR-039 「2026-10-23 확장」).
+
+- 출처: https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html
+- 가져온 사실: Glue는 서버리스 데이터 통합 서비스이고 관리할 인프라가 없다. 여러 소스의 데이터를 찾고 준비하고 옮기고 통합하는 데 쓰며, 용도에 분석이
+  들어간다. 분석을 위해 데이터를 변환·준비·정리하고, ETL 파이프라인으로 데이터 레이크에 적재한다. S3 데이터 레이크와 AWS 분석 서비스에 통합된다.
+  카탈로그에 등록한 데이터를 조회하는 것은 Athena·EMR·Redshift Spectrum이다.
+- 출처: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-csv-home.html,
+  https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-json-home.html,
+  https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-format-parquet-home.html
+- 가져온 사실: Glue는 S3에서 CSV·JSON·Parquet 파일을 읽고, 그 형식으로 S3에 쓴다(세 페이지 모두 읽기·쓰기 지원). 한 형식으로 읽어 다른 형식으로
+  쓴다는 문장은 세 페이지에 없다. 「한 가지 형식으로 맞춘다」는 이 읽기·쓰기 지원과 덤프 Q799의 「ETL 작업으로 열 지향 형식으로 바꾼다」를 함께 근거로 한다.
+- 출처: https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-crawler-pyspark-transforms-DropFields.html
+- 가져온 사실: DropFields 변환은 지정한 필드를 뺀 새 데이터를 돌려준다. 본문의 「분석에 필요 없는 열을 지운다」가 이 변환이다.
+- 이 파일을 근거로 쓰지 않는 것: 연결할 수 있는 데이터 소스의 수, Data Catalog의 구조, Glue Studio의 시각적 편집기, 스트리밍 ETL, 작업 북마크,
+  DynamicFrame, 머신 러닝·애플리케이션 개발 용도.
+- 쓰인 곳: `emr-glue-athena.glue`의 `summary`와 세 문단.

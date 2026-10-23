@@ -7246,3 +7246,24 @@ describe('ADR-050 — 단계 목록', () => {
     expect(numbers).toEqual(Array.from({ length: 19 }, (_, index) => index + 1))
   })
 })
+
+describe('ADR-039 확장 — Glue의 정의와 변환 예시', () => {
+  const byId = Object.fromEntries(
+    topics.flatMap((topic) => topic.concepts).map((concept) => [concept.id, concept]),
+  )
+
+  it('Glue의 요약이 무엇을 하는 서비스인지 바로 말한다', () => {
+    expect(byId['emr-glue-athena.glue'].summary).toBe(
+      'Glue는 여러 곳의 데이터를 모아 분석하기 좋은 형태로 다듬는 서버리스 데이터 통합 서비스다.',
+    )
+  })
+
+  // 분류 문장(ADR-019)은 첫 문단 맨 앞에 남고, 셋째 문단의 「분석하는 기능이 없다」는 q127의 정답 근거다.
+  it('분류 문장 뒤에 하는 일, 변환 예시와 ETL 정의, 분석은 다른 서비스가 한다는 것을 차례로 쓴다', () => {
+    expect(byId['emr-glue-athena.glue'].paragraphs).toEqual([
+      'Glue는 AWS 분류로는 분석(Analytics) 쪽 서비스다. 하는 일은 분석할 데이터를 준비하는 것이다. 여러 곳에 흩어진 데이터를 읽어 와 분석하기 좋은 형태로 다듬고, 그 결과를 원하는 곳에 저장한다. 서버리스라서 이 일을 돌릴 서버나 클러스터를 직접 띄우고 관리하지 않는다.',
+      '예를 들어 S3에 CSV 파일과 JSON 파일이 섞여 쌓여 있다고 하자. Glue는 이 파일들을 읽어 분석에 필요 없는 열을 지우고, 데이터를 한 가지 형식으로 맞춘 뒤 다시 S3에 저장한다. 이렇게 꺼내고(Extract), 형태를 바꾸고(Transform), 대상에 적재하는(Load) 과정을 ETL이라 하고, Glue에서 이 과정을 돌리는 것을 ETL 작업(Glue Job)이라 한다.',
+      'Glue가 맡는 것은 분석할 데이터를 준비하는 데까지다. Glue 자체에는 데이터를 분석하는 기능이 없고, 다듬어 둔 데이터를 SQL로 조회하는 일은 Athena 같은 다른 서비스가 한다.',
+    ])
+  })
+})
